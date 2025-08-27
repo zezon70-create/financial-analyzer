@@ -3,39 +3,44 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Financial Analyzer — محلل القوائم المالي</title>
+  <title>Financial Analyzer — محلل القوائم المالية</title>
 
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- SheetJS (اختياري لرفع Excel) -->
+  <!-- SheetJS for Excel reading -->
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <!-- html2canvas + jsPDF for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="container">
+  <div class="container" id="app">
     <header>
-      <h1>محلل القوائم المالية — Financial Analyzer</h1>
-      <p class="muted">إدخال بيانات متعددة السنوات → حساب نسب كاملة → تحليلات Common-size وTrend وDuPont → رسوم تفاعلية</p>
+      <h1>محلل القوائم المالية</h1>
+      <p class="muted">إدخال يدوي أو رفع Excel/CSV → حساب نسب شاملة → تحليلات Trend / Common-size / DuPont → رسوم تفاعلية</p>
     </header>
 
     <section class="controls">
       <div class="row">
-        <button id="addYearBtn">إضافة سنة</button>
-        <button id="removeYearBtn">حذف آخر سنة</button>
+        <button id="addYearBtn">+ إضافة سنة</button>
+        <button id="removeYearBtn">− حذف آخر سنة</button>
         <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" />
-        <button id="importBtn">استيراد ملف Excel/CSV</button>
+        <button id="importBtn">استيراد ملف</button>
         <button id="computeBtn" class="primary">احسب التحليلات</button>
         <button id="exportCsvBtn">تصدير نسب CSV</button>
+        <button id="exportPdfBtn">حفظ تقرير PDF</button>
       </div>
       <div class="row small">
-        <label>أدخل سعر السهم (اختياري, للسوق): <input id="marketPrice" type="number" placeholder="سعر السوق للسهم الواحد" /></label>
-        <label>عدد الأسهم المصدرة (اختياري): <input id="shares" type="number" placeholder="عدد الأسهم" /></label>
+        <label>سعر السهم (اختياري): <input id="marketPrice" type="number" placeholder="سعر السوق للسهم الواحد" /></label>
+        <label>عدد الأسهم (اختياري): <input id="shares" type="number" placeholder="عدد الأسهم المصدرة" /></label>
+        <button id="downloadSampleBtn" class="ghost">تحميل نموذج CSV</button>
       </div>
     </section>
 
     <section>
-      <h2>المدخلات — القوائم المالية (يمكن تعديل القيم يدوياً)</h2>
+      <h2>المدخلات — القوائم المالية (يمكن التحرير يدوياً)</h2>
       <div id="tablesArea" class="tables-area"></div>
     </section>
 
@@ -45,7 +50,7 @@
     </section>
 
     <section>
-      <h2>التحليلات الرسومية</h2>
+      <h2>الرسوم البيانية</h2>
       <div class="charts-grid">
         <canvas id="trendChart"></canvas>
         <canvas id="balanceChart"></canvas>
@@ -54,7 +59,7 @@
     </section>
 
     <footer>
-      <small>صممه: Financial Analyzer — جاهز للنشر على GitHub Pages</small>
+      <small>تم التصميم بواسطة Financial Analyzer — جاهز للنشر على GitHub Pages</small>
     </footer>
   </div>
 
