@@ -15,45 +15,53 @@
 </header>
 
 <main>
-    <section class="input-section">
-        <h2>Enter Financial Data</h2>
-        <div id="data-inputs">
-            <label>Year: <input type="number" id="year" value="2025"></label>
-            <label>Total Assets: <input type="number" id="totalAssets"></label>
-            <label>Total Liabilities: <input type="number" id="totalLiabilities"></label>
-            <label>Equity: <input type="number" id="equity"></label>
-            <label>Revenue: <input type="number" id="revenue"></label>
-            <label>COGS: <input type="number" id="cogs"></label>
-            <label>Operating Expenses: <input type="number" id="opExpenses"></label>
-            <label>Net Income: <input type="number" id="netIncome"></label>
-            <label>Operating Cash Flow: <input type="number" id="opCF"></label>
-            <label>Free Cash Flow: <input type="number" id="freeCF"></label>
-            <label>Number of Shares: <input type="number" id="shares" value="1000"></label>
-            <label>Stock Price: <input type="number" id="stockPrice" value="50"></label>
-            <button onclick="addData()">Add Data</button>
-        </div>
-    </section>
+<section class="input-section">
+<h2>Enter Financial Data</h2>
+<div id="data-inputs">
+    <label>Company/Year: <input type="text" id="companyName" placeholder="Company or Year"></label>
+    <label>Total Assets: <input type="number" id="totalAssets"></label>
+    <label>Total Liabilities: <input type="number" id="totalLiabilities"></label>
+    <label>Equity: <input type="number" id="equity"></label>
+    <label>Revenue: <input type="number" id="revenue"></label>
+    <label>COGS: <input type="number" id="cogs"></label>
+    <label>Operating Expenses: <input type="number" id="opExpenses"></label>
+    <label>Net Income: <input type="number" id="netIncome"></label>
+    <label>Operating Cash Flow: <input type="number" id="opCF"></label>
+    <label>Free Cash Flow: <input type="number" id="freeCF"></label>
+    <label>Number of Shares: <input type="number" id="shares" value="1000"></label>
+    <label>Stock Price: <input type="number" id="stockPrice" value="50"></label>
+    <button onclick="addData()">Add Data</button>
+    <button onclick="clearData()">Clear All Data</button>
+</div>
+</section>
 
-    <section class="analysis-section">
-        <h2>Financial Ratios & Analysis</h2>
-        <div id="ratios"></div>
-    </section>
+<section class="analysis-section">
+<h2>Financial Ratios & Analysis</h2>
+<div id="ratios"></div>
+</section>
 
-    <section class="charts-section">
-        <h2>Charts</h2>
-        <canvas id="lineChart"></canvas>
-        <canvas id="pieChart"></canvas>
-        <canvas id="barChart"></canvas>
-    </section>
+<section class="compare-section">
+<h2>Compare Records</h2>
+<label>Select Records to Compare (Max 3):</label>
+<select id="compareSelect" multiple size="5"></select>
+<button onclick="compareRecords()">Compare</button>
+</section>
 
-    <section class="export-section">
-        <button onclick="exportCSV()">Export CSV</button>
-        <button onclick="exportPDF()">Export PDF</button>
-    </section>
+<section class="charts-section">
+<h2>Charts</h2>
+<canvas id="lineChart"></canvas>
+<canvas id="pieChart"></canvas>
+<canvas id="barChart"></canvas>
+</section>
+
+<section class="export-section">
+<button onclick="exportCSV()">Export CSV</button>
+<button onclick="exportPDF()">Export PDF</button>
+</section>
 </main>
 
 <footer>
-    <p>&copy; 2025 Financial Analyzer Ultimate Pro by Zezon70</p>
+<p>&copy; 2025 Financial Analyzer Ultimate Pro by Zezon70</p>
 </footer>
 
 <script src="script.js"></script>
