@@ -1,47 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Financial Analyzer</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Financial Analyzer — محلل القوائم المالي</title>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- SheetJS (اختياري لرفع Excel) -->
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>Financial Analyzer</h1>
-    <p>Powered by zezon70</p>
-  </header>
+  <div class="container">
+    <header>
+      <h1>محلل القوائم المالية — Financial Analyzer</h1>
+      <p class="muted">إدخال بيانات متعددة السنوات → حساب نسب كاملة → تحليلات Common-size وTrend وDuPont → رسوم تفاعلية</p>
+    </header>
 
-  <main>
-    <section class="input-section">
-      <h2>Enter Financial Data</h2>
-      <form id="financeForm">
-        <label for="revenue">Revenue:</label>
-        <input type="number" id="revenue" required>
-
-        <label for="expenses">Expenses:</label>
-        <input type="number" id="expenses" required>
-
-        <label for="investments">Investments:</label>
-        <input type="number" id="investments" required>
-
-        <button type="submit">Analyze</button>
-      </form>
+    <section class="controls">
+      <div class="row">
+        <button id="addYearBtn">إضافة سنة</button>
+        <button id="removeYearBtn">حذف آخر سنة</button>
+        <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" />
+        <button id="importBtn">استيراد ملف Excel/CSV</button>
+        <button id="computeBtn" class="primary">احسب التحليلات</button>
+        <button id="exportCsvBtn">تصدير نسب CSV</button>
+      </div>
+      <div class="row small">
+        <label>أدخل سعر السهم (اختياري, للسوق): <input id="marketPrice" type="number" placeholder="سعر السوق للسهم الواحد" /></label>
+        <label>عدد الأسهم المصدرة (اختياري): <input id="shares" type="number" placeholder="عدد الأسهم" /></label>
+      </div>
     </section>
 
-    <section id="results" class="results hidden">
-      <h2>Analysis Results</h2>
-      <p id="profit"></p>
-      <p id="roi"></p>
-      <canvas id="chart"></canvas>
+    <section>
+      <h2>المدخلات — القوائم المالية (يمكن تعديل القيم يدوياً)</h2>
+      <div id="tablesArea" class="tables-area"></div>
     </section>
-  </main>
 
-  <footer>
-    <p>© 2025 | Financial Analyzer by zezon70</p>
-  </footer>
+    <section>
+      <h2>النتائج — النسب المالية</h2>
+      <div id="ratiosArea" class="ratios-area"></div>
+    </section>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <section>
+      <h2>التحليلات الرسومية</h2>
+      <div class="charts-grid">
+        <canvas id="trendChart"></canvas>
+        <canvas id="balanceChart"></canvas>
+        <canvas id="pieChart"></canvas>
+      </div>
+    </section>
+
+    <footer>
+      <small>صممه: Financial Analyzer — جاهز للنشر على GitHub Pages</small>
+    </footer>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
