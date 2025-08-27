@@ -11,7 +11,7 @@ return num.toLocaleString();
 
 function addData(){
 const data = {
-companyName: document.getElementById('companyName').value || `Year ${document.getElementById('year').value}`,
+companyName: document.getElementById('companyName').value || `Record ${financialData.length+1}`,
 totalAssets: parseFloat(document.getElementById('totalAssets').value),
 totalLiabilities: parseFloat(document.getElementById('totalLiabilities').value),
 equity: parseFloat(document.getElementById('equity').value),
