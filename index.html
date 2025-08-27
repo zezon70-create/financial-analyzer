@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Analyzer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Financial Analyzer</h1>
+    <p>Powered by zezon70</p>
+  </header>
+
+  <main>
+    <section class="input-section">
+      <h2>Enter Financial Data</h2>
+      <form id="financeForm">
+        <label for="revenue">Revenue:</label>
+        <input type="number" id="revenue" required>
+
+        <label for="expenses">Expenses:</label>
+        <input type="number" id="expenses" required>
+
+        <label for="investments">Investments:</label>
+        <input type="number" id="investments" required>
+
+        <button type="submit">Analyze</button>
+      </form>
+    </section>
+
+    <section id="results" class="results hidden">
+      <h2>Analysis Results</h2>
+      <p id="profit"></p>
+      <p id="roi"></p>
+      <canvas id="chart"></canvas>
+    </section>
+  </main>
+
+  <footer>
+    <p>© 2025 | Financial Analyzer by zezon70</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
