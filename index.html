@@ -8,8 +8,8 @@
   <!-- Styles -->
   <link rel="stylesheet" href="styles.css">
 
-  <!-- CDNs -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -28,10 +28,12 @@
       <button class="nav-btn" data-view="dashboard" onclick="app.showView('dashboard')" data-i18n="dashboard">Dashboard</button>
       <button class="nav-btn" data-view="forecast" onclick="app.showView('forecast')" data-i18n="forecast">Forecast</button>
     </nav>
+
     <div class="lang-area">
       <button onclick="app.setLang('en')">EN</button>
       <button onclick="app.setLang('ar')">ع</button>
     </div>
+
     <div class="sidebar-footer"><small data-i18n="powered">© 2025 Financial Analyzer</small></div>
   </aside>
 
@@ -94,7 +96,7 @@
       </div>
     </section>
 
-    <!-- MAPPING (Assign accounts to statements) -->
+    <!-- MAPPING -->
     <section id="view-mapping" class="view">
       <header class="view-header">
         <h2 data-i18n="mapping">Map Accounts to Statements</h2>
