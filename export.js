@@ -1,4 +1,5 @@
 function exportStatementsToExcel(statementsObj, filename='financial_statements.xlsx'){
+  if(!statementsObj) return alert('No data to export');
   const wb = XLSX.utils.book_new();
   for(const year of Object.keys(statementsObj.statements)){
     const s = statementsObj.statements[year];
@@ -19,6 +20,7 @@ function exportStatementsToExcel(statementsObj, filename='financial_statements.x
 }
 
 async function exportStatementsToPDF(statementsObj, filename='financial_statements.pdf'){
+  if(!statementsObj) return alert('No data to export');
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   let y = 10;
