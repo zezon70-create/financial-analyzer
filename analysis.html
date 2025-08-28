@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Analyzer Pro - Analysis</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<header>
+<h1>Financial Analysis</h1>
+<nav>
+  <a href="data-entry.html">Data Entry</a> |
+  <a href="dashboard.html">Dashboard</a>
+</nav>
+</header>
+<main>
+<section class="analysis-section">
+<h2>Financial Ratios & Advanced Metrics</h2>
+<div id="ratios"></div>
+</section>
+<section class="compare-section">
+<h2>Compare Records</h2>
+<select id="compareSelect" multiple size="5"></select>
+<button onclick="compareRecords()">Compare</button>
+</section>
+</main>
+<script src="script.js"></script>
+<script>
+window.onload = function() {
+    loadData(); 
+    updateAnalysis(); 
+    updateCompareOptions();
+};
+</script>
+</body>
+</html>
