@@ -9,17 +9,23 @@ const app = {
   },
 
   bindUI(){
-    document.getElementById('fileInput').addEventListener('change', e=> this.handleFile(e.target.files[0]));
-    document.getElementById('processManual').addEventListener('click', ()=> this.handleManual());
-    document.getElementById('downloadTemplate').addEventListener('click', ()=> downloadTemplate());
-    document.getElementById('clearInput').addEventListener('click', ()=> { document.getElementById('manualInput').value=''; document.getElementById('previewTable').innerHTML=''; this.data=[]; });
-    document.getElementById('exportExcelBtn').addEventListener('click', ()=> exportStatementsToExcel(this.statementsObj));
-    document.getElementById('exportPdfBtn').addEventListener('click', ()=> exportStatementsToPDF(this.statementsObj));
-    document.getElementById('generateForecast').addEventListener('click', ()=> this.generateForecast());
-    document.getElementById('yearSelect')?.addEventListener('change', ()=> this.renderStatements());
-    document.getElementById('compareYears')?.addEventListener('change', ()=> {});
-    document.getElementById('compareMetric')?.addEventListener('change', ()=> {});
-    document.getElementById('downloadTemplate').addEventListener('click', ()=> downloadTemplate());
+    const fileInput = document.getElementById('fileInput');
+    if(fileInput) fileInput.addEventListener('change', e=> this.handleFile(e.target.files[0]));
+    const processManual = document.getElementById('processManual');
+    if(processManual) processManual.addEventListener('click', ()=> this.handleManual());
+    const downloadTemplateBtn = document.getElementById('downloadTemplate');
+    if(downloadTemplateBtn) downloadTemplateBtn.addEventListener('click', ()=> downloadTemplate());
+    const clearInput = document.getElementById('clearInput');
+    if(clearInput) clearInput.addEventListener('click', ()=> { document.getElementById('manualInput').value=''; document.getElementById('previewTable').innerHTML=''; this.data=[]; this.statementsObj=null; });
+    const exportExcelBtn = document.getElementById('exportExcelBtn');
+    if(exportExcelBtn) exportExcelBtn.addEventListener('click', ()=> exportStatementsToExcel(this.statementsObj));
+    const exportPdfBtn = document.getElementById('exportPdfBtn');
+    if(exportPdfBtn) exportPdfBtn.addEventListener('click', ()=> exportStatementsToPDF(this.statementsObj));
+    const genForecast = document.getElementById('generateForecast');
+    if(genForecast) genForecast.addEventListener('click', ()=> this.generateForecast());
+    const yearSelect = document.getElementById('yearSelect');
+    if(yearSelect) yearSelect.addEventListener('change', ()=> this.renderStatements());
+    // safe init for buttons that may not exist yet
   },
 
   showView(id){
@@ -103,7 +109,7 @@ const app = {
     const container = document.getElementById('previewTable');
     if(!this.data || this.data.length===0){ container.innerHTML = '<div class="small">No data</div>'; return; }
     let html = '<table><thead><tr><th>Account</th><th>Debit</th><th>Credit</th><th>Year</th></tr></thead><tbody>';
-    this.data.forEach(r=> html += `<tr><td>${r.account}</td><td>${r.debit}</td><td>${r.credit}</td><td>${r.year||''}</td></tr>`);
+    this.data.forEach(r=> html += `<tr><td>${escapeHtml(r.account)}</td><td>${r.debit}</td><td>${r.credit}</td><td>${r.year||''}</td></tr>`);
     html += '</tbody></table>';
     container.innerHTML = html;
     const years = Array.from(new Set(this.data.map(d=>d.year).filter(Boolean)));
@@ -123,12 +129,11 @@ const app = {
   renderMapping(){
     const cont = document.getElementById('mappingContainer');
     if(!this.data || this.data.length===0){ cont.innerHTML='<div class="small">No data to map</div>'; return; }
-    // unique accounts
     const accounts = Array.from(new Set(this.data.map(d=>d.account)));
     let html = '<table><thead><tr><th>Account</th><th>Assign</th></tr></thead><tbody>';
     accounts.forEach(acc=>{
       const val = this.userMap[acc]|| classifyAccount(acc);
-      html += `<tr><td>${acc}</td><td>
+      html += `<tr><td>${escapeHtml(acc)}</td><td>
         <select data-acc="${encodeURIComponent(acc)}">
           <option value="asset" ${val==='asset'?'selected':''}>Asset</option>
           <option value="liability" ${val==='liability'?'selected':''}>Liability</option>
@@ -209,3 +214,11 @@ const app = {
 };
 
 window.addEventListener('DOMContentLoaded', ()=> app.init());
+
+/* small helper */
+function escapeHtml(unsafe) {
+  return String(unsafe)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
