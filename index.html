@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Financial Analyzer — Complete</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- CDNs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <img src="assets/logo.png" class="logo" alt="Logo">
+    <div class="app-title" data-i18n="appTitle">Financial Analyzer</div>
+    <nav>
+      <button class="nav-btn" data-view="home" onclick="app.showView('home')" data-i18n="home">Home</button>
+      <button class="nav-btn" data-view="upload" onclick="app.showView('upload')" data-i18n="upload">Upload/Input</button>
+      <button class="nav-btn" data-view="mapping" onclick="app.showView('mapping')" data-i18n="mapping">Map Accounts</button>
+      <button class="nav-btn" data-view="statements" onclick="app.showView('statements')" data-i18n="statements">Statements</button>
+      <button class="nav-btn" data-view="analysis" onclick="app.showView('analysis')" data-i18n="analysis">Analysis</button>
+      <button class="nav-btn" data-view="compare" onclick="app.showView('compare')" data-i18n="compare">Compare Years</button>
+      <button class="nav-btn" data-view="dashboard" onclick="app.showView('dashboard')" data-i18n="dashboard">Dashboard</button>
+      <button class="nav-btn" data-view="forecast" onclick="app.showView('forecast')" data-i18n="forecast">Forecast</button>
+    </nav>
+    <div class="lang-area">
+      <button onclick="app.setLang('en')">EN</button>
+      <button onclick="app.setLang('ar')">ع</button>
+    </div>
+    <div class="sidebar-footer"><small data-i18n="powered">© 2025 Financial Analyzer</small></div>
+  </aside>
+
+  <main class="main">
+    <!-- HOME -->
+    <section id="view-home" class="view active">
+      <header class="view-header">
+        <h1 data-i18n="welcome">Welcome to Financial Analyzer</h1>
+        <div>
+          <button class="btn" onclick="app.showView('upload')" data-i18n="start">Start</button>
+        </div>
+      </header>
+      <div class="cards">
+        <div class="card">
+          <h3 data-i18n="quickUpload">Quick Upload</h3>
+          <p data-i18n="quickUploadText">Upload a trial balance (CSV/XLSX) or paste it.</p>
+          <button class="btn" onclick="app.showView('upload')" data-i18n="goUpload">Upload</button>
+        </div>
+        <div class="card">
+          <h3 data-i18n="statementsCard">Statements</h3>
+          <p data-i18n="statementsCardText">Generate Income, Balance & Cash Flow.</p>
+          <button class="btn" onclick="app.showView('statements')" data-i18n="goStatements">Open</button>
+        </div>
+        <div class="card">
+          <h3 data-i18n="dashboardCard">Dashboard</h3>
+          <p data-i18n="dashboardCardText">Interactive KPIs and charts.</p>
+          <button class="btn" onclick="app.showView('dashboard')" data-i18n="goDashboard">Open</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- UPLOAD / INPUT -->
+    <section id="view-upload" class="view">
+      <header class="view-header">
+        <h2 data-i18n="uploadTitle">Upload / Input Trial Balance</h2>
+        <button class="back" onclick="app.showView('home')" data-i18n="back">Back</button>
+      </header>
+
+      <div class="upload-area">
+        <div class="left">
+          <label class="field-label" data-i18n="fileUpload">Upload file (CSV / XLSX)</label>
+          <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" />
+          <div class="small-note" data-i18n="fileNote">Download template, fill it and re-upload.</div>
+          <button class="btn" id="downloadTemplate" data-i18n="downloadTemplate">Download Template</button>
+
+          <hr>
+
+          <label class="field-label" data-i18n="pasteData">Or paste trial balance (Account, Debit, Credit, Year optional)</label>
+          <textarea id="manualInput" placeholder="Cash,1000,0,2024&#10;Sales,0,5000,2024"></textarea>
+          <div class="actions">
+            <button class="btn" id="processManual" data-i18n="processManual">Process Manual</button>
+            <button class="btn" id="clearInput" data-i18n="clear">Clear</button>
+          </div>
+        </div>
+
+        <div class="right">
+          <h3 data-i18n="preview">Preview (parsed)</h3>
+          <div id="previewTable" class="table-scroll"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MAPPING (Assign accounts to statements) -->
+    <section id="view-mapping" class="view">
+      <header class="view-header">
+        <h2 data-i18n="mapping">Map Accounts to Statements</h2>
+        <button class="back" onclick="app.showView('upload')" data-i18n="back">Back</button>
+      </header>
+      <div class="mapping-area">
+        <p class="small" data-i18n="mappingInstr">Set each account to a category for accurate statements.</p>
+        <div id="mappingContainer" class="table-scroll"></div>
+        <div style="margin-top:12px">
+          <button class="btn" onclick="app.saveMapping()" data-i18n="saveMapping">Save Mapping</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATEMENTS -->
+    <section id="view-statements" class="view">
+      <header class="view-header">
+        <h2 data-i18n="statements">Financial Statements</h2>
+        <button class="back" onclick="app.showView('home')" data-i18n="back">Back</button>
+      </header>
+
+      <div class="statements-actions">
+        <select id="yearSelect"></select>
+        <button class="btn" id="exportExcelBtn" data-i18n="exportExcel">Export Excel</button>
+        <button class="btn" id="exportPdfBtn" data-i18n="exportPdf">Export PDF</button>
+      </div>
+
+      <div class="statements-grid">
+        <div class="statement-box" id="incomeBox"><h3 data-i18n="incomeStatement">Income Statement</h3><div id="incomeStatement"></div></div>
+        <div class="statement-box" id="balanceBox"><h3 data-i18n="balanceSheet">Balance Sheet</h3><div id="balanceSheet"></div></div>
+        <div class="statement-box" id="cashBox"><h3 data-i18n="cashFlow">Cash Flow</h3><div id="cashFlow"></div></div>
+      </div>
+    </section>
+
+    <!-- ANALYSIS -->
+    <section id="view-analysis" class="view">
+      <header class="view-header">
+        <h2 data-i18n="analysis">Financial Analysis</h2>
+        <button class="back" onclick="app.showView('home')" data-i18n="back">Back</button>
+      </header>
+
+      <div class="analysis-grid">
+        <div class="kpi-cards" id="kpis"></div>
+        <div id="ratiosBox" class="analysis-box"><h3 data-i18n="ratios">Ratios</h3><div id="ratios"></div></div>
+        <div id="evaBox" class="analysis-box"><h3>EVA</h3>
+          <div>Cost of Capital (%) <input type="number" id="waccInput" value="10" step="0.1" style="width:90px"></div>
+          <div id="eva"></div>
+        </div>
+        <div id="riskBox" class="analysis-box"><h3 data-i18n="riskReturn">Return & Risk</h3><div id="riskReturn"></div></div>
+      </div>
+    </section>
+
+    <!-- COMPARE -->
+    <section id="view-compare" class="view">
+      <header class="view-header">
+        <h2 data-i18n="compare">Compare Years</h2>
+        <button class="back" onclick="app.showView('statements')" data-i18n="back">Back</button>
+      </header>
+
+      <div>
+        <label>Select years to compare:</label>
+        <select id="compareYears" multiple style="min-height:80px"></select>
+        <label>Select metric:</label>
+        <select id="compareMetric"><option value="revenue">Revenue</option><option value="netIncome">Net Income</option><option value="assets">Assets</option></select>
+        <button class="btn" onclick="app.doCompare()" data-i18n="compareBtn">Compare</button>
+      </div>
+      <div id="compareChart"></div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="view-dashboard" class="view">
+      <header class="view-header">
+        <h2 data-i18n="dashboard">Dashboard</h2>
+        <button class="back" onclick="app.showView('home')" data-i18n="back">Back</button>
+      </header>
+
+      <div class="dashboard-grid">
+        <div class="chart-card"><h4 data-i18n="revTrend">Revenue Trend</h4><canvas id="chartRevenue"></canvas></div>
+        <div class="chart-card"><h4 data-i18n="profitTrend">Net Profit Trend</h4><canvas id="chartProfit"></canvas></div>
+        <div class="chart-card"><h4 data-i18n="structure">Balance Structure</h4><canvas id="chartStructure"></canvas></div>
+      </div>
+    </section>
+
+    <!-- FORECAST -->
+    <section id="view-forecast" class="view">
+      <header class="view-header">
+        <h2 data-i18n="forecast">Forecast</h2>
+        <button class="back" onclick="app.showView('home')" data-i18n="back">Back</button>
+      </header>
+
+      <div class="forecast-area">
+        <label data-i18n="growthRate">Expected growth rate (%)</label>
+        <input type="number" id="growthRate" step="0.01" placeholder="5">
+        <button class="btn" id="generateForecast" data-i18n="generateForecast">Generate Forecast</button>
+        <div id="forecastResults"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Scripts -->
+  <script src="lang.js"></script>
+  <script src="calculations.js"></script>
+  <script src="charts.js"></script>
+  <script src="export.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
