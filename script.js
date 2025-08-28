@@ -7,6 +7,15 @@ function formatNumber(num){
     return Number(num).toLocaleString();
 }
 
+function evalInput(value){
+    try{
+        // السماح بالمعادلات الحسابية البسيطة
+        return Number(eval(value));
+    } catch(e){
+        return NaN;
+    }
+}
+
 // =================== Data Handling ===================
 function loadData(){
     const data = localStorage.getItem('financialData');
@@ -16,31 +25,34 @@ function loadData(){
 function saveData(){
     const d={
         companyName: document.getElementById('companyName').value,
-        totalAssets: parseFloat(document.getElementById('totalAssets').value),
-        totalLiabilities: parseFloat(document.getElementById('totalLiabilities').value),
-        equity: parseFloat(document.getElementById('equity').value),
-        revenue: parseFloat(document.getElementById('revenue').value),
-        cogs: parseFloat(document.getElementById('cogs').value),
-        opExpenses: parseFloat(document.getElementById('opExpenses').value),
-        netIncome: parseFloat(document.getElementById('netIncome').value),
-        opCF: parseFloat(document.getElementById('opCF').value)||0,
-        invCF: parseFloat(document.getElementById('invCF').value)||0,
-        finCF: parseFloat(document.getElementById('finCF').value)||0,
-        freeCF: parseFloat(document.getElementById('freeCF').value)||0,
-        shares: parseFloat(document.getElementById('shares').value)||0,
-        stockPrice: parseFloat(document.getElementById('stockPrice').value)||0
+        totalAssets: evalInput(document.getElementById('totalAssets').value),
+        totalLiabilities: evalInput(document.getElementById('totalLiabilities').value),
+        equity: evalInput(document.getElementById('equity').value),
+        revenue: evalInput(document.getElementById('revenue').value),
+        cogs: evalInput(document.getElementById('cogs').value),
+        opExpenses: evalInput(document.getElementById('opExpenses').value),
+        netIncome: evalInput(document.getElementById('netIncome').value),
+        opCF: evalInput(document.getElementById('opCF').value)||0,
+        invCF: evalInput(document.getElementById('invCF').value)||0,
+        finCF: evalInput(document.getElementById('finCF').value)||0,
+        freeCF: evalInput(document.getElementById('freeCF').value)||0,
+        shares: evalInput(document.getElementById('shares').value)||0,
+        stockPrice: evalInput(document.getElementById('stockPrice').value)||0
     };
     financialData.push(d);
     localStorage.setItem('financialData', JSON.stringify(financialData));
-    document.getElementById('statusMsg').innerText='Data Saved Successfully!';
+    document.getElementById('statusMsg').innerText='تم حفظ البيانات بنجاح!';
     document.getElementById('dataForm').reset();
+    updateCompareOptions();
 }
 
+// =================== Clear Data ===================
 function clearData(){
-    if(confirm('Clear all data?')){
+    if(confirm('هل تريد مسح جميع البيانات؟')){
         financialData=[];
         localStorage.removeItem('financialData');
-        document.getElementById('statusMsg').innerText='All data cleared!';
+        document.getElementById('statusMsg').innerText='تم مسح جميع البيانات!';
+        updateCompareOptions();
     }
 }
 
@@ -72,7 +84,7 @@ function generateStatements(){
 }
 
 function exportStatementsCSV(){
-    if(!financialData.length){alert('No data'); return;}
+    if(!financialData.length){alert('لا توجد بيانات'); return;}
     let csv='Company,Total Assets,Total Liabilities,Equity,Revenue,COGS,OpExpenses,NetIncome,OpCF,InvCF,FinCF,FreeCF\n';
     financialData.forEach(d=>{
         csv+=`${d.companyName},${d.totalAssets},${d.totalLiabilities},${d.equity},${d.revenue},${d.cogs},${d.opExpenses},${d.netIncome},${d.opCF},${d.invCF},${d.finCF},${d.freeCF}\n`;
@@ -95,7 +107,7 @@ function updateAnalysis(){
         const roa = ((d.netIncome/d.totalAssets)*100).toFixed(2);
         const grossMargin = ((d.revenue - d.cogs)/d.revenue*100).toFixed(2);
         const netMargin = ((d.netIncome/d.revenue)*100).toFixed(2);
-        const EVA = (d.netIncome - 0.1*d.equity).toFixed(2); // مثال على تكلفة رأس المال 10%
+        const EVA = (d.netIncome - 0.1*d.equity).toFixed(2); // تكلفة رأس المال 10% كمثال
         container.innerHTML+=`
         <h3>${d.companyName}</h3>
         <ul>
@@ -123,7 +135,7 @@ function updateCompareOptions(){
 function compareRecords(){
     const select=document.getElementById('compareSelect');
     const indices=Array.from(select.selectedOptions).map(o=>parseInt(o.value));
-    if(indices.length<2){alert('Select at least 2 records'); return;}
+    if(indices.length<2){alert('اختر على الأقل سجلين للمقارنة'); return;}
     let msg='Comparison:\n';
     indices.forEach(i=>{
         const d=financialData[i];
@@ -166,7 +178,7 @@ function updateCharts(){
 
 // =================== Export Dashboard ===================
 function exportCSV(){
-    if(!financialData.length){alert('No data'); return;}
+    if(!financialData.length){alert('لا توجد بيانات'); return;}
     let csv='Company,Revenue,Net Income,Equity,Total Assets\n';
     financialData.forEach(d=>{
         csv+=`${d.companyName},${d.revenue},${d.netIncome},${d.equity},${d.totalAssets}\n`;
@@ -179,5 +191,14 @@ function exportCSV(){
 }
 
 function exportPDF(){
-    alert('PDF export will be implemented later.');
+    alert('سيتم إضافة تصدير PDF لاحقاً.');
+}
+
+// =================== Initialize ===================
+window.onload = function(){
+    loadData();
+    updateCompareOptions();
+    updateAnalysis();
+    generateStatements();
+    updateCharts();
 }
