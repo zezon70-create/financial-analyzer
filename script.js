@@ -62,20 +62,28 @@ function updateAnalysis(){
   });
 }
 
-let lineChart, barChart, pieChart;
+let lineChart, barChart;
 function updateCharts(){
   const labels=financialData.map(d=>d.companyName);
   const revenueData=financialData.map(d=>d.revenue);
   const netIncomeData=financialData.map(d=>d.netIncome);
 
-  if(lineChart) lineChart.destroy();
   const ctxLine=document.getElementById('lineChart')?.getContext('2d');
   if(ctxLine){
-    lineChart=new Chart(ctxLine,{type:'line',
-      data:{labels, datasets:[
-        {label:'Revenue', data:revenueData,borderColor:'blue',fill:false},
-        {label:'Net Income', data:netIncomeData,borderColor:'green',fill:false}
-      ]},
+    if(lineChart) lineChart.destroy();
+    lineChart=new Chart(ctxLine,{
+      type:'line',
+      data:{labels, datasets:[{label:'Revenue', data:revenueData, borderColor:'#0d6efd',fill:false},{label:'Net Income', data:netIncomeData,borderColor:'#6610f2',fill:false}]},
+      options:{responsive:true}
+    });
+  }
+
+  const ctxBar=document.getElementById('barChart')?.getContext('2d');
+  if(ctxBar){
+    if(barChart) barChart.destroy();
+    barChart=new Chart(ctxBar,{
+      type:'bar',
+      data:{labels,datasets:[{label:'Revenue', data:revenueData, backgroundColor:'#0d6efd'},{label:'Net Income', data:netIncomeData, backgroundColor:'#6610f2'}]},
       options:{responsive:true}
     });
   }
@@ -87,44 +95,33 @@ function updateCompareOptions(){
   select.innerHTML='';
   financialData.forEach((d,i)=>{
     const option=document.createElement('option');
-    option.value=i; option.text=d.companyName;
+    option.value=i;
+    option.text=d.companyName;
     select.appendChild(option);
   });
 }
 
 function compareRecords(){
-  const selected=Array.from(document.getElementById('compareSelect').selectedOptions).map(o=>parseInt(o.value));
-  if(selected.length<2 || selected.length>3){alert('Select 2 or 3 records'); return;}
-  const labels=selected.map(i=>financialData[i].companyName);
-  const roeData=selected.map(i=>(financialData[i].equity? (financialData[i].netIncome/financialData[i].equity*100).toFixed(2):0));
-  const netMarginData=selected.map(i=>(financialData[i].revenue? (financialData[i].netIncome/financialData[i].revenue*100).toFixed(2):0));
-  
-  if(barChart) barChart.destroy();
-  const ctxBar=document.getElementById('barChart')?.getContext('2d');
-  if(ctxBar){
-    barChart=new Chart(ctxBar,{
-      type:'bar',
-      data:{labels, datasets:[
-        {label:'ROE %', data:roeData, backgroundColor:'#6610f2'},
-        {label:'Net Margin %', data:netMarginData, backgroundColor:'#0d6efd'}
-      ]},
-      options:{responsive:true,plugins:{legend:{position:'top'}}}
-    });
-  }
+  const select=document.getElementById('compareSelect');
+  const selected=[...select.selectedOptions].map(o=>financialData[o.value]);
+  if(selected.length<2){alert("Select at least 2 records to compare"); return;}
+  let msg="Comparison:\n";
+  selected.forEach(d=>{
+    msg+=`${d.companyName}: ROE ${d.equity? (d.netIncome/d.equity*100).toFixed(2):'N/A'}%, Net Income ${formatNumber(d.netIncome)}\n`;
+  });
+  alert(msg);
 }
 
 function exportCSV(){
-  let csv="Company,Assets,Liabilities,Equity,Revenue,COGS,OpEx,NetIncome\n";
-  financialData.forEach(d=>{
-    csv+=`${d.companyName},${d.totalAssets},${d.totalLiabilities},${d.equity},${d.revenue},${d.cogs},${d.opExpenses},${d.netIncome}\n`;
-  });
-  const blob=new Blob([csv],{type:'text/csv'});
+  if(!financialData.length){alert("No data to export");return;}
+  const headers=Object.keys(financialData[0]);
+  const csv=[headers.join(',')];
+  financialData.forEach(d=>csv.push(headers.map(h=>d[h]).join(',')));
+  const blob=new Blob([csv.join('\n')],{type:'text/csv'});
   const link=document.createElement('a');
   link.href=URL.createObjectURL(blob);
   link.download="financial_data.csv";
   link.click();
 }
 
-function exportPDF(){
-  alert("PDF export feature coming soon!"); // يمكنك استبدالها بمكتبة jsPDF لاحقًا
-}
+function exportPDF(){ alert("PDF export coming soon!"); }
