@@ -1,89 +1,22 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Financial Analyzer Pro</title>
-<link rel="stylesheet" href="style.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="script.js" defer></script>
+  <meta charset="UTF-8">
+  <title>Financial System - Home</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <header>
-    <div class="logo"><img src="logo.png" alt="Logo" class="logo-img"> Financial Analyzer Pro</div>
-    <nav>
-      <ul>
-        <li><a href="#home" class="tablink" onclick="openTab(event,'home')">الرئيسية</a></li>
-        <li><a href="#data-entry" class="tablink" onclick="openTab(event,'data-entry')">إدخال البيانات</a></li>
-        <li><a href="#statements" class="tablink" onclick="openTab(event,'statements')">القوائم المالية</a></li>
-        <li><a href="#analysis" class="tablink" onclick="openTab(event,'analysis')">التحليل المالي</a></li>
-        <li><a href="#dashboard" class="tablink" onclick="openTab(event,'dashboard')">Dashboard</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <section id="home" class="tabcontent">
-    <h1>مرحباً بك في Financial Analyzer Pro</h1>
-    <p>أداة احترافية لتحليل القوائم المالية للشركات، تشمل النسب المالية التقليدية، التحليلات الحديثة، والتنبؤات المستقبلية.</p>
-    <img src="logo.png" alt="Logo" class="home-logo">
-    <p>ابدأ بإدخال البيانات لتوليد القوائم والتحليلات والرسوم البيانية.</p>
-  </section>
-
-  <section id="data-entry" class="tabcontent">
-    <h2>إدخال البيانات المالية</h2>
-    <form id="dataForm">
-      <label>اسم الشركة: <input type="text" id="companyName" required></label>
-
-      <h3>الميزانية العمومية</h3>
-      <label>الأصول المتداولة: <input type="text" id="currentAssets"></label>
-      <label>الأصول الثابتة: <input type="text" id="fixedAssets"></label>
-      <label>الخصوم المتداولة: <input type="text" id="currentLiabilities"></label>
-      <label>الخصوم طويلة الأجل: <input type="text" id="longLiabilities"></label>
-      <label>حقوق الملكية: <input type="text" id="equity"></label>
-
-      <h3>قائمة الدخل</h3>
-      <label>الإيرادات: <input type="text" id="revenue"></label>
-      <label>تكلفة البضاعة المباعة: <input type="text" id="cogs"></label>
-      <label>المصروفات التشغيلية: <input type="text" id="opExpenses"></label>
-      <label>مصروفات الفوائد والضرائب: <input type="text" id="otherExpenses"></label>
-
-      <h3>التدفقات النقدية</h3>
-      <label>التدفقات التشغيلية: <input type="text" id="opCF"></label>
-      <label>التدفقات الاستثمارية: <input type="text" id="invCF"></label>
-      <label>التدفقات التمويلية: <input type="text" id="finCF"></label>
-
-      <h3>الأسهم والمساهمون</h3>
-      <label>عدد الأسهم: <input type="text" id="shares"></label>
-      <label>سعر السهم: <input type="text" id="stockPrice"></label>
-
-      <div class="form-buttons">
-        <button type="button" onclick="saveData()">حفظ البيانات</button>
-        <button type="button" onclick="clearData()">مسح البيانات</button>
-        <button type="button" onclick="exportStatementsCSV()">تصدير CSV</button>
-      </div>
-      <p id="statusMsg"></p>
-    </form>
-  </section>
-
-  <section id="statements" class="tabcontent">
-    <h2>القوائم المالية</h2>
-    <div id="statementsContainer"></div>
-    <button onclick="exportStatementsCSV()">تصدير CSV</button>
-  </section>
-
-  <section id="analysis" class="tabcontent">
-    <h2>التحليل المالي الشامل</h2>
-    <div id="ratios"></div>
-    <h3>مقارنة بين الشركات</h3>
-    <select id="compareSelect" multiple></select>
-    <button onclick="compareRecords()">عرض المقارنة</button>
-  </section>
-
-  <section id="dashboard" class="tabcontent">
-    <h2>Dashboard الرسوم البيانية</h2>
-    <canvas id="lineChart" width="400" height="200"></canvas>
-    <canvas id="barChart" width="400" height="200"></canvas>
-    <button onclick="exportCSV()">تصدير CSV</button>
-  </section>
+  <div class="container">
+    <h1 data-i18n="welcome">Welcome to the Financial Analysis System</h1>
+    <p data-i18n="chooseLang">Choose your language:</p>
+    <select id="langSelect" onchange="changeLanguage()">
+      <option value="en">English</option>
+      <option value="ar">العربية</option>
+    </select>
+    <div class="nav">
+      <a href="data-entry.html" data-i18n="start">Start Data Entry</a>
+    </div>
+  </div>
 </body>
 </html>
