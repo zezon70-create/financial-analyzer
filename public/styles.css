@@ -1,0 +1,30 @@
+:root{
+  --sidebar-w:260px; --accent:#1f6feb; --muted:#6b7280; --page-bg: rgba(255,255,255,0.95);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter, "Segoe UI", Roboto, Arial; min-height:100vh; display:flex;background: linear-gradient(135deg,#f3f6fb 0%, #e9f1ff 100%);}
+.sidebar{width:var(--sidebar-w); background:linear-gradient(180deg,#0b3172,#144a96); color:#fff; padding:22px; display:flex; flex-direction:column; align-items:center;}
+.logo{width:110px;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,0.15)}
+.app-title{margin:12px 0 24px; font-size:18px}
+.nav-btn{width:100%; text-align:left; padding:10px 12px; background:transparent; color:#e6f0ff; border:none; margin:6px 0; border-radius:8px; cursor:pointer}
+.nav-btn:hover{background:rgba(255,255,255,0.06)}
+.lang-area{margin-top:auto; display:flex; gap:8px}
+.lang-area button{background:rgba(255,255,255,0.1); border:none; color:#fff; padding:6px 10px; border-radius:6px; cursor:pointer}
+.main{flex:1; padding:26px; overflow:auto}
+.view{display:none}
+.view.active{display:block}
+.view-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:18px}
+.btn{background:var(--accent); color:#fff; border:none; padding:8px 14px; border-radius:8px; cursor:pointer}
+.table-scroll{max-height:360px; overflow:auto; border:1px solid #eee; padding:8px; background:#fff; border-radius:8px}
+.upload-row{display:flex; gap:8px; align-items:center; margin-bottom:10px}
+.field-label{font-weight:600; color:var(--muted)}
+.kpi-cards{display:flex; gap:12px; flex-wrap:wrap}
+.kpi{background:var(--accent); color:#fff; padding:12px; border-radius:8px; min-width:140px}
+.statement-box{background:var(--page-bg); padding:12px; border-radius:8px; margin-top:10px}
+.analysis-box{background:var(--page-bg); padding:12px; border-radius:8px; margin-top:10px}
+.dashboard-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+.chart-card{background:var(--page-bg); padding:12px; border-radius:8px}
+@media(max-width:900px){ .sidebar{display:none} .main{padding:14px} .dashboard-grid{grid-template-columns:1fr} .cards{flex-direction:column} }
+table{width:100%; border-collapse:collapse}
+th,td{padding:8px;border-bottom:1px solid #eee;text-align:left}
+.row{display:flex; gap:8px; align-items:center}
