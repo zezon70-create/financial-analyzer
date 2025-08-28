@@ -10,7 +10,7 @@
 </head>
 <body>
   <header>
-    <div class="logo">💼 Financial Analyzer Pro</div>
+    <div class="logo"><img src="logo.png" alt="Logo" class="logo-img"> Financial Analyzer Pro</div>
     <nav>
       <ul>
         <li><a href="#home" class="tablink" onclick="openTab(event,'home')">الرئيسية</a></li>
@@ -22,7 +22,6 @@
     </nav>
   </header>
 
-  <!-- Home Tab -->
   <section id="home" class="tabcontent">
     <h1>مرحباً بك في Financial Analyzer Pro</h1>
     <p>أداة احترافية لتحليل القوائم المالية للشركات، تشمل النسب المالية التقليدية، التحليلات الحديثة، والتنبؤات المستقبلية.</p>
@@ -30,29 +29,30 @@
     <p>ابدأ بإدخال البيانات لتوليد القوائم والتحليلات والرسوم البيانية.</p>
   </section>
 
-  <!-- Data Entry Tab -->
   <section id="data-entry" class="tabcontent">
     <h2>إدخال البيانات المالية</h2>
     <form id="dataForm">
       <label>اسم الشركة: <input type="text" id="companyName" required></label>
+
       <h3>الميزانية العمومية</h3>
-      <label>الأصول الكلية: <input type="text" id="totalAssets"></label>
-      <label>الخصوم الكلية: <input type="text" id="totalLiabilities"></label>
+      <label>الأصول المتداولة: <input type="text" id="currentAssets"></label>
+      <label>الأصول الثابتة: <input type="text" id="fixedAssets"></label>
+      <label>الخصوم المتداولة: <input type="text" id="currentLiabilities"></label>
+      <label>الخصوم طويلة الأجل: <input type="text" id="longLiabilities"></label>
       <label>حقوق الملكية: <input type="text" id="equity"></label>
 
       <h3>قائمة الدخل</h3>
       <label>الإيرادات: <input type="text" id="revenue"></label>
-      <label>تكلفة البضاعة المباعة (COGS): <input type="text" id="cogs"></label>
+      <label>تكلفة البضاعة المباعة: <input type="text" id="cogs"></label>
       <label>المصروفات التشغيلية: <input type="text" id="opExpenses"></label>
-      <label>صافي الربح: <input type="text" id="netIncome"></label>
+      <label>مصروفات الفوائد والضرائب: <input type="text" id="otherExpenses"></label>
 
-      <h3>قائمة التدفقات النقدية</h3>
+      <h3>التدفقات النقدية</h3>
       <label>التدفقات التشغيلية: <input type="text" id="opCF"></label>
       <label>التدفقات الاستثمارية: <input type="text" id="invCF"></label>
       <label>التدفقات التمويلية: <input type="text" id="finCF"></label>
-      <label>التدفق الحر: <input type="text" id="freeCF"></label>
 
-      <h3>الأسهم</h3>
+      <h3>الأسهم والمساهمون</h3>
       <label>عدد الأسهم: <input type="text" id="shares"></label>
       <label>سعر السهم: <input type="text" id="stockPrice"></label>
 
@@ -65,14 +65,12 @@
     </form>
   </section>
 
-  <!-- Statements Tab -->
   <section id="statements" class="tabcontent">
     <h2>القوائم المالية</h2>
     <div id="statementsContainer"></div>
     <button onclick="exportStatementsCSV()">تصدير CSV</button>
   </section>
 
-  <!-- Analysis Tab -->
   <section id="analysis" class="tabcontent">
     <h2>التحليل المالي الشامل</h2>
     <div id="ratios"></div>
@@ -81,13 +79,11 @@
     <button onclick="compareRecords()">عرض المقارنة</button>
   </section>
 
-  <!-- Dashboard Tab -->
   <section id="dashboard" class="tabcontent">
     <h2>Dashboard الرسوم البيانية</h2>
     <canvas id="lineChart" width="400" height="200"></canvas>
     <canvas id="barChart" width="400" height="200"></canvas>
     <button onclick="exportCSV()">تصدير CSV</button>
   </section>
-
 </body>
 </html>
