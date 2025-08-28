@@ -1,18 +1,26 @@
-body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; background:#f5f5f5; color:#333;}
-header {background:#004080; color:white; padding:10px; display:flex; align-items:center; justify-content:space-between;}
-.logo {font-size:1.5em; font-weight:bold;}
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin:0; background: linear-gradient(135deg,#f5f5f5,#e0e0e0); color:#333;
+}
+header {
+  background:#004080; color:white; padding:10px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.logo {display:flex; align-items:center; font-size:1.5em; font-weight:bold;}
+.logo-img {width:50px; margin-right:10px;}
 nav ul {list-style:none; display:flex; margin:0; padding:0;}
 nav li {margin:0 10px;}
 nav a {color:white; text-decoration:none; padding:5px 10px; border-radius:5px;}
 nav a:hover, nav a.active {background:#0066cc;}
-
 .tabcontent {display:none; padding:20px;}
 .tabcontent h2,h3 {margin-top:0;}
 form label {display:block; margin:10px 0;}
 form input {width:100%; padding:5px; margin-top:5px; border:1px solid #ccc; border-radius:4px;}
-.form-buttons button {margin:10px 5px; padding:8px 15px; background:#004080; color:white; border:none; border-radius:5px; cursor:pointer;}
+.form-buttons button {
+  margin:10px 5px; padding:8px 15px; background:#004080; color:white;
+  border:none; border-radius:5px; cursor:pointer;
+}
 .form-buttons button:hover {background:#0066cc;}
-
 .home-logo {width:200px; display:block; margin:20px auto;}
 table {width:100%; border-collapse:collapse; margin-bottom:20px;}
 table th, table td {border:1px solid #ccc; padding:8px; text-align:right; background:white;}
