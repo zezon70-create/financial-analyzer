@@ -20,17 +20,27 @@
 <h2>Enter Financial Data</h2>
 <div id="data-inputs">
     <label>Company/Year: <input type="text" id="companyName" placeholder="Company or Year"></label>
-    <label>Total Assets: <input type="number" id="totalAssets"></label>
-    <label>Total Liabilities: <input type="number" id="totalLiabilities"></label>
-    <label>Equity: <input type="number" id="equity"></label>
-    <label>Revenue: <input type="number" id="revenue"></label>
-    <label>COGS: <input type="number" id="cogs"></label>
-    <label>Operating Expenses: <input type="number" id="opExpenses"></label>
-    <label>Net Income: <input type="number" id="netIncome"></label>
-    <label>Operating Cash Flow: <input type="number" id="opCF"></label>
-    <label>Free Cash Flow: <input type="number" id="freeCF"></label>
+    <h3>Balance Sheet</h3>
+    <label>Total Assets: <input type="number" id="totalAssets" placeholder="مثال: 100000"></label>
+    <label>Total Liabilities: <input type="number" id="totalLiabilities" placeholder="مثال: 40000"></label>
+    <label>Equity: <input type="number" id="equity" placeholder="مثال: 60000"></label>
+
+    <h3>Income Statement</h3>
+    <label>Revenue: <input type="number" id="revenue" placeholder="إجمالي الإيرادات"></label>
+    <label>COGS (Cost of Goods Sold): <input type="number" id="cogs" placeholder="تكلفة البضاعة المباعة"></label>
+    <label>Operating Expenses: <input type="number" id="opExpenses" placeholder="المصاريف التشغيلية"></label>
+    <label>Net Income: <input type="number" id="netIncome" placeholder="صافي الربح"></label>
+
+    <h3>Cash Flow Statement</h3>
+    <label>Operating Cash Flow: <input type="number" id="opCF" placeholder="التدفقات النقدية التشغيلية"></label>
+    <label>Investing Cash Flow: <input type="number" id="invCF" placeholder="التدفقات النقدية الاستثمارية"></label>
+    <label>Financing Cash Flow: <input type="number" id="finCF" placeholder="التدفقات النقدية التمويلية"></label>
+    <label>Free Cash Flow: <input type="number" id="freeCF" placeholder="التدفق النقدي الحر"></label>
+
+    <h3>Stock Info (Optional)</h3>
     <label>Number of Shares: <input type="number" id="shares" value="1000"></label>
     <label>Stock Price: <input type="number" id="stockPrice" value="50"></label>
+
     <button onclick="addData()">Add Data</button>
     <button onclick="clearData()">Clear All Data</button>
 </div>
