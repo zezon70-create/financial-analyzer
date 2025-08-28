@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trial Balance Entry</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <h1 data-i18n="trialBalance">Enter Trial Balance</h1>
+    <form id="trialBalanceForm">
+      <table>
+        <thead>
+          <tr>
+            <th data-i18n="account">Account</th>
+            <th data-i18n="debit">Debit</th>
+            <th data-i18n="credit">Credit</th>
+          </tr>
+        </thead>
+        <tbody id="trialBalanceBody">
+          <tr>
+            <td><input type="text" name="account[]"></td>
+            <td><input type="number" name="debit[]" step="0.01"></td>
+            <td><input type="number" name="credit[]" step="0.01"></td>
+          </tr>
+        </tbody>
+      </table>
+      <button type="button" onclick="addRow()" data-i18n="addRow">Add Row</button>
+      <button type="submit" class="btn" data-i18n="generate">Generate Statements</button>
+    </form>
+  </div>
+  <script>
+    function addRow() {
+      const body = document.getElementById("trialBalanceBody");
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td><input type="text" name="account[]"></td>
+        <td><input type="number" name="debit[]" step="0.01"></td>
+        <td><input type="number" name="credit[]" step="0.01"></td>
+      `;
+      body.appendChild(row);
+    }
+
+    document.getElementById("trialBalanceForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const formData = new FormData(this);
+      const data = [];
+      for (let i = 0; i < formData.getAll("account[]").length; i++) {
+        data.push({
+          account: formData.getAll("account[]")[i],
+          debit: parseFloat(formData.getAll("debit[]")[i]) || 0,
+          credit: parseFloat(formData.getAll("credit[]")[i]) || 0
+        });
+      }
+      localStorage.setItem("trialBalance", JSON.stringify(data));
+      window.location.href = "statements.html";
+    });
+  </script>
+</body>
+</html>
