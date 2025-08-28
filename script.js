@@ -105,24 +105,20 @@ function updateCompareOptions(){
 function compareRecords(){
   const select=document.getElementById('compareSelect');
   const selected=[...select.selectedOptions].map(o=>financialData[o.value]);
-  if(selected.length<2){alert("Select at least 2 records to compare"); return;}
-  let msg="Comparison:\n";
-  selected.forEach(d=>{
-    msg+=`${d.companyName}: ROE ${d.equity? (d.netIncome/d.equity*100).toFixed(2):'N/A'}%, Net Income ${formatNumber(d.netIncome)}\n`;
-  });
-  alert(msg);
+  if(selected.length<2){alert('Select at least 2 records'); return;}
+  alert(`Comparison of ${selected.map(s=>s.companyName).join(', ')}`);
 }
 
 function exportCSV(){
-  if(!financialData.length){alert("No data to export");return;}
-  const headers=Object.keys(financialData[0]);
-  const csv=[headers.join(',')];
-  financialData.forEach(d=>csv.push(headers.map(h=>d[h]).join(',')));
-  const blob=new Blob([csv.join('\n')],{type:'text/csv'});
-  const link=document.createElement('a');
-  link.href=URL.createObjectURL(blob);
-  link.download="financial_data.csv";
-  link.click();
+  if(!financialData.length){alert('No data'); return;}
+  let csv='Company,Total Assets,Total Liabilities,Equity,Revenue,COGS,OpExpenses,NetIncome,OpCF,InvCF,FinCF,FreeCF,Shares,StockPrice\n';
+  financialData.forEach(d=>{
+    csv+=`${d.companyName},${d.totalAssets},${d.totalLiabilities},${d.equity},${d.revenue},${d.cogs},${d.opExpenses},${d.netIncome},${d.opCF},${d.invCF},${d.finCF},${d.freeCF},${d.shares},${d.stockPrice}\n`;
+  });
+  const blob=new Blob([csv],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download='financial_data.csv';
+  a.click();
 }
-
-function exportPDF(){ alert("PDF export coming soon!"); }
+function exportPDF(){alert('PDF export coming soon');}
