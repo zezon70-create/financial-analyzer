@@ -1,17 +1,16 @@
 function classifyAccount(name, userMap={}){
   const n = (name||"").toLowerCase();
-  // If user mapped manually, prefer that
   if(userMap && userMap[name]) return userMap[name];
-  if(/cash|bank|inventory|receiv|asset|accounts receivable|stock|deposit/.test(n)) return 'asset';
+  if(/cash|bank|inventory|receiv|asset|accounts receivable|stock|deposit|petty cash/.test(n)) return 'asset';
   if(/payable|liab|loan|debt|accounts payable|creditor|liability|mortgage/.test(n)) return 'liability';
   if(/equity|capital|retained|owner|share/.test(n)) return 'equity';
-  if(/revenue|sales|income|turnover|fees/.test(n)) return 'revenue';
-  if(/cost|cogs|expense|expenses|salar|rent|utility|tax|depreciation/.test(n)) return 'expense';
+  if(/revenue|sales|income|turnover|fees|service/.test(n)) return 'revenue';
+  if(/cost|cogs|expense|expenses|salar|wages|rent|utility|tax|depreciation|amortization/.test(n)) return 'expense';
   return 'other';
 }
 
 function buildStatements(trial, userMap={}, defaultYear='no-year'){
-  const years = Array.from(new Set(trial.map(r=>r.year).filter(Boolean)));
+  const years = Array.from(new Set(trial.map(r=>r.year).filter(Boolean))).sort();
   const result = {years: years.length ? years : [defaultYear], statements:{}};
 
   function processForYear(y){
@@ -19,7 +18,7 @@ function buildStatements(trial, userMap={}, defaultYear='no-year'){
     let assets=0, liabilities=0, equity=0, revenue=0, expenses=0;
     rows.forEach(r=>{
       const cls = classifyAccount(r.account, userMap);
-      const net = (r.debit||0) - (r.credit||0);
+      const net = (Number(r.debit)||0) - (Number(r.credit)||0);
       if(cls==='asset') assets += net;
       else if(cls==='liability') liabilities += -net;
       else if(cls==='equity') equity += -net;
@@ -59,7 +58,7 @@ function computeRatios(stmt){
 }
 
 function computeEVA(stmt, waccPct=10){
-  const nopat = stmt.netIncome; 
+  const nopat = stmt.netIncome;
   const capital = stmt.assets;
   const wacc = waccPct/100;
   const eva = nopat - (capital * wacc);
@@ -75,7 +74,6 @@ function computeRiskReturnFromSeries(series){
 }
 
 function forecastSeriesLinear(values, yearsAhead, growthRate=null){
-  // If growthRate provided use it, else compute average growth from values
   let base = values[values.length-1] || 0;
   let rate = growthRate;
   if(rate===null && values.length>1){
