@@ -22,6 +22,7 @@ function saveData(){
   localStorage.setItem('financialData',JSON.stringify(stored));
   document.getElementById('statusMsg').innerText="Data saved successfully!";
   document.getElementById('dataForm').reset();
+  loadData();
 }
 
 function loadData(){
