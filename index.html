@@ -11,6 +11,7 @@
 <header>
   <h1>Financial Analyzer Pro</h1>
   <nav>
+    <a href="financial-statements.html">Statements</a> |
     <a href="analysis.html">Analysis</a> |
     <a href="dashboard.html">Dashboard</a>
   </nav>
@@ -19,16 +20,16 @@
 <section class="input-section">
 <h2>Enter Financial Data</h2>
 <form id="dataForm">
-<label>Company/Year:<input type="text" id="companyName" placeholder="Company or Year"></label>
+<label>Company/Year:<input type="text" id="companyName" placeholder="Company or Year" required></label>
 <h3>Balance Sheet</h3>
-<label>Total Assets:<input type="number" id="totalAssets"></label>
-<label>Total Liabilities:<input type="number" id="totalLiabilities"></label>
-<label>Equity:<input type="number" id="equity"></label>
+<label>Total Assets:<input type="number" id="totalAssets" required></label>
+<label>Total Liabilities:<input type="number" id="totalLiabilities" required></label>
+<label>Equity:<input type="number" id="equity" required></label>
 <h3>Income Statement</h3>
-<label>Revenue:<input type="number" id="revenue"></label>
-<label>COGS:<input type="number" id="cogs"></label>
-<label>Operating Expenses:<input type="number" id="opExpenses"></label>
-<label>Net Income:<input type="number" id="netIncome"></label>
+<label>Revenue:<input type="number" id="revenue" required></label>
+<label>COGS:<input type="number" id="cogs" required></label>
+<label>Operating Expenses:<input type="number" id="opExpenses" required></label>
+<label>Net Income:<input type="number" id="netIncome" required></label>
 <h3>Cash Flow Statement</h3>
 <label>Operating CF:<input type="number" id="opCF"></label>
 <label>Investing CF:<input type="number" id="invCF"></label>
