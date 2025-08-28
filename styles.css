@@ -42,4 +42,6 @@ body{margin:0;font-family:Inter, "Segoe UI", Roboto, Arial; min-height:100vh; di
 input[type="number"], input[type="text"], textarea { border:1px solid #ddd; padding:8px; border-radius:6px; width:100% }
 select{padding:8px;border-radius:6px}
 .small{font-size:13px;color:var(--muted)}
+table{width:100%; border-collapse:collapse}
+th,td{padding:8px;border-bottom:1px solid #eee;text-align:left}
 @media(max-width:900px){ .sidebar{display:none} .main{padding:14px} .dashboard-grid{grid-template-columns:1fr} .analysis-grid{grid-template-columns:1fr} .cards{flex-direction:column} }
