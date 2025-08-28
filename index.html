@@ -1,55 +1,93 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Financial Analyzer Pro</title>
 <link rel="stylesheet" href="style.css">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="script.js" defer></script>
 </head>
 <body>
-<header>
-  <h1>Financial Analyzer Pro</h1>
-  <nav>
-    <a href="financial-statements.html">Statements</a> |
-    <a href="analysis.html">Analysis</a> |
-    <a href="dashboard.html">Dashboard</a>
-  </nav>
-</header>
-<main>
-<section class="input-section">
-<h2>Enter Financial Data</h2>
-<form id="dataForm">
-<label>Company/Year:<input type="text" id="companyName" placeholder="Company or Year" required></label>
-<h3>Balance Sheet</h3>
-<label>Total Assets:<input type="number" id="totalAssets" required></label>
-<label>Total Liabilities:<input type="number" id="totalLiabilities" required></label>
-<label>Equity:<input type="number" id="equity" required></label>
-<h3>Income Statement</h3>
-<label>Revenue:<input type="number" id="revenue" required></label>
-<label>COGS:<input type="number" id="cogs" required></label>
-<label>Operating Expenses:<input type="number" id="opExpenses" required></label>
-<label>Net Income:<input type="number" id="netIncome" required></label>
-<h3>Cash Flow Statement</h3>
-<label>Operating CF:<input type="number" id="opCF"></label>
-<label>Investing CF:<input type="number" id="invCF"></label>
-<label>Financing CF:<input type="number" id="finCF"></label>
-<label>Free CF:<input type="number" id="freeCF"></label>
-<h3>Stock Info (Optional)</h3>
-<label>Number of Shares:<input type="number" id="shares"></label>
-<label>Stock Price:<input type="number" id="stockPrice"></label>
-<button type="submit">Save Data</button>
-<button type="button" onclick="clearData()">Clear All</button>
-</form>
-<p id="statusMsg"></p>
-</section>
-</main>
-<script src="script.js"></script>
-<script>
-document.getElementById('dataForm').addEventListener('submit', function(e){
-    e.preventDefault();
-    saveData();
-});
-</script>
+  <header>
+    <div class="logo">💼 Financial Analyzer Pro</div>
+    <nav>
+      <ul>
+        <li><a href="#home" class="tablink" onclick="openTab(event,'home')">الرئيسية</a></li>
+        <li><a href="#data-entry" class="tablink" onclick="openTab(event,'data-entry')">إدخال البيانات</a></li>
+        <li><a href="#statements" class="tablink" onclick="openTab(event,'statements')">القوائم المالية</a></li>
+        <li><a href="#analysis" class="tablink" onclick="openTab(event,'analysis')">التحليل المالي</a></li>
+        <li><a href="#dashboard" class="tablink" onclick="openTab(event,'dashboard')">Dashboard</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Home Tab -->
+  <section id="home" class="tabcontent">
+    <h1>مرحباً بك في Financial Analyzer Pro</h1>
+    <p>أداة احترافية لتحليل القوائم المالية للشركات، تشمل النسب المالية التقليدية، التحليلات الحديثة، والتنبؤات المستقبلية.</p>
+    <img src="logo.png" alt="Logo" class="home-logo">
+    <p>ابدأ بإدخال البيانات لتوليد القوائم والتحليلات والرسوم البيانية.</p>
+  </section>
+
+  <!-- Data Entry Tab -->
+  <section id="data-entry" class="tabcontent">
+    <h2>إدخال البيانات المالية</h2>
+    <form id="dataForm">
+      <label>اسم الشركة: <input type="text" id="companyName" required></label>
+      <h3>الميزانية العمومية</h3>
+      <label>الأصول الكلية: <input type="text" id="totalAssets"></label>
+      <label>الخصوم الكلية: <input type="text" id="totalLiabilities"></label>
+      <label>حقوق الملكية: <input type="text" id="equity"></label>
+
+      <h3>قائمة الدخل</h3>
+      <label>الإيرادات: <input type="text" id="revenue"></label>
+      <label>تكلفة البضاعة المباعة (COGS): <input type="text" id="cogs"></label>
+      <label>المصروفات التشغيلية: <input type="text" id="opExpenses"></label>
+      <label>صافي الربح: <input type="text" id="netIncome"></label>
+
+      <h3>قائمة التدفقات النقدية</h3>
+      <label>التدفقات التشغيلية: <input type="text" id="opCF"></label>
+      <label>التدفقات الاستثمارية: <input type="text" id="invCF"></label>
+      <label>التدفقات التمويلية: <input type="text" id="finCF"></label>
+      <label>التدفق الحر: <input type="text" id="freeCF"></label>
+
+      <h3>الأسهم</h3>
+      <label>عدد الأسهم: <input type="text" id="shares"></label>
+      <label>سعر السهم: <input type="text" id="stockPrice"></label>
+
+      <div class="form-buttons">
+        <button type="button" onclick="saveData()">حفظ البيانات</button>
+        <button type="button" onclick="clearData()">مسح البيانات</button>
+        <button type="button" onclick="exportStatementsCSV()">تصدير CSV</button>
+      </div>
+      <p id="statusMsg"></p>
+    </form>
+  </section>
+
+  <!-- Statements Tab -->
+  <section id="statements" class="tabcontent">
+    <h2>القوائم المالية</h2>
+    <div id="statementsContainer"></div>
+    <button onclick="exportStatementsCSV()">تصدير CSV</button>
+  </section>
+
+  <!-- Analysis Tab -->
+  <section id="analysis" class="tabcontent">
+    <h2>التحليل المالي الشامل</h2>
+    <div id="ratios"></div>
+    <h3>مقارنة بين الشركات</h3>
+    <select id="compareSelect" multiple></select>
+    <button onclick="compareRecords()">عرض المقارنة</button>
+  </section>
+
+  <!-- Dashboard Tab -->
+  <section id="dashboard" class="tabcontent">
+    <h2>Dashboard الرسوم البيانية</h2>
+    <canvas id="lineChart" width="400" height="200"></canvas>
+    <canvas id="barChart" width="400" height="200"></canvas>
+    <button onclick="exportCSV()">تصدير CSV</button>
+  </section>
+
 </body>
 </html>
