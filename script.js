@@ -6,23 +6,25 @@ document.body.classList.toggle("dark-mode");
 }
 
 function formatNumber(num){
-return num.toLocaleString();
+return num ? num.toLocaleString() : "0";
 }
 
 function addData(){
 const data = {
 companyName: document.getElementById('companyName').value || `Record ${financialData.length+1}`,
-totalAssets: parseFloat(document.getElementById('totalAssets').value),
-totalLiabilities: parseFloat(document.getElementById('totalLiabilities').value),
-equity: parseFloat(document.getElementById('equity').value),
-revenue: parseFloat(document.getElementById('revenue').value),
-cogs: parseFloat(document.getElementById('cogs').value),
-opExpenses: parseFloat(document.getElementById('opExpenses').value),
-netIncome: parseFloat(document.getElementById('netIncome').value),
-opCF: parseFloat(document.getElementById('opCF').value),
-freeCF: parseFloat(document.getElementById('freeCF').value),
-shares: parseFloat(document.getElementById('shares').value),
-stockPrice: parseFloat(document.getElementById('stockPrice').value)
+totalAssets: parseFloat(document.getElementById('totalAssets').value) || 0,
+totalLiabilities: parseFloat(document.getElementById('totalLiabilities').value) || 0,
+equity: parseFloat(document.getElementById('equity').value) || 0,
+revenue: parseFloat(document.getElementById('revenue').value) || 0,
+cogs: parseFloat(document.getElementById('cogs').value) || 0,
+opExpenses: parseFloat(document.getElementById('opExpenses').value) || 0,
+netIncome: parseFloat(document.getElementById('netIncome').value) || 0,
+opCF: parseFloat(document.getElementById('opCF').value) || 0,
+invCF: parseFloat(document.getElementById('invCF').value) || 0,
+finCF: parseFloat(document.getElementById('finCF').value) || 0,
+freeCF: parseFloat(document.getElementById('freeCF').value) || 0,
+shares: parseFloat(document.getElementById('shares').value) || 0,
+stockPrice: parseFloat(document.getElementById('stockPrice').value) || 0
 };
 financialData.push(data);
 updateAnalysis();
@@ -41,16 +43,16 @@ function updateAnalysis(){
 const container=document.getElementById('ratios');
 container.innerHTML='';
 financialData.forEach(d=>{
-const currentRatio=(d.totalAssets/d.totalLiabilities).toFixed(2);
-const quickRatio=((d.totalAssets-d.cogs)/d.totalLiabilities).toFixed(2);
-const equityRatio=(d.equity/d.totalAssets).toFixed(2);
-const grossMargin=((d.revenue-d.cogs)/d.revenue*100).toFixed(2);
-const netMargin=(d.netIncome/d.revenue*100).toFixed(2);
-const roe=(d.netIncome/d.equity*100).toFixed(2);
-const roa=(d.netIncome/d.totalAssets*100).toFixed(2);
-const eps=(d.netIncome/d.shares).toFixed(2);
-const marketCap=(d.shares*d.stockPrice).toFixed(2);
-const duPontROE=((d.netIncome/d.revenue)*(d.revenue/d.totalAssets)*(d.totalAssets/d.equity)*100).toFixed(2);
+const currentRatio=d.totalLiabilities? (d.totalAssets/d.totalLiabilities).toFixed(2):'N/A';
+const quickRatio=d.totalLiabilities? ((d.totalAssets-d.cogs)/d.totalLiabilities).toFixed(2):'N/A';
+const equityRatio=d.totalAssets? (d.equity/d.totalAssets).toFixed(2):'N/A';
+const grossMargin=d.revenue? ((d.revenue-d.cogs)/d.revenue*100).toFixed(2):'N/A';
+const netMargin=d.revenue? (d.netIncome/d.revenue*100).toFixed(2):'N/A';
+const roe=d.equity? (d.netIncome/d.equity*100).toFixed(2):'N/A';
+const roa=d.totalAssets? (d.netIncome/d.totalAssets*100).toFixed(2):'N/A';
+const eps=d.shares? (d.netIncome/d.shares).toFixed(2):'N/A';
+const marketCap=d.shares && d.stockPrice? (d.shares*d.stockPrice).toFixed(2):'N/A';
+const duPontROE=d.revenue && d.totalAssets && d.equity? ((d.netIncome/d.revenue)*(d.revenue/d.totalAssets)*(d.totalAssets/d.equity)*100).toFixed(2):'N/A';
 
 container.innerHTML+=`
 <h3>${d.companyName}</h3>
@@ -84,9 +86,9 @@ function compareRecords(){
 const selected=Array.from(document.getElementById('compareSelect').selectedOptions).map(o=>parseInt(o.value));
 if(selected.length<2||selected.length>3){alert('Select 2 or 3 records only');return;}
 const labels=selected.map(i=>financialData[i].companyName);
-const roeData=selected.map(i=>(financialData[i].netIncome/financialData[i].equity*100).toFixed(2));
-const roaData=selected.map(i=>(financialData[i].netIncome/financialData[i].totalAssets*100).toFixed(2));
-const netMarginData=selected.map(i=>(financialData[i].netIncome/financialData[i].revenue*100).toFixed(2));
+const roeData=selected.map(i=>(financialData[i].equity? (financialData[i].netIncome/financialData[i].equity*100).toFixed(2):0));
+const roaData=selected.map(i=>(financialData[i].totalAssets? (financialData[i].netIncome/financialData[i].totalAssets*100).toFixed(2):0));
+const netMarginData=selected.map(i=>(financialData[i].revenue? (financialData[i].netIncome/financialData[i].revenue*100).toFixed(2):0));
 
 if(barChart) barChart.destroy();
 const ctxBar=document.getElementById('barChart').getContext('2d');
@@ -133,9 +135,9 @@ if(barChart) barChart.destroy();
 
 function exportCSV(){
 let csvContent="data:text/csv;charset=utf-8,";
-csvContent+="Company/Year,Total Assets,Total Liabilities,Equity,Revenue,COGS,Operating Expenses,Net Income,Operating CF,Free CF,Shares,Stock Price\n";
+csvContent+="Company/Year,Total Assets,Total Liabilities,Equity,Revenue,COGS,Operating Expenses,Net Income,Operating CF,Investing CF,Financing CF,Free CF,Shares,Stock Price\n";
 financialData.forEach(d=>{
-csvContent+=`${d.companyName},${d.totalAssets},${d.totalLiabilities},${d.equity},${d.revenue},${d.cogs},${d.opExpenses},${d.netIncome},${d.opCF},${d.freeCF},${d.shares},${d.stockPrice}\n`;
+csvContent+=`${d.companyName},${d.totalAssets},${d.totalLiabilities},${d.equity},${d.revenue},${d.cogs},${d.opExpenses},${d.netIncome},${d.opCF},${d.invCF},${d.finCF},${d.freeCF},${d.shares},${d.stockPrice}\n`;
 });
 const encodedUri=encodeURI(csvContent);
 const link=document.createElement("a");
@@ -152,7 +154,7 @@ const doc = new jsPDF();
 let y=10;
 financialData.forEach(d=>{
 doc.text(`Company/Year: ${d.companyName}`,10,y); y+=10;
-doc.text(`Revenue: ${formatNumber(d.revenue)}, Net Income: ${formatNumber(d.netIncome)}, ROE: ${(d.netIncome/d.equity*100).toFixed(2)}%`,10,y); y+=10;
+doc.text(`Revenue: ${formatNumber(d.revenue)}, Net Income: ${formatNumber(d.netIncome)}, ROE: ${d.equity? (d.netIncome/d.equity*100).toFixed(2):'N/A'}%`,10,y); y+=10;
 });
 doc.save("financial_report.pdf");
 }
