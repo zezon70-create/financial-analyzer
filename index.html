@@ -1,82 +1,58 @@
-<!doctype html>
-<html lang="ar">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Financial Analyzer — Dashboard</title>
-<link rel="stylesheet" href="assets/css/style.css">
-<!-- Libraries -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.2.1/dist/chartjs-plugin-zoom.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Financial Analyzer</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
-<header class="topbar">
-  <div class="brand">
-    <img src="assets/img/logo.svg" alt="logo" class="logo">
-    <span class="brand-title">Financial Analyzer</span>
-  </div>
-  <div class="top-controls">
-    <button id="themeToggle" title="Toggle theme">Dark</button>
-    <select id="langSwitch">
-      <option value="ar">العربية</option>
-      <option value="en">English</option>
-    </select>
-    <button id="clearDataBtn" title="مسح كل البيانات">Clear Data</button>
-  </div>
-</header>
+  <header>
+    <h1 id="app-title">📊 Financial Analyzer</h1>
+    <button onclick="toggleLanguage()" id="langBtn">AR</button>
+  </header>
 
-<nav class="main-nav">
-  <a href="index.html" class="active">Dashboard</a>
-  <a href="data.html">Data Entry</a>
-  <a href="reports.html">Reports</a>
-  <a href="comparison.html">Comparison</a>
-  <a href="about.html">About</a>
-</nav>
+  <main>
+    <section id="data-input">
+      <h2 id="input-title">Enter Financial Data</h2>
+      <form id="financialForm">
+        <label for="sales" id="label-sales">Sales:</label>
+        <input type="number" id="sales" name="sales" required>
 
-<main class="main">
-  <section class="hero card">
-    <h1 id="dashTitle">لوحة الملخّص المالي / Dashboard</h1>
-    <p class="muted">لمحة سريعة عن الوضع المالي، الرسوم التوضيحية، وروابط سريعة للتقارير والتحليلات.</p>
-    <div class="cards-grid">
-      <div class="stat-card">
-        <div class="stat-value" id="stat-netincome">-</div>
-        <div class="stat-label" id="label-netincome">Net Income</div>
+        <label for="cogs" id="label-cogs">Cost of Goods Sold:</label>
+        <input type="number" id="cogs" name="cogs" required>
+
+        <label for="expenses" id="label-expenses">Operating Expenses:</label>
+        <input type="number" id="expenses" name="expenses" required>
+
+        <label for="tax" id="label-tax">Tax Rate (%):</label>
+        <input type="number" id="tax" name="tax" required>
+
+        <label for="growth" id="label-growth">Expected Sales Growth (%):</label>
+        <input type="number" id="growth" name="growth" required>
+
+        <button type="submit" id="analyzeBtn">Analyze</button>
+      </form>
+    </section>
+
+    <section id="results">
+      <h2 id="results-title">Results & Reports</h2>
+      <div id="reports"></div>
+      <canvas id="chart"></canvas>
+      <div class="export-buttons">
+        <button onclick="exportPDF()">Export PDF</button>
+        <button onclick="exportExcel()">Export Excel</button>
       </div>
-      <div class="stat-card">
-        <div class="stat-value" id="stat-assets">-</div>
-        <div class="stat-label" id="label-assets">Total Assets</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="stat-liab">-</div>
-        <div class="stat-label" id="label-liab">Total Liabilities</div>
-      </div>
-    </div>
-  </section>
+    </section>
+  </main>
 
-  <section class="card charts-section">
-    <h2>Charts</h2>
-    <div class="charts-grid">
-      <div class="chart-card"><canvas id="chart1"></canvas></div>
-      <div class="chart-card"><canvas id="chart2"></canvas></div>
-      <div class="chart-card"><canvas id="chart3"></canvas></div>
-    </div>
-    <div style="margin-top:12px;">
-      <button id="openReports">Open Reports</button>
-      <button id="openData">Open Data Entry</button>
-      <button id="exportPdfDash">Export Dashboard PDF</button>
-    </div>
-  </section>
-</main>
+  <footer>
+    <p>Developed by Zezon70</p>
+  </footer>
 
-<footer class="footer">© Financial Analyzer</footer>
-
-<script src="assets/js/app.js"></script>
-<script src="assets/js/data.js"></script>
-<script src="assets/js/analysis.js"></script>
-<script src="assets/js/charts.js"></script>
-<script src="assets/js/export.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
