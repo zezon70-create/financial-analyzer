@@ -1,0 +1,71 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: url('assets/background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  margin: 0;
+  color: #333;
+}
+header {
+  display: flex;
+  align-items: center;
+  background: rgba(255,255,255,0.95);
+  padding: 10px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+header .logo {
+  height: 50px;
+  margin-right: 20px;
+}
+nav a, nav button {
+  margin: 0 10px;
+  text-decoration: none;
+  padding: 8px 15px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+}
+nav a:hover, nav button:hover {
+  background: #ddd;
+}
+main {
+  padding: 20px;
+}
+section {
+  background: rgba(255,255,255,0.9);
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  background: #4CAF50;
+  color: white;
+  border-radius: 5px;
+  text-decoration: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+.btn:hover {
+  background: #45a049;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+table, th, td {
+  border: 1px solid #ccc;
+}
+th, td {
+  padding: 8px;
+  text-align: center;
+}
+.analysis-card, .statement-card {
+  margin-bottom: 15px;
+  padding: 15px;
+  background: #f7f7f7;
+  border-radius: 8px;
+}

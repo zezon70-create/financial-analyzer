@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إدخال البيانات - Financial Analyzer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <img src="assets/logo.png" class="logo" alt="Logo">
+    <nav>
+      <a href="index.html">الصفحة الرئيسية</a>
+      <a href="statements.html">القوائم المالية</a>
+      <a href="analysis.html">التحليل المالي</a>
+      <a href="dashboard.html">الداشبورد</a>
+      <a href="forecast.html">التنبؤ</a>
+      <button onclick="switchLanguage('ar')">عربي</button>
+      <button onclick="switchLanguage('en')">English</button>
+    </nav>
+  </header>
+  <main>
+    <section class="data-entry-section">
+      <h2>إدخال بيانات ميزان المراجعة</h2>
+      <form id="trialBalanceForm">
+        <table>
+          <thead>
+            <tr>
+              <th>الحساب</th>
+              <th>الرصيد المدين</th>
+              <th>الرصيد الدائن</th>
+            </tr>
+          </thead>
+          <tbody id="accountsTable">
+            <!-- هنا نملأ بجميع الحسابات الممكنة -->
+          </tbody>
+        </table>
+        <button type="submit" class="btn">حفظ البيانات</button>
+      </form>
+      <button id="exportTemplate" class="btn">تحميل نموذج Excel</button>
+      <input type="file" id="importExcel" />
+    </section>
+  </main>
+  <footer>
+    <p>© 2025 Financial Analyzer</p>
+  </footer>
+  <script src="script.js"></script>
+  <script>
+    const accountList = [
+      "النقدية", "البنوك", "الحسابات المستحقة", "المخزون",
+      "الأصول الثابتة", "المصاريف المدفوعة مقدما", "الخصوم قصيرة الأجل",
+      "الخصوم طويلة الأجل", "رأس المال", "الأرباح المحتجزة", "الإيرادات", "المصاريف"
+    ];
+    const tbody = document.getElementById("accountsTable");
+    accountList.forEach(acc => {
+      const row = document.createElement("tr");
+      row.innerHTML = `<td>${acc}</td>
+                       <td><input type="text" name="${acc}-debit" placeholder="0"/></td>
+                       <td><input type="text" name="${acc}-credit" placeholder="0"/></td>`;
+      tbody.appendChild(row);
+    });
+  </script>
+</body>
+</html>

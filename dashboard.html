@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة التحكم - Financial Analyzer</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<header>
+  <img src="assets/logo.png" class="logo" alt="Logo">
+  <nav>
+    <a href="index.html">الصفحة الرئيسية</a>
+    <a href="data-entry.html">إدخال البيانات</a>
+    <a href="statements.html">القوائم المالية</a>
+    <a href="analysis.html">التحليل المالي</a>
+    <a href="forecast.html">التنبؤ</a>
+    <button onclick="switchLanguage('ar')">عربي</button>
+    <button onclick="switchLanguage('en')">English</button>
+  </nav>
+</header>
+<main>
+  <section class="dashboard-section">
+    <h2>الداشبورد</h2>
+    <canvas id="barChart"></canvas>
+    <canvas id="pieChart"></canvas>
+  </section>
+</main>
+<footer>
+  <p>© 2025 Financial Analyzer</p>
+</footer>
+<script src="script.js"></script>
+<script>
+  const barCtx = document.getElementById('barChart').getContext('2d');
+  const barChart = new Chart(barCtx, {
+    type: 'bar',
+    data: {
+      labels: ['الأصول', 'الخصوم', 'الإيرادات', 'المصاريف'],
+      datasets: [{
+        label: 'القيم المالية',
+        data: [120000, 50000, 90000, 40000],
+        backgroundColor: ['#4CAF50', '#FF5722', '#2196F3', '#FFC107']
+      }]
+    }
+  });
+
+  const pieCtx = document.getElementById('pieChart').getContext('2d');
+  const pieChart = new Chart(pieCtx, {
+    type: 'pie',
+    data: {
+      labels: ['الأصول', 'الخصوم', 'الإيرادات', 'المصاريف'],
+      datasets: [{
+        data: [120000, 50000, 90000, 40000],
+        backgroundColor: ['#4CAF50', '#FF5722', '#2196F3', '#FFC107']
+      }]
+    }
+  });
+</script>

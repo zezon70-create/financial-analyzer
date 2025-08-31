@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>التحليل المالي - Financial Analyzer</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header>
+  <img src="assets/logo.png" class="logo" alt="Logo">
+  <nav>
+    <a href="index.html">الصفحة الرئيسية</a>
+    <a href="data-entry.html">إدخال البيانات</a>
+    <a href="statements.html">القوائم المالية</a>
+    <a href="dashboard.html">الداشبورد</a>
+    <a href="forecast.html">التنبؤ</a>
+    <button onclick="switchLanguage('ar')">عربي</button>
+    <button onclick="switchLanguage('en')">English</button>
+  </nav>
+</header>
+<main>
+  <section class="analysis-section">
+    <h2>التحليل المالي</h2>
+    <div id="financialRatios" class="analysis-card"></div>
+    <div id="modernAnalysis" class="analysis-card"></div>
+    <button class="btn" onclick="exportToPDF()">تصدير PDF</button>
+  </section>
+</main>
+<footer>
+  <p>© 2025 Financial Analyzer</p>
+</footer>
+<script src="script.js"></script>
