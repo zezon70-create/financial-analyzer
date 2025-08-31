@@ -1,48 +1,26 @@
-<!doctype html>
-<html lang="ar">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>About — Financial Analyzer</title>
-<link rel="stylesheet" href="assets/css/style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="topbar">
-  <div class="brand">
-    <img src="assets/img/logo.svg" alt="logo" class="logo">
-    <span class="brand-title">Financial Analyzer</span>
-  </div>
-  <div class="top-controls">
-    <select id="langSwitchAbout">
-      <option value="ar">العربية</option>
-      <option value="en">English</option>
-    </select>
-  </div>
-</header>
+    <header>
+        <h1 id="site-title">About Financial Analyzer</h1>
+        <select id="language-select">
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+        </select>
+    </header>
 
-<nav class="main-nav">
-  <a href="index.html">Dashboard</a>
-  <a href="data.html">Data Entry</a>
-  <a href="reports.html">Reports</a>
-  <a href="comparison.html">Comparison</a>
-</nav>
+    <main>
+        <section>
+            <p id="about-text">This platform allows you to analyze financial data efficiently.</p>
+        </section>
+    </main>
 
-<main class="main">
-  <section class="card">
-    <h2>عن المشروع</h2>
-    <p>أداة ويب متكاملة لإعداد القوائم المالية من ميزان المراجعة، احتساب التحليلات التقليدية والحديثة (EVA، Sharpe، الخ)، التنبؤ المالي، وإنشاء داشبورد ديناميكي. يدعم العربية والإنجليزية وتصدير التقارير.</p>
-    <h4>تحسينات مضافة</h4>
-    <ul>
-      <li>Dark / Light mode</li>
-      <li>Chart zoom & pan</li>
-      <li>Improved export to PDF/Excel</li>
-      <li>Comparison UI and expected-growth projection</li>
-    </ul>
-  </section>
-</main>
-
-<footer class="footer">© Financial Analyzer</footer>
-
-<script src="assets/js/app.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
