@@ -1,19 +1,11 @@
-function calculateIncomeStatement() {
-    // placeholder للقائمة الدخل
-    console.log("حساب قائمة الدخل بناءً على البيانات");
+function calculateTotals(){
+    let totalDebit = data.reduce((sum,d)=>sum+d.debit,0);
+    let totalCredit = data.reduce((sum,d)=>sum+d.credit,0);
+    return {totalDebit, totalCredit};
 }
 
-function calculateBalanceSheet() {
-    // placeholder للميزانية العمومية
-    console.log("حساب الميزانية العمومية");
-}
-
-function calculateCashFlow() {
-    // placeholder للتدفقات النقدية
-    console.log("حساب التدفقات النقدية");
-}
-
-function calculateFinancialRatios() {
-    // placeholder للتحليلات المالية الأساسية والمتقدمة
-    console.log("حساب النسب المالية، الربحية، السيولة، المديونية، العائد والمخاطرة");
+function calculateRatios(){
+    let totals = calculateTotals();
+    let liquidity = totals.totalDebit / (totals.totalCredit || 1);
+    return {liquidity};
 }
