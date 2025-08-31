@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="ar">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Financial Analyzer — Dashboard</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<!-- Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.2.1/dist/chartjs-plugin-zoom.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <img src="assets/img/logo.svg" alt="logo" class="logo">
+    <span class="brand-title">Financial Analyzer</span>
+  </div>
+  <div class="top-controls">
+    <button id="themeToggle" title="Toggle theme">Dark</button>
+    <select id="langSwitch">
+      <option value="ar">العربية</option>
+      <option value="en">English</option>
+    </select>
+    <button id="clearDataBtn" title="مسح كل البيانات">Clear Data</button>
+  </div>
+</header>
+
+<nav class="main-nav">
+  <a href="index.html" class="active">Dashboard</a>
+  <a href="data.html">Data Entry</a>
+  <a href="reports.html">Reports</a>
+  <a href="comparison.html">Comparison</a>
+  <a href="about.html">About</a>
+</nav>
+
+<main class="main">
+  <section class="hero card">
+    <h1 id="dashTitle">لوحة الملخّص المالي / Dashboard</h1>
+    <p class="muted">لمحة سريعة عن الوضع المالي، الرسوم التوضيحية، وروابط سريعة للتقارير والتحليلات.</p>
+    <div class="cards-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="stat-netincome">-</div>
+        <div class="stat-label" id="label-netincome">Net Income</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-assets">-</div>
+        <div class="stat-label" id="label-assets">Total Assets</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="stat-liab">-</div>
+        <div class="stat-label" id="label-liab">Total Liabilities</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card charts-section">
+    <h2>Charts</h2>
+    <div class="charts-grid">
+      <div class="chart-card"><canvas id="chart1"></canvas></div>
+      <div class="chart-card"><canvas id="chart2"></canvas></div>
+      <div class="chart-card"><canvas id="chart3"></canvas></div>
+    </div>
+    <div style="margin-top:12px;">
+      <button id="openReports">Open Reports</button>
+      <button id="openData">Open Data Entry</button>
+      <button id="exportPdfDash">Export Dashboard PDF</button>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">© Financial Analyzer</footer>
+
+<script src="assets/js/app.js"></script>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/analysis.js"></script>
+<script src="assets/js/charts.js"></script>
+<script src="assets/js/export.js"></script>
+</body>
+</html>
