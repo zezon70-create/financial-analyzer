@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Financial Analyzer</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <img src="assets/logo.png" alt="Logo" class="logo">
+        <h1>Financial Analyzer</h1>
+        <button id="lang-toggle">عربي / EN</button>
+    </header>
+
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="input.html">Data Input</a>
+        <a href="reports.html">Reports</a>
+        <a href="compare.html">Compare Years</a>
+    </nav>
+
+    <main>
+        <h2>Financial Reports</h2>
+
+        <button id="exportExcel">Export to Excel</button>
+        <button id="exportPDF">Export to PDF</button>
+
+        <div id="reportTables"></div>
+        <canvas id="reportCharts"></canvas>
+    </main>
+
+    <script src="js/dataHandler.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/export.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
