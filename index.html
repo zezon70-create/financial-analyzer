@@ -1,1 +1,39 @@
-<!-- Landing Page فاخرة placeholder -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Analyzer - Landing Page</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+    <img src="assets/logo.png" alt="Logo" class="logo">
+    <nav>
+        <ul>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="input.html">إدخال البيانات</a></li>
+            <li><a href="reports.html">التقارير</a></li>
+            <li><a href="compare.html">مقارنة الأعوام</a></li>
+        </ul>
+        <select id="languageSwitch">
+            <option value="ar">العربية</option>
+            <option value="en">English</option>
+        </select>
+    </nav>
+</header>
+
+<section class="hero">
+    <video autoplay muted loop class="bg-video">
+        <source src="assets/background.mp4" type="video/mp4">
+    </video>
+    <div class="hero-text">
+        <h1>مرحبًا بك في Financial Analyzer</h1>
+        <p>تحليل مالي شامل، تقارير تفاعلية، ومؤشرات الأداء الرئيسية.</p>
+        <a href="input.html" class="btn">ابدأ الآن</a>
+    </div>
+</section>
+
+<script src="js/main.js"></script>
+</body>
+</html>
