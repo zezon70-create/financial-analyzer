@@ -1,1 +1,31 @@
-<!-- Compare Years placeholder -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مقارنة الأعوام</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<header>
+    <img src="assets/logo.png" alt="Logo" class="logo">
+    <nav>
+        <ul>
+            <li><a href="index.html">الرئيسية</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="input.html">إدخال البيانات</a></li>
+            <li><a href="reports.html">التقارير</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <h2>مقارنة البيانات بين الأعوام</h2>
+    <canvas id="compareChart"></canvas>
+</main>
+
+<script src="js/charts.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
