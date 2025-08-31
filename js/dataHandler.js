@@ -10,8 +10,10 @@ document.getElementById('dataForm')?.addEventListener('submit', function(e){
 });
 
 document.getElementById('clearData')?.addEventListener('click', function(){
-    data = [];
-    renderTable();
+    if(confirm("هل تريد مسح جميع البيانات؟")){
+        data = [];
+        renderTable();
+    }
 });
 
 function renderTable(){
