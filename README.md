@@ -1,14 +1,14 @@
 # Financial Analyzer
 
-This is a ready-to-deploy front-end project for generating financial statements, performing analysis (ratios, EVA, Sharpe), forecasting, and building a dynamic dashboard. Supports Arabic and English, export to Excel/PDF, dark/light theme, and comparison UI.
+Ready-to-deploy frontend project for generating financial statements, analyses (ratios, EVA, Sharpe), forecasting, and building a dynamic dashboard. Supports Arabic & English, export to Excel/PDF, dark/light theme, and comparison UI.
 
 ## How to use
 
-1. Clone or download this repository.
-2. Open `index.html` locally or deploy to GitHub Pages.
-3. Use Data Entry page to input Trial Balance (or import Excel). Use Reports to generate statements & analysis.
+1. Place files on a GitHub repo (root).
+2. Enable GitHub Pages: Settings → Pages → Source: main / root.
+3. Open the site: https://<username>.github.io/<repo>/
 
-## Deploy to GitHub Pages
+## Notes
 
-Create a repo, push files to `main`, then enable Pages from the repo settings (source: main / root).
-
+- For projections: add revenue accounts named like `Sales 2022`, `Sales 2023`.
+- Data is stored in `localStorage` (browser). For multi-user persistence add backend (example: Firebase).
