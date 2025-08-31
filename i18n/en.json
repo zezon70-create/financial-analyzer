@@ -1,1 +1,6 @@
-{"dashboard":"Dashboard","data_input":"Data Input","reports":"Reports","compare":"Compare Years"}
+{
+    "dashboard":"Dashboard",
+    "data_input":"Data Input",
+    "reports":"Reports",
+    "compare":"Compare Years"
+}
