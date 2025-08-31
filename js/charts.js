@@ -1,11 +1,13 @@
-let ctx = document.getElementById('financialChart');
-if(ctx){
-    new Chart(ctx,{
+function renderFinancialChart(){
+    let ctx = document.getElementById('financialChart');
+    if(!ctx) return;
+    new Chart(ctx, {
         type:'bar',
-        data:{
-            labels:['الأصول','الخصوم','الإيرادات','المصروفات'],
-            datasets:[{label:'الوضع المالي', data:[120000,90000,250000,150000], backgroundColor:['#ff7f50','#1e90ff','#32cd32','#ffa500']}]
-        },
-        options:{responsive:true}
+        data: {
+            labels:data.map(d=>d.account),
+            datasets:[{label:'مدين', data:data.map(d=>d.debit), backgroundColor:'#1f77b4'},
+                      {label:'دائن', data:data.map(d=>d.credit), backgroundColor:'#ff7f0e'}]
+        }
     });
 }
+window.onload = renderFinancialChart;
