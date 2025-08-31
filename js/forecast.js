@@ -1,4 +1,3 @@
-// مثال تبسيطي للتنبؤ المالي
 let forecastCtx = document.getElementById('forecastChart');
 if(forecastCtx){
     new Chart(forecastCtx,{
