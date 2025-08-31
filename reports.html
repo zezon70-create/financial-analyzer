@@ -1,89 +1,28 @@
-<!doctype html>
-<html lang="ar">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Financial Analyzer — Reports</title>
-<link rel="stylesheet" href="assets/css/style.css">
-<script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="topbar">
-  <div class="brand">
-    <img src="assets/img/logo.svg" alt="logo" class="logo">
-    <span class="brand-title">Financial Analyzer</span>
-  </div>
-  <div class="top-controls">
-    <select id="langSwitchReports">
-      <option value="ar">العربية</option>
-      <option value="en">English</option>
-    </select>
-    <button id="clearDataBtn3">Clear Data</button>
-  </div>
-</header>
+    <header>
+        <h1 id="site-title">Financial Reports</h1>
+        <select id="language-select">
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+        </select>
+    </header>
 
-<nav class="main-nav">
-  <a href="index.html">Dashboard</a>
-  <a href="data.html">Data Entry</a>
-  <a href="reports.html" class="active">Reports</a>
-  <a href="comparison.html">Comparison</a>
-</nav>
+    <main>
+        <section id="report-dashboard">
+            <h2 id="dashboard-title">Reports Dashboard</h2>
+            <canvas id="financial-chart"></canvas>
+            <div id="analysis-results"></div>
+        </section>
+    </main>
 
-<main class="main">
-  <section class="card">
-    <h2>القوائم المالية</h2>
-    <div class="controls-row">
-      <button id="generateBtn">Generate Statements & Analysis</button>
-      <button id="exportExcelFull">Export All (Excel)</button>
-      <button id="exportPdfFull">Export Report (PDF)</button>
-    </div>
-
-    <div class="grid three-cols mt12">
-      <div class="card small-card">
-        <h4>Balance Sheet</h4>
-        <pre id="balanceSheet" class="mono"></pre>
-      </div>
-      <div class="card small-card">
-        <h4>Income Statement</h4>
-        <pre id="incomeStatement" class="mono"></pre>
-      </div>
-      <div class="card small-card">
-        <h4>Cash Flow Statement</h4>
-        <pre id="cashFlow" class="mono"></pre>
-      </div>
-    </div>
-
-    <div class="grid three-cols mt12">
-      <div class="card small-card">
-        <h4>Financial Ratios</h4>
-        <pre id="ratiosOut" class="mono"></pre>
-      </div>
-      <div class="card small-card">
-        <h4>EVA</h4>
-        <pre id="evaOut" class="mono"></pre>
-      </div>
-      <div class="card small-card">
-        <h4>Return & Risk</h4>
-        <pre id="rrOut" class="mono"></pre>
-      </div>
-    </div>
-
-    <div class="mt12">
-      <label>WACC (%) <input id="wacc" type="number" value="10"></label>
-      <label>Risk-free (%) <input id="rf" type="number" value="3"></label>
-      <label>Projection years <input id="projY" type="number" value="3"></label>
-    </div>
-  </section>
-</main>
-
-<footer class="footer">© Financial Analyzer</footer>
-
-<script src="assets/js/app.js"></script>
-<script src="assets/js/analysis.js"></script>
-<script src="assets/js/charts.js"></script>
-<script src="assets/js/export.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
