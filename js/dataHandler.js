@@ -7,12 +7,14 @@ document.getElementById('dataForm')?.addEventListener('submit', function(e){
     data.push({account, debit, credit});
     renderTable();
 });
+
 document.getElementById('clearData')?.addEventListener('click', function(){
     if(confirm("هل تريد مسح جميع البيانات؟")){
         data = [];
         renderTable();
     }
 });
+
 function renderTable(){
     let tableDiv = document.getElementById('dataTable');
     if(!tableDiv) return;
