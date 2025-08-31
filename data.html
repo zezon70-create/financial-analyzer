@@ -1,65 +1,26 @@
-<!doctype html>
-<html lang="ar">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Financial Analyzer — Data Entry</title>
-<link rel="stylesheet" href="assets/css/style.css">
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="topbar">
-  <div class="brand">
-    <img src="assets/img/logo.svg" alt="logo" class="logo">
-    <span class="brand-title">Financial Analyzer</span>
-  </div>
-  <div class="top-controls">
-    <select id="langSwitchData">
-      <option value="ar">العربية</option>
-      <option value="en">English</option>
-    </select>
-    <button id="clearDataBtn2">Clear Data</button>
-  </div>
-</header>
+    <header>
+        <h1 id="site-title">Financial Data</h1>
+        <select id="language-select">
+            <option value="en">English</option>
+            <option value="ar">العربية</option>
+        </select>
+    </header>
 
-<nav class="main-nav">
-  <a href="index.html">Dashboard</a>
-  <a href="data.html" class="active">Data Entry</a>
-  <a href="reports.html">Reports</a>
-  <a href="comparison.html">Comparison</a>
-</nav>
+    <main>
+        <section>
+            <p id="data-text">Manage and view financial data.</p>
+        </section>
+    </main>
 
-<main class="main">
-  <section class="card">
-    <h2>ميزان المراجعة / Trial Balance</h2>
-    <div class="muted small">أدخل الحساب (رمز - اسم - مدين - دائن). يمكنك استخدام معادلات بسيطة مثل =SUM(100,200) أو =100+50</div>
-
-    <div class="table-wrap">
-      <table id="tbTable">
-        <thead>
-          <tr><th>Code</th><th>Name</th><th>Debit</th><th>Credit</th><th>Actions</th></tr>
-        </thead>
-        <tbody id="tbBody"></tbody>
-      </table>
-    </div>
-
-    <div class="controls-row">
-      <button id="addRowBtn">+ Add Row</button>
-      <button id="importExcelBtn">Import Excel</button>
-      <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" style="display:none">
-      <button id="saveTbBtn">Save</button>
-      <button id="clearTbBtn">Clear Table</button>
-      <div class="muted" id="tbTotals">Totals: -</div>
-    </div>
-
-    <div style="margin-top:12px;" class="muted small">ملاحظة: لتفعيل ميزة المقارنة تأكد من أن أسماء حسابات الإيراد تنتهي بالسنة (مثلاً: Sales 2022)</div>
-  </section>
-</main>
-
-<footer class="footer">© Financial Analyzer</footer>
-
-<script src="assets/js/app.js"></script>
-<script src="assets/js/data.js"></script>
-<script src="assets/js/export.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
