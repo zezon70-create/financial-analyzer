@@ -1,1 +1,32 @@
-<!-- Reports placeholder -->
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>التقارير</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+    <img src="assets/logo.png" alt="Logo" class="logo">
+    <nav>
+        <ul>
+            <li><a href="index.html">الرئيسية</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="input.html">إدخال البيانات</a></li>
+            <li><a href="compare.html">مقارنة الأعوام</a></li>
+        </ul>
+    </nav>
+</header>
+
+<main>
+    <h2>التقارير المالية</h2>
+    <button id="exportExcel">تصدير Excel</button>
+    <button id="exportPDF">تصدير PDF</button>
+    <div id="reportsContainer"></div>
+</main>
+
+<script src="js/export.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
