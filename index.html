@@ -1,41 +1,43 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Financial Analyzer</title>
-<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <header class="topbar">
   <div class="left">
-    <img src="assets/logo.png" alt="logo" class="logo" />
+    <img src="assets/logo.png" alt="logo" class="logo">
     <h1 id="appTitle">Financial Analyzer</h1>
   </div>
   <div class="right">
-    <select id="langSelect">
-      <option value="ar">العربية</option>
-      <option value="en">English</option>
-    </select>
-    <select id="currencySelect">
-      <option value="EGP">EGP</option>
-      <option value="USD">USD</option>
-      <option value="EUR">EUR</option>
-    </select>
+    <select id="langSelect"><option value="ar">العربية</option><option value="en">English</option></select>
+    <select id="currencySelect"><option>EGP</option><option>USD</option><option>EUR</option></select>
   </div>
 </header>
 
-<section class="hero">
-  <video autoplay muted loop class="bg-video"><source src="assets/background.mp4" type="video/mp4"></video>
-  <div class="hero-content">
+<main class="container">
+  <section class="panel hero">
     <h2 id="heroTitle">أداة التحليل المالي الشاملة</h2>
-    <p id="heroSubtitle">ادخل ميزان المراجعة يدوياً أو حمّل ملف Excel، واحصل على القوائم المالية والتحليلات والتقارير القابلة للتصدير.</p>
+    <p id="heroSubtitle">ابدأ بتحميل ميزان المراجعة أو إدخاله يدويًا لتحصل على القوائم المالية والتحليلات والتقارير.</p>
     <div class="hero-actions">
-      <a class="btn" href="input.html" id="startBtn">ابدأ الآن</a>
+      <a class="btn" href="input.html">ابدأ الآن</a>
       <a class="btn ghost" href="dashboard.html">اذهب إلى Dashboard</a>
     </div>
-  </div>
-</section>
+  </section>
+
+  <section class="panel features">
+    <h3>ميزات سريعة</h3>
+    <ul>
+      <li>استيراد Excel/CSV — إدخال يدوي — حفظ جلسة</li>
+      <li>قوائم مالية تلقائية + نسب وتحليلات متقدمة</li>
+      <li>تنبؤ ARIMA/Holt-Winters + تحليل حساسية</li>
+      <li>تصدير Excel متعدد الأوراق وPDF</li>
+    </ul>
+  </section>
+</main>
 
 <footer class="footer">
   <small>© <span id="year"></span> Financial Analyzer</small>
