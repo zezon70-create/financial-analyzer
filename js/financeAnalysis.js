@@ -1,23 +1,30 @@
-function movingAverage(data, period = 3) {
-  const result = [];
-  for (let i = 0; i <= data.length - period; i++) {
-    const sum = data.slice(i, i + period).reduce((a,b)=>a+b,0);
-    result.push(sum / period);
-  }
-  return result;
-}
+// الحسابات الأساسية والتحليلات
+const dataForm = document.getElementById('dataForm');
+const resultsSection = document.getElementById('results');
 
-function calculateRiskReturn(profits, riskFreeRate=0) {
-  const n = profits.length;
-  const avg = profits.reduce((a,b)=>a+b,0)/n;
-  const variance = profits.reduce((a,b)=>a+Math.pow(b-avg,2),0)/n;
-  const stdDev = Math.sqrt(variance);
-  const sharpe = (avg - riskFreeRate)/stdDev;
-  return { avg, stdDev, sharpe };
-}
+dataForm?.addEventListener('submit', function(e){
+    e.preventDefault();
+    const revenue = Number(document.getElementById('revenue').value);
+    const expenses = Number(document.getElementById('expenses').value);
+    const assets = Number(document.getElementById('assets').value);
+    const liabilities = Number(document.getElementById('liabilities').value);
 
-function breakEvenPoint(fixedCosts, pricePerUnit, variableCostPerUnit) {
-  return fixedCosts / (pricePerUnit - variableCostPerUnit);
-}
+    const profit = revenue - expenses;
+    const roi = (profit / assets * 100).toFixed(2);
+    const deRatio = (liabilities / assets *100).toFixed(2);
 
-window.financeAnalysis = { movingAverage, calculateRiskReturn, breakEvenPoint };
+    document.getElementById('profit').textContent = "صافي الربح: "+profit;
+    document.getElementById('roi').textContent = "العائد على الاستثمار: "+roi+"%";
+    document.getElementById('deRatio').textContent = "نسبة الدين للأصول: "+deRatio+"%";
+
+    resultsSection.classList.remove('hidden');
+
+    // Sensitivity Analysis Example
+    const sensitivity = {
+        revenue10: (revenue*1.1 - expenses),
+        revenueMinus10: (revenue*0.9 - expenses)
+    };
+    console.log("تحليل الحساسية:", sensitivity);
+
+    updateDashboard({revenue, expenses, assets, liabilities, profit});
+});
