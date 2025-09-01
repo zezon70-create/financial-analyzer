@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>التقارير - Financial Analyzer</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="left"><img src="assets/logo.png" class="logo" alt="logo"/><h1>Financial Analyzer</h1></div>
+  <div class="right">
+    <select id="langSelect"><option value="ar">العربية</option><option value="en">English</option></select>
+    <select id="currencySelect"><option>EGP</option><option>USD</option><option>EUR</option></select>
+  </div>
+</header>
+
+<main class="container">
+  <nav class="navtabs"><a href="index.html">الرئيسية</a><a href="input.html">إدخال البيانات</a><a href="dashboard.html">Dashboard</a><a href="compare.html">مقارنة</a></nav>
+  <section class="panel">
+    <h2>تصدير التقرير</h2>
+    <div class="controls">
+      <button id="downloadExcel" class="btn">تصدير Excel (أساسي)</button>
+      <button id="downloadExcelAdv" class="btn">تصدير Excel (متعدد الأوراق)</button>
+      <button id="downloadPDF" class="btn">تصدير PDF</button>
+    </div>
+    <div id="reportPreview"></div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script src="js/main.js"></script>
+<script src="js/dataHandler.js"></script>
+<script src="js/financialCalc.js"></script>
+<script src="js/export_excel_adv.js"></script>
+</body>
+</html>

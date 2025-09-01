@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>مقارنة الأعوام - Financial Analyzer</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="left"><img src="assets/logo.png" class="logo" alt="logo"/><h1>Financial Analyzer</h1></div>
+  <div class="right">
+    <select id="langSelect"><option value="ar">العربية</option><option value="en">English</option></select>
+    <select id="currencySelect"><option>EGP</option><option>USD</option><option>EUR</option></select>
+  </div>
+</header>
+
+<main class="container">
+  <nav class="navtabs"><a href="index.html">الرئيسية</a><a href="input.html">إدخال البيانات</a><a href="dashboard.html">Dashboard</a></nav>
+  <section class="panel">
+    <h2>مقارنة الأعوام</h2>
+    <div class="controls"><label>اختر مؤشر:</label><select id="compareMetric"><option value="revenue">Revenue</option><option value="netProfit">Net Profit</option><option value="assets">Assets</option></select></div>
+    <canvas id="compareChart" height="260"></canvas>
+  </section>
+</main>
+
+<script src="js/main.js"></script>
+<script src="js/dataHandler.js"></script>
+<script src="js/compare.js"></script>
+</body>
+</html>

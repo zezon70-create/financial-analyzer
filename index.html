@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Financial Analyzer</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="left">
+    <img src="assets/logo.png" alt="logo" class="logo">
+    <h1 id="appTitle">Financial Analyzer</h1>
+  </div>
+  <div class="right">
+    <select id="langSelect"><option value="ar">العربية</option><option value="en">English</option></select>
+    <select id="currencySelect"><option>EGP</option><option>USD</option><option>EUR</option></select>
+  </div>
+</header>
+
+<main class="container">
+  <section class="panel hero">
+    <h2 id="heroTitle">أداة التحليل المالي الشاملة</h2>
+    <p id="heroSubtitle">ابدأ بتحميل ميزان المراجعة أو إدخاله يدويًا لتحصل على القوائم المالية، التحليلات، والتقارير القابلة للتصدير.</p>
+    <div class="hero-actions">
+      <a class="btn" href="input.html">ابدأ الآن</a>
+      <a class="btn ghost" href="dashboard.html">اذهب إلى Dashboard</a>
+    </div>
+  </section>
+
+  <section class="panel features">
+    <h3>ميزات سريعة</h3>
+    <ul>
+      <li>استيراد Excel/CSV — إدخال يدوي — حفظ جلسة</li>
+      <li>إعداد القوائم المالية تلقائيًا من ميزان المراجعة</li>
+      <li>التحليلات التقليدية والحديثة (EVA, ROA, ROE, IRR, NPV)</li>
+      <li>تنبؤ Auto-ARIMA / Holt-Winters + تحليل حساسية</li>
+      <li>تصدير Excel متعدد الأوراق وPDF</li>
+    </ul>
+  </section>
+</main>
+
+<footer class="footer">
+  <small>© <span id="year"></span> Financial Analyzer</small>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>
