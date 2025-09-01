@@ -1,57 +1,31 @@
-// التعامل مع اللغة
-document.getElementById('languageSwitch')?.addEventListener('change', function() {
-    const lang = this.value;
-    localStorage.setItem('lang', lang);
-    location.reload();
-});
-
-// استرجاع البيانات من LocalStorage
-let financialData = JSON.parse(localStorage.getItem('financialData')) || [];
-
-function saveData() {
-    localStorage.setItem('financialData', JSON.stringify(financialData));
-}
-
-// إضافة بيانات جديدة مع التحقق من الصحة
-document.getElementById('dataForm')?.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const accountName = document.getElementById('accountName').value.trim();
-    const debit = parseFloat(document.getElementById('debit').value);
-    const credit = parseFloat(document.getElementById('credit').value);
-
-    if (!accountName || isNaN(debit) || isNaN(credit)) {
-        alert('يرجى إدخال جميع الحقول بشكل صحيح.');
-        return;
-    }
-
-    financialData.push({ accountName, debit, credit });
-    saveData();
-    renderTable();
-});
-
-// مسح البيانات
-document.getElementById('clearData')?.addEventListener('click', function() {
-    if(confirm('هل تريد مسح جميع البيانات؟')) {
-        financialData = [];
-        saveData();
-        renderTable();
-    }
-});
-
-// عرض البيانات في جدول
-function renderTable() {
-    const container = document.getElementById('dataTable');
-    if(!container) return;
-    if(financialData.length === 0) {
-        container.innerHTML = '<p>لا توجد بيانات بعد.</p>';
-        return;
-    }
-    let html = '<table><tr><th>الحساب</th><th>مدين</th><th>دائن</th></tr>';
-    financialData.forEach(d => {
-        html += `<tr><td>${d.accountName}</td><td>${d.debit}</td><td>${d.credit}</td></tr>`;
+// main.js - language, currency, common helpers
+const LANG_KEY = 'fa_lang';
+const CUR_KEY = 'fa_currency';
+document.addEventListener('DOMContentLoaded', ()=> {
+  // load saved lang/currency
+  const lang = localStorage.getItem(LANG_KEY) || 'ar';
+  const cur = localStorage.getItem(CUR_KEY) || 'EGP';
+  document.querySelectorAll('#langSelect, #languageSelect, #languageSwitch').forEach(sel=>{
+    if(sel) sel.value = lang;
+    sel?.addEventListener('change', (e)=>{
+      localStorage.setItem(LANG_KEY, e.target.value);
+      // simple: reload to apply (could be SPA)
+      location.reload();
     });
-    html += '</table>';
-    container.innerHTML = html;
+  });
+  document.querySelectorAll('#currencySelect').forEach(sel=>{
+    if(sel) sel.value = cur;
+    sel?.addEventListener('change', (e)=>{
+      localStorage.setItem(CUR_KEY, e.target.value);
+      // re-render tables / charts if needed
+      window.dispatchEvent(new Event('currencyChanged'));
+    });
+  });
+  // set year
+  const y = new Date().getFullYear();
+  document.getElementById('year')?.textContent = y;
+});
+function formatMoney(v){
+  const cur = localStorage.getItem(CUR_KEY) || 'EGP';
+  return new Intl.NumberFormat(undefined, {style:'currency',currency:cur, maximumFractionDigits:2}).format(v);
 }
-
-renderTable();
