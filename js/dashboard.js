@@ -1,4 +1,4 @@
-// ينفّذ على صفحة dashboard
+// dashboard.js — يعرض النتائج على لوحة التحكم
 document.addEventListener('DOMContentLoaded', () => {
   const noData = document.getElementById('noData');
   const content = document.getElementById('dashboardContent');
@@ -19,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
     noData.style.display = 'none'; content.style.display = 'block';
     const trial = session.trial;
 
-    // compute core
     const inc = generateIncomeStatement(trial);
     const bs = generateBalanceSheet(trial);
     const ratios = computeRatios(trial);
@@ -29,14 +28,12 @@ document.addEventListener('DOMContentLoaded', () => {
     roeEl.innerText = ratios.roe !== null ? fmt(ratios.roe) + ' %' : '-';
     evaEl.innerText = fmt(ratios.eva);
 
-    // render statements
     document.getElementById('incomeStatement').innerHTML =
       `<table class="table table-sm"><tbody>${inc.map(r => `<tr><td>${r.بند}</td><td>${fmt(r.قيمة)}</td></tr>`).join('')}</tbody></table>`;
 
     document.getElementById('balanceSheet').innerHTML =
       `<table class="table table-sm"><tbody>${bs.map(r => `<tr><td>${r.بند}</td><td>${fmt(r.قيمة)}</td></tr>`).join('')}</tbody></table>`;
 
-    // charts
     const labels = ['إيرادات', 'مصروفات'];
     const revenue = inc.find(x => x.بند === 'إجمالي الإيرادات')?.قيمة || 0;
     const expenses = inc.find(x => x.بند === 'إجمالي المصروفات')?.قيمة || 0;
@@ -52,7 +49,8 @@ document.addEventListener('DOMContentLoaded', () => {
       data: {
         labels,
         datasets: [{ data: [Math.abs(revenue), Math.abs(expenses)] }]
-      }
+      },
+      options: { responsive: true }
     });
 
     if (ratiosChart) ratiosChart.destroy();
@@ -61,7 +59,8 @@ document.addEventListener('DOMContentLoaded', () => {
       data: {
         labels: ratiosData.map(r => r.label),
         datasets: [{ label: 'النسب', data: ratiosData.map(r => r.value) }]
-      }
+      },
+      options: { responsive: true }
     });
   }
 
