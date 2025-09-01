@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-<meta charset="utf-8" />
+<meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>إدخال بيانات - Financial Analyzer</title>
-<link rel="stylesheet" href="css/style.css" />
+<title>إدخال البيانات - Financial Analyzer</title>
+<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <header class="topbar">
@@ -13,15 +13,8 @@
     <h1 id="appTitle">Financial Analyzer</h1>
   </div>
   <div class="right">
-    <select id="langSelect">
-      <option value="ar">العربية</option>
-      <option value="en">English</option>
-    </select>
-    <select id="currencySelect">
-      <option value="EGP">EGP</option>
-      <option value="USD">USD</option>
-      <option value="EUR">EUR</option>
-    </select>
+    <select id="langSelect"><option value="ar">العربية</option><option value="en">English</option></select>
+    <select id="currencySelect"><option>EGP</option><option>USD</option><option>EUR</option></select>
   </div>
 </header>
 
@@ -63,30 +56,27 @@
     </div>
 
     <div id="alerts"></div>
-
     <div id="tableWrapper"></div>
   </section>
 
   <section class="panel tips">
     <h3>نصائح</h3>
     <ul>
-      <li>استخدم شيت بترتيب: Account | Debit | Credit</li>
-      <li>يمكنك تحديد العملة من أعلى الصفحة</li>
-      <li>اضغط "حفظ الجلسة" للعودة لاحقًا</li>
+      <li>تنسيق شيت: Account | Debit | Credit</li>
+      <li>احفظ الجلسة للعودة لاحقًا</li>
     </ul>
   </section>
 </main>
 
-<!-- libs -->
+<!-- libraries -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-<!-- app scripts -->
 <script src="js/main.js"></script>
 <script src="js/dataHandler.js"></script>
 <script src="js/financialCalc.js"></script>
-<script src="js/export.js"></script>
+<script src="js/export_excel_adv.js"></script>
 </body>
 </html>
