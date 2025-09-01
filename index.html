@@ -4,14 +4,22 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>المحلل المالي — Financial Analyzer</title>
+
+  <!-- Bootstrap RTL -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <!-- FontAwesome -->
   <script src="https://kit.fontawesome.com/a2d9b6f5a8.js" crossorigin="anonymous"></script>
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- NAVBAR -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-      <a class="navbar-brand" href="index.html">المحلل المالي</a>
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img id="siteLogo" src="assets/logo.png" alt="logo" height="36" onerror="this.style.display='none'">
+        <span class="ms-2">المحلل المالي</span>
+      </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"
         aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -23,17 +31,21 @@
           <li class="nav-item"><a class="nav-link" href="reports.html">التقارير</a></li>
           <li class="nav-item"><a class="nav-link" href="compare.html">مقارنة</a></li>
         </ul>
-        <div class="d-flex">
-          <a class="btn btn-outline-light me-2" href="#" id="langToggle">EN</a>
+        <div class="d-flex align-items-center">
+          <button id="darkToggle" class="btn btn-outline-light me-2" title="تبديل الوضع الداكن">
+            <i class="fa fa-moon"></i>
+          </button>
+          <a class="btn btn-outline-light" href="#" id="langToggle">EN</a>
         </div>
       </div>
     </div>
   </nav>
 
+  <!-- MAIN -->
   <main class="container py-5">
     <div class="text-center mb-4">
       <h1>أهلاً بك في المحلل المالي</h1>
-      <p class="lead">أداة إلكترونية بسيطة لتحويل ميزان المراجعة إلى قوائم مالية وتحليلها — جاهزة للعمل على GitHub Pages</p>
+      <p class="lead">أداة لتحويل ميزان المراجعة إلى قوائم مالية، تحليلها وتصديرها — تعمل على GitHub Pages</p>
     </div>
 
     <div class="row g-4">
@@ -41,7 +53,7 @@
         <div class="card h-100 shadow-sm">
           <div class="card-body">
             <h5 class="card-title">ابدأ بإدخال البيانات</h5>
-            <p class="card-text">ارفع ملف ميزان المراجعة أو أدخله يدوياً ثم انتقل للوحة التحكم.</p>
+            <p class="card-text">ارفع ملف ميزان المراجعة (CSV/Excel) أو أدخله يدويًا ثم انتقل للوحة التحكم.</p>
             <a class="btn btn-primary w-100" href="input.html"><i class="fa fa-upload me-2"></i>إدخال البيانات</a>
           </div>
         </div>
@@ -51,7 +63,7 @@
         <div class="card h-100 shadow-sm">
           <div class="card-body">
             <h5 class="card-title">عرض التحليلات</h5>
-            <p class="card-text">اطّلع على القوائم المالية والنسب والرسوم البيانية فوراً.</p>
+            <p class="card-text">اطّلع على القوائم المالية، النسب والرسوم البيانية فوراً.</p>
             <a class="btn btn-success w-100" href="dashboard.html"><i class="fa fa-chart-line me-2"></i>لوحة التحكم</a>
           </div>
         </div>
@@ -61,7 +73,7 @@
         <div class="card h-100 shadow-sm">
           <div class="card-body">
             <h5 class="card-title">التقارير والتصدير</h5>
-            <p class="card-text">صدّر القوائم والتقارير إلى Excel أو PDF.</p>
+            <p class="card-text">صدّر القوائم والتقارير إلى Excel أو PDF بسهولة.</p>
             <a class="btn btn-warning w-100" href="reports.html"><i class="fa fa-file-export me-2"></i>التقارير</a>
           </div>
         </div>
@@ -74,21 +86,22 @@
       <div class="col-md-6">
         <h4>ملاحظات سريعة</h4>
         <ul>
-          <li>البيانات تُخزّن محليًا في متصفحك (LocalStorage) — لا يُخزّن الموقع بيانات على خوادم.</li>
-          <li>استخدم قالب ملف الميزان الموجود في صفحة الإدخال لتجنب أخطاء التنسيق.</li>
+          <li>البيانات تُخزّن محليًا في المتصفح (LocalStorage) — لا تُرفع إلى أي خادم.</li>
+          <li>حمّل قالب الميزان من صفحة الإدخال لتجنّب أخطاء التنسيق.</li>
         </ul>
       </div>
       <div class="col-md-6">
         <h4>دعم وتطوير</h4>
-        <p>للدعم أو رفع مشكلة: أضف Issue في مستودع GitHub الخاص بالمشروع.</p>
+        <p>لو عايز تعديلات إضافية أو مميزات متقدمة (مثل تصنيف حسابات احترافي أو توقعات ARIMA عبر Back-end)، أبعتلي وسننفذها.</p>
       </div>
     </div>
   </main>
 
   <footer class="bg-light py-3 text-center small">
-    &copy; 2025 المحلل المالي — نسخة محسنة للعمل على GitHub Pages
+    &copy; 2025 المحلل المالي — نسخة محسّنة للعمل على GitHub Pages
   </footer>
 
+  <!-- Scripts -->
   <script src="js/main.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
