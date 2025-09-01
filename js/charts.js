@@ -35,11 +35,9 @@ function renderSensitivity(){
 
 function refreshAll(){
   renderTable?.(); renderBSChart(); renderRatios(); renderSensitivity();
-  // forecast: create hist from stored if exists or from revenue
   const hist = JSON.parse(localStorage.getItem('FA_HIST_REVENUE')) || Array.from({length:8},(_,i)=> FA.ratios().revenue * Math.pow(1.03,i));
   const forecast = autoARIMAForecast(hist, 6);
   renderForecastHistoryAndForecast(hist, forecast);
-  // fill analysisReports
   const ar = document.getElementById('analysisReports');
   if(ar){ const inc = FA.incomeStatement(); const bs = FA.balanceSheet(); ar.innerHTML = `<div class="card"><h4>Income Statement</h4><p>Revenue: ${formatMoney(inc.revenue)} | Net Profit: ${formatMoney(inc.netProfit)}</p></div><div class="card"><h4>Balance Sheet</h4><p>Assets: ${formatMoney(bs.assets)} | Liabilities: ${formatMoney(bs.liabilities)}</p></div>`; }
 }
