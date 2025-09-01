@@ -1,49 +1,191 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Financial Analyzer</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Financial Analyzer — المحلل المالي</title>
+
+  <!-- styles -->
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- libs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.3.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <meta name="description" content="محلل مالي: استيراد ميزان المراجعة، تكوين القوائم، التحليل، التنبؤ، التصدير" />
 </head>
 <body>
-<header class="topbar">
-  <div class="left">
-    <img src="assets/logo.png" alt="logo" class="logo">
-    <h1 id="appTitle">Financial Analyzer</h1>
-  </div>
-  <div class="right">
-    <select id="langSelect"><option value="ar">العربية</option><option value="en">English</option></select>
-    <select id="currencySelect"><option>EGP</option><option>USD</option><option>EUR</option></select>
-  </div>
-</header>
-
-<main class="container">
-  <section class="panel hero">
-    <h2 id="heroTitle">أداة التحليل المالي الشاملة</h2>
-    <p id="heroSubtitle">ابدأ بتحميل ميزان المراجعة أو إدخاله يدويًا لتحصل على القوائم المالية، التحليلات، والتقارير القابلة للتصدير.</p>
-    <div class="hero-actions">
-      <a class="btn" href="input.html">ابدأ الآن</a>
-      <a class="btn ghost" href="dashboard.html">اذهب إلى Dashboard</a>
+  <header class="topbar">
+    <div class="left">
+      <img src="assets/logo.png" alt="logo" class="logo" id="topLogo" onerror="this.style.display='none'">
+      <div>
+        <h1 id="appTitle">المحلل المالي</h1>
+        <small id="appSubtitle">تحليلات مالية شاملة — قوائم، نسب، تنبؤ، تصدير</small>
+      </div>
     </div>
-  </section>
 
-  <section class="panel features">
-    <h3>ميزات سريعة</h3>
-    <ul>
-      <li>استيراد Excel/CSV — إدخال يدوي — حفظ جلسة</li>
-      <li>إعداد القوائم المالية تلقائيًا من ميزان المراجعة</li>
-      <li>التحليلات التقليدية والحديثة (EVA, ROA, ROE, IRR, NPV)</li>
-      <li>تنبؤ Auto-ARIMA / Holt-Winters + تحليل حساسية</li>
-      <li>تصدير Excel متعدد الأوراق وPDF</li>
-    </ul>
-  </section>
-</main>
+    <div class="right">
+      <label class="sr-only">اللغة</label>
+      <select id="langSelect" title="اختر اللغة">
+        <option value="ar">العربية</option>
+        <option value="en">English</option>
+      </select>
 
-<footer class="footer">
-  <small>© <span id="year"></span> Financial Analyzer</small>
-</footer>
+      <label class="sr-only">العملة</label>
+      <select id="currencySelect" title="اختر العملة">
+        <option>EGP</option><option>USD</option><option>EUR</option>
+      </select>
+    </div>
+  </header>
 
-<script src="js/main.js"></script>
+  <nav class="navtabs">
+    <button class="tab active" data-target="input">إدخال البيانات</button>
+    <button class="tab" data-target="dashboard">Dashboard</button>
+    <button class="tab" data-target="reports">التقارير</button>
+    <button class="tab" data-target="compare">مقارنة</button>
+  </nav>
+
+  <main class="container">
+    <!-- INPUT TAB -->
+    <section id="input" class="tab-pane active">
+      <div class="panel">
+        <h2>ادخل ميزان المراجعة</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>رفع ملف Excel / CSV</h3>
+            <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" aria-label="رفع ملف">
+            <p class="hint">تنسيق الشيت المفضل: <code>Account | Debit | Credit</code>، رؤوس الأعمدة اختيارية.</p>
+            <button id="btnImport" class="btn">استيراد الملف</button>
+          </div>
+
+          <div class="card">
+            <h3>إدخال يدوي سريع</h3>
+            <textarea id="manualInput" placeholder="مبيعات | 0 | 10000 (سطر لكل حساب)"></textarea>
+            <div class="row">
+              <button id="btnManual" class="btn">أضف من النص</button>
+              <button id="btnClearAll" class="btn danger" title="مسح كل البيانات">مسح الكل</button>
+            </div>
+            <p class="hint">يمكن استخدام الفاصل | أو فاصلة أو tab.</p>
+          </div>
+
+          <div class="card">
+            <h3>الحقول المخصصة</h3>
+            <div id="customFieldsContainer"></div>
+            <div class="row">
+              <input id="newCF" placeholder="اسم الحقل" />
+              <button id="addCF" class="btn ghost">أضف حقل</button>
+              <button id="removeCF" class="btn ghost">إزالة آخر</button>
+            </div>
+            <p class="hint">يمكن إضافة حقول مخصصة تظهر لكل صف — تحفظ مع الجلسة.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>ميزان المراجعة — جدول قابل للتحرير</h3>
+        <div id="tableWrapper" class="tableWrapper"></div>
+        <div class="row actions">
+          <button id="saveSession" class="btn ghost" title="حفظ الجلسة محليًا">حفظ الجلسة</button>
+          <button id="loadSession" class="btn ghost">تحميل الجلسة</button>
+          <button id="exportSession" class="btn">تصدير جلسة (JSON)</button>
+          <input type="file" id="importSession" accept=".json" />
+        </div>
+      </div>
+    </section>
+
+    <!-- DASHBOARD TAB -->
+    <section id="dashboard" class="tab-pane">
+      <div class="panel">
+        <h2>Dashboard</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>القوائم المالية</h3>
+            <div id="statements"></div>
+          </div>
+
+          <div class="card">
+            <h3>مؤشرات رئيسية</h3>
+            <ul id="keyRatios"></ul>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <h3>التنبؤ</h3>
+            <div class="controls">
+              <select id="forecastModel" title="اختر نموذج التنبؤ">
+                <option value="auto">Auto (مبسط)</option>
+                <option value="holt">Holt-Winters</option>
+                <option value="linear">Linear</option>
+              </select>
+              <input type="number" id="forecastHorizon" value="6" min="1" style="width:80px" title="عدد الفترات المستقبلية" />
+              <input id="arimaP" placeholder="p" style="width:60px" title="p (اختياري)"/>
+              <input id="arimaD" placeholder="d" style="width:60px" title="d (اختياري)"/>
+              <input id="arimaQ" placeholder="q" style="width:60px" title="q (اختياري)"/>
+              <button id="runForecast" class="btn">شغّل التنبؤ</button>
+            </div>
+            <canvas id="forecastChart"></canvas>
+          </div>
+
+          <div class="card">
+            <h3>تحليل الحساسية / Monte Carlo</h3>
+            <canvas id="sensitivityChart"></canvas>
+            <div class="row">
+              <button id="runMC" class="btn ghost">تشغيل Monte Carlo (1000)</button>
+              <button id="downloadMC" class="btn ghost">تصدير نتائج MC</button>
+            </div>
+            <p class="hint">تحليل تقلب صافي الربح باستخدام محاكاة مبسطة.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REPORTS TAB -->
+    <section id="reports" class="tab-pane">
+      <div class="panel">
+        <h2>التقارير و التصدير</h2>
+        <div class="row">
+          <label>شعار للتقرير (assets/)</label>
+          <input id="reportLogo" placeholder="logo.png" />
+          <label>ملاحظات</label>
+          <input id="reportNotes" placeholder="أدخل ملاحظات للتقرير" />
+        </div>
+        <div class="row actions">
+          <button id="exportExcel" class="btn">تصدير Excel (متعدد الأوراق)</button>
+          <button id="exportPDF" class="btn">تصدير PDF</button>
+          <button id="printReport" class="btn ghost">طباعة</button>
+        </div>
+        <div id="reportPreview" class="card"></div>
+      </div>
+    </section>
+
+    <!-- COMPARE TAB -->
+    <section id="compare" class="tab-pane">
+      <div class="panel">
+        <h2>مقارنة سيناريوهات / أعوام</h2>
+        <div class="row">
+          <select id="compareMetric"><option value="revenue">الإيرادات</option><option value="netProfit">صافي الربح</option><option value="assets">الأصول</option></select>
+          <button id="saveScenario" class="btn">حفظ السيناريو</button>
+          <button id="clearScenarios" class="btn danger">مسح السيناريوهات</button>
+        </div>
+        <div id="scenarioList" class="card"></div>
+        <canvas id="compareChart"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <small>© <span id="year"></span> Financial Analyzer — جاهز للـ GitHub</small>
+  </footer>
+
+  <!-- scripts (keep the same filenames in repo) -->
+  <script src="app.js" defer></script>
+  <script src="calculations.js" defer></script>
+  <script src="charts.js" defer></script>
+  <script src="export.js" defer></script>
+  <script src="lang.js" defer></script>
 </body>
 </html>
