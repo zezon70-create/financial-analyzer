@@ -1,7 +1,6 @@
 // financialCalc.js
 function classify(){
   const map = {revenue:0,cogs:0,expenses:0,assets:0,liabilities:0,equity:0};
-  (window.FA_DATA || window.FA_DATA === undefined) // ensure available
   const data = (typeof FA_DATA !== 'undefined') ? FA_DATA : (JSON.parse(localStorage.getItem('FA_DATA_v1'))||[]);
   data.forEach(r=>{
     const a = (r.account||'').toString().toLowerCase();
@@ -57,7 +56,6 @@ function npv(cashflows, rate){
 }
 
 function irrSimple(cashflows){
-  // simple bisection
   let low=-0.9999, high=10, mid=0;
   function f(r){ return cashflows.reduce((s,cf,i)=> s + cf / Math.pow(1+r,i), 0); }
   for(let i=0;i<100;i++){ mid=(low+high)/2; if(f(mid) > 0) low=mid; else high=mid; }
