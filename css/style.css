@@ -1,93 +1,45 @@
-/* إعدادات أساسية */
-body {
-  margin: 0;
-  font-family: "Tahoma", Arial, sans-serif;
-  background: #f9f9f9;
-  color: #333;
-  transition: background 0.3s, color 0.3s;
+:root{
+  --bg: #f7f9fc;
+  --card: #ffffff;
+  --text: #222;
+  --muted: #6c757d;
+  --primary: #0d6efd;
+  --shadow: 0 6px 18px rgba(13,110,253,0.05);
 }
 
-header.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #004080;
-  color: white;
-  padding: 10px 20px;
+/* dark mode variables */
+html[data-theme='dark']{
+  --bg: #0f1720;
+  --card: #0b1220;
+  --text: #e6eef8;
+  --muted: #9aa7b3;
+  --primary: #4da3ff;
+  --shadow: 0 6px 18px rgba(0,0,0,0.6);
 }
 
-header .logo {
-  font-size: 20px;
-  font-weight: bold;
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: "Segoe UI", Tahoma, Arial, sans-serif; transition: background .25s, color .25s; }
+a { color: var(--primary); }
+.card { background: var(--card); border-radius: 12px; box-shadow: var(--shadow); color: var(--text); }
+.display-6 { font-weight: 700; color: var(--primary); }
+.table td, .table th { vertical-align: middle; }
+#tbBody td input { width: 100%; box-sizing: border-box; background: transparent; color: inherit; border: none; padding: 6px; }
+.table thead { background: rgba(0,0,0,0.03); }
+small.text-muted { color: var(--muted); font-size: 0.85rem; }
+
+/* buttons */
+.btn-outline-light { color: #fff; border-color: rgba(255,255,255,0.25); }
+.navbar-dark .navbar-nav .nav-link.active { font-weight: 700; }
+
+/* responsive tweaks */
+@media (max-width: 576px){
+  .display-6 { font-size: 1.3rem; }
+  .card .card-body { padding: 12px; }
 }
 
-header .controls {
-  display: flex;
-  gap: 10px;
-}
+/* simple tooltip-like help */
+.help-dot { cursor: pointer; display:inline-block; width:18px; height:18px; border-radius:50%; background:#dee2e6; color:#000; text-align:center; line-height:18px; font-size:12px; margin-left:6px; }
+html[data-theme='dark'] .help-dot { background:#1f2937; color:#fff; }
 
-header select, header button {
-  padding: 5px;
-  border-radius: 5px;
-  border: none;
-}
-
-.container {
-  max-width: 600px;
-  margin: auto;
-  padding: 20px;
-}
-
-form label {
-  display: block;
-  margin-top: 15px;
-}
-
-form input {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-}
-
-form button {
-  margin-top: 20px;
-  padding: 10px;
-  background: #004080;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-form button:hover {
-  background: #0066cc;
-}
-
-.results {
-  margin-top: 20px;
-  padding: 15px;
-  border-radius: 8px;
-  background: #eef;
-}
-
-.hidden {
-  display: none;
-}
-
-/* الوضع الليلي */
-body.dark {
-  background: #121212;
-  color: #e0e0e0;
-}
-
-body.dark header.navbar {
-  background: #222;
-}
-
-body.dark form button {
-  background: #333;
-}
-
-body.dark .results {
-  background: #333;
-}
+/* small alert container */
+#alertsHere .alert { margin-bottom:10px; }
