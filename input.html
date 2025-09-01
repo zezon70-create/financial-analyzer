@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Input Trial Balance</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<header>
+    <img src="assets/images/logo.png" alt="Logo" class="logo">
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="input.html">Input Data</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="reports.html">Reports</a>
+        <a href="compare.html">Compare</a>
+        <select id="langSelect">
+            <option value="en">English</option>
+            <option value="ar">عربي</option>
+        </select>
+        <button id="darkModeToggle">Dark Mode</button>
+    </nav>
+</header>
+
+<main>
+<h2>Enter Trial Balance</h2>
+<form id="trialBalanceForm">
+    <table>
+        <thead>
+            <tr>
+                <th>Account</th>
+                <th>Debit</th>
+                <th>Credit</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="accountRows">
+            <tr>
+                <td><input type="text" name="account[]" required></td>
+                <td><input type="number" name="debit[]" value="0" required></td>
+                <td><input type="number" name="credit[]" value="0" required></td>
+                <td><button type="button" class="deleteRow">Delete</button></td>
+            </tr>
+        </tbody>
+    </table>
+    <button type="button" id="addRow">Add Row</button>
+    <button type="submit">Submit</button>
+</form>
+</main>
+
+<script src="assets/js/financial.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
