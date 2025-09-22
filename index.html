@@ -1,69 +1,119 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Financial Analyzer - المحلل المالي</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; connect-src 'self'; font-src 'self' https://fonts.gstatic.com;">
-  <link href="https://fonts.googleapis.com/css?family=Cairo:300,400,600&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>المحلل المالي — Financial Analyzer</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://kit.fontawesome.com/a2d9b6f5a8.js" crossorigin="anonymous"></script>
   <style>
-    body{font-family: 'Cairo', sans-serif; margin:0; background:#f6f8fb; color:#1b1f23}
-    header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:#0b2a4a;color:white}
-    .logo-wrap{display:flex;align-items:center;gap:12px}
-    .logo-wrap img{height:48px}
-    nav a{color:white;text-decoration:none;margin:0 8px;font-weight:600}
-    main{padding:20px}
-    .card{background:white;padding:18px;border-radius:8px;box-shadow:0 6px 18px rgba(6,20,34,0.06);margin-bottom:16px}
-    footer{padding:12px 20px;text-align:center;color:#666}
-    table{width:100%;border-collapse:collapse}
-    th,td{padding:8px;border:1px solid #eee;text-align:right}
-    #data-table tbody td{direction:ltr;text-align:left}
-    .btn{display:inline-block;padding:8px 12px;border-radius:6px;background:#0b6fb2;color:white;text-decoration:none;border:none;cursor:pointer}
+    /* العلامة المائية */
+    .watermark {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.05;
+      z-index: 0;
+      pointer-events: none;
+      width: 300px;
+    }
+    header img.logo {
+      height: 50px;
+    }
   </style>
-
-  <!-- libraries -->
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-  <script src="scripts/storage.js" defer></script>
-  <script src="scripts/file-handlers.js" defer></script>
-  <script src="scripts/pdf-export.js" defer></script>
 </head>
 <body>
-  <header>
-    <div class="logo-wrap">
-      <img src="assets/img/logo.png" alt="logo">
-      <div>
-        <div style="font-weight:700">MOATAZ MADKOUR</div>
-        <div style="font-size:13px">Financial Analyzer - المحلل المالي</div>
+  <!-- هيدر -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img src="logo.png" alt="شعار" class="logo me-2">
+        <span>المحلل المالي</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"
+        aria-controls="nav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div id="nav" class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="input.html">إدخال البيانات</a></li>
+          <li class="nav-item"><a class="nav-link" href="dashboard.html">لوحة التحكم</a></li>
+          <li class="nav-item"><a class="nav-link" href="reports.html">التقارير</a></li>
+          <li class="nav-item"><a class="nav-link" href="compare.html">مقارنة</a></li>
+        </ul>
+        <div class="d-flex">
+          <a class="btn btn-outline-light me-2" href="#" id="langToggle">EN</a>
+        </div>
       </div>
     </div>
-    <nav>
-      <a href="index.html">الرئيسية</a>
-      <a href="input.html">إدخال البيانات</a>
-      <a href="dashboard.html">لوحة التحكم</a>
-      <a href="reports.html">التقارير</a>
-      <a href="compare.html">المقارنة</a>
-      <a href="privacy.html">الخصوصية</a>
-    </nav>
-  </header>
+  </nav>
 
-  <main>
-    <div class="card">
-      <h2>مرحبًا بك في Financial Analyzer</h2>
-      <p>أداة خفيفة لتحويل ميزان المراجعة إلى قوائم مالية، استيراد CSV/XLSX، وتصدير تقارير PDF / Excel.</p>
-      <p>استخدم قائمة <strong>إدخال البيانات</strong> لرفع ملف CSV أو XLSX (قالب جاهز).</p>
+  <!-- العلامة المائية -->
+  <img src="logo.png" alt="Watermark" class="watermark">
+
+  <main class="container py-5 position-relative" style="z-index:1;">
+    <div class="text-center mb-4">
+      <img src="logo.png" alt="شعار" class="mb-3" style="height:80px;">
+      <h1>أهلاً بك في المحلل المالي</h1>
+      <p class="lead">أداة إلكترونية بسيطة لتحويل ميزان المراجعة إلى قوائم مالية وتحليلها — مقدمة من معتز مدكور</p>
     </div>
 
-    <div class="card">
-      <h3>نموذج بيانات تجريبي</h3>
-      <p>يمكن تحميل ملف CSV تجريبي من صفحة إدخال البيانات أو تجربة رفع ملفك.</p>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">ابدأ بإدخال البيانات</h5>
+            <p class="card-text">ارفع ملف ميزان المراجعة أو أدخله يدوياً ثم انتقل للوحة التحكم.</p>
+            <a class="btn btn-primary w-100" href="input.html"><i class="fa fa-upload me-2"></i>إدخال البيانات</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">عرض التحليلات</h5>
+            <p class="card-text">اطّلع على القوائم المالية والنسب والرسوم البيانية فوراً.</p>
+            <a class="btn btn-success w-100" href="dashboard.html"><i class="fa fa-chart-line me-2"></i>لوحة التحكم</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <h5 class="card-title">التقارير والتصدير</h5>
+            <p class="card-text">صدّر القوائم والتقارير إلى Excel أو PDF.</p>
+            <a class="btn btn-warning w-100" href="reports.html"><i class="fa fa-file-export me-2"></i>التقارير</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="my-5">
+
+    <div class="row">
+      <div class="col-md-6">
+        <h4>ملاحظات سريعة</h4>
+        <ul>
+          <li>البيانات تُخزّن محليًا في متصفحك (LocalStorage) — لا يُخزّن الموقع بيانات على خوادم.</li>
+          <li>استخدم قالب ملف الميزان الموجود في صفحة الإدخال لتجنب أخطاء التنسيق.</li>
+        </ul>
+      </div>
+      <div class="col-md-6">
+        <h4>دعم وتطوير</h4>
+        <p>للدعم أو رفع مشكلة: أضف Issue في مستودع GitHub الخاص بالمشروع.</p>
+      </div>
     </div>
   </main>
 
-  <footer>
-    Financial Analyzer © جميع الحقوق محفوظة
+  <footer class="bg-light py-3 text-center small">
+    &copy; 2025 المحلل المالي — Moataz Madkour
   </footer>
+
+  <script src="js/main.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
