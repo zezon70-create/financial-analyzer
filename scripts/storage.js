@@ -17,6 +17,7 @@ async function deriveKey(pass) {
 }
 
 window.secureSave = async function(key, obj, pass) {
+  if (!pass) return localStorage.setItem(key, JSON.stringify(obj));
   const iv = crypto.getRandomValues(new Uint8Array(12));
   const derived = await deriveKey(pass);
   const enc = new TextEncoder();
@@ -30,16 +31,20 @@ window.secureLoad = async function(key, pass) {
   if (!raw) return null;
   try{
     const parsed = JSON.parse(raw);
-    const derived = await deriveKey(pass);
-    const dec = await crypto.subtle.decrypt({name:'AES-GCM', iv: base64ToBuf(parsed.iv)}, derived, base64ToBuf(parsed.data));
-    return JSON.parse(new TextDecoder().decode(dec));
+    // if parsed has iv/data -> encrypted
+    if (parsed && parsed.iv && parsed.data && pass) {
+      const derived = await deriveKey(pass);
+      const dec = await crypto.subtle.decrypt({name:'AES-GCM', iv: base64ToBuf(parsed.iv)}, derived, base64ToBuf(parsed.data));
+      return JSON.parse(new TextDecoder().decode(dec));
+    }
+    // else return raw JSON
+    return parsed;
   }catch(e){
-    console.error('decrypt failed', e);
+    console.error('secureLoad failed', e);
     return null;
   }
 };
 
 window.clearAllData = function(){
   localStorage.removeItem(FA_STORAGE_KEY);
-  // also keep other keys if needed
 };
