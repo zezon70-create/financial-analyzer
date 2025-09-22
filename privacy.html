@@ -1,18 +1,25 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"/><title>الخصوصية - Financial Analyzer</title>
-<link href="https://fonts.googleapis.com/css?family=Cairo:300,400,600&display=swap" rel="stylesheet">
-<style>body{font-family:'Cairo',sans-serif;margin:0;background:#f6f8fb} header{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:#0b2a4a;color:white}.logo-wrap{display:flex;align-items:center;gap:12px}.logo-wrap img{height:48px} main{padding:20px}.card{background:white;padding:18px;border-radius:8px;box-shadow:0 6px 18px rgba(6,20,34,0.06);margin-bottom:16px}</style>
-</head>
+<head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>الخصوصية</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css"></head>
 <body>
-  <header><div class="logo-wrap"><img src="assets/img/logo.png" alt="logo"><div><div style="font-weight:700">MOATAZ MADKOUR</div><div style="font-size:13px">Financial Analyzer</div></div></div><nav><a href="index.html" style="color:white;text-decoration:none">الرئيسية</a></nav></header>
-  <main>
-    <div class="card">
-      <h2>سياسة الخصوصية</h2>
-      <p>البيانات التي تقوم بتحميلها تُخزّن محليًا في متصفحك فقط ولا تُرسل إلى أي خادم خارجي. يمكنك حذف كل البيانات في أي وقت عبر زر "مسح كل البيانات" الموجود بصفحات التطبيق.</p>
-      <p>إذا قررت تفعيل الحفظ المشفّر المحلي فالمفاتيح لا تُرسل إلى خوادمنا. احرص على عدم مشاركة جهازك أو كلمة المرور مع أي شخص.</p>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img src="assets/img/logo.png" alt="logo" class="site-logo"><div class="ms-2">المحلل المالي</div>
+      </a>
+    </div>
+  </nav>
+
+  <main class="container py-4" style="position:relative; z-index:1;">
+    <div class="card p-3 shadow-sm">
+      <h3>سياسة الخصوصية</h3>
+      <p>البيانات التي تقوم بتحميلها على الموقع تُخزن محلياً في متصفحك فقط (LocalStorage). لا تُرسل أي بيانات إلى خوادم خارجية ما لم تختَر ذلك صراحة أو تفعّل مزايا متقدمة.</p>
+      <p>يمكنك حذف جميع البيانات محلياً باستخدام زر مسح البيانات في صفحة التقارير أو إدخال البيانات. إذا اخترت حفظ الجلسة المشفّر فالمفتاح يبقى محلياً على جهازك ولا يرسل للخوادم.</p>
     </div>
   </main>
-  <footer style="padding:12px 20px;text-align:center;color:#666">Financial Analyzer ©</footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
