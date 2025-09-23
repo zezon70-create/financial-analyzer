@@ -3,126 +3,98 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>المقارنة — المحلل المالي</title>
+  <title>التقارير — المحلل المالي</title>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;">
+  <link href="https://fonts.googleapis.com/css?family=Cairo:300,400,600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center" href="index.html">
         <img src="assets/img/logo.png" alt="logo" class="site-logo">
         <div class="ms-2">المحلل المالي</div>
       </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div id="nav" class="collapse navbar-collapse">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" href="input.html">إدخال البيانات</a></li>
+          <li class="nav-item"><a class="nav-link" href="dashboard.html">لوحة التحكم</a></li>
+          <li class="nav-item"><a class="nav-link active" href="reports.html">التقارير</a></li>
+          <li class="nav-item"><a class="nav-link" href="compare.html">مقارنة</a></li>
+        </ul>
+      </div>
     </div>
   </nav>
 
+  <!-- Main Content -->
   <main class="container py-4" style="position:relative; z-index:1;">
-    <h2>مقارنة بين جلستين</h2>
-    <p class="text-muted">يمكن تحميل جلستين من المتصفح للمقارنة (نفس الميزة من الكود القديم محفوظة).</p>
-
-    <div class="row g-3 mb-4">
-      <div class="col-md-6"><div class="card p-3 shadow-sm"><h6>الجلسة A</h6><button id="loadA" class="btn btn-outline-primary w-100">تحميل الجلسة A</button></div></div>
-      <div class="col-md-6"><div class="card p-3 shadow-sm"><h6>الجلسة B</h6><button id="loadB" class="btn btn-outline-primary w-100">تحميل الجلسة B</button></div></div>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 gap-2">
+      <h2>التقارير المالية</h2>
+      <div class="d-flex flex-wrap gap-2">
+        <button id="exportExcel" class="btn btn-warning">تصدير Excel</button>
+        <button id="exportPdf" class="btn btn-secondary">تصدير PDF</button>
+      </div>
     </div>
 
-    <div id="noData" class="alert alert-warning" style="display:none;">لم يتم تحميل جلستين بعد. برجاء تحميل A و B.</div>
+    <div id="noData" class="alert alert-warning" style="display:none;">
+      لا توجد بيانات — ارفع ميزان المراجعة في صفحة الإدخال أولاً.
+    </div>
 
-    <div id="compareContent" style="display:none;">
-      <div class="card mb-4 shadow-sm p-3">
-        <h5>مقارنة صافي الربح (كما في النسخة القديمة)</h5>
-        <canvas id="profitChart" height="120"></canvas>
-      </div>
-
-      <div class="card mb-4 shadow-sm p-3">
-        <h5>مقارنة شاملة (الإيرادات، المصروفات، الأصول، الخصوم، حقوق الملكية)</h5>
-        <canvas id="compareChart" height="180"></canvas>
-      </div>
-
-      <div class="card shadow-sm p-3">
-        <h5>جدول مقارنة تفصيلي</h5>
-        <div class="table-responsive">
-          <table class="table table-bordered text-center align-middle">
-            <thead class="table-primary"><tr><th>المؤشر</th><th>الجلسة A</th><th>الجلسة B</th><th>الفرق</th></tr></thead>
-            <tbody id="compareTable"></tbody>
-          </table>
+    <div id="reportsContent" style="display:none;">
+      <!-- Financial Statements -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <div class="card p-3 shadow-sm">
+            <h6>قائمة الدخل التفصيلية</h6>
+            <div id="incomeReport"></div>
+          </div>
         </div>
+        <div class="col-md-6">
+          <div class="card p-3 shadow-sm">
+            <h6>الميزانية العمومية التفصيلية</h6>
+            <div id="balanceReport"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ratios -->
+      <div class="row g-4 mb-4">
+        <div class="col-md-6">
+          <div class="card p-3 shadow-sm">
+            <h6>النسب المالية</h6>
+            <canvas id="ratiosChart" height="250"></canvas>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card p-3 shadow-sm">
+            <h6>تطور الإيرادات والمصروفات</h6>
+            <canvas id="revExpChart" height="250"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary KPIs -->
+      <div class="row g-3">
+        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><h6>صافي الربح</h6><div id="netProfit" class="display-6">-</div></div></div>
+        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><h6>العائد على الأصول (ROA)</h6><div id="roa" class="display-6">-</div></div></div>
+        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><h6>العائد على حقوق الملكية (ROE)</h6><div id="roe" class="display-6">-</div></div></div>
+        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><h6>EVA</h6><div id="eva" class="display-6">-</div></div></div>
       </div>
     </div>
   </main>
 
+  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="scripts/storage.js"></script>
   <script src="scripts/file-handlers.js"></script>
+  <script src="scripts/pdf-export.js"></script>
   <script src="scripts/main.js"></script>
-
-  <script>
-    // المحافظة على سلوك الكود القديم + التحليلات الجديدة
-    let sessionA = null, sessionB = null;
-    let profitChart = null, cmpChart = null;
-
-    document.getElementById('loadA').addEventListener('click', () => {
-      sessionA = loadSession();
-      if (!sessionA) return alert('لا توجد جلسة مخزنة في المتصفح للاستخدام A');
-      alert('تم جلب الجلسة A من المتصفح');
-      renderComparison();
-    });
-
-    document.getElementById('loadB').addEventListener('click', () => {
-      sessionB = loadSession();
-      if (!sessionB) return alert('لا توجد جلسة مخزنة في المتصفح للاستخدام B');
-      alert('تم جلب الجلسة B من المتصفح');
-      renderComparison();
-    });
-
-    function renderComparison(){
-      if (!sessionA || !sessionB) {
-        document.getElementById('compareContent').style.display = 'none';
-        document.getElementById('noData').style.display = 'block';
-        return;
-      }
-      document.getElementById('noData').style.display = 'none';
-      document.getElementById('compareContent').style.display = 'block';
-
-      // استخراج قيم مبسطة — نحاول استخدام الحقول المباشرة إن وجدت، وإلا نعتمد على تحليل الصفوف
-      const a = normalizeTrial(sessionA.trial);
-      const b = normalizeTrial(sessionB.trial);
-
-      // الرسم: صافي الربح
-      if (profitChart) profitChart.destroy();
-      profitChart = new Chart(document.getElementById('profitChart'), {
-        type: 'bar',
-        data: { labels: ['صافي الربح'], datasets: [{ label: 'جلسة A', data: [a.profit], backgroundColor:'#0d6efd' }, { label:'جلسة B', data:[b.profit], backgroundColor:'#ffc107' }] },
-        options: { responsive:true, plugins:{legend:{position:'top'}}}
-      });
-
-      // الرسم الشامل
-      const labels = ['الإيرادات','المصروفات','صافي الربح','الأصول','الخصوم','حقوق الملكية'];
-      const dataA = [a.revenues,a.expenses,a.profit,a.assets,a.liabilities,a.equity];
-      const dataB = [b.revenues,b.expenses,b.profit,b.assets,b.liabilities,b.equity];
-
-      if (cmpChart) cmpChart.destroy();
-      cmpChart = new Chart(document.getElementById('compareChart'), {
-        type: 'bar',
-        data: { labels, datasets: [{ label:'جلسة A', data: dataA, backgroundColor:'#0d6efd' }, { label:'جلسة B', data: dataB, backgroundColor:'#ffc107' }]},
-        options: { responsive:true, plugins:{legend:{position:'top'}}, scales:{y:{beginAtZero:true}}}
-      });
-
-      // جدول المقارنة
-      const tbody = document.getElementById('compareTable'); tbody.innerHTML = '';
-      labels.forEach((label, i)=>{
-        const diff = dataA[i] - dataB[i];
-        const tr = `<tr>
-          <td>${label}</td>
-          <td>${formatNumber(dataA[i])}</td>
-          <td>${formatNumber(dataB[i])}</td>
-          <td class="${diff>0?'text-success':diff<0?'text-danger':''}">${formatNumber(diff)}</td>
-        </tr>`;
-        tbody.insertAdjacentHTML('beforeend', tr);
-      });
-    }
-  </script>
-
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
