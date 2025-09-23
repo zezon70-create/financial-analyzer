@@ -1,17 +1,37 @@
-body {
+:root{
+  --bg:#f8f9fa;
+  --card:#ffffff;
+  --text:#212529;
+  --muted:#6c757d;
+  --primary:#0d6efd;
+  --success:#198754;
+  --danger:#dc3545;
+}
+
+[data-theme="dark"]{
+  --bg:#0b1220;
+  --card:#0f1724;
+  --text:#e6eef6;
+  --muted:#9aa6b2;
+  --primary:#4ea8ff;
+}
+
+body{
   font-family: 'Cairo', sans-serif;
-  background-color: #f8f9fa;
+  background: var(--bg);
+  color: var(--text);
 }
 
-.site-logo {
-  width: 40px;
-  height: 40px;
-}
+.site-logo{ width:36px; height:36px; object-fit:contain; }
+.brand-title{ font-weight:600; }
 
-.card {
-  border-radius: 1rem;
-}
+.card{ background:var(--card); color:var(--text); }
+.table thead th{ background:#eef3ff; }
+.btn-outline-light{ color:#fff; border-color:rgba(255,255,255,0.25); }
+.display-6{ font-size:1.6rem; font-weight:700; }
+.chart-card{ min-height:260px; }
 
-.display-6 {
-  font-weight: bold;
+/* small responsive tweaks */
+@media (max-width: 575px){
+  .display-6{ font-size:1.2rem; }
 }
