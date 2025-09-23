@@ -4,18 +4,20 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>إدخال البيانات — المحلل المالي</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://cdn.sheetjs.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; connect-src 'self'; font-src 'self' https://fonts.gstatic.com;">
   <link href="https://fonts.googleapis.com/css?family=Cairo:300,400,600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <script src="https://kit.fontawesome.com/a2d9b6f5a8.js" crossorigin="anonymous"></script>
   <style>
+    body { font-family: 'Cairo', sans-serif; background: #f8f9fa; }
     .card:hover { transform: translateY(-5px); transition: all 0.3s ease; }
     .global-watermark { opacity: 0.05; position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:200px; }
     #trialTable input { width:100%; }
     #dashboardContent { animation: fadeIn 0.6s; }
     @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
     .btn { min-width:120px; }
+    .table thead th { background-color: #e9ecef; }
+    #validationResult { font-weight: 600; }
   </style>
 </head>
 <body>
@@ -45,7 +47,7 @@
   <!-- Main Content -->
   <main class="container py-4" style="position:relative; z-index:1;">
     <h2 class="mb-3">إدخال ميزان المراجعة</h2>
-    <p>اختر الطريقة: ارفع CSV/XLSX أو أدخل الحسابات يدوياً.</p>
+    <p class="text-muted">اختر الطريقة: ارفع CSV/XLSX أو أدخل الحسابات يدوياً.</p>
 
     <div class="row g-3 mb-4">
       <!-- تحميل القالب -->
@@ -98,12 +100,13 @@
           <div>
             <button id="saveSession" class="btn btn-primary"><i class="fa fa-save me-1"></i>حفظ الجلسة</button>
             <button id="loadSession" class="btn btn-secondary"><i class="fa fa-folder-open me-1"></i>استرجاع الجلسة</button>
-            <a class="btn btn-success" href="dashboard.html"><i class="fa fa-arrow-left me-1"></i>اذهب للوحة التحكم</a>
+            <button id="exportCSV" class="btn btn-warning"><i class="fa fa-file-csv me-1"></i>تصدير CSV</button>
+            <button id="exportXLSX" class="btn btn-success"><i class="fa fa-file-excel me-1"></i>تصدير XLSX</button>
+            <a class="btn btn-dark" href="dashboard.html"><i class="fa fa-arrow-left me-1"></i>اذهب للوحة التحكم</a>
           </div>
         </div>
 
         <div id="validationResult" class="mt-3"></div>
-
       </div>
     </div>
   </main>
@@ -119,7 +122,15 @@
   <script src="scripts/storage.js"></script>
   <script src="scripts/file-handlers.js"></script>
   <script src="scripts/main.js"></script>
+  <script>
+    // إضافة وظائف تصدير CSV و XLSX
+    document.getElementById('exportCSV').addEventListener('click', () => {
+      exportTrialCSV();
+    });
+    document.getElementById('exportXLSX').addEventListener('click', () => {
+      exportTrialXLSX();
+    });
+  </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>
