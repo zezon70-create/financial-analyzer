@@ -1,97 +1,60 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>إدخال البيانات — المحلل المالي</title>
-  <link href="https://fonts.googleapis.com/css?family=Cairo:300,400,600&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إدخال البيانات - Financial Analyzer</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <!-- navbar same as index (kept minimal here) -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container-fluid">
-      <a class="navbar-brand d-flex align-items-center" href="index.html">
-        <img src="assets/logo.png" alt="logo" class="site-logo">
-        <span class="ms-2 brand-title">المحلل المالي</span>
-      </a>
-      <div class="d-flex gap-2">
-        <select id="currencySelectTop" class="form-select form-select-sm" style="width:110px">
-          <option value="EGP">EGP</option>
-          <option value="USD">USD</option>
-          <option value="EUR">EUR</option>
-        </select>
-        <button id="langToggleTop" class="btn btn-outline-light btn-sm">EN</button>
-        <button id="themeToggleTop" class="btn btn-outline-light btn-sm">🌙</button>
-      </div>
+  <header>
+    <img src="assets/logo.png" alt="Logo" class="logo">
+    <h1 data-i18n="input_title">إدخال البيانات المالية</h1>
+    <div class="header-controls">
+      <button id="toggle-lang">English</button>
+      <button id="toggle-theme">🌙</button>
     </div>
-  </nav>
+  </header>
 
-  <main class="container py-4">
-    <h2 data-i18n="input_title">إدخال ميزان المراجعة</h2>
-    <p class="text-muted" data-i18n="input_desc">اختر الطريقة: ارفع CSV/XLSX أو أدخل الحسابات يدوياً.</p>
+  <main>
+    <section class="input-section">
+      <h2 data-i18n="manual_entry">إدخال يدوي</h2>
+      <form id="manualForm">
+        <label data-i18n="revenues">الإيرادات</label>
+        <input type="number" name="revenues" required>
 
-    <div class="row g-3 mb-4">
-      <div class="col-md-4">
-        <div class="card p-3 shadow-sm">
-          <h5 data-i18n="download_template">تحميل قالب CSV</h5>
-          <p class="small text-muted" data-i18n="download_template_desc">قالب جاهز لتسهيل الإدخال.</p>
-          <button id="downloadTemplate" class="btn btn-outline-primary w-100">تحميل القالب</button>
-        </div>
-      </div>
+        <label data-i18n="expenses">المصروفات</label>
+        <input type="number" name="expenses" required>
 
-      <div class="col-md-8">
-        <div class="card p-3 shadow-sm">
-          <h5 data-i18n="upload_file">رفع ملف الميزان</h5>
-          <input id="fileInput" type="file" accept=".csv, .xlsx, .xls" class="form-control mb-3"/>
-          <div class="d-flex gap-2">
-            <button id="parseFile" class="btn btn-primary">استيراد الملف</button>
-            <button id="clearAll" class="btn btn-danger">مسح كل البيانات</button>
-            <button id="autoSaveToggle" class="btn btn-outline-secondary">Auto-save: ON</button>
-          </div>
-          <div id="fileMsg" class="small text-muted mt-2"></div>
-        </div>
-      </div>
-    </div>
+        <label data-i18n="assets">الأصول</label>
+        <input type="number" name="assets">
 
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <h6 data-i18n="trial_table">ميزان المراجعة (قابل للتعديل)</h6>
-        <div class="table-responsive">
-          <table id="trialTable" class="table table-sm table-bordered align-middle">
-            <thead class="table-light">
-              <tr><th data-i18n="col_account">الحساب</th><th data-i18n="col_accno">رقم الحساب</th><th data-i18n="col_debit">مدين</th><th data-i18n="col_credit">دائن</th><th data-i18n="col_actions">إجراءات</th></tr>
-            </thead>
-            <tbody id="tbBody"></tbody>
-          </table>
-        </div>
+        <label data-i18n="liabilities">الخصوم</label>
+        <input type="number" name="liabilities">
 
-        <div class="d-flex justify-content-between mt-3">
-          <div>
-            <button id="addRow" class="btn btn-outline-secondary">إضافة سطر</button>
-            <button id="validate" class="btn btn-outline-success">تحقق من الميزان</button>
-          </div>
-          <div>
-            <button id="saveSession" class="btn btn-primary">حفظ الجلسة</button>
-            <button id="loadSession" class="btn btn-secondary">استرجاع الجلسة</button>
-            <button id="exportCSV" class="btn btn-warning">تصدير CSV</button>
-            <button id="exportXLSX" class="btn btn-success">تصدير XLSX</button>
-            <a class="btn btn-dark" href="dashboard.html">اذهب للوحة التحكم</a>
-          </div>
-        </div>
+        <label data-i18n="equity">حقوق الملكية</label>
+        <input type="number" name="equity">
 
-        <div id="validationResult" class="mt-3"></div>
-      </div>
-    </div>
+        <button type="submit" data-i18n="save">حفظ البيانات</button>
+      </form>
+    </section>
+
+    <section class="input-section">
+      <h2 data-i18n="upload_excel">رفع ملف Excel</h2>
+      <input type="file" id="excelFile" accept=".xlsx,.xls">
+      <button id="uploadExcel" data-i18n="upload_btn">تحميل البيانات</button>
+    </section>
+
+    <section class="input-section">
+      <a href="dashboard.html" class="next-btn" data-i18n="go_dashboard">الانتقال إلى لوحة التحكم</a>
+    </section>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-  <script src="scripts/storage.js"></script>
-  <script src="scripts/file-handlers.js"></script>
-  <script src="scripts/export.js"></script>
-  <script src="scripts/app.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <footer>
+    <p>&copy; 2025 Financial Analyzer</p>
+  </footer>
+
+  <script src="scripts/main.js"></script>
+  <script src="scripts/input.js"></script>
 </body>
 </html>
