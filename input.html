@@ -10,19 +10,12 @@
   <link rel="stylesheet" href="css/style.css">
   <script src="https://kit.fontawesome.com/a2d9b6f5a8.js" crossorigin="anonymous"></script>
   <style>
-    .global-watermark {
-      position: absolute;
-      top: 20%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      opacity: 0.05;
-      width: 300px;
-      z-index: 0;
-    }
-    .table tbody tr:nth-child(odd) { background-color: #f8f9fa; }
-    .table tbody tr:hover { background-color: #e2f0ff; }
-    .card { border-radius: 12px; }
-    button:hover { transform: scale(1.02); transition: 0.2s; }
+    .card:hover { transform: translateY(-5px); transition: all 0.3s ease; }
+    .global-watermark { opacity: 0.05; position: absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:200px; }
+    #trialTable input { width:100%; }
+    #dashboardContent { animation: fadeIn 0.6s; }
+    @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+    .btn { min-width:120px; }
   </style>
 </head>
 <body>
@@ -52,12 +45,12 @@
   <!-- Main Content -->
   <main class="container py-4" style="position:relative; z-index:1;">
     <h2 class="mb-3">إدخال ميزان المراجعة</h2>
-    <p class="mb-4">اختر الطريقة: ارفع CSV/XLSX أو أدخل الحسابات يدوياً.</p>
+    <p>اختر الطريقة: ارفع CSV/XLSX أو أدخل الحسابات يدوياً.</p>
 
-    <div class="row g-4">
+    <div class="row g-3 mb-4">
       <!-- تحميل القالب -->
       <div class="col-md-4">
-        <div class="card p-4 shadow-sm h-100 d-flex flex-column justify-content-between">
+        <div class="card p-3 shadow-sm border-0">
           <h5>تحميل قالب CSV</h5>
           <p>قالب جاهز لتسهيل إدخال البيانات.</p>
           <button id="downloadTemplate" class="btn btn-outline-primary w-100"><i class="fa fa-file-csv me-2"></i>تحميل القالب</button>
@@ -66,52 +59,51 @@
 
       <!-- رفع الملف -->
       <div class="col-md-8">
-        <div class="card p-4 shadow-sm h-100">
+        <div class="card p-3 shadow-sm border-0">
           <h5>رفع ملف الميزان</h5>
-          <input id="fileInput" type="file" accept=".csv,.xlsx,.xls" class="form-control mb-3"/>
-          <div class="d-flex flex-wrap gap-2 mb-3">
+          <input id="fileInput" type="file" accept=".csv, .xlsx, .xls" class="form-control mb-3"/>
+          <div class="mb-3 d-flex gap-2 flex-wrap">
             <button id="parseFile" class="btn btn-primary"><i class="fa fa-upload me-1"></i>استيراد الملف</button>
             <button id="clearAll" class="btn btn-danger"><i class="fa fa-trash me-1"></i>مسح كل البيانات</button>
           </div>
           <div id="fileMsg" class="small text-muted"></div>
         </div>
       </div>
+    </div>
 
-      <!-- جدول الميزان -->
-      <div class="col-12">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h6>ميزان المراجعة (قابل للتعديل)</h6>
-            <div class="table-responsive">
-              <table id="trialTable" class="table table-sm table-bordered align-middle">
-                <thead class="table-light">
-                  <tr>
-                    <th>الحساب</th>
-                    <th>رقم الحساب</th>
-                    <th>مدين</th>
-                    <th>دائن</th>
-                    <th>إجراءات</th>
-                  </tr>
-                </thead>
-                <tbody id="tbBody"></tbody>
-              </table>
-            </div>
+    <!-- جدول الميزان -->
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <h6>ميزان المراجعة (قابل للتعديل)</h6>
+        <div class="table-responsive">
+          <table id="trialTable" class="table table-sm table-bordered align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>الحساب</th>
+                <th>رقم الحساب</th>
+                <th>مدين</th>
+                <th>دائن</th>
+                <th>إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="tbBody"></tbody>
+          </table>
+        </div>
 
-            <div class="d-flex justify-content-between flex-wrap gap-2 mt-3">
-              <div>
-                <button id="addRow" class="btn btn-outline-secondary"><i class="fa fa-plus me-1"></i>إضافة سطر</button>
-                <button id="validate" class="btn btn-outline-success"><i class="fa fa-check me-1"></i>تحقق من الميزان</button>
-              </div>
-              <div>
-                <button id="saveSession" class="btn btn-primary"><i class="fa fa-save me-1"></i>حفظ الجلسة</button>
-                <button id="loadSession" class="btn btn-secondary"><i class="fa fa-folder-open me-1"></i>استرجاع الجلسة</button>
-                <a class="btn btn-success" href="dashboard.html"><i class="fa fa-arrow-left me-1"></i>اذهب للوحة التحكم</a>
-              </div>
-            </div>
-
-            <div id="validationResult" class="mt-3"></div>
+        <div class="d-flex justify-content-between mt-3 flex-wrap gap-2">
+          <div>
+            <button id="addRow" class="btn btn-outline-secondary"><i class="fa fa-plus me-1"></i>إضافة سطر</button>
+            <button id="validate" class="btn btn-outline-success"><i class="fa fa-check me-1"></i>تحقق من الميزان</button>
+          </div>
+          <div>
+            <button id="saveSession" class="btn btn-primary"><i class="fa fa-save me-1"></i>حفظ الجلسة</button>
+            <button id="loadSession" class="btn btn-secondary"><i class="fa fa-folder-open me-1"></i>استرجاع الجلسة</button>
+            <a class="btn btn-success" href="dashboard.html"><i class="fa fa-arrow-left me-1"></i>اذهب للوحة التحكم</a>
           </div>
         </div>
+
+        <div id="validationResult" class="mt-3"></div>
+
       </div>
     </div>
   </main>
