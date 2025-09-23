@@ -1,202 +1,124 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>لوحة التحكم UHD — المحلل المالي</title>
-  <link href="https://fonts.googleapis.com/css?family=Cairo:300,400,600&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-  <script src="https://kit.fontawesome.com/a2d9b6f5a8.js" crossorigin="anonymous"></script><!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>لوحة التحكم — المحلل المالي</title>
-  <link href="https://fonts.googleapis.com/css?family=Cairo:300,400,600&display=swap" rel="stylesheet">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>لوحة التحكم | Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script defer src="main.js"></script>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container-fluid">
-      <a class="navbar-brand d-flex align-items-center" href="index.html">
-        <img src="assets/logo.png" alt="logo" class="site-logo">
-        <span class="ms-2 brand-title">المحلل المالي</span>
-      </a>
-      <div class="d-flex gap-2">
-        <select id="currencySelectDash" class="form-select form-select-sm" style="width:110px">
-          <option value="EGP">EGP</option>
-          <option value="USD">USD</option>
-          <option value="EUR">EUR</option>
-        </select>
-        <button id="langToggleDash" class="btn btn-outline-light btn-sm">EN</button>
-        <button id="themeToggleDash" class="btn btn-outline-light btn-sm">🌙</button>
-      </div>
+  <!-- الهيدر -->
+  <header class="header">
+    <div class="logo">
+      <img src="assets/logo.png" alt="Logo" />
+      <h1 id="dashboard-title">لوحة التحكم</h1>
     </div>
-  </nav>
-
-  <main class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 data-i18n="dashboard_title">الملخص المالي والتحليلات</h2>
-      <div class="d-flex gap-2">
-        <button id="exportExcelDash" class="btn btn-warning">تصدير Excel</button>
-        <button id="exportPdfDash" class="btn btn-secondary">تصدير PDF</button>
-      </div>
+    <div class="controls">
+      <button id="darkModeToggle">🌙</button>
+      <button id="languageToggle">EN</button>
     </div>
+  </header>
 
-    <div id="noData" class="alert alert-warning" style="display:none;">لا توجد بيانات — ارفع ميزان المراجعة في صفحة الإدخال أولاً.</div>
-
-    <div id="dashboardContent" style="display:none;">
-      <div class="row g-3 mb-4">
-        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><h6>صافي الربح</h6><div id="netProfit" class="display-6">-</div></div></div>
-        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><h6>العائد على الأصول (ROA)</h6><div id="roa" class="display-6">-</div></div></div>
-        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><h6>العائد على حقوق الملكية (ROE)</h6><div id="roe" class="display-6">-</div></div></div>
-        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><h6>EVA</h6><div id="eva" class="display-6">-</div></div></div>
+  <!-- المحتوى -->
+  <main class="dashboard">
+    <!-- KPIs -->
+    <section class="kpi-cards">
+      <div class="card">
+        <h3 id="kpi-revenue">الإيرادات</h3>
+        <p>$120,000</p>
       </div>
-
-      <div class="row g-4 mb-4">
-        <div class="col-md-6"><div class="card p-3 shadow-sm chart-card"><h6>تطور الإيرادات والمصروفات</h6><canvas id="revExpChart" height="250"></canvas></div></div>
-        <div class="col-md-6"><div class="card p-3 shadow-sm chart-card"><h6>ملف النسب</h6><canvas id="ratiosChart" height="250"></canvas></div></div>
+      <div class="card">
+        <h3 id="kpi-expenses">المصروفات</h3>
+        <p>$75,000</p>
       </div>
-
-      <div>
-        <h5>قوائم مالية مُبسطة</h5>
-        <div class="row g-3">
-          <div class="col-md-6"><div class="card p-3 shadow-sm"><h6>قائمة الدخل (مبسطة)</h6><div id="incomeStatement"></div></div></div>
-          <div class="col-md-6"><div class="card p-3 shadow-sm"><h6>الميزانية العمومية (مبسطة)</h6><div id="balanceSheet"></div></div></div>
-        </div>
+      <div class="card">
+        <h3 id="kpi-profit">الأرباح</h3>
+        <p>$45,000</p>
       </div>
+    </section>
 
-    </div>
+    <!-- الرسوم البيانية -->
+    <section class="charts">
+      <div class="chart-container">
+        <canvas id="revenueChart"></canvas>
+      </div>
+      <div class="chart-container">
+        <canvas id="expenseChart"></canvas>
+      </div>
+    </section>
+
+    <!-- الجدول -->
+    <section class="data-table">
+      <h2 id="table-title">ملخص البيانات</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>الشهر</th>
+            <th>الإيرادات</th>
+            <th>المصروفات</th>
+            <th>الأرباح</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>يناير</td>
+            <td>$10,000</td>
+            <td>$6,000</td>
+            <td>$4,000</td>
+          </tr>
+          <tr>
+            <td>فبراير</td>
+            <td>$12,000</td>
+            <td>$7,500</td>
+            <td>$4,500</td>
+          </tr>
+          <tr>
+            <td>مارس</td>
+            <td>$15,000</td>
+            <td>$9,000</td>
+            <td>$6,000</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="scripts/storage.js"></script>
-  <script src="scripts/app.js"></script>
-  <script src="scripts/export.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
-
-  <style>
-    .card:hover { transform: translateY(-5px); transition: all 0.3s ease; }
-    .display-6 { font-weight: 700; }
-    .chart-card { min-height: 280px; }
-    #dashboardContent { animation: fadeIn 0.6s; }
-    @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
-    .btn { min-width: 120px; }
-  </style>
-</head>
-<body>
-
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
-    <div class="container-fluid">
-      <a class="navbar-brand d-flex align-items-center" href="index.html">
-        <img src="assets/img/logo.png" alt="logo" class="site-logo">
-        <div class="ms-2">المحلل المالي</div>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div id="nav" class="collapse navbar-collapse">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="input.html">إدخال البيانات</a></li>
-          <li class="nav-item"><a class="nav-link active" href="dashboard-uhd.html">لوحة التحكم UHD</a></li>
-          <li class="nav-item"><a class="nav-link" href="reports.html">التقارير</a></li>
-          <li class="nav-item"><a class="nav-link" href="compare.html">مقارنة</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
-  <!-- Main Content -->
-  <main class="container py-5" style="position:relative; z-index:1;">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4 gap-2">
-      <h2>الملخص المالي والتحليلات UHD</h2>
-      <div class="d-flex flex-wrap gap-2">
-        <button id="refreshBtn" class="btn btn-outline-primary"><i class="fa fa-sync-alt me-1"></i>تحديث البيانات</button>
-      </div>
-    </div>
-
-    <div id="noData" class="alert alert-warning text-center" style="display:none;">
-      لا توجد بيانات — ارفع ميزان المراجعة أولاً.
-    </div>
-
-    <div id="dashboardContent" style="display:none;">
-      <!-- KPIs Cards -->
-      <div class="row g-3 mb-4">
-        <div class="col-md-3">
-          <div class="card text-center p-3 shadow-sm border-0">
-            <h6>صافي الربح</h6>
-            <div id="netProfit" class="display-6">-</div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card text-center p-3 shadow-sm border-0">
-            <h6>العائد على الأصول (ROA)</h6>
-            <div id="roa" class="display-6">-</div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card text-center p-3 shadow-sm border-0">
-            <h6>العائد على حقوق الملكية (ROE)</h6>
-            <div id="roe" class="display-6">-</div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card text-center p-3 shadow-sm border-0">
-            <h6>EVA</h6>
-            <div id="eva" class="display-6">-</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Charts -->
-      <div class="row g-4 mb-4">
-        <div class="col-md-6">
-          <div class="card p-3 shadow-sm chart-card">
-            <h6>تطور الإيرادات والمصروفات</h6>
-            <canvas id="revExpChart" height="250"></canvas>
-          </div>
-        </div>
-        <div class="col-md-6">
-          <div class="card p-3 shadow-sm chart-card">
-            <h6>ملف النسب</h6>
-            <canvas id="ratiosChart" height="250"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Financial Statements -->
-      <div>
-        <h5>قوائم مالية مُبسطة</h5>
-        <div class="row g-3">
-          <div class="col-md-6">
-            <div class="card p-3 shadow-sm">
-              <h6>قائمة الدخل (مبسطة)</h6>
-              <div id="incomeStatement"></div>
-            </div>
-          </div>
-          <div class="col-md-6">
-            <div class="card p-3 shadow-sm">
-              <h6>الميزانية العمومية (مبسطة)</h6>
-              <div id="balanceSheet"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </main>
-
-  <footer class="bg-light py-3 text-center small">
-    &copy; 2025 المحلل المالي — Moataz Madkour
+  <!-- الفوتر -->
+  <footer class="footer">
+    <p>&copy; 2025 المحلل المالي | Financial Analyzer</p>
   </footer>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="scripts/dashboard-uhd.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- سكريبت خاص بالرسوم -->
+  <script>
+    const ctx1 = document.getElementById('revenueChart').getContext('2d');
+    new Chart(ctx1, {
+      type: 'line',
+      data: {
+        labels: ['يناير', 'فبراير', 'مارس'],
+        datasets: [{
+          label: 'الإيرادات',
+          data: [10000, 12000, 15000],
+          borderColor: 'green',
+          backgroundColor: 'rgba(0,128,0,0.2)',
+          fill: true
+        }]
+      }
+    });
+
+    const ctx2 = document.getElementById('expenseChart').getContext('2d');
+    new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: ['يناير', 'فبراير', 'مارس'],
+        datasets: [{
+          label: 'المصروفات',
+          data: [6000, 7500, 9000],
+          backgroundColor: 'rgba(255,0,0,0.6)'
+        }]
+      }
+    });
+  </script>
 </body>
 </html>
