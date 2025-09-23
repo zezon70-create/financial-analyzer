@@ -4,14 +4,21 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>التقارير — المحلل المالي</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;">
   <link href="https://fonts.googleapis.com/css?family=Cairo:300,400,600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://kit.fontawesome.com/a2d9b6f5a8.js" crossorigin="anonymous"></script>
+  <style>
+    .card:hover { transform: translateY(-5px); transition: all 0.3s ease; }
+    .table-responsive { max-height:400px; overflow-y:auto; }
+    .btn { min-width:120px; }
+    .global-watermark { opacity:0.05; position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); width:200px; }
+  </style>
 </head>
 <body>
+
   <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center" href="index.html">
         <img src="assets/img/logo.png" alt="logo" class="site-logo">
@@ -31,70 +38,82 @@
     </div>
   </nav>
 
+  <!-- Watermark -->
+  <img src="assets/img/logo.png" alt="watermark" class="global-watermark">
+
   <!-- Main Content -->
   <main class="container py-4" style="position:relative; z-index:1;">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-3 gap-2">
-      <h2>التقارير المالية</h2>
-      <div class="d-flex flex-wrap gap-2">
-        <button id="exportExcel" class="btn btn-warning">تصدير Excel</button>
-        <button id="exportPdf" class="btn btn-secondary">تصدير PDF</button>
-      </div>
-    </div>
+    <h2 class="mb-4">التقارير المالية</h2>
 
     <div id="noData" class="alert alert-warning" style="display:none;">
-      لا توجد بيانات — ارفع ميزان المراجعة في صفحة الإدخال أولاً.
+      لا توجد بيانات لعرض التقارير — ارفع ميزان المراجعة أولاً.
     </div>
 
     <div id="reportsContent" style="display:none;">
-      <!-- Financial Statements -->
+      <div class="d-flex flex-wrap gap-2 mb-4">
+        <button id="exportExcel" class="btn btn-warning"><i class="fa fa-file-excel me-1"></i>تصدير Excel</button>
+        <button id="exportPdf" class="btn btn-secondary"><i class="fa fa-file-pdf me-1"></i>تصدير PDF</button>
+        <button id="printReport" class="btn btn-info"><i class="fa fa-print me-1"></i>طباعة التقرير</button>
+      </div>
+
+      <!-- Cards Summary -->
       <div class="row g-3 mb-4">
-        <div class="col-md-6">
-          <div class="card p-3 shadow-sm">
-            <h6>قائمة الدخل التفصيلية</h6>
-            <div id="incomeReport"></div>
+        <div class="col-md-3">
+          <div class="card text-center p-3 shadow-sm">
+            <h6>صافي الربح</h6>
+            <div id="netProfit" class="display-6">-</div>
           </div>
         </div>
-        <div class="col-md-6">
-          <div class="card p-3 shadow-sm">
-            <h6>الميزانية العمومية التفصيلية</h6>
-            <div id="balanceReport"></div>
+        <div class="col-md-3">
+          <div class="card text-center p-3 shadow-sm">
+            <h6>العائد على الأصول (ROA)</h6>
+            <div id="roa" class="display-6">-</div>
           </div>
         </div>
-      </div>
-
-      <!-- Ratios -->
-      <div class="row g-4 mb-4">
-        <div class="col-md-6">
-          <div class="card p-3 shadow-sm">
-            <h6>النسب المالية</h6>
-            <canvas id="ratiosChart" height="250"></canvas>
+        <div class="col-md-3">
+          <div class="card text-center p-3 shadow-sm">
+            <h6>العائد على حقوق الملكية (ROE)</h6>
+            <div id="roe" class="display-6">-</div>
           </div>
         </div>
-        <div class="col-md-6">
-          <div class="card p-3 shadow-sm">
-            <h6>تطور الإيرادات والمصروفات</h6>
-            <canvas id="revExpChart" height="250"></canvas>
+        <div class="col-md-3">
+          <div class="card text-center p-3 shadow-sm">
+            <h6>EVA</h6>
+            <div id="eva" class="display-6">-</div>
           </div>
         </div>
       </div>
 
-      <!-- Summary KPIs -->
-      <div class="row g-3">
-        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><h6>صافي الربح</h6><div id="netProfit" class="display-6">-</div></div></div>
-        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><h6>العائد على الأصول (ROA)</h6><div id="roa" class="display-6">-</div></div></div>
-        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><h6>العائد على حقوق الملكية (ROE)</h6><div id="roe" class="display-6">-</div></div></div>
-        <div class="col-md-3"><div class="card text-center p-3 shadow-sm"><h6>EVA</h6><div id="eva" class="display-6">-</div></div></div>
+      <!-- Financial Statements -->
+      <div class="row g-4">
+        <div class="col-md-6">
+          <div class="card p-3 shadow-sm">
+            <h6>قائمة الدخل (مبسطة)</h6>
+            <div id="incomeStatement" class="table-responsive"></div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card p-3 shadow-sm">
+            <h6>الميزانية العمومية (مبسطة)</h6>
+            <div id="balanceSheet" class="table-responsive"></div>
+          </div>
+        </div>
       </div>
     </div>
   </main>
 
+  <!-- Footer -->
+  <footer class="bg-light py-3 text-center small">
+    &copy; 2025 المحلل المالي — Moataz Madkour
+  </footer>
+
   <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="scripts/storage.js"></script>
   <script src="scripts/file-handlers.js"></script>
   <script src="scripts/pdf-export.js"></script>
   <script src="scripts/main.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
