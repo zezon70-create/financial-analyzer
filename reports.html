@@ -1,159 +1,47 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>التقارير — المحلل المالي</title>
   <link href="https://fonts.googleapis.com/css?family=Cairo:300,400,600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <script src="https://kit.fontawesome.com/a2d9b6f5a8.js" crossorigin="anonymous"></script>
-  <style>
-    body { font-family: 'Cairo', sans-serif; background: #f8f9fa; }
-    .report-card { transition: transform 0.2s; cursor: pointer; }
-    .report-card:hover { transform: scale(1.02); }
-    .report-table th, .report-table td { text-align: center; }
-  </style>
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-      <a class="navbar-brand d-flex align-items-center" href="dashboard.html">
-        <img src="assets/img/logo.png" alt="logo" class="site-logo me-2"> المحلل المالي
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img src="assets/logo.png" alt="logo" class="site-logo">
+        <span class="ms-2 brand-title">المحلل المالي</span>
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div id="nav" class="collapse navbar-collapse">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="dashboard.html">لوحة التحكم</a></li>
-          <li class="nav-item"><a class="nav-link" href="compare.html">المقارنة</a></li>
-          <li class="nav-item"><a class="nav-link active" href="reports.html">التقارير</a></li>
-        </ul>
-      </div>
     </div>
   </nav>
 
-  <!-- Main Content -->
   <main class="container py-5">
-    <div class="text-center mb-4">
-      <h2>📄 التقارير المالية</h2>
-      <p class="text-muted">يمكنك إنشاء تقرير للجلسة الحالية أو تحميل تقارير محفوظة سابقة.</p>
-    </div>
+    <h2>التقارير</h2>
+    <p class="text-muted">توليد وتصدير التقارير كاملة (PDF / Excel).</p>
 
-    <!-- Reports Options -->
-    <div class="row g-4 mb-4">
-      <div class="col-md-6">
-        <div class="card shadow-sm p-4 report-card">
-          <h5>الجلسة الحالية</h5>
-          <p class="text-muted">إنشاء تقرير تفصيلي للبيانات الحالية المخزنة في المتصفح.</p>
-          <button id="currentReport" class="btn btn-primary w-100"><i class="fa fa-file-alt me-1"></i> إنشاء تقرير</button>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="card shadow-sm p-4 report-card">
-          <h5>جلسة محفوظة</h5>
-          <p class="text-muted">تحميل جلسة محفوظة من المتصفح واستعراض التقرير الخاص بها.</p>
-          <button id="loadReport" class="btn btn-success w-100"><i class="fa fa-folder-open me-1"></i> تحميل تقرير</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Report Display -->
-    <div id="reportContent" class="card shadow-sm p-4" style="display:none;">
-      <h5>📑 محتوى التقرير</h5>
-      <div id="reportText" class="mb-4"></div>
-
-      <!-- Table Example -->
-      <div class="table-responsive mb-4">
-        <table class="table table-bordered table-striped report-table">
-          <thead class="table-light">
-            <tr>
-              <th>المؤشر</th>
-              <th>القيمة</th>
-            </tr>
-          </thead>
-          <tbody id="reportTableBody"></tbody>
-        </table>
+    <div class="card p-3 shadow-sm">
+      <div class="mb-3">
+        <label class="form-label">اختر نوع التقرير</label>
+        <select id="reportType" class="form-select">
+          <option value="full">تقرير كامل</option>
+          <option value="financials">قوائم مالية فقط</option>
+          <option value="ratios">ملف النسب</option>
+        </select>
       </div>
 
-      <!-- Export Buttons -->
-      <div class="d-flex gap-2 flex-wrap">
-        <button id="exportExcel" class="btn btn-warning"><i class="fa fa-file-excel me-1"></i> تصدير Excel</button>
-        <button id="exportPdf" class="btn btn-secondary"><i class="fa fa-file-pdf me-1"></i> تصدير PDF</button>
+      <div class="d-flex gap-2">
+        <button id="generatePdf" class="btn btn-secondary">تصدير PDF</button>
+        <button id="generateXlsx" class="btn btn-warning">تصدير Excel</button>
       </div>
     </div>
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-light py-3 text-center small">
-    &copy; 2025 المحلل المالي — Moataz Madkour
-  </footer>
-
-  <!-- Scripts -->
-  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="scripts/storage.js"></script>
-  <script src="scripts/file-handlers.js"></script>
-  <script src="scripts/pdf-export.js"></script>
-  <script src="scripts/main.js"></script>
+  <script src="scripts/app.js"></script>
+  <script src="scripts/export.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-  <script>
-    const reportContent = document.getElementById('reportContent');
-    const reportText = document.getElementById('reportText');
-    const reportTableBody = document.getElementById('reportTableBody');
-
-    function generateReport(session) {
-      if(!session || !session.trial) {
-        alert('⚠️ لا توجد بيانات لإنشاء التقرير');
-        return;
-      }
-
-      // عرض نص التقرير
-      reportText.innerHTML = `
-        <p><strong>الإيرادات:</strong> ${session.trial.revenues?.toLocaleString() || 0}</p>
-        <p><strong>المصروفات:</strong> ${session.trial.expenses?.toLocaleString() || 0}</p>
-        <p><strong>صافي الربح:</strong> ${(session.trial.revenues - session.trial.expenses).toLocaleString()}</p>
-      `;
-
-      // جدول تفصيلي
-      reportTableBody.innerHTML = '';
-      const entries = [
-        ['الإيرادات', session.trial.revenues],
-        ['المصروفات', session.trial.expenses],
-        ['الأصول', session.trial.assets],
-        ['الخصوم', session.trial.liabilities],
-        ['حقوق الملكية', session.trial.equity],
-        ['صافي الربح', session.trial.revenues - session.trial.expenses]
-      ];
-
-      entries.forEach(([label, value]) => {
-        const row = `<tr><td>${label}</td><td>${(value||0).toLocaleString()}</td></tr>`;
-        reportTableBody.insertAdjacentHTML('beforeend', row);
-      });
-
-      reportContent.style.display = 'block';
-    }
-
-    document.getElementById('currentReport').addEventListener('click', () => {
-      const session = loadSession();
-      generateReport(session);
-    });
-
-    document.getElementById('loadReport').addEventListener('click', () => {
-      const session = loadSession();
-      generateReport(session);
-    });
-
-    document.getElementById('exportExcel').addEventListener('click', () => {
-      const table = document.querySelector('.report-table');
-      exportTableToExcel(table, 'report.xlsx');
-    });
-
-    document.getElementById('exportPdf').addEventListener('click', () => {
-      exportPDF('reportContent', 'report.pdf');
-    });
-  </script>
 </body>
 </html>
