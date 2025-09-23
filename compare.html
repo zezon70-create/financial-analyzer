@@ -3,205 +3,59 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>المقارنة — المحلل المالي</title>
+  <title>مقارنة — المحلل المالي</title>
   <link href="https://fonts.googleapis.com/css?family=Cairo:300,400,600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <script src="https://kit.fontawesome.com/a2d9b6f5a8.js" crossorigin="anonymous"></script>
-  <style>
-    body { font-family: 'Cairo', sans-serif; background: #f8f9fa; }
-    .global-watermark { position: fixed; bottom: 10px; left: 10px; width: 120px; opacity: 0.05; z-index:0; }
-    .card-header { font-weight: 600; background: #e9ecef; }
-    .diff-up { color: green; font-weight: bold; }
-    .diff-down { color: red; font-weight: bold; }
-    .sidebar { display:none; } /* إزالة sidebar القديم */
-  </style>
 </head>
 <body>
-
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
-      <a class="navbar-brand d-flex align-items-center" href="dashboard.html">
-        <img src="assets/img/logo.png" alt="logo" class="site-logo me-2"> المحلل المالي
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img src="assets/logo.png" alt="logo" class="site-logo">
+        <span class="ms-2 brand-title">المحلل المالي</span>
       </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div id="nav" class="collapse navbar-collapse">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" href="dashboard.html">لوحة التحكم</a></li>
-          <li class="nav-item"><a class="nav-link active" href="compare.html">المقارنة</a></li>
-          <li class="nav-item"><a class="nav-link" href="reports.html">التقارير</a></li>
-        </ul>
-      </div>
     </div>
   </nav>
 
-  <!-- Watermark -->
-  <img src="assets/img/logo.png" alt="watermark" class="global-watermark">
+  <main class="container py-4">
+    <h2>مقارنة بين جلستين</h2>
+    <p class="text-muted">اختر جلستين محفوظتين لمقارنة النتائج.</p>
 
-  <!-- Main Content -->
-  <main class="container py-5" style="position:relative; z-index:1;">
-    <h2 class="mb-4">مقارنة بين جلستين</h2>
-    <p class="text-muted">يمكنك تحميل جلستين من المتصفح لمقارنة النتائج المالية بينهما.</p>
-
-    <div class="row g-3 mb-4">
+    <div class="row g-3 mb-3">
       <div class="col-md-6">
-        <div class="card shadow-sm">
-          <div class="card-header">الجلسة A</div>
-          <div class="card-body">
-            <button id="loadA" class="btn btn-outline-primary w-100"><i class="fa fa-folder-open me-1"></i> تحميل من المتصفح</button>
-          </div>
+        <div class="card p-3 shadow-sm">
+          <label>اختر جلسة A</label>
+          <select id="sessionA" class="form-select"></select>
         </div>
       </div>
       <div class="col-md-6">
-        <div class="card shadow-sm">
-          <div class="card-header">الجلسة B</div>
-          <div class="card-body">
-            <button id="loadB" class="btn btn-outline-primary w-100"><i class="fa fa-folder-open me-1"></i> تحميل من المتصفح</button>
-          </div>
+        <div class="card p-3 shadow-sm">
+          <label>اختر جلسة B</label>
+          <select id="sessionB" class="form-select"></select>
         </div>
       </div>
     </div>
 
-    <!-- Charts Section -->
-    <div class="row g-4 mb-4">
-      <div class="col-md-6">
-        <div class="card shadow-sm p-3">
-          <h6 class="card-title mb-3">📊 مقارنة صافي الربح</h6>
-          <canvas id="profitChart" height="120"></canvas>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="card shadow-sm p-3">
-          <h6 class="card-title mb-3">📈 مقارنة شاملة</h6>
-          <canvas id="compareChart" height="180"></canvas>
-        </div>
-      </div>
+    <div class="card p-3 shadow-sm mb-3">
+      <h6>مقارنة صافي الربح</h6>
+      <canvas id="compareProfit" height="120"></canvas>
     </div>
 
-    <!-- Comparison Table -->
-    <div class="card shadow-sm p-3 mb-4">
-      <h6 class="card-title mb-3">📑 جدول مقارنة تفصيلي</h6>
+    <div class="card p-3 shadow-sm">
+      <h6>جدول مقارنة</h6>
       <div class="table-responsive">
-        <table class="table table-bordered text-center align-middle">
-          <thead class="table-primary">
-            <tr>
-              <th>المؤشر</th>
-              <th>الجلسة A</th>
-              <th>الجلسة B</th>
-              <th>الفرق</th>
-              <th>النسبة المئوية</th>
-            </tr>
-          </thead>
-          <tbody id="compareTable"></tbody>
+        <table class="table table-bordered" id="compareTable">
+          <thead class="table-light"><tr><th>المؤشر</th><th>جلسة A</th><th>جلسة B</th><th>الفرق</th></tr></thead>
+          <tbody></tbody>
         </table>
-      </div>
-      <div class="d-flex gap-2 mt-3 flex-wrap">
-        <button id="exportExcel" class="btn btn-warning"><i class="fa fa-file-excel me-1"></i> تصدير Excel</button>
-        <button id="exportPdf" class="btn btn-secondary"><i class="fa fa-file-pdf me-1"></i> تصدير PDF</button>
       </div>
     </div>
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-light py-3 text-center small">
-    &copy; 2025 المحلل المالي — Moataz Madkour
-  </footer>
-
-  <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
   <script src="scripts/storage.js"></script>
-  <script src="scripts/file-handlers.js"></script>
-  <script src="scripts/pdf-export.js"></script>
-  <script src="scripts/main.js"></script>
-  <script>
-    let sessionA = null, sessionB = null;
-    let profitChart = null, cmpChart = null;
-
-    document.getElementById('loadA').addEventListener('click', () => {
-      sessionA = loadSession();
-      if (!sessionA) return alert('⚠️ لا توجد جلسة مخزنة A');
-      alert('✅ تم جلب الجلسة A');
-      renderComparison();
-    });
-
-    document.getElementById('loadB').addEventListener('click', () => {
-      sessionB = loadSession();
-      if (!sessionB) return alert('⚠️ لا توجد جلسة مخزنة B');
-      alert('✅ تم جلب الجلسة B');
-      renderComparison();
-    });
-
-    function renderComparison() {
-      if (!sessionA || !sessionB) return;
-
-      const revenuesA = sessionA.trial?.revenues || 0;
-      const expensesA = sessionA.trial?.expenses || 0;
-      const assetsA = sessionA.trial?.assets || 0;
-      const liabA = sessionA.trial?.liabilities || 0;
-      const equityA = sessionA.trial?.equity || 0;
-      const profitA = revenuesA - expensesA;
-
-      const revenuesB = sessionB.trial?.revenues || 0;
-      const expensesB = sessionB.trial?.expenses || 0;
-      const assetsB = sessionB.trial?.assets || 0;
-      const liabB = sessionB.trial?.liabilities || 0;
-      const equityB = sessionB.trial?.equity || 0;
-      const profitB = revenuesB - expensesB;
-
-      const labels = ['الإيرادات','المصروفات','صافي الربح','الأصول','الخصوم','حقوق الملكية'];
-      const dataA = [revenuesA, expensesA, profitA, assetsA, liabA, equityA];
-      const dataB = [revenuesB, expensesB, profitB, assetsB, liabB, equityB];
-
-      // ✅ Charts
-      if (profitChart) profitChart.destroy();
-      profitChart = new Chart(document.getElementById('profitChart'), {
-        type: 'bar',
-        data: {
-          labels: ['صافي الربح'],
-          datasets: [
-            { label: 'جلسة A', data: [profitA], backgroundColor: '#0d6efd' },
-            { label: 'جلسة B', data: [profitB], backgroundColor: '#ffc107' }
-          ]
-        },
-        options: { responsive:true, plugins:{ legend:{position:'top'} } }
-      });
-
-      if (cmpChart) cmpChart.destroy();
-      cmpChart = new Chart(document.getElementById('compareChart'), {
-        type: 'bar',
-        data: { labels, datasets:[
-          { label:'جلسة A', data:dataA, backgroundColor:'#0d6efd' },
-          { label:'جلسة B', data:dataB, backgroundColor:'#ffc107' }
-        ] },
-        options:{ responsive:true, plugins:{legend:{position:'top'}}, scales:{y:{beginAtZero:true}} }
-      });
-
-      // ✅ Table
-      const tableBody = document.getElementById('compareTable');
-      tableBody.innerHTML = '';
-      labels.forEach((label,i)=>{
-        const diff = dataA[i] - dataB[i];
-        const pct = dataB[i] ? ((diff/dataB[i])*100).toFixed(2) : '—';
-        const row = `
-          <tr>
-            <td>${label}</td>
-            <td>${dataA[i].toLocaleString()}</td>
-            <td>${dataB[i].toLocaleString()}</td>
-            <td class="${diff>0?'diff-up':diff<0?'diff-down':''}">${diff.toLocaleString()}</td>
-            <td>${pct==='—'?pct:pct+'%'}</td>
-          </tr>`;
-        tableBody.insertAdjacentHTML('beforeend', row);
-      });
-    }
-
-    // ✅ Export Buttons
-    document.getElementById('exportExcel').addEventListener('click', ()=>exportTableToExcel('compareTable','Comparison'));
-    document.getElementById('exportPdf').addEventListener('click', ()=>exportTableToPDF('compareTable','Comparison'));
-  </script>
+  <script src="scripts/app.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
