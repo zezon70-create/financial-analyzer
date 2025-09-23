@@ -1,134 +1,151 @@
-/*======================
-  الخطوط والأساسيات
-=======================*/
+/* ========== Reset Styles ========== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Cairo", sans-serif;
+}
+
 body {
-  font-family: 'Cairo', sans-serif;
-  background-color: #f8f9fa;
-  color: #212529;
-  transition: background-color 0.3s, color 0.3s;
+  background: #f9f9f9;
+  color: #222;
+  line-height: 1.6;
+  transition: background 0.3s, color 0.3s;
 }
 
-h1, h2, h3, h4, h5, h6 {
-  font-weight: 700;
-}
-
-/*======================
-  الوضع الليلي (دارك مود)
-=======================*/
+/* ========== Dark Mode ========== */
 body.dark-mode {
-  background-color: #121212;
-  color: #e9ecef;
+  background: #121212;
+  color: #f1f1f1;
+}
+
+/* ========== Header ========== */
+.header {
+  background: #0077b6;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  flex-wrap: wrap;
+}
+
+.header .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header .logo img {
+  width: 40px;
+  height: 40px;
+}
+
+.header .controls {
+  display: flex;
+  gap: 10px;
+}
+
+.header button,
+.header select {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.header button:hover,
+.header select:hover {
+  opacity: 0.9;
+}
+
+/* ========== Dashboard Layout ========== */
+.dashboard {
+  padding: 20px;
+}
+
+/* Cards */
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: background 0.3s, color 0.3s;
 }
 
 body.dark-mode .card {
-  background-color: #1e1e1e;
-  color: #e9ecef;
+  background: #1e1e1e;
+  color: #f1f1f1;
 }
 
-body.dark-mode .navbar,
-body.dark-mode footer {
-  background-color: #212529 !important;
-  color: #f8f9fa !important;
+/* Charts */
+.charts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
 }
 
-body.dark-mode .btn-outline-primary {
-  border-color: #0d6efd;
-  color: #0d6efd;
-}
-body.dark-mode .btn-outline-primary:hover {
-  background-color: #0d6efd;
-  color: #fff;
-}
-
-/*======================
-  اللوجو المائي
-=======================*/
-.watermark {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  opacity: 0.08;
-  pointer-events: none;
-  z-index: 0;
-  width: 180px;
-}
-
-/*======================
-  البطاقات (Cards)
-=======================*/
-.card {
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: transform 0.3s;
-}
-
-.card:hover {
-  transform: translateY(-4px);
-}
-
-.display-6 {
-  font-weight: bold;
-  font-size: 1.8rem;
-}
-
-/*======================
-  المخططات (Charts)
-=======================*/
 .chart-card {
-  min-height: 280px;
-  position: relative;
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  transition: background 0.3s, color 0.3s;
 }
 
-canvas {
-  max-width: 100% !important;
-  height: auto !important;
+body.dark-mode .chart-card {
+  background: #1e1e1e;
+  color: #f1f1f1;
 }
 
-/*======================
-  استجابة (Responsive)
-=======================*/
-@media (max-width: 992px) {
-  .display-6 {
-    font-size: 1.5rem;
-  }
+/* Reports */
+.reports {
+  margin: 20px 0;
+  text-align: center;
 }
 
+.reports button {
+  margin: 10px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #0077b6;
+  color: white;
+  font-size: 15px;
+  transition: 0.3s;
+}
+
+.reports button:hover {
+  background: #023e8a;
+}
+
+/* Footer */
+.footer {
+  background: #0077b6;
+  color: white;
+  text-align: center;
+  padding: 15px;
+  margin-top: 30px;
+}
+
+/* ========== Responsive ========== */
 @media (max-width: 768px) {
-  .navbar-brand img {
-    width: 40px;
+  .header {
+    flex-direction: column;
+    gap: 10px;
   }
 
-  .btn {
-    min-width: unset;
-    padding: 6px 12px;
-    font-size: 0.85rem;
-  }
-
-  .chart-card {
-    min-height: 220px;
-  }
-}
-
-@media (max-width: 576px) {
-  h2 {
-    font-size: 1.25rem;
-  }
-
-  .display-6 {
-    font-size: 1.2rem;
-  }
-
-  footer {
-    font-size: 0.75rem;
-  }
-
-  .d-flex.flex-md-row {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-  }
-
-  .d-flex.flex-wrap.gap-2 {
-    justify-content: flex-start !important;
+  .charts {
+    grid-template-columns: 1fr;
   }
 }
