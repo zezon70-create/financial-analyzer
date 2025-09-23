@@ -1,117 +1,92 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>المحلل المالي — Financial Analyzer</title>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data:; font-src 'self' https://fonts.gstatic.com;">
   <link href="https://fonts.googleapis.com/css?family=Cairo:300,400,600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <script src="https://kit.fontawesome.com/a2d9b6f5a8.js" crossorigin="anonymous"></script>
-  <style>
-    body { font-family: 'Cairo', sans-serif; background-color: #f8f9fa; }
-    .site-logo { height: 40px; }
-    .global-watermark { position: fixed; top: 50%; left: 50%; width: 300px; opacity: 0.05; transform: translate(-50%, -50%); z-index: 0; }
-    .card:hover { transform: translateY(-5px); transition: all 0.3s ease; box-shadow: 0 10px 20px rgba(0,0,0,0.15); }
-    .btn i { margin-left: 5px; }
-  </style>
 </head>
 <body>
-
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center" href="index.html">
-        <img src="assets/img/logo.png" alt="logo" class="site-logo">
-        <div class="ms-2">المحلل المالي</div>
+        <img src="assets/logo.png" alt="logo" class="site-logo">
+        <span class="ms-2 brand-title">المحلل المالي</span>
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div id="nav" class="collapse navbar-collapse">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link active" href="index.html">الرئيسية</a></li>
-          <li class="nav-item"><a class="nav-link" href="input.html">إدخال البيانات</a></li>
-          <li class="nav-item"><a class="nav-link" href="dashboard.html">لوحة التحكم</a></li>
-          <li class="nav-item"><a class="nav-link" href="reports.html">التقارير</a></li>
-          <li class="nav-item"><a class="nav-link" href="compare.html">مقارنة</a></li>
-          <li class="nav-item"><a class="nav-link" href="privacy.html">الخصوصية</a></li>
+          <li class="nav-item"><a class="nav-link" href="input.html" data-i18n="nav_input">إدخال البيانات</a></li>
+          <li class="nav-item"><a class="nav-link" href="dashboard.html" data-i18n="nav_dashboard">لوحة التحكم</a></li>
+          <li class="nav-item"><a class="nav-link" href="reports.html" data-i18n="nav_reports">التقارير</a></li>
+          <li class="nav-item"><a class="nav-link" href="compare.html" data-i18n="nav_compare">مقارنة</a></li>
         </ul>
-        <div class="d-flex">
-          <button id="langToggle" class="btn btn-outline-light">EN</button>
+        <div class="d-flex gap-2 align-items-center">
+          <select id="currencySelect" class="form-select form-select-sm" style="width:110px">
+            <option value="EGP">EGP</option>
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+          </select>
+          <button id="langToggle" class="btn btn-outline-light btn-sm">EN</button>
+          <button id="themeToggle" class="btn btn-outline-light btn-sm">🌙</button>
         </div>
       </div>
     </div>
   </nav>
 
-  <!-- Watermark -->
-  <img src="assets/img/logo.png" alt="watermark" class="global-watermark">
-
-  <!-- Main Content -->
-  <main class="container py-5" style="position:relative; z-index:1;">
-    <div class="text-center mb-5">
-      <h1 class="fw-bold">أهلاً بك في المحلل المالي</h1>
-      <p class="lead text-muted">أداة لتحويل ميزان المراجعة إلى قوائم مالية، تحليل، مقارنة، وتصدير التقارير — مطوَّر من قِبل فريقك.</p>
+  <main class="container py-5">
+    <div class="text-center mb-4">
+      <h1 data-i18n="welcome">أهلاً بك في المحلل المالي</h1>
+      <p class="lead" data-i18n="lead">أداة إلكترونية لتحويل ميزان المراجعة إلى قوائم مالية وتحليلها.</p>
     </div>
 
-    <!-- Cards Section -->
-    <div class="row g-4 mb-5">
-      <div class="col-md-4">
-        <div class="card h-100 shadow-sm border-0">
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title">ابدأ بإدخال البيانات</h5>
-            <p class="card-text flex-grow-1">ارفع ملف ميزان المراجعة أو أدخله يدوياً ثم انتقل للوحة التحكم.</p>
-            <a class="btn btn-primary w-100 mt-3" href="input.html"><i class="fa fa-upload"></i> إدخال البيانات</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card h-100 shadow-sm border-0">
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title">عرض التحليلات</h5>
-            <p class="card-text flex-grow-1">اطّلع على القوائم المالية، النسب، والرسوم البيانية فوراً.</p>
-            <a class="btn btn-success w-100 mt-3" href="dashboard.html"><i class="fa fa-chart-line"></i> لوحة التحكم</a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card h-100 shadow-sm border-0">
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title">التقارير والتصدير</h5>
-            <p class="card-text flex-grow-1">صدّر القوائم والتقارير إلى Excel أو PDF جاهز للطباعة.</p>
-            <a class="btn btn-warning w-100 mt-3" href="reports.html"><i class="fa fa-file-export"></i> التقارير</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Quick Notes and Support -->
     <div class="row g-4">
-      <div class="col-md-6">
-        <h4>ملاحظات سريعة</h4>
-        <ul class="text-muted">
-          <li>البيانات تُخزّن محليًا في متصفحك (LocalStorage) — لا يُخزّن الموقع بيانات على خوادم.</li>
-          <li>استخدم قالب ملف الميزان الموجود في صفحة الإدخال لتجنب أخطاء التنسيق.</li>
-        </ul>
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title" data-i18n="start_input">ابدأ بإدخال البيانات</h5>
+            <p class="card-text flex-grow-1" data-i18n="start_input_desc">ارفع ملف ميزان المراجعة أو أدخله يدوياً ثم انتقل للوحة التحكم.</p>
+            <a class="btn btn-primary mt-3" href="input.html" data-i18n="go_input">إدخال البيانات</a>
+          </div>
+        </div>
       </div>
-      <div class="col-md-6">
-        <h4>دعم وتطوير</h4>
-        <p class="text-muted">للدعم أو رفع مشكلة: أضف Issue في <a href="https://github.com/zezon70-create/financial-analyzer" target="_blank">مستودع GitHub</a> الخاص بالمشروع.</p>
+
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title" data-i18n="view_dashboard">عرض التحليلات</h5>
+            <p class="card-text flex-grow-1" data-i18n="view_dashboard_desc">اطّلع على القوائم والنسب والرسوم البيانية فوراً.</p>
+            <a class="btn btn-success mt-3" href="dashboard.html" data-i18n="go_dashboard">لوحة التحكم</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title" data-i18n="reports">التقارير والتصدير</h5>
+            <p class="card-text flex-grow-1" data-i18n="reports_desc">صدّر القوائم والتقارير إلى Excel أو PDF.</p>
+            <a class="btn btn-warning mt-3" href="reports.html" data-i18n="go_reports">التقارير</a>
+          </div>
+        </div>
       </div>
     </div>
   </main>
 
-  <!-- Footer -->
   <footer class="bg-light py-3 text-center small">
-    &copy; 2025 المحلل المالي — Moataz Madkour
+    &copy; <span id="year"></span> المحلل المالي — Moataz Madkour
   </footer>
 
-  <!-- Scripts -->
-  <script src="scripts/main.js"></script>
+  <script src="scripts/storage.js"></script>
+  <script src="scripts/app.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 </body>
 </html>
