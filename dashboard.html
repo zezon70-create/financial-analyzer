@@ -1,124 +1,70 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>لوحة التحكم | Dashboard</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم - Financial Analyzer</title>
+  <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script defer src="main.js"></script>
 </head>
 <body>
-  <!-- الهيدر -->
-  <header class="header">
-    <div class="logo">
-      <img src="assets/logo.png" alt="Logo" />
-      <h1 id="dashboard-title">لوحة التحكم</h1>
-    </div>
-    <div class="controls">
-      <button id="darkModeToggle">🌙</button>
-      <button id="languageToggle">EN</button>
+  <header>
+    <img src="assets/logo.png" alt="Logo" class="logo">
+    <h1 data-i18n="dashboard_title">لوحة التحكم</h1>
+    <div class="header-controls">
+      <button id="toggle-lang">English</button>
+      <button id="toggle-theme">🌙</button>
     </div>
   </header>
 
-  <!-- المحتوى -->
-  <main class="dashboard">
-    <!-- KPIs -->
-    <section class="kpi-cards">
+  <main>
+    <img src="assets/logo.png" alt="Watermark" class="watermark">
+
+    <section class="cards">
       <div class="card">
-        <h3 id="kpi-revenue">الإيرادات</h3>
-        <p>$120,000</p>
+        <h3 data-i18n="revenues">الإيرادات</h3>
+        <p id="revenuesValue">0</p>
       </div>
       <div class="card">
-        <h3 id="kpi-expenses">المصروفات</h3>
-        <p>$75,000</p>
+        <h3 data-i18n="expenses">المصروفات</h3>
+        <p id="expensesValue">0</p>
       </div>
       <div class="card">
-        <h3 id="kpi-profit">الأرباح</h3>
-        <p>$45,000</p>
+        <h3 data-i18n="assets">الأصول</h3>
+        <p id="assetsValue">0</p>
+      </div>
+      <div class="card">
+        <h3 data-i18n="liabilities">الخصوم</h3>
+        <p id="liabilitiesValue">0</p>
+      </div>
+      <div class="card">
+        <h3 data-i18n="equity">حقوق الملكية</h3>
+        <p id="equityValue">0</p>
+      </div>
+      <div class="card">
+        <h3 data-i18n="profit">صافي الربح</h3>
+        <p id="profitValue">0</p>
       </div>
     </section>
 
-    <!-- الرسوم البيانية -->
     <section class="charts">
-      <div class="chart-container">
-        <canvas id="revenueChart"></canvas>
-      </div>
-      <div class="chart-container">
-        <canvas id="expenseChart"></canvas>
-      </div>
+      <h2 data-i18n="charts">الرسوم البيانية</h2>
+      <canvas id="barChart"></canvas>
+      <canvas id="pieChart"></canvas>
     </section>
 
-    <!-- الجدول -->
-    <section class="data-table">
-      <h2 id="table-title">ملخص البيانات</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>الشهر</th>
-            <th>الإيرادات</th>
-            <th>المصروفات</th>
-            <th>الأرباح</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>يناير</td>
-            <td>$10,000</td>
-            <td>$6,000</td>
-            <td>$4,000</td>
-          </tr>
-          <tr>
-            <td>فبراير</td>
-            <td>$12,000</td>
-            <td>$7,500</td>
-            <td>$4,500</td>
-          </tr>
-          <tr>
-            <td>مارس</td>
-            <td>$15,000</td>
-            <td>$9,000</td>
-            <td>$6,000</td>
-          </tr>
-        </tbody>
-      </table>
+    <section class="actions">
+      <button id="exportPDF" data-i18n="export_pdf">تصدير PDF</button>
+      <button id="clearData" data-i18n="clear_data">مسح البيانات</button>
+      <a href="input.html" class="back-btn" data-i18n="back_input">العودة لإدخال البيانات</a>
     </section>
   </main>
 
-  <!-- الفوتر -->
-  <footer class="footer">
-    <p>&copy; 2025 المحلل المالي | Financial Analyzer</p>
+  <footer>
+    <p>&copy; 2025 Financial Analyzer</p>
   </footer>
 
-  <!-- سكريبت خاص بالرسوم -->
-  <script>
-    const ctx1 = document.getElementById('revenueChart').getContext('2d');
-    new Chart(ctx1, {
-      type: 'line',
-      data: {
-        labels: ['يناير', 'فبراير', 'مارس'],
-        datasets: [{
-          label: 'الإيرادات',
-          data: [10000, 12000, 15000],
-          borderColor: 'green',
-          backgroundColor: 'rgba(0,128,0,0.2)',
-          fill: true
-        }]
-      }
-    });
-
-    const ctx2 = document.getElementById('expenseChart').getContext('2d');
-    new Chart(ctx2, {
-      type: 'bar',
-      data: {
-        labels: ['يناير', 'فبراير', 'مارس'],
-        datasets: [{
-          label: 'المصروفات',
-          data: [6000, 7500, 9000],
-          backgroundColor: 'rgba(255,0,0,0.6)'
-        }]
-      }
-    });
-  </script>
+  <script src="scripts/main.js"></script>
+  <script src="scripts/dashboard.js"></script>
 </body>
 </html>
