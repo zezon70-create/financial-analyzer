@@ -1,37 +1,143 @@
-:root{
-  --bg:#f8f9fa;
-  --card:#ffffff;
-  --text:#212529;
-  --muted:#6c757d;
-  --primary:#0d6efd;
-  --success:#198754;
-  --danger:#dc3545;
+/* ================
+   إعدادات عامة
+================ */
+:root {
+  --bg-color: #f9f9f9;
+  --text-color: #333;
+  --card-bg: #ffffff;
+  --card-border: #ddd;
+  --primary-color: #4CAF50;
+  --secondary-color: #2196F3;
 }
 
-[data-theme="dark"]{
-  --bg:#0b1220;
-  --card:#0f1724;
-  --text:#e6eef6;
-  --muted:#9aa6b2;
-  --primary:#4ea8ff;
+body.dark-mode {
+  --bg-color: #121212;
+  --text-color: #f5f5f5;
+  --card-bg: #1e1e1e;
+  --card-border: #444;
+  --primary-color: #81C784;
+  --secondary-color: #64B5F6;
 }
 
-body{
-  font-family: 'Cairo', sans-serif;
-  background: var(--bg);
-  color: var(--text);
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background 0.3s, color 0.3s;
 }
 
-.site-logo{ width:36px; height:36px; object-fit:contain; }
-.brand-title{ font-weight:600; }
+/* ================
+   الرأس (الهيدر)
+================ */
+header {
+  background: var(--primary-color);
+  color: white;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-.card{ background:var(--card); color:var(--text); }
-.table thead th{ background:#eef3ff; }
-.btn-outline-light{ color:#fff; border-color:rgba(255,255,255,0.25); }
-.display-6{ font-size:1.6rem; font-weight:700; }
-.chart-card{ min-height:260px; }
+header h1 {
+  font-size: 1.5rem;
+  margin: 0;
+}
 
-/* small responsive tweaks */
-@media (max-width: 575px){
-  .display-6{ font-size:1.2rem; }
+header nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+header button, header select {
+  background: var(--secondary-color);
+  border: none;
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+header button:hover, header select:hover {
+  background: var(--primary-color);
+}
+
+/* ================
+   الأقسام (الكروت)
+================ */
+section {
+  padding: 1rem;
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: background 0.3s, color 0.3s;
+}
+
+.card h2 {
+  margin-top: 0;
+  color: var(--primary-color);
+}
+
+/* ================
+   الجداول
+================ */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+table th, table td {
+  border: 1px solid var(--card-border);
+  padding: 0.7rem;
+  text-align: center;
+}
+
+table th {
+  background: var(--secondary-color);
+  color: white;
+}
+
+table tr:nth-child(even) {
+  background: rgba(0,0,0,0.03);
+}
+
+body.dark-mode table tr:nth-child(even) {
+  background: rgba(255,255,255,0.05);
+}
+
+/* ================
+   الأزرار
+================ */
+.btn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn:hover {
+  background: var(--secondary-color);
+}
+
+/* ================
+   استجابة الشاشات
+================ */
+@media (max-width: 768px) {
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
 }
