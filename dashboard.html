@@ -3,18 +3,21 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>لوحة التحكم — المحلل المالي</title>
+  <title>لوحة التحكم UHD — المحلل المالي</title>
   <link href="https://fonts.googleapis.com/css?family=Cairo:300,400,600&display=swap" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <script src="https://kit.fontawesome.com/a2d9b6f5a8.js" crossorigin="anonymous"></script>
   <style>
+    body { background:#f8f9fa; }
     .card:hover { transform: translateY(-5px); transition: all 0.3s ease; }
     .display-6 { font-weight: 700; }
     .chart-card { min-height: 280px; }
     #dashboardContent { animation: fadeIn 0.6s; }
     @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
     .btn { min-width: 120px; }
+    .kpi-card { border-radius:12px; box-shadow:0 3px 8px rgba(0,0,0,0.1); }
+    .quick-compare { border-radius:12px; background:#fff; padding:15px; box-shadow:0 3px 8px rgba(0,0,0,0.05); }
   </style>
 </head>
 <body>
@@ -59,28 +62,28 @@
       <!-- KPIs Cards -->
       <div class="row g-3 mb-4">
         <div class="col-md-3">
-          <div class="card text-center p-3 shadow-sm border-0">
+          <div class="card text-center p-3 shadow-sm border-0 kpi-card">
             <h6>صافي الربح</h6>
             <div id="netProfit" class="display-6">-</div>
             <small class="text-muted">الفرق بين الإيرادات والمصروفات</small>
           </div>
         </div>
         <div class="col-md-3">
-          <div class="card text-center p-3 shadow-sm border-0">
+          <div class="card text-center p-3 shadow-sm border-0 kpi-card">
             <h6>العائد على الأصول (ROA)</h6>
             <div id="roa" class="display-6">-</div>
             <small class="text-muted">نسبة ربحية الأصول</small>
           </div>
         </div>
         <div class="col-md-3">
-          <div class="card text-center p-3 shadow-sm border-0">
+          <div class="card text-center p-3 shadow-sm border-0 kpi-card">
             <h6>العائد على حقوق الملكية (ROE)</h6>
             <div id="roe" class="display-6">-</div>
             <small class="text-muted">نسبة ربحية الملاك</small>
           </div>
         </div>
         <div class="col-md-3">
-          <div class="card text-center p-3 shadow-sm border-0">
+          <div class="card text-center p-3 shadow-sm border-0 kpi-card">
             <h6>EVA</h6>
             <div id="eva" class="display-6">-</div>
             <small class="text-muted">قيمة اقتصادية مضافة</small>
@@ -91,7 +94,7 @@
       <!-- Quick Comparison Widget -->
       <div class="row g-3 mb-4">
         <div class="col-md-6">
-          <div class="card p-3 shadow-sm border-0">
+          <div class="quick-compare">
             <h6>📊 مقارنة سريعة للإيرادات والمصروفات</h6>
             <div class="d-flex justify-content-between mt-3">
               <div>
@@ -168,39 +171,46 @@
   <script src="scripts/pdf-export.js"></script>
   <script src="scripts/main.js"></script>
   <script>
-    function renderDashboard(data) {
-      if(!data) { document.getElementById('noData').style.display='block'; return; }
-      document.getElementById('dashboardContent').style.display='block';
-      document.getElementById('noData').style.display='none';
+    // Load actual session data
+    async function initDashboard() {
+      const sessionData = await loadSession();
+      const normalized = normalizeTrial(sessionData?.trial);
 
-      // حساب الـ KPIs
-      const netProfit = data.revenues - data.expenses;
-      const roa = (netProfit / data.assets * 100).toFixed(2);
-      const roe = (netProfit / data.equity * 100).toFixed(2);
-      const eva = (netProfit - data.costOfCapital).toLocaleString();
+      // تحقق من الميزان
+      const balanceAlert = normalized.revenues < normalized.expenses;
+      document.getElementById('balanceAlert').style.display = balanceAlert ? 'block' : 'none';
+
+      document.getElementById('dashboardContent').style.display = 'block';
+      document.getElementById('noData').style.display = sessionData ? 'none' : 'block';
+
+      // KPIs
+      const netProfit = normalized.profit;
+      const roa = normalized.assets ? ((netProfit / normalized.assets) * 100).toFixed(2) : 0;
+      const roe = normalized.equity ? ((netProfit / normalized.equity) * 100).toFixed(2) : 0;
+      const eva = netProfit - (normalized.costOfCapital ?? 0);
 
       document.getElementById('netProfit').textContent = netProfit.toLocaleString();
       document.getElementById('roa').textContent = roa + '%';
       document.getElementById('roe').textContent = roe + '%';
-      document.getElementById('eva').textContent = eva;
+      document.getElementById('eva').textContent = eva.toLocaleString();
 
       // Quick Comparison
-      const prevData = data.previous || { revenues:0, expenses:0 };
-      document.getElementById('currentRevenue').textContent = data.revenues.toLocaleString();
-      document.getElementById('currentExpenses').textContent = data.expenses.toLocaleString();
-      document.getElementById('prevRevenue').textContent = prevData.revenues.toLocaleString();
-      document.getElementById('prevExpenses').textContent = prevData.expenses.toLocaleString();
-      document.getElementById('balanceAlert').style.display = (data.revenues < data.expenses) ? 'block' : 'none';
+      const prev = sessionData?.previous ?? { revenues:0, expenses:0 };
+      document.getElementById('currentRevenue').textContent = normalized.revenues.toLocaleString();
+      document.getElementById('currentExpenses').textContent = normalized.expenses.toLocaleString();
+      document.getElementById('prevRevenue').textContent = prev.revenues.toLocaleString();
+      document.getElementById('prevExpenses').textContent = prev.expenses.toLocaleString();
 
       // Charts
+      const history = sessionData?.history ?? [];
       const revExpCtx = document.getElementById('revExpChart');
       new Chart(revExpCtx, {
         type:'line',
         data:{
-          labels: data.history.map(d=>d.month),
+          labels: history.map(d=>d.month),
           datasets:[
-            { label:'الإيرادات', data:data.history.map(d=>d.revenues), borderColor:'#0d6efd', tension:0.3, fill:false },
-            { label:'المصروفات', data:data.history.map(d=>d.expenses), borderColor:'#dc3545', tension:0.3, fill:false }
+            { label:'الإيرادات', data: history.map(d=>d.revenues), borderColor:'#0d6efd', tension:0.3, fill:false },
+            { label:'المصروفات', data: history.map(d=>d.expenses), borderColor:'#dc3545', tension:0.3, fill:false }
           ]
         },
         options:{ responsive:true, plugins:{ legend:{ position:'top' } } }
@@ -211,37 +221,26 @@
         type:'bar',
         data:{
           labels:['ROA','ROE','EVA'],
-          datasets:[{ label:'القيم', data:[roa, roe, eva], backgroundColor:['#0d6efd','#ffc107','#198754']] }
-        ],
+          datasets:[{ label:'القيم', data:[Number(roa), Number(roe), eva], backgroundColor:['#0d6efd','#ffc107','#198754']] }
+        },
         options:{ responsive:true, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
       });
 
-      // قوائم مالية مبسطة
+      // قوائم مالية
       document.getElementById('incomeStatement').innerHTML = `
-        <p>إيرادات: ${data.revenues.toLocaleString()}</p>
-        <p>مصروفات: ${data.expenses.toLocaleString()}</p>
+        <p>إيرادات: ${normalized.revenues.toLocaleString()}</p>
+        <p>مصروفات: ${normalized.expenses.toLocaleString()}</p>
         <p>صافي الربح: ${netProfit.toLocaleString()}</p>
       `;
       document.getElementById('balanceSheet').innerHTML = `
-        <p>أصول: ${data.assets.toLocaleString()}</p>
-        <p>خصوم: ${data.liabilities.toLocaleString()}</p>
-        <p>حقوق الملكية: ${data.equity.toLocaleString()}</p>
+        <p>أصول: ${normalized.assets.toLocaleString()}</p>
+        <p>خصوم: ${normalized.liabilities.toLocaleString()}</p>
+        <p>حقوق الملكية: ${normalized.equity.toLocaleString()}</p>
       `;
     }
 
-    // مثال بيانات افتراضية، استبدلها بالبيانات الفعلية من storage.js
-    const demoData = {
-      revenues:50000, expenses:42000, assets:100000, liabilities:30000, equity:70000, costOfCapital:5000,
-      previous:{ revenues:48000, expenses:43000 },
-      history:[
-        {month:'يناير', revenues:4000, expenses:3500},
-        {month:'فبراير', revenues:4500, expenses:3600},
-        {month:'مارس', revenues:4800, expenses:4000},
-        {month:'أبريل', revenues:5000, expenses:4200},
-        {month:'مايو', revenues:5200, expenses:4300}
-      ]
-    };
-    renderDashboard(demoData);
+    document.getElementById('refreshBtn').addEventListener('click', initDashboard);
+    window.addEventListener('load', initDashboard);
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
