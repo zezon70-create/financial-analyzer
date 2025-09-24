@@ -5,3 +5,7 @@ body { background: #f7f9fc; font-family: "Segoe UI", Tahoma, Arial, sans-serif; 
 .table td, .table th { vertical-align: middle; }
 #tbBody td input { width: 100%; box-sizing: border-box; }
 small.text-muted { font-size: 0.85rem; }
+.dark-mode {
+  background-color: #121212;
+  color: #f5f5f5;
+}
