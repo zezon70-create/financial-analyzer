@@ -1,60 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>إدخال البيانات - Financial Analyzer</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <header>
-    <img src="assets/logo.png" alt="Logo" class="logo">
-    <h1 data-i18n="input_title">إدخال البيانات المالية</h1>
-    <div class="header-controls">
-      <button id="toggle-lang">English</button>
-      <button id="toggle-theme">🌙</button>
-    </div>
-  </header>
-
-  <main>
-    <section class="input-section">
-      <h2 data-i18n="manual_entry">إدخال يدوي</h2>
-      <form id="manualForm">
-        <label data-i18n="revenues">الإيرادات</label>
-        <input type="number" name="revenues" required>
-
-        <label data-i18n="expenses">المصروفات</label>
-        <input type="number" name="expenses" required>
-
-        <label data-i18n="assets">الأصول</label>
-        <input type="number" name="assets">
-
-        <label data-i18n="liabilities">الخصوم</label>
-        <input type="number" name="liabilities">
-
-        <label data-i18n="equity">حقوق الملكية</label>
-        <input type="number" name="equity">
-
-        <button type="submit" data-i18n="save">حفظ البيانات</button>
-      </form>
-    </section>
-
-    <section class="input-section">
-      <h2 data-i18n="upload_excel">رفع ملف Excel</h2>
-      <input type="file" id="excelFile" accept=".xlsx,.xls">
-      <button id="uploadExcel" data-i18n="upload_btn">تحميل البيانات</button>
-    </section>
-
-    <section class="input-section">
-      <a href="dashboard.html" class="next-btn" data-i18n="go_dashboard">الانتقال إلى لوحة التحكم</a>
-    </section>
-  </main>
-
-  <footer>
-    <p>&copy; 2025 Financial Analyzer</p>
-  </footer>
-
-  <script src="scripts/main.js"></script>
-  <script src="scripts/input.js"></script>
-</body>
-</html>
