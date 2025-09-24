@@ -6,87 +6,102 @@
   <title>المحلل المالي — Financial Analyzer</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-  <script src="https://kit.fontawesome.com/a2d9b6f5a8.js" crossorigin="anonymous"></script>
   <style>
-    body.dark-mode { background-color: #121212; color: #f5f5f5; }
-    .dark-mode .table { color: #f5f5f5; }
-    .dark-mode header, .dark-mode footer { background-color: #1e1e1e; color: #f5f5f5; }
-    .watermark { position: fixed; top:50%; left:50%; transform:translate(-50%,-50%); opacity:0.06; z-index:-1; pointer-events:none; }
-    .dark-mode .watermark { opacity:0.1; }
-    table input, table select { width: 100%; box-sizing: border-box; }
+    .dark-mode { background-color: #1e1e1e !important; color: #f5f5f5 !important; }
+    .dark-mode header, .dark-mode footer { background-color: #333 !important; color: #f5f5f5 !important; }
+    .control-select, .control-btn { margin-left: 8px; padding: 3px 6px; border-radius: 6px; }
   </style>
 </head>
 <body>
 
-<header class="site-header d-flex justify-content-between align-items-center p-2 border-bottom">
+<header class="d-flex justify-content-between align-items-center p-2 border-bottom bg-light">
   <div class="d-flex align-items-center gap-2">
-    <img src="assets/logo.png" class="logo" height="40" alt="logo">
+    <img src="assets/logo.png" class="logo" alt="logo" style="height:40px;">
     <strong data-i18n="app_title">المحلل المالي</strong>
   </div>
-  <div class="controls d-flex align-items-center gap-2">
-    <label>
-      <input type="checkbox" id="darkModeToggle"/> 
-      <span data-i18n="toggle_dark">الوضع الليلي</span>
+  <div class="d-flex align-items-center">
+    <label class="me-2">
+      <input type="checkbox" id="darkModeToggle"/> <span data-i18n="toggle_dark">الوضع الليلي</span>
     </label>
-    <select id="currencySelect" class="form-select form-select-sm" title="Currency">
-      <option value="EGP">EGP</option>
+    <select id="currencySelect" class="control-select" title="Currency">
       <option value="USD">USD</option>
       <option value="EUR">EUR</option>
+      <option value="EGP">EGP</option>
     </select>
-    <select id="languageSelect" class="form-select form-select-sm" title="Language">
+    <select id="languageSelect" class="control-select" title="Language">
       <option value="ar">العربية</option>
       <option value="en">English</option>
     </select>
-    <button class="btn btn-outline-primary btn-sm" id="exportPDF"><i class="fa fa-file-pdf me-1"></i> PDF</button>
-    <button class="btn btn-outline-success btn-sm" id="exportExcel"><i class="fa fa-file-excel me-1"></i> Excel</button>
   </div>
 </header>
 
-<div class="watermark">
-  <img src="assets/logo.png" style="height:240px;filter:grayscale(100%)">
-</div>
+<main class="container py-5">
+  <h1 class="mb-4 text-center" data-i18n="welcome_title">أهلاً بك في المحلل المالي</h1>
 
-<main class="container py-4">
-  <h2 class="mb-3" data-i18n="input_title">إدخال ميزان المراجعة</h2>
-  
-  <div class="mb-3">
-    <input type="file" id="fileInput" class="form-control" accept=".csv, .xlsx, .xls">
+  <div class="mb-3 text-center">
+    <input type="file" id="fileInput" class="form-control w-50 d-inline-block">
+    <button id="addRow" class="btn btn-primary btn-sm ms-2" data-i18n="add_row">إضافة صف</button>
   </div>
 
-  <table class="table table-bordered table-striped align-middle">
-    <thead class="table-light">
+  <table class="table table-striped">
+    <thead>
       <tr>
-        <th>الحساب</th>
-        <th>النوع</th>
-        <th>كود الحساب</th>
-        <th>مدين</th>
-        <th>دائن</th>
-        <th>إجراء</th>
+        <th data-i18n="account">الحساب</th>
+        <th data-i18n="type">النوع</th>
+        <th data-i18n="code">الكود</th>
+        <th data-i18n="debit">مدين</th>
+        <th data-i18n="credit">دائن</th>
+        <th data-i18n="actions">إجراءات</th>
       </tr>
     </thead>
     <tbody id="tbBody"></tbody>
   </table>
 
-  <div class="d-flex gap-2 mb-3">
-    <button class="btn btn-primary" id="addRow"><i class="fa fa-plus me-1"></i> إضافة صف</button>
-    <button class="btn btn-warning" id="validate"><i class="fa fa-check me-1"></i> تحقق من الميزان</button>
-    <button class="btn btn-success" id="saveSession"><i class="fa fa-save me-1"></i> حفظ الجلسة</button>
-    <button class="btn btn-info" id="loadSession"><i class="fa fa-upload me-1"></i> استرجاع الجلسة</button>
-    <button class="btn btn-danger" id="clearAll"><i class="fa fa-trash me-1"></i> مسح الكل</button>
+  <div class="d-flex gap-2 mt-3">
+    <button id="validate" class="btn btn-success" data-i18n="validate">تحقق من الميزان</button>
+    <button id="saveSession" class="btn btn-primary" data-i18n="save">حفظ الجلسة</button>
+    <button id="loadSession" class="btn btn-warning" data-i18n="load">استرجاع الجلسة</button>
+    <button id="clearAll" class="btn btn-danger" data-i18n="clear">مسح الكل</button>
   </div>
 
-  <div id="validationResult"></div>
+  <div id="validationResult" class="mt-3"></div>
 </main>
 
-<footer class="bg-light py-3 text-center small">
+<footer class="text-center py-2 bg-light" data-i18n="footer">
   &copy; 2025 المحلل المالي — Moataz Madkour
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 <script src="js/input.js"></script>
-<script src="js/main.js"></script>
+<script>
+  // Dark Mode
+  const body = document.body;
+  const darkToggle = document.getElementById('darkModeToggle');
+  if(localStorage.getItem('theme')==='dark'){ body.classList.add('dark-mode'); darkToggle.checked=true; }
+  darkToggle.addEventListener('change', ()=>{ 
+    body.classList.toggle('dark-mode', darkToggle.checked); 
+    localStorage.setItem('theme', darkToggle.checked?'dark':'light'); 
+  });
+
+  // Translation
+  const i18n = {
+    ar:{ app_title:"المحلل المالي", toggle_dark:"الوضع الليلي", welcome_title:"أهلاً بك في المحلل المالي", add_row:"إضافة صف",
+         account:"الحساب", type:"النوع", code:"الكود", debit:"مدين", credit:"دائن", actions:"إجراءات",
+         validate:"تحقق من الميزان", save:"حفظ الجلسة", load:"استرجاع الجلسة", clear:"مسح الكل",
+         footer:"&copy; 2025 المحلل المالي — Moataz Madkour" },
+    en:{ app_title:"Financial Analyzer", toggle_dark:"Dark Mode", welcome_title:"Welcome to Financial Analyzer", add_row:"Add Row",
+         account:"Account", type:"Type", code:"Code", debit:"Debit", credit:"Credit", actions:"Actions",
+         validate:"Validate", save:"Save Session", load:"Load Session", clear:"Clear All",
+         footer:"&copy; 2025 Financial Analyzer — Moataz Madkour" }
+  };
+  const langSelect = document.getElementById('languageSelect');
+  function applyTranslation(lang){ document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key=el.dataset.i18n; if(i18n[lang][key]) el.innerHTML=i18n[lang][key];
+  }); }
+  langSelect.addEventListener('change', ()=>applyTranslation(langSelect.value));
+  applyTranslation(langSelect.value);
+</script>
+
 </body>
 </html>
