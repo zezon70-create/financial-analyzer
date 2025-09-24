@@ -1,0 +1,10 @@
+{
+  "app_title": "محلل مالي",
+  "input_trial_balance": "ادخال ميزان المراجعة",
+  "export_pdf": "تصدير PDF",
+  "toggle_dark": "الوضع الداكن",
+  "select_currency": "العملة",
+  "select_language": "اللغة",
+  "validation_balanced": "متوازن",
+  "validation_not_balanced": "غير متوازن"
+}
