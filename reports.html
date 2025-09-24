@@ -1,142 +1,0 @@
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>التقارير — المحلل المالي</title>
-  <link rel="stylesheet" href="styles.css">
-  <!-- Chart.js (لرسوم بيانية موجزة داخل التقارير) -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- html2canvas + jsPDF ستُحمّل ديناميكياً في report.js عند الطلب -->
-</head>
-<body>
-  <header>
-    <div class="header-left">
-      <img src="assets/logo.png" alt="logo" class="logo">
-      <h1 data-i18n="report_title">التقارير المالية</h1>
-    </div>
-
-    <div class="header-controls">
-      <select id="languageSelect" aria-label="language">
-        <option value="ar">العربية</option>
-        <option value="en">English</option>
-      </select>
-
-      <select id="currencySelect" aria-label="currency">
-        <option value="EGP">EGP</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-      </select>
-
-      <button id="toggleThemeBtn">🌙</button>
-    </div>
-  </header>
-
-  <main class="container">
-    <!-- Notice / Metadata -->
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
-        <div>
-          <strong data-i18n="report_name">تقرير التحليل المالي</strong>
-          <div id="reportDate" class="muted small"></div>
-        </div>
-        <div style="display:flex;gap:.5rem;align-items:center">
-          <button class="btn" id="exportPdfBtn" data-i18n="export_pdf">تصدير PDF</button>
-          <button class="btn" id="exportXlsxBtn">Export XLSX</button>
-          <button class="btn" id="exportCsvBtn">Export CSV</button>
-          <a href="dashboard.html" class="btn btn-outline-secondary" data-i18n="back_dashboard">العودة للوحة التحكم</a>
-        </div>
-      </div>
-    </div>
-
-    <!-- KPIs -->
-    <div class="kpi-cards" id="kpiCards">
-      <div class="card">
-        <h6 data-i18n="net_profit">صافي الربح</h6>
-        <div id="kpiProfit" class="display-6 amount" data-value="0">-</div>
-      </div>
-      <div class="card">
-        <h6 data-i18n="gross_margin">الهامش الإجمالي</h6>
-        <div id="kpiGrossMargin" class="display-6">-</div>
-      </div>
-      <div class="card">
-        <h6 data-i18n="net_margin">هامش صافي الربح</h6>
-        <div id="kpiNetMargin" class="display-6">-</div>
-      </div>
-      <div class="card">
-        <h6 data-i18n="roa">العائد على الأصول (ROA)</h6>
-        <div id="kpiROA" class="display-6">-</div>
-      </div>
-      <div class="card">
-        <h6 data-i18n="roe">العائد على حقوق الملكية (ROE)</h6>
-        <div id="kpiROE" class="display-6">-</div>
-      </div>
-      <div class="card">
-        <h6 data-i18n="current_ratio">النسبة الحالية (Current Ratio)</h6>
-        <div id="kpiCurrentRatio" class="display-6">-</div>
-      </div>
-    </div>
-
-    <!-- Financial statements summary -->
-    <div class="row g-3">
-      <div class="col-md-6">
-        <div class="card">
-          <h6 data-i18n="income_statement">قائمة الدخل (مبسطة)</h6>
-          <div id="incomeStatement"></div>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="card">
-          <h6 data-i18n="balance_sheet">الميزانية العمومية (مبسطة)</h6>
-          <div id="balanceSheet"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Ratios & table -->
-    <div class="card">
-      <h6 data-i18n="ratios_table">جداول ونسب مالية</h6>
-      <div class="table-responsive">
-        <table id="ratiosTable">
-          <thead>
-            <tr>
-              <th data-i18n="ratio">النسبة</th>
-              <th data-i18n="value">القيمة</th>
-              <th data-i18n="explanation">تفسير / ملاحظة</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Charts -->
-    <div class="row g-3">
-      <div class="col-md-6">
-        <div class="card chart-card">
-          <h6 data-i18n="rev_exp_trend">تطور الإيرادات والمصروفات</h6>
-          <canvas id="trendChart"></canvas>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="card chart-card">
-          <h6 data-i18n="structure">بنية الميزانية (الأصول/الخصوم/حقوق الملكية)</h6>
-          <canvas id="structureChart"></canvas>
-        </div>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- watermark (خفيف) -->
-  <img src="assets/logo.png" class="global-watermark" alt="watermark">
-
-  <footer class="bg-light py-3 text-center small">
-    &copy; 2025 المحلل المالي — Moataz Madkour
-  </footer>
-
-  <!-- سكربت التقرير -->
-  <script src="scripts/report.js"></script>
-</body>
-</html>
