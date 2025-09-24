@@ -4,121 +4,170 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>التحليلات المتقدمة | Financial Analyzer</title>
-  <link rel="stylesheet" href="styles.css">
+
+  <!-- Bootstrap RTL -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+  <!-- المشروع CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="light-mode">
 
-  <!-- الهيدر -->
-  <header class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-    <a class="navbar-brand d-flex align-items-center" href="index.html">
-      <img src="assets/logo.png" alt="Logo" height="40" class="me-2">
-      <span id="siteTitle">Financial Analyzer</span>
-    </a>
-    <div class="ms-auto d-flex gap-2">
-      <select id="currencySelector" class="form-select form-select-sm">
+  <!-- Header -->
+  <header class="site-header navbar navbar-expand-lg navbar-dark bg-primary px-3">
+    <div class="d-flex align-items-center">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <img src="assets/logo.png" alt="logo" class="logo me-2" height="40">
+        <div><strong id="siteTitle">Financial Analyzer</strong></div>
+      </a>
+    </div>
+
+    <div class="ms-auto d-flex align-items-center gap-2 no-print">
+      <select id="currencySelect" class="form-select form-select-sm" title="Currency">
         <option value="EGP">جنيه</option>
-        <option value="USD">$ USD</option>
-        <option value="EUR">€ EUR</option>
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
       </select>
-      <button id="toggleDarkMode" class="btn btn-outline-light btn-sm">🌙/☀️</button>
-      <button id="toggleLanguage" class="btn btn-outline-light btn-sm">EN/AR</button>
+
+      <button id="toggleDarkMode" class="btn btn-outline-light btn-sm" title="Dark / Light">
+        <i class="fa fa-moon"></i> وضع
+      </button>
+
+      <button id="toggleLanguage" class="btn btn-outline-light btn-sm" title="EN/AR">
+        EN / AR
+      </button>
     </div>
   </header>
 
-  <!-- العلامة المائية -->
-  <div class="watermark">Financial Analyzer</div>
+  <!-- Watermark -->
+  <div class="watermark">
+    <img src="assets/logo.png" alt="watermark">
+  </div>
 
-  <main class="container my-4">
-    <h2 class="text-center mb-4" id="advancedTitle">📊 التحليلات المالية المتقدمة</h2>
+  <main class="container py-4">
+    <div class="text-center mb-4">
+      <h1 id="advancedTitle">📊 التحليلات المالية المتقدمة</h1>
+      <p class="lead">عرض النسب المالية المتقدمة و الرسوم البيانية المباشرة استناداً إلى ميزان المراجعة المحمّل.</p>
+    </div>
 
-    <!-- جداول التحليلات -->
-    <div class="card shadow-sm mb-4">
-      <div class="card-header bg-primary text-white" id="liquidityTitle">نسب السيولة</div>
-      <div class="card-body">
-        <table class="table table-bordered text-center">
-          <thead class="table-light">
-            <tr>
-              <th id="ratioCol">النسبة</th>
-              <th id="valueCol">القيمة</th>
-              <th id="explanationCol">التفسير</th>
-            </tr>
-          </thead>
-          <tbody id="liquidityRatios"></tbody>
-        </table>
+    <!-- Ratios Cards & Tables -->
+    <div class="row g-4">
+
+      <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-header bg-primary text-white">
+            <strong id="liquidityTitle">نسب السيولة</strong>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th id="ratioCol">النسبة</th>
+                    <th id="valueCol">القيمة</th>
+                    <th id="explanationCol">التفسير</th>
+                  </tr>
+                </thead>
+                <tbody id="liquidityRatios"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-header bg-success text-white">
+            <strong id="profitabilityTitle">نسب الربحية</strong>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered mb-0">
+                <thead class="table-light">
+                  <tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr>
+                </thead>
+                <tbody id="profitabilityRatios"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-header bg-warning">
+            <strong id="activityTitle">نسب النشاط</strong>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered mb-0">
+                <thead class="table-light">
+                  <tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr>
+                </thead>
+                <tbody id="activityRatios"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+          <div class="card-header bg-danger text-white">
+            <strong id="debtTitle">نسب المديونية</strong>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-sm table-bordered mb-0">
+                <thead class="table-light">
+                  <tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr>
+                </thead>
+                <tbody id="debtRatios"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Charts -->
+    <div class="row g-4 mt-1">
+      <div class="col-md-6">
+        <div class="card shadow-sm p-3 h-100">
+          <h6 class="card-title">نسب السيولة</h6>
+          <canvas id="liquidityChart" height="200"></canvas>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card shadow-sm p-3 h-100">
+          <h6 class="card-title">نسب الربحية</h6>
+          <canvas id="profitabilityChart" height="200"></canvas>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card shadow-sm p-3 h-100">
+          <h6 class="card-title">نسب النشاط</h6>
+          <canvas id="activityChart" height="200"></canvas>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card shadow-sm p-3 h-100">
+          <h6 class="card-title">نسب المديونية</h6>
+          <canvas id="debtChart" height="200"></canvas>
+        </div>
       </div>
     </div>
 
-    <div class="card shadow-sm mb-4">
-      <div class="card-header bg-success text-white" id="profitabilityTitle">نسب الربحية</div>
-      <div class="card-body">
-        <table class="table table-bordered text-center">
-          <thead class="table-light">
-            <tr>
-              <th>النسبة</th>
-              <th>القيمة</th>
-              <th>التفسير</th>
-            </tr>
-          </thead>
-          <tbody id="profitabilityRatios"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="card shadow-sm mb-4">
-      <div class="card-header bg-warning" id="activityTitle">نسب النشاط</div>
-      <div class="card-body">
-        <table class="table table-bordered text-center">
-          <thead class="table-light">
-            <tr>
-              <th>النسبة</th>
-              <th>القيمة</th>
-              <th>التفسير</th>
-            </tr>
-          </thead>
-          <tbody id="activityRatios"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="card shadow-sm mb-4">
-      <div class="card-header bg-danger text-white" id="debtTitle">نسب المديونية</div>
-      <div class="card-body">
-        <table class="table table-bordered text-center">
-          <thead class="table-light">
-            <tr>
-              <th>النسبة</th>
-              <th>القيمة</th>
-              <th>التفسير</th>
-            </tr>
-          </thead>
-          <tbody id="debtRatios"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- الرسوم البيانية -->
-    <div class="row">
-      <div class="col-md-6 mb-4">
-        <canvas id="liquidityChart"></canvas>
-      </div>
-      <div class="col-md-6 mb-4">
-        <canvas id="profitabilityChart"></canvas>
-      </div>
-      <div class="col-md-6 mb-4">
-        <canvas id="activityChart"></canvas>
-      </div>
-      <div class="col-md-6 mb-4">
-        <canvas id="debtChart"></canvas>
-      </div>
-    </div>
   </main>
 
-  <footer class="text-center py-3 bg-dark text-white" id="footerText">
-    &copy; 2025 Financial Analyzer. جميع الحقوق محفوظة.
+  <footer class="bg-light text-center py-3 small">
+    &copy; 2025 المحلل المالي — Financial Analyzer
   </footer>
 
-  <script src="main.js"></script>
+  <!-- main.js (تأكد إن النسخة الحديثة والمحسنة موجودة بالمجلد js/main.js) -->
+  <script src="js/main.js"></script>
 </body>
 </html>
