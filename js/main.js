@@ -1,5 +1,5 @@
 // ========================
-// إعدادات عامة
+// إعدادات عامة وحالة التطبيق
 // ========================
 let currentLanguage = "ar";
 let currentCurrency = "EGP";
@@ -47,7 +47,7 @@ const translations = {
 };
 
 // ========================
-// تبديل اللغة
+// التبديل بين اللغة، الوضع الداكن، العملة
 // ========================
 document.addEventListener("DOMContentLoaded", () => {
   const langBtn = document.getElementById("toggleLanguage");
@@ -72,15 +72,28 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (currencySelect) {
+    currencySelect.value = currentCurrency;
     currencySelect.addEventListener("change", (e) => {
       currentCurrency = e.target.value;
       renderAdvancedIfNeeded();
     });
   }
 
-  // Render advanced if we're on advanced.html
   renderAdvancedIfNeeded();
 });
+
+// ========================
+// دوال المساعدة: تحويل العملة وتنسيق القيم
+// ========================
+const fxRates = { EGP: 1, USD: 30.9, EUR: 33.8 };
+function formatCurrency(value) {
+  if (value === null || value === undefined || isNaN(value)) return "-";
+  const converted = Number(value) / (fxRates[currentCurrency] || 1);
+  return new Intl.NumberFormat(currentLanguage === "ar" ? "ar-EG" : "en-US", {
+    style: "currency",
+    currency: currentCurrency
+  }).format(converted);
+}
 
 // ========================
 // حساب النسب المالية
@@ -149,11 +162,12 @@ function calculateRatios(financials) {
 }
 
 // ========================
-// ملء advanced.html
+// ملء الجداول والرسوم البيانية
 // ========================
 function renderAdvancedIfNeeded() {
   if (!document.getElementById("liquidityRatios")) return;
 
+  // بيانات مالية نموذجية - لاحقًا يمكن ربطها بالجلسة أو ملف CSV/XLSX
   const sampleFinancials = {
     currentAssets: 500000,
     currentLiabilities: 200000,
@@ -180,50 +194,38 @@ function renderAdvancedIfNeeded() {
   drawChart("debtChart", ratios.debt);
 }
 
-// ========================
-// ملء الجداول
-// ========================
 function fillTable(tableId, data) {
   const tbody = document.getElementById(tableId);
   if (!tbody) return;
   tbody.innerHTML = "";
-  data.forEach((item) => {
+  data.forEach(item => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${item.name}</td>
-      <td>${item.value}</td>
+      <td>${formatCurrency(item.value.replace("%",""))}${item.value.includes("%") ? "%" : ""}</td>
       <td>${item.interpretation}</td>
     `;
     tbody.appendChild(tr);
   });
 }
 
-// ========================
-// الرسم البياني
-// ========================
 function drawChart(canvasId, data) {
   const ctx = document.getElementById(canvasId);
   if (!ctx) return;
 
+  const values = data.map(d => parseFloat(d.value.replace("%","")));
   new Chart(ctx, {
     type: "bar",
     data: {
-      labels: data.map((d) => d.name),
-      datasets: [
-        {
-          label: translations[currentLanguage].value,
-          data: data.map((d) => parseFloat(d.value)),
-          backgroundColor: "rgba(54, 162, 235, 0.6)",
-          borderColor: "rgba(54, 162, 235, 1)",
-          borderWidth: 1
-        }
-      ]
+      labels: data.map(d => d.name),
+      datasets: [{
+        label: translations[currentLanguage].value,
+        data: values,
+        backgroundColor: "rgba(54, 162, 235, 0.6)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        borderWidth: 1
+      }]
     },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false }
-      }
-    }
+    options: { responsive: true, plugins: { legend: { display: false } } }
   });
 }
