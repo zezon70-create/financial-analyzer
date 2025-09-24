@@ -1,7 +1,7 @@
-/* styles.css - نسخة محسّنة للتصميم والـ dark mode و watermark */
+/* style.css - نسخة محسّنة للتصميم، Dark Mode، Watermark، وتوافق كامل مع Input & Dashboard */
 
-/* قواعد أساسية */
-:root{
+/* ======= متغيرات أساسية ======= */
+:root {
   --bg: #f7f9fc;
   --card: #ffffff;
   --muted: #6c757d;
@@ -9,35 +9,46 @@
   --success: #198754;
   --danger: #dc3545;
   --text: #222;
+  --shadow-light: 0 6px 18px rgba(15, 23, 42, 0.06);
+  --shadow-dark: 0 6px 28px rgba(2,6,23,0.6);
 }
+
+/* ======= Body & Global ======= */
 body {
-  margin:0;
+  margin: 0;
   background: var(--bg);
   color: var(--text);
   font-family: "Segoe UI", Tahoma, Arial, sans-serif;
-  -webkit-font-smoothing:antialiased;
-  line-height:1.45;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.45;
 }
 
-/* Header / logo */
+/* ======= Header / Logo ======= */
 .site-header {
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 8px 16px;
   background: var(--primary);
   color: #fff;
+  z-index: 1000;
 }
-.logo { border-radius:6px; }
+.logo {
+  border-radius: 6px;
+  height: 40px;
+}
 
-/* Cards */
+/* ======= Cards ======= */
 .card {
   border-radius: 10px;
   background: var(--card);
-  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+  box-shadow: var(--shadow-light);
+  transition: all 0.3s ease;
+  margin-bottom: 1rem;
+  overflow: hidden;
 }
 
-/* Tables */
+/* ======= Tables ======= */
 .table {
   margin-bottom: 0;
 }
@@ -45,10 +56,10 @@ body {
   vertical-align: middle;
   padding: 8px 10px;
   border-color: #e9ecef;
-  font-size: .95rem;
+  font-size: 0.95rem;
 }
 
-/* Watermark */
+/* ======= Watermark ======= */
 .watermark {
   position: fixed;
   left: 50%;
@@ -63,15 +74,21 @@ body {
   filter: grayscale(100%);
 }
 
-/* Buttons */
+/* ======= Buttons ======= */
 .btn {
   border-radius: 8px;
+  transition: all 0.2s ease;
+}
+.btn:hover {
+  transform: translateY(-2px);
 }
 
-/* Responsive spacing */
-.container { max-width: 1200px; }
+/* ======= Responsive Container ======= */
+.container {
+  max-width: 1200px;
+}
 
-/* Dark mode */
+/* ======= Dark Mode ======= */
 body.dark-mode {
   --bg: #0b0f14;
   --card: #0f1720;
@@ -82,22 +99,59 @@ body.dark-mode {
   color: var(--text);
 }
 body.dark-mode .card {
-  box-shadow: 0 6px 28px rgba(2,6,23,0.6);
+  box-shadow: var(--shadow-dark);
 }
 body.dark-mode .table-light {
-  background: rgba(255,255,255,0.02) !important;
+  background: rgba(255, 255, 255, 0.02) !important;
 }
-body.dark-mode .bg-light { background: transparent !important; color: var(--muted); }
+body.dark-mode .bg-light {
+  background: transparent !important;
+  color: var(--muted);
+}
+body.dark-mode .site-header {
+  background: #0c2a50;
+}
+body.dark-mode .navbar {
+  background: #0c2a50 !important;
+}
 
-/* Print style (remove watermark and controls) */
+/* ======= Input & Select Controls ======= */
+input, select {
+  border-radius: 6px;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  transition: all 0.2s ease;
+}
+input:focus, select:focus {
+  border-color: var(--primary);
+  outline: none;
+}
+
+/* ======= Form Buttons in Input Page ======= */
+#tbBody button {
+  min-width: 60px;
+}
+
+/* ======= Print Styles ======= */
 @media print {
-  .no-print, .site-header, .btn, select { display: none !important; }
-  .watermark { display:none !important; }
-  body { background: #fff; color: #000; }
+  .no-print, .site-header, .btn, select {
+    display: none !important;
+  }
+  .watermark {
+    display: none !important;
+  }
+  body {
+    background: #fff;
+    color: #000;
+  }
 }
 
-/* Small devices tweak */
+/* ======= Small Devices ======= */
 @media (max-width: 768px) {
-  .logo { height:32px; }
-  .card { margin-bottom: .75rem; }
+  .logo {
+    height: 32px;
+  }
+  .card {
+    margin-bottom: 0.75rem;
+  }
 }
