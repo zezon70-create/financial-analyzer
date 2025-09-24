@@ -1,11 +1,103 @@
-/* بسيطة ومباشرة للنسخة المحسنة */
-body { background: #f7f9fc; font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
-.card { border-radius: 12px; }
-.display-6 { font-weight: 700; color: #0d6efd; }
-.table td, .table th { vertical-align: middle; }
-#tbBody td input { width: 100%; box-sizing: border-box; }
-small.text-muted { font-size: 0.85rem; }
-.dark-mode {
-  background-color: #121212;
-  color: #f5f5f5;
+/* styles.css - نسخة محسّنة للتصميم والـ dark mode و watermark */
+
+/* قواعد أساسية */
+:root{
+  --bg: #f7f9fc;
+  --card: #ffffff;
+  --muted: #6c757d;
+  --primary: #0d6efd;
+  --success: #198754;
+  --danger: #dc3545;
+  --text: #222;
+}
+body {
+  margin:0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  -webkit-font-smoothing:antialiased;
+  line-height:1.45;
+}
+
+/* Header / logo */
+.site-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 8px 16px;
+  background: var(--primary);
+  color: #fff;
+}
+.logo { border-radius:6px; }
+
+/* Cards */
+.card {
+  border-radius: 10px;
+  background: var(--card);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+}
+
+/* Tables */
+.table {
+  margin-bottom: 0;
+}
+.table th, .table td {
+  vertical-align: middle;
+  padding: 8px 10px;
+  border-color: #e9ecef;
+  font-size: .95rem;
+}
+
+/* Watermark */
+.watermark {
+  position: fixed;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  opacity: 0.06;
+  z-index: 0;
+}
+.watermark img {
+  max-width: 380px;
+  filter: grayscale(100%);
+}
+
+/* Buttons */
+.btn {
+  border-radius: 8px;
+}
+
+/* Responsive spacing */
+.container { max-width: 1200px; }
+
+/* Dark mode */
+body.dark-mode {
+  --bg: #0b0f14;
+  --card: #0f1720;
+  --muted: #9aa4b2;
+  --text: #e6eef6;
+  --primary: #0ea5ff;
+  background: #071028;
+  color: var(--text);
+}
+body.dark-mode .card {
+  box-shadow: 0 6px 28px rgba(2,6,23,0.6);
+}
+body.dark-mode .table-light {
+  background: rgba(255,255,255,0.02) !important;
+}
+body.dark-mode .bg-light { background: transparent !important; color: var(--muted); }
+
+/* Print style (remove watermark and controls) */
+@media print {
+  .no-print, .site-header, .btn, select { display: none !important; }
+  .watermark { display:none !important; }
+  body { background: #fff; color: #000; }
+}
+
+/* Small devices tweak */
+@media (max-width: 768px) {
+  .logo { height:32px; }
+  .card { margin-bottom: .75rem; }
 }
