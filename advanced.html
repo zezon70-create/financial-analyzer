@@ -12,9 +12,9 @@
 
   <!-- الهيدر -->
   <header class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-    <a class="navbar-brand d-flex align-items-center" href="index.html">
+    <a class="navbar-brand d-flex align-items-center" href="dashboard.html">
       <img src="assets/logo.png" alt="Logo" height="40" class="me-2">
-      Financial Analyzer
+      <span id="titleText">Financial Analyzer</span>
     </a>
     <div class="ms-auto">
       <button id="toggleDarkMode" class="btn btn-outline-light btn-sm">🌙/☀️</button>
@@ -26,77 +26,72 @@
   <div class="watermark">Financial Analyzer</div>
 
   <main class="container my-4">
-    <h2 class="text-center mb-4">📊 التحليلات المالية المتقدمة</h2>
+    <h2 class="text-center mb-4" id="advancedTitle">📊 التحليلات المالية المتقدمة</h2>
 
-    <!-- جداول التحليلات -->
+    <!-- نسب السيولة -->
     <div class="card shadow-sm mb-4">
-      <div class="card-header bg-primary text-white">نسب السيولة</div>
+      <div class="card-header bg-primary text-white" id="liquidityHeader">نسب السيولة</div>
       <div class="card-body">
         <table class="table table-bordered text-center">
           <thead class="table-light">
             <tr>
-              <th>النسبة</th>
-              <th>القيمة</th>
-              <th>التفسير</th>
+              <th id="ratioCol">النسبة</th>
+              <th id="valueCol">القيمة</th>
+              <th id="explanationCol">التفسير</th>
             </tr>
           </thead>
-          <tbody id="liquidityRatios">
-            <!-- يتم ملء البيانات ديناميكياً من main.js -->
-          </tbody>
+          <tbody id="liquidityRatios"></tbody>
         </table>
       </div>
     </div>
 
+    <!-- نسب الربحية -->
     <div class="card shadow-sm mb-4">
-      <div class="card-header bg-success text-white">نسب الربحية</div>
+      <div class="card-header bg-success text-white" id="profitabilityHeader">نسب الربحية</div>
       <div class="card-body">
         <table class="table table-bordered text-center">
           <thead class="table-light">
             <tr>
-              <th>النسبة</th>
-              <th>القيمة</th>
-              <th>التفسير</th>
+              <th id="ratioCol2">النسبة</th>
+              <th id="valueCol2">القيمة</th>
+              <th id="explanationCol2">التفسير</th>
             </tr>
           </thead>
-          <tbody id="profitabilityRatios">
-            <!-- يتم ملء البيانات -->
-          </tbody>
+          <tbody id="profitabilityRatios"></tbody>
         </table>
       </div>
     </div>
 
+    <!-- نسب النشاط -->
     <div class="card shadow-sm mb-4">
-      <div class="card-header bg-warning">نسب النشاط</div>
+      <div class="card-header bg-warning" id="activityHeader">نسب النشاط</div>
       <div class="card-body">
         <table class="table table-bordered text-center">
           <thead class="table-light">
             <tr>
-              <th>النسبة</th>
-              <th>القيمة</th>
-              <th>التفسير</th>
+              <th id="ratioCol3">النسبة</th>
+              <th id="valueCol3">القيمة</th>
+              <th id="explanationCol3">التفسير</th>
             </tr>
           </thead>
-          <tbody id="activityRatios">
-            <!-- يتم ملء البيانات -->
-          </tbody>
+          <tbody id="activityRatios"></tbody>
         </table>
       </div>
     </div>
 
+    <!-- نسب المديونية -->
     <div class="card shadow-sm mb-4">
-      <div class="card-header bg-danger text-white">نسب المديونية</div>
+      <div class="card-header bg-danger text-white" id="debtHeader">نسب المديونية</div>
       <div class="card-body">
         <table class="table table-bordered text-center">
           <thead class="table-light">
             <tr>
-              <th>النسبة</th>
-              <th>القيمة</th>
-              <th>التفسير</th>
+              <th id="ratioCol4">النسبة</th>
+              <th id="valueCol4">القيمة</th>
+              <th id="explanationCol4">التفسير</th>
             </tr>
           </thead>
-          <tbody id="debtRatios">
-            <!-- يتم ملء البيانات -->
-          </tbody>
+          <tbody id="debtRatios"></tbody>
         </table>
       </div>
     </div>
@@ -118,8 +113,9 @@
     </div>
   </main>
 
+  <!-- الفوتر -->
   <footer class="text-center py-3 bg-dark text-white">
-    &copy; 2025 Financial Analyzer. جميع الحقوق محفوظة.
+    &copy; 2025 <span id="footerText">Financial Analyzer</span>. جميع الحقوق محفوظة.
   </footer>
 
   <script src="main.js"></script>
