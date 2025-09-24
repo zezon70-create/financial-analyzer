@@ -16,89 +16,112 @@
     <div><strong data-i18n="app_title">Financial Analyzer</strong></div>
   </div>
   <div class="controls no-print">
-    <label style="margin-right:8px;"><input type="checkbox" onchange="toggleDark(this)" /> <span data-i18n="toggle_dark">Dark Mode</span></label>
+    <label style="margin-right:8px;">
+      <input type="checkbox" onchange="toggleDark(this)" /> 
+      <span data-i18n="toggle_dark">Dark Mode</span>
+    </label>
     <select onchange="changeCurrency(this)" class="control-select" title="Currency">
       <option value="USD">USD</option><option value="EUR">EUR</option><option value="EGP">EGP</option>
     </select>
     <select onchange="changeLang(this)" class="control-select" title="Language">
       <option value="en">English</option><option value="ar">العربية</option>
     </select>
-    <button class="control-btn" onclick="exportReportToPdf('report-area','financial-report.pdf')"><span data-i18n='export_pdf'>Export PDF</span></button>
-    <button class="control-btn" onclick="exportActiveReportExcel()">Export Excel</button>
+    <button class="control-btn" onclick="exportReportToPdf('report-area','financial-report.pdf')">
+      <span data-i18n='export_pdf'>تصدير PDF</span>
+    </button>
+    <button class="control-btn" onclick="exportActiveReportExcel()">تصدير Excel</button>
   </div>
 </header>
+
 <div class="watermark"><img src="assets/logo.png" style="height:220px;opacity:0.06;filter:grayscale(100%)"></div>
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="index.html">المحلل المالي</a>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="index.html">المحلل المالي</a>
+  </div>
+</nav>
+
+<main class="container py-4">
+  <h2>التقارير المالية المفصلة</h2>
+  <p>يمكنك استعراض وتصدير القوائم المالية (ميزان المراجعة، قائمة الدخل، الميزانية العمومية، التدفقات النقدية) بشكل مفصل.</p>
+
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3">
+        <h5>📊 ميزان المراجعة</h5>
+        <div id="trialBalanceReport" class="report-block"></div>
+      </div>
     </div>
-  </nav>
-
-  <main class="container py-4">
-    <h2>تقارير وتصدير</h2>
-    <p>يمكنك تصدير القوائم المالية والتقارير إلى Excel أو طباعة تقرير PDF (طباعة الصفحة).</p>
-
-    <div class="card p-3 shadow-sm">
-      <h5>تصدير Excel</h5>
-      <p>سيتم إنشاء ملف Excel متعدد الشيت يحتوي ميزان المراجعة، قائمة الدخل، والميزانية.</p>
-      <button id="exportAll" class="btn btn-warning">تصدير ملف Excel</button>
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3">
+        <h5>📑 قائمة الدخل</h5>
+        <div id="incomeStatementReport" class="report-block"></div>
+      </div>
     </div>
-
-    <div class="card p-3 shadow-sm mt-3">
-      <h5>تصدير PDF</h5>
-      <p>سيتم فتح نافذة الطباعة لتصدير تقرير PDF مبسط.</p>
-      <button id="printReport" class="btn btn-secondary">طباعة التقرير (PDF)</button>
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3">
+        <h5>💰 الميزانية العمومية</h5>
+        <div id="balanceSheetReport" class="report-block"></div>
+      </div>
     </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3">
+        <h5>💵 التدفقات النقدية</h5>
+        <div id="cashFlowReport" class="report-block"></div>
+      </div>
+    </div>
+  </div>
 
-    <div id="reportPreview" class="mt-4"></div>
-  </main>
+  <div class="mt-4 text-center">
+    <button id="exportAll" class="btn btn-warning">تصدير جميع القوائم Excel</button>
+    <button id="printReport" class="btn btn-secondary">طباعة التقرير PDF</button>
+  </div>
+</main>
 
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-  <script src="js/main.js"></script>
-  <script>
-    document.getElementById('exportAll').addEventListener('click', () => {
-      const session = loadSession();
-      if (!session || !session.trial) { alert('لا توجد بيانات للتصدير'); return; }
-      const wb = XLSX.utils.book_new();
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="js/main.js"></script>
+<script>
+  function renderReports() {
+    const session = loadSession();
+    if (!session || !session.trial) {
+      alert('لا توجد بيانات للتقارير');
+      return;
+    }
 
-      // ميزان المراجعة
-      const tb = session.trial.map(r => ({ حساب: r.account, "رقم الحساب": r.code || "", مدين: r.debit, دائن: r.credit }));
-      const ws1 = XLSX.utils.json_to_sheet(tb);
-      XLSX.utils.book_append_sheet(wb, ws1, 'ميزان المراجعة');
+    // استخدام دوال مفصلة (هنعدلها لاحقاً في main.js)
+    document.getElementById('trialBalanceReport').innerHTML = renderTrialBalance(session.trial);
+    document.getElementById('incomeStatementReport').innerHTML = renderIncomeStatement(session.trial);
+    document.getElementById('balanceSheetReport').innerHTML = renderBalanceSheet(session.trial);
+    document.getElementById('cashFlowReport').innerHTML = renderCashFlow(session.trial);
+  }
 
-      // قائمة دخل مبسطة
-      const inc = generateIncomeStatement(session.trial);
-      const ws2 = XLSX.utils.json_to_sheet(inc);
-      XLSX.utils.book_append_sheet(wb, ws2, 'قائمة الدخل');
+  document.getElementById('exportAll').addEventListener('click', () => {
+    const session = loadSession();
+    if (!session || !session.trial) { alert('لا توجد بيانات للتصدير'); return; }
+    const wb = XLSX.utils.book_new();
 
-      // ميزانية مبسطة
-      const bal = generateBalanceSheet(session.trial);
-      const ws3 = XLSX.utils.json_to_sheet(bal);
-      XLSX.utils.book_append_sheet(wb, ws3, 'الميزانية');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(exportTrialBalance(session.trial)), 'ميزان المراجعة');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(exportIncomeStatement(session.trial)), 'قائمة الدخل');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(exportBalanceSheet(session.trial)), 'الميزانية العمومية');
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(exportCashFlow(session.trial)), 'التدفقات النقدية');
 
-      XLSX.writeFile(wb, 'financial-report.xlsx');
-    });
+    XLSX.writeFile(wb, 'financial-report.xlsx');
+  });
 
-    document.getElementById('printReport').addEventListener('click', () => {
-      const session = loadSession();
-      if (!session || !session.trial) { alert('لا توجد بيانات للطباعة'); return; }
-      const preview = document.getElementById('reportPreview');
-      preview.innerHTML = renderPrintableReport(session);
-      window.print();
-    });
+  document.getElementById('printReport').addEventListener('click', () => {
+    window.print();
+  });
 
-    // small helper wrappers used here are defined in js/main.js (generateIncomeStatement, generateBalanceSheet, renderPrintableReport)
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  renderReports();
+</script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-  <script src="js/fa_enhancements.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-  <script src="js/fa_excel_export.js"></script>
-  <script src="js/fa_forecast.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+<script src="js/fa_enhancements.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script src="js/fa_excel_export.js"></script>
+<script src="js/fa_forecast.js"></script>
 </body>
 </html>
