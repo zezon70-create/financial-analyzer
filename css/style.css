@@ -1,7 +1,0 @@
-/* بسيطة ومباشرة للنسخة المحسنة */
-body { background: #f7f9fc; font-family: "Segoe UI", Tahoma, Arial, sans-serif; }
-.card { border-radius: 12px; }
-.display-6 { font-weight: 700; color: #0d6efd; }
-.table td, .table th { vertical-align: middle; }
-#tbBody td input { width: 100%; box-sizing: border-box; }
-small.text-muted { font-size: 0.85rem; }
