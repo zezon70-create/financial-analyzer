@@ -7,6 +7,25 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/fa_enhancements.css">
+  <style>
+    .report-block table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .report-block th, .report-block td {
+      border: 1px solid #ccc;
+      padding: 6px 10px;
+      text-align: center;
+    }
+    .report-block th {
+      background: #f5f5f5;
+    }
+    .report-title {
+      margin-bottom: 10px;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+  </style>
 </head>
 <body>
 
@@ -26,14 +45,16 @@
     <select onchange="changeLang(this)" class="control-select" title="Language">
       <option value="en">English</option><option value="ar">العربية</option>
     </select>
-    <button class="control-btn" onclick="exportReportToPdf('report-area','financial-report.pdf')">
+    <button class="control-btn" onclick="exportReportToPdf('main','financial-report.pdf')">
       <span data-i18n='export_pdf'>تصدير PDF</span>
     </button>
     <button class="control-btn" onclick="exportActiveReportExcel()">تصدير Excel</button>
   </div>
 </header>
 
-<div class="watermark"><img src="assets/logo.png" style="height:220px;opacity:0.06;filter:grayscale(100%)"></div>
+<div class="watermark">
+  <img src="assets/logo.png" style="height:220px;opacity:0.06;filter:grayscale(100%)">
+</div>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
   <div class="container-fluid">
@@ -41,40 +62,40 @@
   </div>
 </nav>
 
-<main class="container py-4">
+<main class="container py-4" id="report-area">
   <h2>التقارير المالية المفصلة</h2>
-  <p>يمكنك استعراض وتصدير القوائم المالية (ميزان المراجعة، قائمة الدخل، الميزانية العمومية، التدفقات النقدية) بشكل مفصل.</p>
+  <p>يمكنك استعراض وتصدير القوائم المالية: ميزان المراجعة، قائمة الدخل، الميزانية العمومية، وقائمة التدفقات النقدية.</p>
 
   <div class="row g-3">
     <div class="col-md-6">
       <div class="card shadow-sm p-3">
-        <h5>📊 ميزان المراجعة</h5>
+        <div class="report-title">📊 ميزان المراجعة</div>
         <div id="trialBalanceReport" class="report-block"></div>
       </div>
     </div>
     <div class="col-md-6">
       <div class="card shadow-sm p-3">
-        <h5>📑 قائمة الدخل</h5>
+        <div class="report-title">📑 قائمة الدخل</div>
         <div id="incomeStatementReport" class="report-block"></div>
       </div>
     </div>
     <div class="col-md-6">
       <div class="card shadow-sm p-3">
-        <h5>💰 الميزانية العمومية</h5>
+        <div class="report-title">💰 الميزانية العمومية</div>
         <div id="balanceSheetReport" class="report-block"></div>
       </div>
     </div>
     <div class="col-md-6">
       <div class="card shadow-sm p-3">
-        <h5>💵 التدفقات النقدية</h5>
+        <div class="report-title">💵 التدفقات النقدية</div>
         <div id="cashFlowReport" class="report-block"></div>
       </div>
     </div>
   </div>
 
-  <div class="mt-4 text-center">
-    <button id="exportAll" class="btn btn-warning">تصدير جميع القوائم Excel</button>
-    <button id="printReport" class="btn btn-secondary">طباعة التقرير PDF</button>
+  <div class="mt-4 text-center no-print">
+    <button id="exportAll" class="btn btn-warning">📤 تصدير جميع القوائم Excel</button>
+    <button id="printReport" class="btn btn-secondary">🖨️ طباعة التقرير PDF</button>
   </div>
 </main>
 
@@ -88,7 +109,7 @@
       return;
     }
 
-    // استخدام دوال مفصلة (هنعدلها لاحقاً في main.js)
+    // دوال من main.js
     document.getElementById('trialBalanceReport').innerHTML = renderTrialBalance(session.trial);
     document.getElementById('incomeStatementReport').innerHTML = renderIncomeStatement(session.trial);
     document.getElementById('balanceSheetReport').innerHTML = renderBalanceSheet(session.trial);
