@@ -14,46 +14,42 @@
 </head>
 <body>
 
-<header class="site-header no-print">
-  <div class="left d-flex align-items-center">
+<header class="site-header no-print d-flex justify-content-between align-items-center p-2 shadow-sm bg-light">
+  <div class="d-flex align-items-center">
     <img src="assets/logo.png" class="logo me-2" alt="logo" />
-    <div><strong data-i18n="app_title">المحلل المالي</strong></div>
+    <strong data-i18n="app_title">المحلل المالي</strong>
   </div>
 
-  <div class="controls d-flex align-items-center">
-    <label class="me-2 d-flex align-items-center">
-      <input type="checkbox" id="darkModeToggle" class="form-check-input me-1" />
+  <div class="controls d-flex align-items-center gap-2">
+    <label class="d-flex align-items-center gap-1 mb-0">
+      <input type="checkbox" id="darkModeToggle" class="form-check-input" />
       <span data-i18n="toggle_dark">الوضع الليلي</span>
     </label>
 
-    <select id="currencySelect" class="form-select form-select-sm control-select" style="width:110px;">
+    <select id="currencySelect" class="form-select form-select-sm" style="width:100px;">
       <option value="EGP">EGP</option>
       <option value="USD">USD</option>
       <option value="EUR">EUR</option>
     </select>
 
-    <select id="languageSelect" class="form-select form-select-sm control-select" style="width:130px;">
+    <select id="languageSelect" class="form-select form-select-sm" style="width:120px;">
       <option value="ar">العربية</option>
       <option value="en">English</option>
     </select>
 
-    <button id="exportPdfBtn" class="btn btn-outline-primary btn-sm control-btn">
+    <button id="exportPdfBtn" class="btn btn-outline-primary btn-sm">
       <i class="fa fa-file-pdf me-1"></i> PDF
     </button>
 
-    <button id="exportExcelBtn" class="btn btn-outline-success btn-sm control-btn">
+    <button id="exportExcelBtn" class="btn btn-outline-success btn-sm">
       <i class="fa fa-file-excel me-1"></i> Excel
     </button>
 
-    <button id="refreshBtn" class="btn btn-outline-secondary btn-sm control-btn">
+    <button id="refreshBtn" class="btn btn-outline-secondary btn-sm">
       <i class="fa fa-sync me-1"></i> تحديث البيانات
     </button>
   </div>
 </header>
-
-<div class="watermark">
-  <img src="assets/logo.png" alt="watermark">
-</div>
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary no-print">
   <div class="container-fluid">
@@ -74,35 +70,35 @@
 
 <main class="container py-4">
   <div id="report-area">
-    <div id="noData" class="alert alert-warning" style="display:none;">
+    <div id="noData" class="alert alert-warning text-center" style="display:none;">
       لا توجد بيانات — ارفع ميزان المراجعة في صفحة الإدخال أولاً.
     </div>
 
     <div id="dashboardContent" style="display:none;">
-      <div class="row g-3 mb-4">
+      <div class="row g-3 mb-4 text-center">
         <div class="col-md-3">
-          <div class="card text-center p-3 shadow-sm">
+          <div class="card p-3 shadow-sm">
             <h6 data-i18n="net_profit">صافي الربح</h6>
             <div id="netProfit" class="display-6 financial-value" data-base-value="0">-</div>
             <small class="text-muted" data-i18n="net_profit_desc">الفرق بين الإيرادات والمصروفات</small>
           </div>
         </div>
         <div class="col-md-3">
-          <div class="card text-center p-3 shadow-sm">
+          <div class="card p-3 shadow-sm">
             <h6 data-i18n="roa">العائد على الأصول (ROA)</h6>
             <div id="roa" class="display-6">-</div>
             <small class="text-muted" data-i18n="roa_desc">نسبة ربحية الأصول</small>
           </div>
         </div>
         <div class="col-md-3">
-          <div class="card text-center p-3 shadow-sm">
+          <div class="card p-3 shadow-sm">
             <h6 data-i18n="roe">العائد على حقوق الملكية (ROE)</h6>
             <div id="roe" class="display-6">-</div>
             <small class="text-muted" data-i18n="roe_desc">نسبة ربحية الملاك</small>
           </div>
         </div>
         <div class="col-md-3">
-          <div class="card text-center p-3 shadow-sm">
+          <div class="card p-3 shadow-sm">
             <h6 data-i18n="eva">EVA (قيمة اقتصادية مضافة)</h6>
             <div id="eva" class="display-6">-</div>
             <small class="text-muted" data-i18n="eva_desc">قياس القيمة المضافة بعد تكلفة رأس المال</small>
