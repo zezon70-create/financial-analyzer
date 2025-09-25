@@ -1,4 +1,4 @@
-/* style.css - نسخة محسّنة للتصميم، Dark Mode، Watermark، وتوافق كامل مع Input & Dashboard */
+/* style.css - نسخة محسّنة للتصميم، Dark Mode، Watermark، و توافق كامل مع Input & Dashboard */
 
 /* ======= متغيرات أساسية ======= */
 :root {
@@ -21,6 +21,7 @@ body {
   font-family: "Segoe UI", Tahoma, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   line-height: 1.45;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 /* ======= Header / Logo ======= */
@@ -58,6 +59,8 @@ body {
   border-color: #e9ecef;
   font-size: 0.95rem;
 }
+.table tbody tr.balanced { background-color: #e6ffed; }
+.table tbody tr.unbalanced { background-color: #ffe6e6; }
 
 /* ======= Watermark ======= */
 .watermark {
@@ -73,47 +76,14 @@ body {
   max-width: 380px;
   filter: grayscale(100%);
 }
+body.dark-mode .watermark { opacity: 0.1; }
 
 /* ======= Buttons ======= */
 .btn {
   border-radius: 8px;
   transition: all 0.2s ease;
 }
-.btn:hover {
-  transform: translateY(-2px);
-}
-
-/* ======= Responsive Container ======= */
-.container {
-  max-width: 1200px;
-}
-
-/* ======= Dark Mode ======= */
-body.dark-mode {
-  --bg: #0b0f14;
-  --card: #0f1720;
-  --muted: #9aa4b2;
-  --text: #e6eef6;
-  --primary: #0ea5ff;
-  background: #071028;
-  color: var(--text);
-}
-body.dark-mode .card {
-  box-shadow: var(--shadow-dark);
-}
-body.dark-mode .table-light {
-  background: rgba(255, 255, 255, 0.02) !important;
-}
-body.dark-mode .bg-light {
-  background: transparent !important;
-  color: var(--muted);
-}
-body.dark-mode .site-header {
-  background: #0c2a50;
-}
-body.dark-mode .navbar {
-  background: #0c2a50 !important;
-}
+.btn:hover { transform: translateY(-2px); }
 
 /* ======= Input & Select Controls ======= */
 input, select {
@@ -128,30 +98,36 @@ input:focus, select:focus {
 }
 
 /* ======= Form Buttons in Input Page ======= */
-#tbBody button {
-  min-width: 60px;
+#tbBody button { min-width: 60px; }
+
+/* ======= Responsive Container ======= */
+.container { max-width: 1200px; }
+
+/* ======= Dark Mode ======= */
+body.dark-mode {
+  --bg: #0b0f14;
+  --card: #0f1720;
+  --muted: #9aa4b2;
+  --text: #e6eef6;
+  --primary: #0ea5ff;
+  background: #071028;
+  color: var(--text);
 }
+body.dark-mode .card { box-shadow: var(--shadow-dark); }
+body.dark-mode .table-light { background: rgba(255,255,255,0.02) !important; }
+body.dark-mode .bg-light { background: transparent !important; color: var(--muted); }
+body.dark-mode .site-header { background: #0c2a50; }
+body.dark-mode .navbar { background: #0c2a50 !important; }
 
 /* ======= Print Styles ======= */
 @media print {
-  .no-print, .site-header, .btn, select {
-    display: none !important;
-  }
-  .watermark {
-    display: none !important;
-  }
-  body {
-    background: #fff;
-    color: #000;
-  }
+  .no-print, .site-header, .btn, select { display: none !important; }
+  .watermark { display: none !important; }
+  body { background: #fff; color: #000; }
 }
 
 /* ======= Small Devices ======= */
 @media (max-width: 768px) {
-  .logo {
-    height: 32px;
-  }
-  .card {
-    margin-bottom: 0.75rem;
-  }
+  .logo { height: 32px; }
+  .card { margin-bottom: 0.75rem; }
 }
