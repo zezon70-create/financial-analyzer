@@ -37,14 +37,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const expenseItems = trial.filter(r=>r.type==='expense');
     const totalRevenue = revenueItems.reduce((a,b)=>a+b.value,0);
     const totalExpense = expenseItems.reduce((a,b)=>a+b.value,0);
-    const statement = [
+    return [
       ...revenueItems.map(r=>({ بند:r.account, قيمة:r.value })),
       { بند:'إجمالي الإيرادات', قيمة:totalRevenue },
       ...expenseItems.map(r=>({ بند:r.account, قيمة:r.value })),
       { بند:'إجمالي المصروفات', قيمة:totalExpense },
       { بند:'صافي الربح', قيمة:totalRevenue-totalExpense }
     ];
-    return statement;
   }
 
   function generateBalanceSheet(trial){
@@ -109,19 +108,12 @@ document.addEventListener('DOMContentLoaded', () => {
     ratiosChart = new Chart(ratiosCtx,{type:'bar',data:{labels:['ROA','ROE','EVA'],datasets:[{label:'النسب',data:[ratios.roa||0,ratios.roe||0,ratios.eva],backgroundColor:['#007bff','#ffc107','#17a2b8']}] }});
   }
 
-  darkToggle.addEventListener('change', ()=>{
-    document.body.classList.toggle('dark-mode', darkToggle.checked);
-    localStorage.setItem('darkMode', darkToggle.checked);
-  });
+  darkToggle.addEventListener('change', ()=>{ document.body.classList.toggle('dark-mode', darkToggle.checked); localStorage.setItem('darkMode', darkToggle.checked); });
   currencySelect.addEventListener('change', ()=>{ currentCurrency = currencySelect.value; localStorage.setItem('currency', currentCurrency); render(); });
   languageSelect.addEventListener('change', ()=>{ currentLang = languageSelect.value; localStorage.setItem('lang', currentLang); render(); });
   refreshBtn.addEventListener('click', render);
 
-  exportPdfBtn.addEventListener('click', ()=>{
-    const element = document.body;
-    html2pdf().set({filename:'financial-report.pdf', jsPDF:{orientation:'landscape'}}).from(element).save();
-  });
-
+  exportPdfBtn.addEventListener('click', ()=>{ html2pdf().set({filename:'financial-report.pdf', jsPDF:{orientation:'landscape'}}).from(document.body).save(); });
   exportExcelBtn.addEventListener('click', ()=>{
     const trial = loadSession();
     if(!trial.length){ alert('لا توجد بيانات للتصدير'); return; }
