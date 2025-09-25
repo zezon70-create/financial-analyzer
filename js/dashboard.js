@@ -1,4 +1,4 @@
-// dashboard.js - نسخة محسّنة ديناميكية وجمالية
+// dashboard.js - النسخة النهائية والمحسّنة
 document.addEventListener('DOMContentLoaded', () => {
   const noDataEl = document.getElementById('noData');
   const contentEl = document.getElementById('dashboardContent');
@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let ratiosChart = null;
 
   const state = {
-    currency: localStorage.getItem('currency') || (currencySelect ? currencySelect.value : 'EGP'),
-    lang: localStorage.getItem('lang') || (languageSelect ? languageSelect.value : 'ar'),
+    currency: localStorage.getItem('currency') || 'EGP',
+    lang: localStorage.getItem('lang') || 'ar',
     darkMode: localStorage.getItem('darkMode') === 'true'
   };
 
@@ -63,8 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const normalizeTrialRows = rows => {
     if (!Array.isArray(rows)) return [];
     return rows.map(r => {
-      const account = String(r.account ?? r['الحساب'] ?? r.name ?? r.Name ?? '').trim();
-      const code = String(r.code ?? r['رمز'] ?? r['Code'] ?? r['رقم الحساب'] ?? '').trim();
+      const account = String(r.account ?? r['الحساب'] ?? r.name ?? '').trim();
+      const code = String(r.code ?? r['رمز'] ?? '').trim();
       let debit = safeNum(r.debit ?? r.Debit ?? r['مدين']);
       let credit = safeNum(r.credit ?? r.Credit ?? r['دائن']);
       const value = r.value ?? r.Value ?? r['القيمة'] ?? r.amount ?? r.Amount;
@@ -72,8 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const v = Number(value || 0);
         if (v >= 0) debit = v; else credit = Math.abs(v);
       }
-      debit = safeNum(debit);
-      credit = safeNum(credit);
       const type = (r.type || r['النوع'] || '').toString().trim();
       return { account, code, debit, credit, type };
     });
@@ -174,12 +172,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const render = () => {
     const trial = loadSession();
     if (!trial.length) {
-      if (noDataEl) noDataEl.style.display = 'block';
-      if (contentEl) contentEl.style.display = 'none';
+      noDataEl.style.display = 'block';
+      contentEl.style.display = 'none';
       return;
     }
-    if (noDataEl) noDataEl.style.display = 'none';
-    if (contentEl) contentEl.style.display = 'block';
+    noDataEl.style.display = 'none';
+    contentEl.style.display = 'block';
 
     const inc = generateIncomeStatement(trial);
     const bs = generateBalanceSheet(trial);
@@ -190,7 +188,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (roeEl) roeEl.innerText = ratios.roe ? `${ratios.roe.toFixed(2)} %` : '-';
     if (evaEl) animateValue(evaEl, 0, ratios.eva);
 
-    // Income statement table
     const incContainer = document.getElementById('incomeStatement');
     if (incContainer) {
       const rows = [
@@ -207,7 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
       incContainer.innerHTML = `<table class="table table-sm"><tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</tbody></table>`;
     }
 
-    // Balance sheet table
     const bsContainer = document.getElementById('balanceSheet');
     if (bsContainer) {
       const rows = [
@@ -222,11 +218,10 @@ document.addEventListener('DOMContentLoaded', () => {
       bsContainer.innerHTML = `<table class="table table-sm"><tbody>${rows.map(r => `<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</tbody></table>`;
     }
 
-    debouncedUpdateCharts(inc, ratios);
+    updateCharts(inc, ratios);
   };
 
-  const debouncedUpdateCharts = debounce((inc, ratios) => {
-    // rev/exp pie
+  const updateCharts = debounce((inc, ratios) => {
     if (revExpCanvas) {
       if (revExpChart) revExpChart.destroy();
       revExpChart = new Chart(revExpCanvas, {
@@ -235,124 +230,75 @@ document.addEventListener('DOMContentLoaded', () => {
           labels: ['إيرادات', 'مصروفات'],
           datasets: [{
             data: [Math.max(0, inc.sales), Math.max(0, (inc.cogs + inc.operatingExpenses + inc.financeExpenses + inc.otherExpenses))],
-            backgroundColor: [
-              'rgba(40,167,69,0.8)',
-              'rgba(220,53,69,0.8)'
-            ],
-            borderColor: ['#28a745', '#dc3545'],
-            borderWidth: 1
+            backgroundColor: ['rgba(40,167,69,0.8)', 'rgba(220,53,69,0.8)']
           }]
         },
-        options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+        options: { responsive: true }
       });
     }
-
-    // ratios bar
     if (ratiosCanvas) {
       if (ratiosChart) ratiosChart.destroy();
       ratiosChart = new Chart(ratiosCanvas, {
         type: 'bar',
         data: {
-          labels: ['ROA (%)', 'ROE (%)', 'EVA'],
+          labels: ['ROA', 'ROE', 'EVA'],
           datasets: [{
-            label: 'Value / %',
-            data: [
-              ratios.roa ? ratios.roa.toFixed(2) : 0,
-              ratios.roe ? ratios.roe.toFixed(2) : 0,
-              ratios.eva ? ratios.eva.toFixed(2) : 0
-            ],
-            backgroundColor: [
-              'rgba(0,123,255,0.8)',
-              'rgba(255,193,7,0.8)',
-              'rgba(23,162,184,0.8)'
-            ],
-            borderWidth: 1
+            label: 'النسب المالية',
+            data: [ratios.roa || 0, ratios.roe || 0, ratios.eva || 0],
+            backgroundColor: ['#0d6efd', '#6f42c1', '#fd7e14']
           }]
         },
-        options: { responsive: true, scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+        options: { responsive: true }
       });
     }
-  }, 200);
+  }, 100);
 
-  // ----- Exports -----
-  const exportPdf = () => {
-    if (!exportPdfBtn) return;
-    const el = document.getElementById('report-area') || document.body;
-    html2pdf().set({ margin:10, filename:'financial-report.pdf', image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2,useCORS:true}, jsPDF:{unit:'mm',format:'a4'} }).from(el).save();
-  };
-
-  const exportExcel = () => {
-    if (!exportExcelBtn) return;
-    const trial = loadSession();
-    if (!trial.length) return alert('لا توجد بيانات للتصدير');
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(trial.map(r => ({
-      الحساب: r.account ?? r['الحساب'] ?? '',
-      رمز: r.code ?? r['رمز'] ?? '',
-      مدين: r.debit ?? r.Debit ?? r.amount ?? 0,
-      دائن: r.credit ?? r.Credit ?? 0,
-      النوع: r.type ?? ''
-    }))), 'ميزان المراجعة');
-
-    const inc = generateIncomeStatement(trial);
-    const incSheet = [
-      { بند:'إجمالي المبيعات', قيمة:inc.sales },
-      { بند:'تكلفة المبيعات', قيمة:inc.cogs },
-      { بند:'مجمل الربح', قيمة:inc.grossProfit },
-      { بند:'مصاريف تشغيلية', قيمة:inc.operatingExpenses },
-      { بند:'مصاريف تمويلية', قيمة:inc.financeExpenses },
-      { بند:'صافي قبل الضريبة', قيمة:inc.netBeforeTax },
-      { بند:'ضريبة', قيمة:inc.tax },
-      { بند:'صافي بعد الضريبة', قيمة:inc.netAfterTax }
-    ];
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(incSheet), 'قائمة الدخل');
-
-    const bs = generateBalanceSheet(trial);
-    const bsSheet = [
-      { بند:'الأصول المتداولة', قيمة:bs.assetsCurrent },
-      { بند:'الأصول غير المتداولة', قيمة:bs.assetsNonCurrent },
-      { بند:'إجمالي الأصول', قيمة:bs.totalAssets },
-      { بند:'الخصوم المتداولة', قيمة:bs.liabilitiesCurrent },
-      { بند:'الخصوم طويلة الأجل', قيمة:bs.liabilitiesNonCurrent },
-      { بند:'إجمالي الخصوم', قيمة:bs.totalLiabilities },
-      { بند:'حقوق الملكية', قيمة:bs.equity }
-    ];
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(bsSheet), 'الميزانية');
-
-    XLSX.writeFile(wb, 'financial-report.xlsx');
-  };
-
-  // ----- UI bindings -----
-  if (darkToggle) {
+  // ----- Dark mode -----
+  const applyDarkMode = () => {
+    document.body.classList.toggle('dark-mode', state.darkMode);
     darkToggle.checked = state.darkMode;
-    if (state.darkMode) document.body.classList.add('dark-mode');
-    darkToggle.addEventListener('change', e => {
-      document.body.classList.toggle('dark-mode', e.target.checked);
-      localStorage.setItem('darkMode', e.target.checked);
-    });
-  }
+    localStorage.setItem('darkMode', state.darkMode);
+  };
+  darkToggle.addEventListener('change', e => {
+    state.darkMode = e.target.checked;
+    applyDarkMode();
+  });
 
-  if (currencySelect) {
-    currencySelect.value = state.currency;
-    currencySelect.addEventListener('change', e => {
-      state.currency = e.target.value;
-      localStorage.setItem('currency', state.currency);
-      render();
-    });
-  }
+  // ----- Currency -----
+  currencySelect.value = state.currency;
+  currencySelect.addEventListener('change', e => {
+    state.currency = e.target.value;
+    localStorage.setItem('currency', state.currency);
+    render();
+  });
 
-  if (languageSelect) {
-    languageSelect.value = state.lang;
-    languageSelect.addEventListener('change', e => {
-      state.lang = e.target.value;
-      localStorage.setItem('lang', state.lang);
-      render();
-    });
-  }
+  // ----- Language -----
+  languageSelect.value = state.lang;
+  languageSelect.addEventListener('change', e => {
+    state.lang = e.target.value;
+    localStorage.setItem('lang', state.lang);
+    render();
+  });
 
-  if (refreshBtn) refreshBtn.addEventListener('click', render);
-  if (exportPdfBtn) exportPdfBtn.addEventListener('click', exportPdf);
-  if (exportExcelBtn) exportExcelBtn.addEventListener('click', exportExcel);
+  // ----- Refresh -----
+  refreshBtn.addEventListener('click', () => render());
 
+  // ----- Export PDF -----
+  exportPdfBtn.addEventListener('click', () => {
+    const opt = { margin: 0.5, filename: 'financial_dashboard.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' } };
+    html2pdf().set(opt).from(document.getElementById('report-area')).save();
+  });
+
+  // ----- Export Excel -----
+  exportExcelBtn.addEventListener('click', () => {
+    const wb = XLSX.utils.book_new();
+    const incTbl = document.getElementById('incomeStatement').querySelector('table');
+    const bsTbl = document.getElementById('balanceSheet').querySelector('table');
+    if (incTbl) XLSX.utils.book_append_sheet(wb, XLSX.utils.table_to_sheet(incTbl), 'قائمة الدخل');
+    if (bsTbl) XLSX.utils.book_append_sheet(wb, XLSX.utils.table_to_sheet(bsTbl), 'الميزانية');
+    XLSX.writeFile(wb, 'financial_dashboard.xlsx');
+  });
+
+  applyDarkMode();
   render();
 });
