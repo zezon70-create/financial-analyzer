@@ -8,19 +8,23 @@
   <!-- Bootstrap RTL -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
 
-  <!-- Optional: استخدم ملف الستايلي العام (style.css) أو ضع جزء الـ CSS أدناه -->
+  <!-- ستايل عام -->
   <link rel="stylesheet" href="css/style.css">
 
   <style>
-    /* تحسينات محلية سريعة (يمكن نقلها لملف style.css) */
-    body { background: var(--bg, #f7f9fc); padding-top: 12px; }
-    .controls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
-    .watermark { position: fixed; left:50%; top:45%; transform:translate(-50%,-50%); opacity:0.06; pointer-events:none; z-index:0;}
+    body { background: var(--bg, #f7f9fc); padding-top: 12px; transition: background .3s, color .3s; }
+    .dark-mode { background: #1e1e1e !important; color: #f5f5f5 !important; }
+    .dark-mode table { color: #f5f5f5; }
+    .controls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:10px; }
+    .watermark { position: fixed; left:50%; top:45%; transform:translate(-50%,-50%); opacity:0.05; pointer-events:none; z-index:0; max-width:80%; }
     table input, table select { width:100%; box-sizing:border-box; }
-    tr.balanced td { background-color: #e6ffed !important; }
-    tr.unbalanced td { background-color: #ffe6e6 !important; }
+    tr.balanced td { background-color: #e6ffed !important; transition: background .3s; }
+    tr.unbalanced td { background-color: #ffe6e6 !important; transition: background .3s; }
     .small-muted { font-size:0.85rem; color:#6c757d; }
-    @media (max-width:576px){ .controls { gap:6px; } .controls .form-control{ width: 100%; } }
+    @media (max-width:576px){
+      .controls { gap:6px; flex-direction:column; }
+      .controls .form-control, .controls .form-select, .controls .btn{ width:100%; }
+    }
   </style>
 </head>
 <body>
@@ -36,25 +40,25 @@
     </div>
 
     <div class="controls">
-      <label class="form-check form-switch mb-0">
+      <label class="form-check form-switch mb-0" title="تفعيل الوضع الليلي">
         <input class="form-check-input" id="darkModeToggle" type="checkbox" />
         <span class="form-check-label">الوضع الليلي</span>
       </label>
 
-      <select id="currencySelect" class="form-select form-select-sm" title="Currency" style="min-width:110px;">
+      <select id="currencySelect" class="form-select form-select-sm" title="اختيار العملة" style="min-width:110px;">
         <option value="EGP">جنيه (EGP)</option>
         <option value="USD">دولار (USD)</option>
         <option value="EUR">يورو (EUR)</option>
         <option value="SAR">ريال (SAR)</option>
       </select>
 
-      <select id="languageSelect" class="form-select form-select-sm" title="Language" style="min-width:120px;">
+      <select id="languageSelect" class="form-select form-select-sm" title="اختيار اللغة" style="min-width:120px;">
         <option value="ar">العربية</option>
         <option value="en">English</option>
       </select>
 
-      <button id="exportPdfBtn" class="btn btn-outline-primary btn-sm">تصدير PDF</button>
-      <button id="exportExcelBtn" class="btn btn-outline-success btn-sm">Excel</button>
+      <button id="exportPdfBtn" class="btn btn-outline-primary btn-sm" title="تصدير تقرير PDF">تصدير PDF</button>
+      <button id="exportExcelBtn" class="btn btn-outline-success btn-sm" title="تصدير تقرير Excel">Excel</button>
     </div>
   </div>
 </header>
@@ -64,7 +68,7 @@
     <img src="assets/logo.png" alt="logo" style="height:240px; filter:grayscale(100%);" />
   </div>
 
-  <main class="card p-3 mb-4">
+  <main class="card p-3 mb-4 shadow-sm">
     <div class="row g-3">
       <div class="col-md-6">
         <label class="form-label">تحميل ملف ميزان المراجعة (CSV أو Excel)</label>
@@ -72,17 +76,17 @@
         <div class="form-text">يدعم ملفات CSV و XLSX — يحاول اكتشاف رؤوس الأعمدة الشائعة.</div>
       </div>
 
-      <div class="col-md-6 d-flex align-items-end gap-2">
-        <button id="addRow" class="btn btn-success btn-add">➕ إضافة صف</button>
-        <button id="validate" class="btn btn-primary">✅ تحقق</button>
-        <button id="saveSession" class="btn btn-info">💾 حفظ</button>
-        <button id="loadSession" class="btn btn-warning">📂 استرجاع</button>
-        <button id="clearAll" class="btn btn-danger">🗑️ مسح الكل</button>
+      <div class="col-md-6 d-flex align-items-end gap-2 flex-wrap">
+        <button id="addRow" class="btn btn-success btn-add" title="إضافة صف جديد">➕ إضافة صف</button>
+        <button id="validate" class="btn btn-primary" title="التحقق من التوازن">✅ تحقق</button>
+        <button id="saveSession" class="btn btn-info" title="حفظ الجلسة محلياً">💾 حفظ</button>
+        <button id="loadSession" class="btn btn-warning" title="استرجاع الجلسة المحفوظة">📂 استرجاع</button>
+        <button id="clearAll" class="btn btn-danger" title="مسح جميع البيانات">🗑️ مسح الكل</button>
       </div>
     </div>
   </main>
 
-  <section class="card p-3">
+  <section class="card p-3 shadow-sm">
     <div class="table-responsive">
       <table class="table table-bordered table-hover align-middle">
         <thead class="table-light">
