@@ -3,54 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>التحليلات المالية الفائقة التفاعلية | Financial Analyzer</title>
+<title>التحليلات المالية التفاعلية ثلاثية الأبعاد | Financial Analyzer</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-body { font-family: Arial,sans-serif; margin:0; padding:0; transition: background 0.3s,color 0.3s;}
-.light-mode { background:#f8f9fa; color:#212529;}
-.dark-mode { background:#121212; color:#f8f9fa;}
-header { display:flex; justify-content:space-between; align-items:center; padding:10px 20px; background:#0d6efd; color:#fff; box-shadow:0 4px 6px rgba(0,0,0,0.1);}
-header .logo { height:40px; margin-left:10px;}
-header button, header select { margin-left:10px; padding:5px 10px; cursor:pointer; border:none; border-radius:5px;}
-header button:hover, header select:hover { opacity:0.85;}
-.container { padding:20px; position:relative;}
-.card { background:#fff; border-radius:10px; padding:15px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.15); transition: transform 0.2s;}
-.card:hover { transform: translateY(-5px);}
-.dark-mode .card { background:#1e1e1e;}
-.card-header { font-weight:bold; margin-bottom:10px; padding:10px; border-radius:8px; box-shadow: inset 0 -2px 4px rgba(0,0,0,0.1);}
-.bg-primary { background:#0d6efd; color:#fff;}
-.bg-success { background:#198754; color:#fff;}
-.bg-warning { background:#ffc107; color:#212529;}
-.bg-danger { background:#dc3545; color:#fff;}
-table { width:100%; border-collapse:collapse; table-layout:auto;}
-table, th, td { border:1px solid #dee2e6;}
-th, td { padding:8px; text-align:right;}
-th { background:#e9ecef; cursor:pointer;}
-.dark-mode th { background:#2c2c2c;}
-tr:nth-child(even) { background:#f2f2f2;}
-.dark-mode tr:nth-child(even) { background:#2a2a2a;}
-canvas { width:100% !important; max-height:300px;}
-.footer { text-align:center; padding:15px; background:#e9ecef; margin-top:20px;}
-.dark-mode .footer { background:#1e1e1e; color:#f8f9fa;}
-.alert { padding:10px; margin-bottom:15px; border-radius:6px;}
-.alert-success { background:#d1e7dd; color:#0f5132;}
-.alert-warning { background:#fff3cd; color:#664d03;}
-.alert-danger { background:#f8d7da; color:#842029;}
-.badge { padding:2px 6px; border-radius:4px; font-size:0.9em; margin-left:3px;}
-.badge-low { background:#198754; color:#fff;}
-.badge-medium { background:#ffc107; color:#212529;}
-.badge-high { background:#dc3545; color:#fff;}
-/* العلامة المائية */
-.watermark {
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%, -50%);
-  opacity:0.05;
-  z-index:0;
-  pointer-events:none;
-}
-.watermark img { max-width:400px; max-height:400px;}
+body { font-family: Arial, sans-serif; margin:0; padding:0; transition: background 0.3s, color 0.3s;}
+.light-mode { background:#f4f4f4; color:#333;}
+.dark-mode { background:#1e1e1e; color:#f4f4f4;}
+header { background:#007bff; color:white; display:flex; align-items:center; justify-content:space-between; padding:0.5rem 1rem; }
+header .logo { height:40px; }
+header select, header button { margin-left:0.5rem; cursor:pointer;}
+.watermark { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); opacity:0.05; z-index:-1;}
+main { padding:1rem; max-width:1400px; margin:auto;}
+.card { background:white; border-radius:0.5rem; box-shadow:0 2px 12px rgba(0,0,0,0.15); margin-bottom:1rem; padding:1rem; transition: transform 0.2s;}
+.card:hover { transform: translateY(-3px);}
+.dark-mode .card { background:#2b2b2b; color:#f4f4f4;}
+.card-header { font-weight:bold; font-size:1rem; margin-bottom:0.5rem; }
+table { width:100%; border-collapse:collapse; margin-top:0.5rem;}
+th, td { padding:0.5rem; border:1px solid #ccc; text-align:center; font-size:0.9rem;}
+th { background:#eee; }
+.dark-mode th { background:#444; }
+.chart-container { width:100%; height:300px; margin-top:1rem; }
+.slider-container { display:flex; align-items:center; margin:0.5rem 0; gap:0.5rem;}
+footer { text-align:center; padding:1rem; background:#eee; margin-top:2rem; font-size:0.9rem;}
 </style>
 </head>
 <body class="light-mode">
@@ -58,7 +32,7 @@ canvas { width:100% !important; max-height:300px;}
 <header>
   <div class="d-flex align-items-center">
     <img src="assets/logo.png" alt="logo" class="logo">
-    <strong id="siteTitle">Financial Analyzer</strong>
+    <span style="margin-right:0.5rem;">Financial Analyzer</span>
   </div>
   <div>
     <select id="currencySelect">
@@ -66,161 +40,133 @@ canvas { width:100% !important; max-height:300px;}
       <option value="USD">USD</option>
       <option value="EUR">EUR</option>
     </select>
-    <button id="toggleDarkMode">Dark/Light</button>
-    <button id="toggleLanguage">EN/AR</button>
+    <button id="toggleDarkMode">وضع</button>
+    <button id="toggleLanguage">EN / AR</button>
   </div>
 </header>
 
-<!-- العلامة المائية -->
 <div class="watermark">
-  <img src="assets/logo.png" alt="Watermark">
+  <img src="assets/logo.png" alt="watermark" height="300">
 </div>
 
-<div class="container">
-  <h1 id="pageTitle">📊 التحليلات المالية الفائقة التفاعلية + تنبؤ 10 سنوات</h1>
-  <p id="pageDesc">جميع النسب والمؤشرات مع مقارنة الفترة السابقة والحالية + التنبؤات المستقبلية والمخاطر حسب السيناريوهات.</p>
+<main>
+  <h1 style="text-align:center;">💎 التحليلات المالية التفاعلية ثلاثية الأبعاد</h1>
+  <p style="text-align:center;">تفاعلات ديناميكية لجميع المؤشرات المالية، القيم المضافة، المخاطر والتنبؤات بناءً على بيانات صفحة التقرير.</p>
 
-  <div class="alert alert-warning" id="forecastAlert">
-    تشمل التنبؤات المستقبلية لعوائد ومخاطر الشركة لكل سنة لعشر سنوات مع ألوان ديناميكية حسب المستوى.
+  <div class="slider-container">
+    <label for="riskMultiplier">مستوى المخاطر:</label>
+    <input type="range" id="riskMultiplier" min="0.8" max="1.5" step="0.05" value="1">
+    <span id="riskValue">1.00</span>
   </div>
 
-  <div class="row" id="ratioTables"></div>
+  <div id="ratiosContainer"></div>
+  <div id="chartsContainer"></div>
+</main>
 
-  <!-- Charts -->
-  <div class="row mt-3" id="chartsRow"></div>
-
-  <!-- المخاطر والتنبؤ -->
-  <div class="row mt-3">
-    <div class="col">
-      <div class="card">
-        <div class="card-header bg-danger">مؤشر المخاطر المتوقع حسب السيناريو</div>
-        <p id="riskIndex" class="alert alert-danger"></p>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card">
-        <div class="card-header bg-success">تنبؤ العائد المستقبلي (10 سنوات)</div>
-        <p id="forecastReturn" class="alert alert-success"></p>
-      </div>
-    </div>
-  </div>
-
-</div>
-
-<div class="footer">&copy; 2025 Financial Analyzer</div>
+<footer>
+  &copy; 2025 المحلل المالي — Financial Analyzer
+</footer>
 
 <script>
-// إعدادات عامة
-let lang='AR', currency='EGP';
-const body=document.body;
+let isDarkMode = false;
+let currentLang = 'AR';
+let currentCurrency = 'EGP';
+let reportData = null;
 
-// التبديل
-document.getElementById('toggleDarkMode').addEventListener('click',()=>{body.classList.toggle('dark-mode');body.classList.toggle('light-mode');});
-document.getElementById('toggleLanguage').addEventListener('click',()=>{lang=lang==='AR'?'EN':'AR';updateLanguage();});
-document.getElementById('currencySelect').addEventListener('change',(e)=>{currency=e.target.value;updateTables();});
-
-// بيانات وهمية متقدمة
-const financialData={
-  liquidity:[
-    {ratio:'Current Ratio', prev:1.5, curr:1.8, descAR:'قدرة الشركة على تغطية الالتزامات القصيرة الأجل', descEN:'Ability to cover short-term obligations', forecast:[1.85,1.9,1.95,2.0,2.05,2.1,2.15,2.2,2.25,2.3]},
-    {ratio:'Quick Ratio', prev:1.0, curr:1.2, descAR:'السيولة الفورية مقارنة بالخصوم القصيرة', descEN:'Immediate liquidity vs short-term liabilities', forecast:[1.22,1.25,1.28,1.3,1.33,1.35,1.38,1.4,1.42,1.45]}
-  ],
-  profitability:[
-    {ratio:'ROA', prev:0.10, curr:0.12, descAR:'العائد على الأصول', descEN:'Return on Assets', forecast:[0.13,0.14,0.145,0.15,0.152,0.155,0.16,0.162,0.165,0.17]},
-    {ratio:'Net Margin', prev:0.12, curr:0.15, descAR:'هامش الربح الصافي', descEN:'Net Profit Margin', forecast:[0.155,0.16,0.162,0.165,0.168,0.17,0.172,0.175,0.178,0.18]}
-  ],
-  activity:[
-    {ratio:'Asset Turnover', prev:1.3, curr:1.5, descAR:'كفاءة استخدام الأصول', descEN:'Efficiency of asset use', forecast:[1.52,1.55,1.57,1.6,1.62,1.65,1.67,1.7,1.72,1.75]}
-  ],
-  debt:[
-    {ratio:'Debt/Equity', prev:0.9, curr:0.8, descAR:'نسبة الدين إلى حقوق الملكية', descEN:'Debt to Equity Ratio', forecast:[0.78,0.76,0.75,0.73,0.72,0.7,0.68,0.66,0.65,0.63]}
-  ]
-};
-
-function formatVal(val){
-  return currency==='EGP'?val+' ج.م':currency==='USD'? '$'+val:'€'+val;
+async function fetchReportData() {
+  try { const res = await fetch('report.json'); const data = await res.json(); return data; }
+  catch(err){ console.error('خطأ في جلب بيانات التقرير:', err); alert('لا يمكن تحميل بيانات التقرير!'); return null; }
 }
 
-// إضافة جداول ديناميكية
-function updateTables(){
-  const container=document.getElementById('ratioTables');
-  container.innerHTML='';
-  for(const key in financialData){
-    const card=document.createElement('div');
-    card.className='col-md-6';
-    const inner=`<div class="card">
-      <div class="card-header ${key==='liquidity'?'bg-primary':key==='profitability'?'bg-success':key==='activity'?'bg-warning':'bg-danger'}">
-      ${lang==='AR'?key==='liquidity'?'نسب السيولة':key==='profitability'?'نسب الربحية':key==='activity'?'نسب النشاط':'نسب المديونية':key}
-      </div>
-      <table>
-        <thead><tr><th>النسبة</th><th>الفترة السابقة</th><th>الفترة الحالية</th><th>تنبؤ 10 سنوات</th><th>التفسير</th></tr></thead>
-        <tbody>
-        ${financialData[key].map(f=>{
-          const forecastStr=f.forecast.map(v=>{
-            if(v<0.5) return `<span class="badge badge-low">${formatVal(v)}</span>`;
-            else if(v<1.5) return `<span class="badge badge-medium">${formatVal(v)}</span>`;
-            else return `<span class="badge badge-high">${formatVal(v)}</span>`;
-          }).join(' | ');
-          return `<tr>
-            <td>${f.ratio}</td>
-            <td>${formatVal(f.prev)}</td>
-            <td>${formatVal(f.curr)}</td>
-            <td>${forecastStr}</td>
-            <td>${lang==='AR'?f.descAR:f.descEN}</td>
-          </tr>`;
-        }).join('')}
-        </tbody>
-      </table>
-    </div>`;
-    card.innerHTML=inner;
+function calculateRatios(data, riskMultiplier) {
+  const predictiveMultiplier = { best:1.2*riskMultiplier, normal:1.1*riskMultiplier, conservative:1.05*riskMultiplier };
+  return {
+    السيولة:[
+      { name:'النسبة الحالية', value:(data.assets/data.liabilities).toFixed(2), explanation:'قدرة الشركة على تغطية الالتزامات القصيرة الأجل.'},
+      { name:'النسبة السريعة', value:((data.assets - data.inventory)/data.liabilities).toFixed(2), explanation:'السيولة بدون المخزون.'},
+      { name:'السيولة النقدية', value:(data.cash/data.liabilities).toFixed(2), explanation:'قدرة النقد الفوري على تغطية الالتزامات.'}
+    ],
+    الربحية:[
+      { name:'هامش الربح الصافي', value:((data.netProfit/data.revenue*100).toFixed(2))+'%', explanation:'نسبة صافي الربح من الإيرادات.'},
+      { name:'العائد على الأصول', value:((data.netProfit/data.assets*100).toFixed(2))+'%', explanation:'كفاءة استخدام الأصول لتحقيق الأرباح.'},
+      { name:'العائد على حقوق الملكية', value:((data.netProfit/data.equity*100).toFixed(2))+'%', explanation:'العائد على الأموال المستثمرة.'}
+    ],
+    النشاط:[
+      { name:'دوران المخزون', value:(data.cost/data.inventory).toFixed(2), explanation:'عدد مرات دوران المخزون.'},
+      { name:'دوران الذمم المدينة', value:(data.revenue/data.accountsReceivable).toFixed(2), explanation:'سرعة تحصيل المستحقات.'},
+      { name:'مؤشر النشاط الشامل', value:(data.revenue/data.assets).toFixed(2), explanation:'كفاءة استخدام الأصول لتوليد الإيرادات.'}
+    ],
+    المديونية:[
+      { name:'نسبة المديونية', value:((data.liabilities/data.assets*100).toFixed(2))+'%', explanation:'نسبة التمويل بالدين مقارنة بالأصول.'},
+      { name:'الدين إلى حقوق الملكية', value:(data.liabilities/data.equity).toFixed(2), explanation:'هيكل رأس المال.'},
+      { name:'مؤشر المخاطر المالي', value:((data.liabilities/(data.assets+data.equity))*100).toFixed(2)+'%', explanation:'تقدير لمخاطر الشركة المالية.'}
+    ],
+    القيم_المضافة:[
+      { name:'القيمة المضافة الصافية', value:(data.netProfit - data.interest).toFixed(2), explanation:'القيمة المالية المضافة بعد الفوائد.'},
+      { name:'العائد على القيمة المضافة', value:(((data.netProfit - data.interest)/data.assets*100).toFixed(2))+'%', explanation:'العائد على القيمة المضافة للأصول.'}
+    ],
+    التنبؤات:[
+      { name:'توقع الإيرادات (أفضل سيناريو)', value:(data.revenue*predictiveMultiplier.best).toFixed(2), explanation:'تقدير الإيرادات في أفضل السيناريوهات.'},
+      { name:'توقع الإيرادات (سيناريو عادي)', value:(data.revenue*predictiveMultiplier.normal).toFixed(2), explanation:'تقدير الإيرادات في السيناريو الطبيعي.'},
+      { name:'توقع الإيرادات (سيناريو محافظ)', value:(data.revenue*predictiveMultiplier.conservative).toFixed(2), explanation:'تقدير الإيرادات في السيناريو المحافظ.'}
+    ]
+  };
+}
+
+function renderTables(ratios) {
+  const container = document.getElementById('ratiosContainer'); container.innerHTML = '';
+  for (let category in ratios){
+    let card = document.createElement('div'); card.className='card';
+    card.innerHTML=`<div class="card-header">${category}</div>
+      <div class="card-body">
+        <table>
+          <thead><tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr></thead>
+          <tbody>${ratios[category].map(r=>`<tr><td>${r.name}</td><td>${r.value}</td><td>${r.explanation}</td></tr>`).join('')}</tbody>
+        </table>
+      </div>`;
     container.appendChild(card);
   }
 }
 
-// الرسوم البيانية
-let charts={};
-function createCharts(){
-  const chartContainer=document.getElementById('chartsRow');
-  chartContainer.innerHTML='';
-  for(const key in financialData){
-    const col=document.createElement('div');
-    col.className='col-md-6';
-    col.innerHTML=`<div class="card p-2"><canvas id="${key}Chart"></canvas></div>`;
-    chartContainer.appendChild(col);
+let chartInstances = {};
+function renderCharts(ratios){
+  const chartsContainer=document.getElementById('chartsContainer'); chartsContainer.innerHTML='';
+  for(let category in ratios){
+    let card=document.createElement('div'); card.className='card'; card.style.marginTop='1rem';
+    card.innerHTML=`<div class="card-header">رسم بياني ثلاثي الأبعاد: ${category}</div>
+      <div class="card-body"><canvas id="${category}Chart" height="250"></canvas></div>`;
+    chartsContainer.appendChild(card);
 
-    const ctx=document.getElementById(`${key}Chart`).getContext('2d');
-    const labels=financialData[key].map(f=>f.ratio);
-    const datasets=[
-      {label:'Previous', data:financialData[key].map(f=>f.prev), backgroundColor:'rgba(220,53,69,0.6)'},
-      {label:'Current', data:financialData[key].map(f=>f.curr), backgroundColor:'rgba(13,110,253,0.6)'},
-      {label:'Forecast', data:financialData[key].map(f=>f.forecast.reduce((a,b)=>a+b,0)/f.forecast.length),
-        type:'line', borderColor:'orange', borderWidth:2, fill:false}
-    ];
-    charts[key]=new Chart(ctx,{type:'bar', data:{labels,datasets}, options:{responsive:true,plugins:{legend:{position:'top'}}}});
+    if(chartInstances[category]) chartInstances[category].destroy();
+    chartInstances[category]=new Chart(document.getElementById(category+'Chart').getContext('2d'),{
+      type:'bar',
+      data:{ labels:ratios[category].map(r=>r.name), datasets:[{ label:'القيمة', data:ratios[category].map(r=>parseFloat(r.value)), backgroundColor:'rgba(0,123,255,0.6)', borderColor:'#0056b3', borderWidth:2, borderRadius:10, hoverBackgroundColor:'rgba(0,123,255,0.9)'}]},
+      options:{
+        responsive:true,
+        plugins:{ legend:{ display:false } },
+        scales:{ y:{ beginAtZero:true, grid:{ color:'rgba(0,0,0,0.1)' } }, x:{ grid:{ color:'rgba(0,0,0,0.1)' } } }
+      }
+    });
   }
 }
 
-// المخاطر والتنبؤ
-function updateRiskForecast(){
-  let avgRisk=(financialData.debt.reduce((a,f)=>a.forecast.reduce((x,y)=>x+y,0)/f.forecast.length,0)/financialData.debt.length*100).toFixed(1);
-  document.getElementById('riskIndex').innerText=lang==='AR'?`مؤشر المخاطر المتوقع (10 سنوات): ${avgRisk}%`:`Expected Risk Index (10Y): ${avgRisk}%`;
+document.getElementById('toggleDarkMode').onclick = ()=>{ isDarkMode=!isDarkMode; document.body.className=isDarkMode?'dark-mode':'light-mode'; };
+document.getElementById('toggleLanguage').onclick = ()=>{ currentLang=currentLang==='AR'?'EN':'AR'; alert('تغيير اللغة إلى '+currentLang); };
+document.getElementById('currencySelect').onchange = (e)=>{ currentCurrency=e.target.value; alert('تم تغيير العملة إلى '+currentCurrency); };
+document.getElementById('riskMultiplier').oninput = (e)=>{
+  let val=parseFloat(e.target.value).toFixed(2);
+  document.getElementById('riskValue').innerText=val;
+  if(reportData){ const ratios=calculateRatios(reportData,val); renderTables(ratios); renderCharts(ratios); }
+};
 
-  let forecastReturn=(financialData.profitability.reduce((a,f)=>a.forecast.reduce((x,y)=>x+y,0)/f.forecast.length,0)/financialData.profitability.length*100).toFixed(1);
-  document.getElementById('forecastReturn').innerText=lang==='AR'?`تنبؤ العائد المستقبلي (10 سنوات): ${forecastReturn}%`:`Forecast Return (10Y): ${forecastReturn}%`;
+async function init(){
+  reportData = await fetchReportData();
+  if(!reportData) return;
+  const ratios = calculateRatios(reportData,1);
+  renderTables(ratios); renderCharts(ratios);
 }
 
-// اللغة
-function updateLanguage(){
-  document.getElementById('pageTitle').innerText = lang==='AR'?'📊 التحليلات المالية الفائقة التفاعلية + تنبؤ 10 سنوات':'📊 Interactive Super Advanced Financial Analysis + 10 Years Forecast';
-  document.getElementById('pageDesc').innerText = lang==='AR'?'جميع النسب والمؤشرات مع مقارنة بين الفترة السابقة والحالية + التنبؤات المستقبلية والمخاطر حسب السيناريوهات.':'All ratios and indicators with period comparison + future forecasts & risk scenarios.';
-  updateTables();
-}
-
-// تنفيذ الكل
-updateLanguage();
-createCharts();
-updateRiskForecast();
+init();
 </script>
-
 </body>
 </html>
