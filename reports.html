@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>التقارير المالية — Financial Analyzer</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+<title>التقارير المالية — المحلل المالي</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 body { font-family: Arial, sans-serif; margin:0; padding:0; transition: background 0.3s, color 0.3s;}
 .light-mode { background:#f4f4f4; color:#333;}
@@ -12,16 +12,18 @@ body { font-family: Arial, sans-serif; margin:0; padding:0; transition: backgrou
 header { background:#007bff; color:white; display:flex; align-items:center; justify-content:space-between; padding:0.5rem 1rem; }
 header .logo { height:40px; }
 header select, header button { margin-left:0.5rem; cursor:pointer;}
-nav.navbar { margin-bottom:1rem; }
 .watermark { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); opacity:0.05; z-index:-1;}
-.card { border-radius:0.5rem; box-shadow:0 2px 12px rgba(0,0,0,0.15); margin-bottom:1rem; transition: transform 0.2s;}
+main { padding:1rem; max-width:1400px; margin:auto;}
+.card { background:white; border-radius:0.5rem; box-shadow:0 2px 12px rgba(0,0,0,0.15); margin-bottom:1rem; padding:1rem; transition: transform 0.2s;}
 .card:hover { transform: translateY(-3px);}
 .dark-mode .card { background:#2b2b2b; color:#f4f4f4;}
-.card-header { font-weight:bold; font-size:1rem; margin-bottom:0.5rem; background:#007bff; color:white; padding:0.5rem;}
+.card-header { font-weight:bold; font-size:1rem; margin-bottom:0.5rem; }
 table { width:100%; border-collapse:collapse; margin-top:0.5rem;}
 th, td { padding:0.5rem; border:1px solid #ccc; text-align:center; font-size:0.9rem;}
 th { background:#eee; }
 .dark-mode th { background:#444; }
+.chart-container { width:100%; height:300px; margin-top:1rem; }
+.slider-container { display:flex; align-items:center; margin:0.5rem 0; gap:0.5rem;}
 footer { text-align:center; padding:1rem; background:#eee; margin-top:2rem; font-size:0.9rem;}
 </style>
 </head>
@@ -30,7 +32,7 @@ footer { text-align:center; padding:1rem; background:#eee; margin-top:2rem; font
 <header>
   <div class="d-flex align-items-center">
     <img src="assets/logo.png" alt="logo" class="logo">
-    <strong style="margin-right:0.5rem;">Financial Analyzer</strong>
+    <span style="margin-right:0.5rem;">Financial Analyzer</span>
   </div>
   <div>
     <select id="currencySelect">
@@ -40,6 +42,7 @@ footer { text-align:center; padding:1rem; background:#eee; margin-top:2rem; font
     </select>
     <button id="toggleDarkMode">وضع</button>
     <button id="toggleLanguage">EN / AR</button>
+    <a href="advanced.html"><button>تحليلات متقدمة</button></a>
   </div>
 </header>
 
@@ -47,129 +50,107 @@ footer { text-align:center; padding:1rem; background:#eee; margin-top:2rem; font
   <img src="assets/logo.png" alt="watermark" height="300">
 </div>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="index.html">الصفحة الرئيسية</a>
-    <a class="navbar-brand" href="input.html">إدخال البيانات</a>
-    <a class="navbar-brand" href="advanced.html">التحليلات المتقدمة</a>
-  </div>
-</nav>
+<main>
+  <h1 style="text-align:center;">💎 التقارير المالية التفاعلية</h1>
+  <p style="text-align:center;">تفاعلات ديناميكية لجميع المؤشرات المالية والقيم المضافة والمخاطر.</p>
 
-<main class="container py-4" id="report-area">
-  <h2>📊 التقارير المالية المفصلة</h2>
-  <p>استعرض وتصدير القوائم المالية: ميزان المراجعة، قائمة الدخل، الميزانية العمومية، وقائمة التدفقات النقدية.</p>
-
-  <div class="row g-3">
-    <div class="col-md-6">
-      <div class="card shadow-sm">
-        <div class="card-header">📊 ميزان المراجعة</div>
-        <div id="trialBalanceReport" class="card-body"></div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card shadow-sm">
-        <div class="card-header">📑 قائمة الدخل</div>
-        <div id="incomeStatementReport" class="card-body"></div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card shadow-sm">
-        <div class="card-header">💰 الميزانية العمومية</div>
-        <div id="balanceSheetReport" class="card-body"></div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card shadow-sm">
-        <div class="card-header">💵 التدفقات النقدية</div>
-        <div id="cashFlowReport" class="card-body"></div>
-      </div>
-    </div>
+  <div class="slider-container">
+    <label for="riskMultiplier">مستوى المخاطر:</label>
+    <input type="range" id="riskMultiplier" min="0.8" max="1.5" step="0.05" value="1">
+    <span id="riskValue">1.00</span>
   </div>
 
-  <div class="mt-4 text-center">
-    <button id="exportAll" class="btn btn-warning">📤 تصدير جميع القوائم Excel</button>
-    <button id="printReport" class="btn btn-secondary">🖨️ طباعة التقرير PDF</button>
-  </div>
+  <div id="ratiosContainer"></div>
+  <div id="chartsContainer"></div>
 </main>
 
 <footer>
   &copy; 2025 المحلل المالي — Financial Analyzer
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-
 <script>
-let isDarkMode=false;
-let currentLang='AR';
-let currentCurrency='EGP';
+let isDarkMode = false;
+let currentLang = 'AR';
+let currentCurrency = 'EGP';
+let trialData = JSON.parse(localStorage.getItem('trialData') || '[]');
 
-// محاكاة تحميل بيانات من صفحة Input
-function loadReportData() {
-  const session = JSON.parse(sessionStorage.getItem('financialData'));
-  if(!session) { alert('لا توجد بيانات'); return null; }
-  return session;
+function sumByType(field){
+  return trialData.reduce((acc,row)=>acc+(parseFloat(row[field]||0)),0);
 }
 
-// دوال رسم الجداول
-function renderTrialBalance(data){
-  if(!data.trialBalance) return 'لا توجد بيانات';
-  let html='<table><thead><tr><th>الحساب</th><th>مدين</th><th>دائن</th></tr></thead><tbody>';
-  data.trialBalance.forEach(r=>{ html+=`<tr><td>${r.account}</td><td>${r.debit}</td><td>${r.credit}</td></tr>`; });
-  html+='</tbody></table>'; return html;
-}
-function renderIncomeStatement(data){
-  if(!data.incomeStatement) return 'لا توجد بيانات';
-  let html='<table><thead><tr><th>البند</th><th>القيمة</th></tr></thead><tbody>';
-  data.incomeStatement.forEach(r=>{ html+=`<tr><td>${r.item}</td><td>${r.value}</td></tr>`; });
-  html+='</tbody></table>'; return html;
-}
-function renderBalanceSheet(data){
-  if(!data.balanceSheet) return 'لا توجد بيانات';
-  let html='<table><thead><tr><th>البند</th><th>القيمة</th></tr></thead><tbody>';
-  data.balanceSheet.forEach(r=>{ html+=`<tr><td>${r.item}</td><td>${r.value}</td></tr>`; });
-  html+='</tbody></table>'; return html;
-}
-function renderCashFlow(data){
-  if(!data.cashFlow) return 'لا توجد بيانات';
-  let html='<table><thead><tr><th>البند</th><th>القيمة</th></tr></thead><tbody>';
-  data.cashFlow.forEach(r=>{ html+=`<tr><td>${r.item}</td><td>${r.value}</td></tr>`; });
-  html+='</tbody></table>'; return html;
-}
+function calculateRatios(data, riskMultiplier){
+  const assets = sumByType('debit');
+  const liabilities = sumByType('credit');
+  const equity = assets - liabilities;
+  const netProfit = assets*0.2; // تبسيط
+  const predictiveMultiplier = { best:1.2*riskMultiplier, normal:1.1*riskMultiplier, conservative:1.05*riskMultiplier };
 
-// تصدير Excel
-document.getElementById('exportAll').addEventListener('click', ()=>{
-  const data = loadReportData(); if(!data) return;
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data.trialBalance),'ميزان المراجعة');
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data.incomeStatement),'قائمة الدخل');
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data.balanceSheet),'الميزانية العمومية');
-  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data.cashFlow),'التدفقات النقدية');
-  XLSX.writeFile(wb,'financial-report.xlsx');
-});
-
-// طباعة PDF
-document.getElementById('printReport').addEventListener('click', ()=>{
-  const element = document.getElementById('report-area');
-  html2pdf().from(element).save('financial-report.pdf');
-});
-
-// تفعيل الداكن و تغيير اللغة و العملة
-document.getElementById('toggleDarkMode').onclick=()=>{ isDarkMode=!isDarkMode; document.body.className=isDarkMode?'dark-mode':'light-mode'; };
-document.getElementById('toggleLanguage').onclick=()=>{ currentLang=currentLang==='AR'?'EN':'AR'; alert('تغيير اللغة إلى '+currentLang); };
-document.getElementById('currencySelect').onchange=(e)=>{ currentCurrency=e.target.value; alert('تم تغيير العملة إلى '+currentCurrency); };
-
-// تحميل وعرض البيانات
-function renderReports(){
-  const data=loadReportData(); if(!data) return;
-  document.getElementById('trialBalanceReport').innerHTML=renderTrialBalance(data);
-  document.getElementById('incomeStatementReport').innerHTML=renderIncomeStatement(data);
-  document.getElementById('balanceSheetReport').innerHTML=renderBalanceSheet(data);
-  document.getElementById('cashFlowReport').innerHTML=renderCashFlow(data);
+  return {
+    السيولة:[
+      { name:'النسبة الحالية', value:(assets/liabilities).toFixed(2), explanation:'قدرة الشركة على تغطية الالتزامات القصيرة الأجل.'}
+    ],
+    الربحية:[
+      { name:'هامش الربح الصافي', value:((netProfit/assets)*100).toFixed(2)+'%', explanation:'نسبة صافي الربح من الإيرادات.'}
+    ],
+    المديونية:[
+      { name:'نسبة المديونية', value:((liabilities/assets)*100).toFixed(2)+'%', explanation:'نسبة التمويل بالدين مقارنة بالأصول.'}
+    ],
+    التنبؤات:[
+      { name:'توقع الإيرادات (أفضل سيناريو)', value:(assets* predictiveMultiplier.best).toFixed(2), explanation:'تقدير الإيرادات في أفضل السيناريوهات.'},
+      { name:'توقع الإيرادات (سيناريو عادي)', value:(assets* predictiveMultiplier.normal).toFixed(2), explanation:'تقدير الإيرادات في السيناريو الطبيعي.'},
+      { name:'توقع الإيرادات (سيناريو محافظ)', value:(assets* predictiveMultiplier.conservative).toFixed(2), explanation:'تقدير الإيرادات في السيناريو المحافظ.'}
+    ]
+  };
 }
 
-renderReports();
+function renderTables(ratios){
+  const container = document.getElementById('ratiosContainer'); container.innerHTML = '';
+  for(let category in ratios){
+    let card = document.createElement('div'); card.className='card';
+    card.innerHTML=`<div class="card-header">${category}</div>
+      <div class="card-body">
+        <table>
+          <thead><tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr></thead>
+          <tbody>${ratios[category].map(r=>`<tr><td>${r.name}</td><td>${r.value}</td><td>${r.explanation}</td></tr>`).join('')}</tbody>
+        </table>
+      </div>`;
+    container.appendChild(card);
+  }
+}
+
+let chartInstances = {};
+function renderCharts(ratios){
+  const chartsContainer=document.getElementById('chartsContainer'); chartsContainer.innerHTML='';
+  for(let category in ratios){
+    let card=document.createElement('div'); card.className='card'; card.style.marginTop='1rem';
+    card.innerHTML=`<div class="card-header">رسم بياني: ${category}</div>
+      <div class="card-body"><canvas id="${category}Chart" height="250"></canvas></div>`;
+    chartsContainer.appendChild(card);
+
+    if(chartInstances[category]) chartInstances[category].destroy();
+    chartInstances[category]=new Chart(document.getElementById(category+'Chart').getContext('2d'),{
+      type:'bar',
+      data:{ labels:ratios[category].map(r=>r.name), datasets:[{ label:'القيمة', data:ratios[category].map(r=>parseFloat(r.value)), backgroundColor:'rgba(0,123,255,0.6)'}]},
+      options:{ responsive:true, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true }, x:{}} }
+    });
+  }
+}
+
+document.getElementById('toggleDarkMode').onclick = ()=>{ isDarkMode=!isDarkMode; document.body.className=isDarkMode?'dark-mode':'light-mode'; };
+document.getElementById('toggleLanguage').onclick = ()=>{ currentLang=currentLang==='AR'?'EN':'AR'; alert('تغيير اللغة إلى '+currentLang); };
+document.getElementById('currencySelect').onchange = (e)=>{ currentCurrency=e.target.value; alert('تم تغيير العملة إلى '+currentCurrency); };
+document.getElementById('riskMultiplier').oninput = (e)=>{
+  let val=parseFloat(e.target.value).toFixed(2);
+  document.getElementById('riskValue').innerText=val;
+  const ratios = calculateRatios(trialData,val);
+  renderTables(ratios); renderCharts(ratios);
+};
+
+window.onload=()=>{
+  const ratios = calculateRatios(trialData,1);
+  renderTables(ratios);
+  renderCharts(ratios);
+};
 </script>
-
 </body>
 </html>
