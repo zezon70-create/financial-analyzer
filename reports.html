@@ -1,70 +1,55 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>التقارير — المحلل المالي</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="stylesheet" href="css/fa_enhancements.css">
-  <style>
-    .report-block table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .report-block th, .report-block td {
-      border: 1px solid #ccc;
-      padding: 6px 10px;
-      text-align: center;
-    }
-    .report-block th {
-      background: #f5f5f5;
-    }
-    .report-title {
-      margin-bottom: 10px;
-      font-weight: bold;
-      font-size: 1.1rem;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>التقارير — المحلل المالي</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+
+<style>
+body { font-family: Arial, sans-serif; background: #f8f9fa; }
+.site-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background: #0d6efd; color: #fff; }
+.site-header img.logo { height: 40px; margin-left:10px; }
+.controls select, .controls button { margin-left: 8px; }
+.watermark { position: fixed; top: 30%; left: 30%; z-index: 0; opacity: 0.06; filter: grayscale(100%); pointer-events:none; }
+.report-block table { width:100%; border-collapse: collapse; margin-top:5px; }
+.report-block th, .report-block td { border:1px solid #ccc; padding:6px 10px; text-align:center; }
+.report-block th { background:#e9ecef; }
+.card { position: relative; z-index:1; }
+</style>
 </head>
 <body>
 
-<header class="site-header" role="banner">
-  <div class="left">
+<header class="site-header">
+  <div class="d-flex align-items-center">
     <img src="assets/logo.png" class="logo" alt="logo">
-    <div><strong data-i18n="app_title">Financial Analyzer</strong></div>
+    <strong>المحلل المالي</strong>
   </div>
-  <div class="controls no-print">
-    <label style="margin-right:8px;">
-      <input type="checkbox" onchange="toggleDark(this)" /> 
-      <span data-i18n="toggle_dark">Dark Mode</span>
+  <div class="controls d-flex align-items-center">
+    <label style="margin-left:8px;">
+      <input type="checkbox" id="darkModeToggle" /> وضع داكن
     </label>
-    <select onchange="changeCurrency(this)" class="control-select" title="Currency">
-      <option value="USD">USD</option><option value="EUR">EUR</option><option value="EGP">EGP</option>
+    <select id="currencySelect">
+      <option value="EGP">جنيه</option>
+      <option value="USD">USD</option>
+      <option value="EUR">EUR</option>
     </select>
-    <select onchange="changeLang(this)" class="control-select" title="Language">
-      <option value="en">English</option><option value="ar">العربية</option>
+    <select id="langSelect">
+      <option value="ar">العربية</option>
+      <option value="en">English</option>
     </select>
-    <button class="control-btn" onclick="exportReportToPdf('main','financial-report.pdf')">
-      <span data-i18n='export_pdf'>تصدير PDF</span>
-    </button>
-    <button class="control-btn" onclick="exportActiveReportExcel()">تصدير Excel</button>
+    <button id="exportAll" class="btn btn-warning btn-sm">📤 تصدير Excel</button>
+    <button id="printReport" class="btn btn-secondary btn-sm">🖨️ PDF</button>
   </div>
 </header>
 
 <div class="watermark">
-  <img src="assets/logo.png" style="height:220px;opacity:0.06;filter:grayscale(100%)">
+  <img src="assets/logo.png" style="height:220px;">
 </div>
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="index.html">المحلل المالي</a>
-  </div>
-</nav>
 
 <main class="container py-4" id="report-area">
   <h2>التقارير المالية المفصلة</h2>
-  <p>يمكنك استعراض وتصدير القوائم المالية: ميزان المراجعة، قائمة الدخل، الميزانية العمومية، وقائمة التدفقات النقدية.</p>
+  <p>عرض القوائم المالية المفصلة بناءً على ميزان المراجعة المرفوع.</p>
 
   <div class="row g-3">
     <div class="col-md-6">
@@ -92,57 +77,57 @@
       </div>
     </div>
   </div>
-
-  <div class="mt-4 text-center no-print">
-    <button id="exportAll" class="btn btn-warning">📤 تصدير جميع القوائم Excel</button>
-    <button id="printReport" class="btn btn-secondary">🖨️ طباعة التقرير PDF</button>
-  </div>
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script src="js/main.js"></script>
-<script>
-  function renderReports() {
-    const session = loadSession();
-    if (!session || !session.trial) {
-      alert('لا توجد بيانات للتقارير');
-      return;
-    }
-
-    // دوال من main.js
-    document.getElementById('trialBalanceReport').innerHTML = renderTrialBalance(session.trial);
-    document.getElementById('incomeStatementReport').innerHTML = renderIncomeStatement(session.trial);
-    document.getElementById('balanceSheetReport').innerHTML = renderBalanceSheet(session.trial);
-    document.getElementById('cashFlowReport').innerHTML = renderCashFlow(session.trial);
-  }
-
-  document.getElementById('exportAll').addEventListener('click', () => {
-    const session = loadSession();
-    if (!session || !session.trial) { alert('لا توجد بيانات للتصدير'); return; }
-    const wb = XLSX.utils.book_new();
-
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(exportTrialBalance(session.trial)), 'ميزان المراجعة');
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(exportIncomeStatement(session.trial)), 'قائمة الدخل');
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(exportBalanceSheet(session.trial)), 'الميزانية العمومية');
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(exportCashFlow(session.trial)), 'التدفقات النقدية');
-
-    XLSX.writeFile(wb, 'financial-report.xlsx');
-  });
-
-  document.getElementById('printReport').addEventListener('click', () => {
-    window.print();
-  });
-
-  renderReports();
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-<script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
-<script src="js/fa_enhancements.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.3.0/exceljs.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-<script src="js/fa_excel_export.js"></script>
-<script src="js/fa_forecast.js"></script>
+
+<script>
+// ====== Dark Mode ======
+const darkToggle = document.getElementById('darkModeToggle');
+darkToggle.addEventListener('change', ()=> {
+  document.body.classList.toggle('bg-dark');
+  document.body.classList.toggle('text-light');
+});
+
+// ====== Render Reports ======
+function renderReports() {
+  const session = loadSession();
+  if (!session || !session.trial) return alert('لا توجد بيانات للتقارير');
+
+  document.getElementById('trialBalanceReport').innerHTML = renderTrialBalance(session.trial);
+  document.getElementById('incomeStatementReport').innerHTML = renderIncomeStatement(session.trial);
+  document.getElementById('balanceSheetReport').innerHTML = renderBalanceSheet(session.trial);
+  document.getElementById('cashFlowReport').innerHTML = renderCashFlow(session.trial);
+}
+
+// ====== Export PDF ======
+function exportReportToPdf(elementId, filename){
+  const element = document.getElementById(elementId);
+  const opt = { margin:0.5, filename, image:{type:'jpeg', quality:0.98}, html2canvas:{scale:2}, jsPDF:{unit:'in', format:'a4', orientation:'landscape'} };
+  html2pdf().set(opt).from(element).save();
+}
+
+// ====== Export Excel ======
+function exportActiveReportExcel(){
+  const wb = XLSX.utils.book_new();
+  const session = loadSession();
+  if(!session || !session.trial) return alert('لا توجد بيانات للتصدير');
+
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(exportTrialBalance(session.trial)), 'ميزان المراجعة');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(exportIncomeStatement(session.trial)), 'قائمة الدخل');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(exportBalanceSheet(session.trial)), 'الميزانية العمومية');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(exportCashFlow(session.trial)), 'التدفقات النقدية');
+
+  XLSX.writeFile(wb, 'financial-report.xlsx');
+}
+
+// ====== Event Listeners ======
+document.getElementById('exportAll').addEventListener('click', exportActiveReportExcel);
+document.getElementById('printReport').addEventListener('click', ()=> exportReportToPdf('report-area','financial-report.pdf'));
+
+// ====== Initial Render ======
+renderReports();
+</script>
 </body>
 </html>
