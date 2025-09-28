@@ -1,42 +1,78 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>إدخال ميزان المراجعة — المحلل المالي</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+
 <style>
-:root{--accent:#0d6efd;--bg-light:#f7f9fc;--card-bg:#ffffff;--text:#222;}
-[data-theme="dark"]{--bg-light:#111217;--card-bg:#141418;--text:#e9ecef;}
-html,body{height:100%; margin:0; font-family: "Cairo", sans-serif; background:var(--bg-light); color:var(--text);}
-header.site-header{position:sticky;top:0;z-index:1100;background:rgba(255,255,255,0.85);backdrop-filter: blur(6px);border-bottom:1px solid rgba(13,110,253,0.06);}
-[data-theme="dark"] header.site-header{background:rgba(12,12,12,0.85); border-color: rgba(255,255,255,0.04);}
-.brand{display:flex;align-items:center;gap:.6rem;font-weight:700;color:var(--accent);}
-.brand img{height:44px;border-radius:6px;}
-.controls{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;}
-.controls .form-select,.controls .form-control{min-width:140px;}
-main.container{padding-top:20px;padding-bottom:60px;max-width:1200px;}
-.card-surface{background:var(--card-bg);border-radius:12px;padding:18px;box-shadow:0 8px 20px rgba(15,15,15,0.04);border:1px solid rgba(13,110,253,0.03);}
-[data-theme="dark"] .card-surface{box-shadow:0 8px 24px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03);}
-.table thead th{background:transparent;border-bottom:1px solid rgba(0,0,0,0.06);}
-[data-theme="dark"] .table thead th{border-color: rgba(255,255,255,0.04);}
-td .form-control{font-size:.92rem;padding:.375rem .5rem;}
-tr.balanced td{background: rgba(16,185,129,0.06) !important;}
-tr.unbalanced td{background: rgba(220,53,69,0.05) !important;}
-.watermark{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;opacity:0.04;}
-.watermark img{max-width:420px;filter:grayscale(100%);opacity:0.12;}
-#fa_toast_area{position:fixed;top:18px;left:18px;z-index:1200;}
-.icon-btn{display:inline-flex;align-items:center;gap:.5rem;}
+:root{
+  --accent:#0d6efd;
+  --bg-light:#f7f9fc;
+  --card-bg:#ffffff;
+  --text:#222;
+}
+[data-theme="dark"]{
+  --bg-light:#111217;
+  --card-bg:#141418;
+  --text:#e9ecef;
+}
+html,body{height:100%}
+body{
+  margin:0;
+  min-height:100%;
+  font-family: "Cairo", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  background:var(--bg-light);
+  color:var(--text);
+  transition: background .25s ease, color .25s ease;
+}
+header.site-header{
+  position:sticky; top:0; z-index:1100;
+  background:rgba(255,255,255,0.85);
+  backdrop-filter: blur(6px);
+  border-bottom:1px solid rgba(13,110,253,0.06);
+}
+[data-theme="dark"] header.site-header{
+  background:rgba(12,12,12,0.85);
+  border-color: rgba(255,255,255,0.04);
+}
+.brand { display:flex; align-items:center; gap:.6rem; font-weight:700; color:var(--accent); }
+.brand img{height:44px; border-radius:6px;}
+.controls { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
+.controls .form-select, .controls .form-control { min-width:140px; }
+main.container{ padding-top:20px; padding-bottom:60px; max-width:1200px; }
+.card-surface{
+  background:var(--card-bg); border-radius:12px; padding:18px;
+  box-shadow: 0 8px 20px rgba(15,15,15,0.04);
+  border:1px solid rgba(13,110,253,0.03);
+}
+[data-theme="dark"] .card-surface{
+  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  border:1px solid rgba(255,255,255,0.03);
+}
+.table thead th{ background:transparent; border-bottom:1px solid rgba(0,0,0,0.06); }
+[data-theme="dark"] .table thead th{ border-color: rgba(255,255,255,0.04); }
+td .form-control{ font-size:.92rem; padding:.375rem .5rem; }
+tr.balanced td{ background: rgba(16,185,129,0.06) !important; }
+tr.unbalanced td{ background: rgba(220,53,69,0.05) !important; }
+.watermark{
+  position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+  pointer-events:none; z-index:0; opacity:0.04;
+}
+.watermark img{ max-width:420px; filter:grayscale(100%); opacity:0.12; }
+.icon-btn { display:inline-flex; align-items:center; gap:.5rem; }
 </style>
 </head>
-<body data-theme="light">
+<body>
+
 <div class="watermark"><img src="assets/logo.png" alt="logo"/></div>
 
 <header class="site-header py-2">
   <div class="container d-flex align-items-center justify-content-between">
     <div class="d-flex align-items-center gap-3">
-      <a class="brand" href="#">
+      <a class="brand" href="index.html">
         <img src="assets/logo.png" alt="logo">
         <span>المحلل المالي</span>
       </a>
@@ -60,9 +96,12 @@ tr.unbalanced td{background: rgba(220,53,69,0.05) !important;}
         <label class="form-check-label small" for="darkModeToggle">الوضع الليلي</label>
       </div>
 
-      <button id="exportPdfBtn" class="btn btn-outline-primary btn-sm icon-btn"><i class="fa-regular fa-file-pdf"></i> PDF</button>
-      <button id="exportExcelBtn" class="btn btn-outline-success btn-sm icon-btn"><i class="fa-regular fa-file-excel"></i> Excel</button>
-      <a href="reports.html" class="btn btn-primary btn-sm">عرض التقارير</a>
+      <button id="exportPdfBtn" class="btn btn-outline-primary btn-sm icon-btn">
+        <i class="fa-regular fa-file-pdf"></i> PDF
+      </button>
+      <button id="exportExcelBtn" class="btn btn-outline-success btn-sm icon-btn">
+        <i class="fa-regular fa-file-excel"></i> Excel
+      </button>
     </div>
   </div>
 </header>
@@ -71,9 +110,9 @@ tr.unbalanced td{background: rgba(220,53,69,0.05) !important;}
   <section class="card-surface mb-3">
     <div class="row gx-3 gy-3 align-items-end">
       <div class="col-md-6">
-        <label>تحميل ملف ميزان المراجعة (CSV / XLSX)</label>
+        <label class="form-label">تحميل ملف ميزان المراجعة (CSV / XLSX)</label>
         <input type="file" id="fileInput" class="form-control" accept=".csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" />
-        <div class="form-text">يدعم CSV و XLSX — يحاول اكتشاف رؤوس الأعمدة الشائعة.</div>
+        <div class="form-text">يدعم ملفات CSV و XLSX — يحاول اكتشاف رؤوس الأعمدة الشائعة.</div>
       </div>
 
       <div class="col-md-6 text-md-end d-flex gap-2 justify-content-md-end flex-wrap">
@@ -106,42 +145,163 @@ tr.unbalanced td{background: rgba(220,53,69,0.05) !important;}
   </section>
 </main>
 
-<div id="fa_toast_area"></div>
-<footer class="text-center py-3 small">&copy; 2025 المحلل المالي — Moataz Madkour</footer>
+<footer class="text-center py-3 small">
+  &copy; 2025 المحلل المالي
+</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 <script>
-let trialData = JSON.parse(localStorage.getItem('trialData') || '[]');
+const tbBody = document.getElementById('tbBody');
+const validationResult = document.getElementById('validationResult');
 
-function renderTable(){
-  const tbody = document.getElementById('tbBody');
-  tbody.innerHTML = '';
-  trialData.forEach((row,i)=>{
-    let tr = document.createElement('tr');
-    tr.innerHTML = `<td><input class="form-control" value="${row.account||''}"></td>
-                    <td><select class="form-select"><option value="asset" ${row.type==='asset'?'selected':''}>أصل</option><option value="liability" ${row.type==='liability'?'selected':''}>خصم</option><option value="equity" ${row.type==='equity'?'selected':''}>حقوق ملكية</option></select></td>
-                    <td><input class="form-control" value="${row.code||''}"></td>
-                    <td><input class="form-control" value="${row.debit||''}"></td>
-                    <td><input class="form-control" value="${row.credit||''}"></td>
-                    <td><button class="btn btn-sm btn-danger" onclick="deleteRow(${i})"><i class="fa-solid fa-trash"></i></button></td>`;
-    tbody.appendChild(tr);
+// ---------------- Dark Mode ----------------
+const darkToggle = document.getElementById('darkModeToggle');
+if(localStorage.getItem('theme')==='dark'){ document.body.setAttribute('data-theme','dark'); darkToggle.checked=true;}
+darkToggle.addEventListener('change', ()=> {
+  if(darkToggle.checked){ document.body.setAttribute('data-theme','dark'); localStorage.setItem('theme','dark');}
+  else{ document.body.removeAttribute('data-theme'); localStorage.setItem('theme','light');}
+});
+
+// ---------------- Language ----------------
+const languageSelect = document.getElementById('languageSelect');
+languageSelect.value = localStorage.getItem('lang')||'ar';
+languageSelect.addEventListener('change', ()=>{
+  localStorage.setItem('lang', languageSelect.value);
+  alert('تم تغيير اللغة إلى '+languageSelect.value.toUpperCase());
+});
+
+// ---------------- Currency ----------------
+const currencySelect = document.getElementById('currencySelect');
+currencySelect.value = localStorage.getItem('currency')||'EGP';
+currencySelect.addEventListener('change', ()=>{
+  localStorage.setItem('currency', currencySelect.value);
+  alert('تم تغيير العملة إلى '+currencySelect.value);
+});
+
+// ---------------- ميزان المراجعة ----------------
+function checkBalance(){
+  let totalDebit=0, totalCredit=0;
+  tbBody.querySelectorAll('tr').forEach(tr=>{
+    const debit=parseFloat(tr.querySelector('.debit').value)||0;
+    const credit=parseFloat(tr.querySelector('.credit').value)||0;
+    totalDebit+=debit;
+    totalCredit+=credit;
   });
+  if(totalDebit.toFixed(2)===totalCredit.toFixed(2)){
+    validationResult.innerHTML='<span class="text-success fw-bold">✔ الميزان متوازن</span>';
+  }else{
+    validationResult.innerHTML='<span class="text-danger fw-bold">✖ الميزان غير متوازن</span>';
+  }
 }
 
-function deleteRow(i){ trialData.splice(i,1); saveData(); renderTable(); }
-function addRow(){ trialData.push({}); renderTable(); }
-function saveData(){ localStorage.setItem('trialData',JSON.stringify(trialData)); }
-function loadData(){ trialData = JSON.parse(localStorage.getItem('trialData') || '[]'); renderTable(); }
-function clearAll(){ trialData=[]; saveData(); renderTable(); }
+// ---------------- إضافة صف ----------------
+document.getElementById('addRow').addEventListener('click', ()=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML=`
+    <td><input class="form-control account" placeholder="اسم الحساب"></td>
+    <td><input class="form-control type" placeholder="نوع"></td>
+    <td><input class="form-control code" placeholder="الكود"></td>
+    <td><input class="form-control debit" type="number" value="0" oninput="checkBalance()"></td>
+    <td><input class="form-control credit" type="number" value="0" oninput="checkBalance()"></td>
+    <td><button class="btn btn-sm btn-danger removeRow"><i class="fa-solid fa-trash"></i></button></td>
+  `;
+  tbBody.appendChild(tr);
+  tr.querySelector('.removeRow').addEventListener('click', ()=>{ tr.remove(); checkBalance(); });
+  checkBalance();
+});
 
-document.getElementById('addRow').onclick=addRow;
-document.getElementById('saveSession').onclick=saveData;
-document.getElementById('loadSession').onclick=loadData;
-document.getElementById('clearAll').onclick=clearAll;
+// ---------------- تحقق ----------------
+document.getElementById('validate').addEventListener('click', checkBalance);
 
-window.onload=renderTable;
+// ---------------- مسح الكل ----------------
+document.getElementById('clearAll').addEventListener('click', ()=>{
+  tbBody.innerHTML='';
+  validationResult.innerHTML='';
+});
+
+// ---------------- حفظ واسترجاع محلي ----------------
+document.getElementById('saveSession').addEventListener('click', ()=>{
+  const data=[];
+  tbBody.querySelectorAll('tr').forEach(tr=>{
+    data.push({
+      account: tr.querySelector('.account').value,
+      type: tr.querySelector('.type').value,
+      code: tr.querySelector('.code').value,
+      debit: tr.querySelector('.debit').value,
+      credit: tr.querySelector('.credit').value
+    });
+  });
+  localStorage.setItem('trialData', JSON.stringify(data));
+  alert('تم حفظ الجلسة محليًا');
+});
+
+document.getElementById('loadSession').addEventListener('click', ()=>{
+  const data=JSON.parse(localStorage.getItem('trialData')||'[]');
+  tbBody.innerHTML='';
+  data.forEach(row=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><input class="form-control account" value="${row.account}"></td>
+      <td><input class="form-control type" value="${row.type}"></td>
+      <td><input class="form-control code" value="${row.code}"></td>
+      <td><input class="form-control debit" type="number" value="${row.debit}" oninput="checkBalance()"></td>
+      <td><input class="form-control credit" type="number" value="${row.credit}" oninput="checkBalance()"></td>
+      <td><button class="btn btn-sm btn-danger removeRow"><i class="fa-solid fa-trash"></i></button></td>
+    `;
+    tbBody.appendChild(tr);
+    tr.querySelector('.removeRow').addEventListener('click', ()=>{ tr.remove(); checkBalance(); });
+  });
+  checkBalance();
+});
+
+// ---------------- تحميل ملفات ----------------
+document.getElementById('fileInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  if(file.name.endsWith('.csv')){
+    Papa.parse(file, {header:true, complete:(results)=>{
+      tbBody.innerHTML='';
+      results.data.forEach(row=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML=`
+          <td><input class="form-control account" value="${row.Account||''}"></td>
+          <td><input class="form-control type" value="${row.Type||''}"></td>
+          <td><input class="form-control code" value="${row.Code||''}"></td>
+          <td><input class="form-control debit" type="number" value="${row.Debit||0}" oninput="checkBalance()"></td>
+          <td><input class="form-control credit" type="number" value="${row.Credit||0}" oninput="checkBalance()"></td>
+          <td><button class="btn btn-sm btn-danger removeRow"><i class="fa-solid fa-trash"></i></button></td>
+        `;
+        tbBody.appendChild(tr);
+        tr.querySelector('.removeRow').addEventListener('click', ()=>{ tr.remove(); checkBalance(); });
+      });
+      checkBalance();
+    }});
+  } else {
+    const reader = new FileReader();
+    reader.onload = (evt)=>{
+      const wb = XLSX.read(evt.target.result, {type:'binary'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const json = XLSX.utils.sheet_to_json(ws);
+      tbBody.innerHTML='';
+      json.forEach(row=>{
+        const tr=document.createElement('tr');
+        tr.innerHTML=`
+          <td><input class="form-control account" value="${row.Account||''}"></td>
+          <td><input class="form-control type" value="${row.Type||''}"></td>
+          <td><input class="form-control code" value="${row.Code||''}"></td>
+          <td><input class="form-control debit" type="number" value="${row.Debit||0}" oninput="checkBalance()"></td>
+          <td><input class="form-control credit" type="number" value="${row.Credit||0}" oninput="checkBalance()"></td>
+          <td><button class="btn btn-sm btn-danger removeRow"><i class="fa-solid fa-trash"></i></button></td>
+        `;
+        tbBody.appendChild(tr);
+        tr.querySelector('.removeRow').addEventListener('click', ()=>{ tr.remove(); checkBalance(); });
+      });
+      checkBalance();
+    };
+    reader.readAsBinaryString(file);
+  }
+});
 </script>
 </body>
 </html>
