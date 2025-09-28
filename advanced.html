@@ -1,243 +1,225 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>التحليلات المالية الفائقة | Financial Analyzer</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>التحليلات المالية المتقدمة | Financial Analyzer</title>
 
-<!-- Bootstrap RTL CDN -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<!-- Font Awesome -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-<style>
-/* تنسيقات داخلية كاملة */
-body.light-mode { background:#f7f9fc; color:#212529; }
-body.dark-mode { background:#121212; color:#eee; }
-.site-header { position: sticky; top:0; z-index:1000; }
-.logo { height:40px; }
-.card { border-radius:10px; }
-.card-header { font-weight:bold; }
-.table th, .table td { vertical-align: middle !important; }
-.watermark { position: fixed; top:50%; left:50%; transform: translate(-50%, -50%); opacity:0.03; z-index:0; pointer-events:none; }
-.tooltip-inner { max-width:300px; text-align:right; }
-</style>
+  <style>
+    /* === Reset & Base === */
+    * { box-sizing: border-box; margin:0; padding:0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background:#f8f9fa; color:#212529; transition: all .3s ease; }
+    h1,h2,h3,h4,h5,h6 { margin-bottom: .5rem; }
+    .container { max-width: 1200px; margin:auto; padding:20px; }
+    .row { display:flex; flex-wrap:wrap; gap:20px; }
+    .col-lg-6, .col-md-6 { flex:1 1 48%; }
+    .card { background:#fff; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,.08); padding:20px; display:flex; flex-direction:column; }
+    .card-header { padding:10px 15px; border-radius:8px 8px 0 0; font-weight:bold; }
+    .card-body { padding:10px 15px; flex:1; overflow:auto; }
+    table { width:100%; border-collapse:collapse; margin-top:10px; }
+    th, td { padding:8px; border:1px solid #dee2e6; text-align:right; }
+    th { background:#e9ecef; }
+    .chart-container { height:250px; }
+    footer { text-align:center; padding:10px 0; margin-top:20px; background:#e9ecef; border-radius:10px; }
+    .btn { padding:6px 12px; border:none; border-radius:6px; cursor:pointer; transition: all .2s ease; }
+    .btn:hover { opacity:.85; }
+    .btn-primary { background:#0d6efd; color:#fff; }
+    .btn-success { background:#198754; color:#fff; }
+    .btn-warning { background:#ffc107; color:#212529; }
+    .btn-danger { background:#dc3545; color:#fff; }
+    .top-controls { display:flex; justify-content:flex-end; gap:10px; margin-bottom:20px; flex-wrap:wrap; }
+    select, input { padding:5px 8px; border-radius:6px; border:1px solid #ced4da; }
+    .watermark { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); opacity:.05; z-index:0; }
+    .watermark img { width:300px; }
+    /* Dark Mode */
+    body.dark-mode { background:#212529; color:#f8f9fa; }
+    body.dark-mode table, body.dark-mode th, body.dark-mode td { border-color:#495057; color:#f8f9fa; }
+    body.dark-mode .card { background:#343a40; color:#f8f9fa; }
+    body.dark-mode .card-header { color:#fff; }
+    body.dark-mode footer { background:#343a40; color:#f8f9fa; }
+  </style>
 </head>
-<body class="light-mode">
+<body>
 
-<header class="site-header navbar navbar-expand-lg navbar-dark bg-primary px-3">
-  <a class="navbar-brand d-flex align-items-center" href="index.html">
-    <img src="assets/logo.png" alt="logo" class="logo me-2">
-    <div><strong>Financial Analyzer</strong></div>
-  </a>
-  <div class="ms-auto d-flex gap-2">
-    <select id="currencySelect" class="form-select form-select-sm">
+  <!-- Watermark -->
+  <div class="watermark">
+    <img src="assets/logo.png" alt="watermark">
+  </div>
+
+  <!-- Header & Controls -->
+  <div class="container top-controls">
+    <select id="currencySelect" title="Currency">
       <option value="EGP">جنيه</option>
       <option value="USD">USD</option>
       <option value="EUR">EUR</option>
     </select>
-    <button id="toggleDarkMode" class="btn btn-outline-light btn-sm"><i class="fa fa-moon"></i></button>
-  </div>
-</header>
-
-<div class="watermark">
-  <img src="assets/logo.png" alt="watermark">
-</div>
-
-<main class="container py-4">
-
-  <div class="text-center mb-4">
-    <h1>📊 التحليلات المالية الفائقة</h1>
-    <p class="lead">عرض كافة التحليلات، النسب، الرسوم التفاعلية، التنبؤات، ومؤشرات المخاطر والعائد.</p>
+    <button id="toggleDarkMode" class="btn btn-primary">Dark / Light</button>
+    <button id="toggleLanguage" class="btn btn-success">EN / AR</button>
   </div>
 
-  <!-- Cards & Ratios -->
-  <div class="row g-4">
+  <div class="container text-center mb-4">
+    <h1>📊 التحليلات المالية المتقدمة</h1>
+    <p class="lead">عرض النسب المالية المتقدمة، المؤشرات المضافة، التنبؤات، وعرض الرسوم البيانية المباشرة استناداً إلى ميزان المراجعة.</p>
+  </div>
+
+  <div class="container row g-4">
 
     <!-- Liquidity Ratios -->
     <div class="col-lg-6">
-      <div class="card shadow-sm h-100">
-        <div class="card-header bg-primary text-white">نسب السيولة</div>
-        <div class="card-body table-responsive">
-          <table class="table table-bordered table-sm">
-            <thead class="table-light">
-              <tr><th>النسبة</th><th>القيمة</th><th>تفسير</th></tr>
-            </thead>
+      <div class="card">
+        <div class="card-header btn-primary">نسب السيولة</div>
+        <div class="card-body">
+          <table>
+            <thead><tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr></thead>
             <tbody id="liquidityRatios"></tbody>
           </table>
+          <canvas id="liquidityChart" class="chart-container"></canvas>
         </div>
       </div>
     </div>
 
     <!-- Profitability Ratios -->
     <div class="col-lg-6">
-      <div class="card shadow-sm h-100">
-        <div class="card-header bg-success text-white">نسب الربحية</div>
-        <div class="card-body table-responsive">
-          <table class="table table-bordered table-sm">
-            <thead class="table-light"><tr><th>النسبة</th><th>القيمة</th><th>تفسير</th></tr></thead>
+      <div class="card">
+        <div class="card-header btn-success">نسب الربحية</div>
+        <div class="card-body">
+          <table>
+            <thead><tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr></thead>
             <tbody id="profitabilityRatios"></tbody>
           </table>
+          <canvas id="profitabilityChart" class="chart-container"></canvas>
         </div>
       </div>
     </div>
 
     <!-- Activity Ratios -->
     <div class="col-lg-6">
-      <div class="card shadow-sm h-100">
-        <div class="card-header bg-warning">نسب النشاط</div>
-        <div class="card-body table-responsive">
-          <table class="table table-bordered table-sm">
-            <thead class="table-light"><tr><th>النسبة</th><th>القيمة</th><th>تفسير</th></tr></thead>
+      <div class="card">
+        <div class="card-header btn-warning">نسب النشاط</div>
+        <div class="card-body">
+          <table>
+            <thead><tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr></thead>
             <tbody id="activityRatios"></tbody>
           </table>
+          <canvas id="activityChart" class="chart-container"></canvas>
         </div>
       </div>
     </div>
 
     <!-- Debt Ratios -->
     <div class="col-lg-6">
-      <div class="card shadow-sm h-100">
-        <div class="card-header bg-danger text-white">نسب المديونية</div>
-        <div class="card-body table-responsive">
-          <table class="table table-bordered table-sm">
-            <thead class="table-light"><tr><th>النسبة</th><th>القيمة</th><th>تفسير</th></tr></thead>
+      <div class="card">
+        <div class="card-header btn-danger">نسب المديونية</div>
+        <div class="card-body">
+          <table>
+            <thead><tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr></thead>
             <tbody id="debtRatios"></tbody>
           </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- Advanced Predictive & Risk -->
-    <div class="col-12">
-      <div class="card shadow-sm h-100">
-        <div class="card-header bg-info text-white">تنبؤ ومخاطر وعائد</div>
-        <div class="card-body table-responsive">
-          <table class="table table-bordered table-sm">
-            <thead class="table-light">
-              <tr><th>المؤشر</th><th>القيمة</th><th>تفسير</th></tr>
-            </thead>
-            <tbody id="advancedRatios"></tbody>
-          </table>
+          <canvas id="debtChart" class="chart-container"></canvas>
         </div>
       </div>
     </div>
 
   </div>
 
-  <!-- Charts Section -->
-  <div class="row g-4 mt-3">
-    <div class="col-md-6"><div class="card shadow-sm p-3"><h6>السيولة</h6><canvas id="liquidityChart" height="200"></canvas></div></div>
-    <div class="col-md-6"><div class="card shadow-sm p-3"><h6>الربحية</h6><canvas id="profitabilityChart" height="200"></canvas></div></div>
-    <div class="col-md-6"><div class="card shadow-sm p-3"><h6>النشاط</h6><canvas id="activityChart" height="200"></canvas></div></div>
-    <div class="col-md-6"><div class="card shadow-sm p-3"><h6>المديونية</h6><canvas id="debtChart" height="200"></canvas></div></div>
-    <div class="col-12"><div class="card shadow-sm p-3"><h6>التنبؤات & المخاطر & العائد</h6><canvas id="riskChart" height="300"></canvas></div></div>
-  </div>
+  <footer>&copy; 2025 المحلل المالي — Financial Analyzer</footer>
 
-</main>
+  <script>
+    // ====== Settings & Utilities ======
+    const settings = { lang: 'ar', theme: 'light', currency: 'EGP' };
+    const data = { liquidity:[], profitability:[], activity:[], debt:[] };
 
-<footer class="bg-light text-center py-3 small">&copy; 2025 المحلل المالي — Financial Analyzer</footer>
+    function fmtCurrency(val){
+      try{
+        return new Intl.NumberFormat(settings.lang==='ar'?'ar-EG':'en-US', {style:'currency', currency:settings.currency, maximumFractionDigits:2}).format(val);
+      }catch(e){ return val + ' ' + settings.currency; }
+    }
 
-<!-- Chart.js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    function addRatio(tableId,name,value,explanation){
+      const tbody = document.getElementById(tableId);
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${name}</td><td>${fmtCurrency(value)}</td><td>${explanation}</td>`;
+      tbody.appendChild(tr);
+    }
 
-<!-- Main Advanced JS -->
-<script>
-// بيانات وهمية للتجربة، يمكن استبدالها بالبيانات الحقيقية
-const trialData = window.__trialData || [
-  { account:"Cash", code:"1001", debit:50000, credit:0, type:"asset" },
-  { account:"Revenue", code:"4001", debit:0, credit:70000, type:"revenue" },
-  { account:"Expense", code:"5001", debit:20000, credit:0, type:"expense" },
-  { account:"Loan", code:"2001", debit:0, credit:15000, type:"liability" }
-];
+    // ====== Sample Advanced Ratios ======
+    function generateRatios(){
+      // Liquidity
+      data.liquidity = [
+        {name:'النسبة الحالية', value:1.45, expl:'تعكس قدرة الشركة على الوفاء بالالتزامات القصيرة الأجل.'},
+        {name:'النسبة السريعة', value:1.1, expl:'تحسب بدون المخزون لتقييم السيولة الحقيقية.'},
+        {name:'نسبة النقد', value:0.35, expl:'النقد المتاح مقارنة بالالتزامات قصيرة الأجل.'}
+      ];
+      data.liquidity.forEach(r=>addRatio('liquidityRatios',r.name,r.value,r.expl));
 
-// حساب مؤشرات
-function calculateRatios(data){
-  const ratios = { liquidity:[], profitability:[], activity:[], debt:[], advanced:[] };
-  let totalAssets = 0, totalLiabilities=0, totalEquity=0, totalRevenue=0, totalExpense=0;
-  data.forEach(r=>{
-    if(r.type==="asset") totalAssets+=r.debit-r.credit;
-    else if(r.type==="liability") totalLiabilities+=r.credit-r.debit;
-    else if(r.type==="equity") totalEquity+=r.credit-r.debit;
-    else if(r.type==="revenue") totalRevenue+=r.credit-r.debit;
-    else if(r.type==="expense") totalExpense+=r.debit-r.credit;
-  });
+      // Profitability
+      data.profitability = [
+        {name:'هامش صافي الربح', value:0.22, expl:'تعكس الربحية الصافية للشركة بعد جميع المصاريف.'},
+        {name:'العائد على حقوق الملكية', value:0.18, expl:'توضح مدى تحقيق الأرباح مقابل حقوق المساهمين.'},
+        {name:'العائد على الأصول', value:0.12, expl:'مدى فعالية استخدام الأصول لتحقيق الأرباح.'}
+      ];
+      data.profitability.forEach(r=>addRatio('profitabilityRatios',r.name,r.value,r.expl));
 
-  // نسب السيولة
-  ratios.liquidity.push({name:"النسبة الحالية", value: (totalAssets/totalLiabilities).toFixed(2), explanation:"السيولة مقابل الالتزامات القصيرة الأجل"});
-  ratios.liquidity.push({name:"النسبة السريعة", value: ((totalAssets-totalExpense)/totalLiabilities).toFixed(2), explanation:"السيولة الفعلية بدون المخزون"});
+      // Activity
+      data.activity = [
+        {name:'دورة التحصيل', value:45, expl:'عدد أيام تحصيل الذمم المدينة.'},
+        {name:'دورة المخزون', value:70, expl:'عدد أيام بقاء المخزون قبل بيعه.'},
+        {name:'دورة الدفع', value:30, expl:'مدة دفع الموردين.'}
+      ];
+      data.activity.forEach(r=>addRatio('activityRatios',r.name,r.value,r.expl));
 
-  // الربحية
-  const netIncome = totalRevenue-totalExpense;
-  ratios.profitability.push({name:"صافي الربح", value: netIncome.toFixed(2), explanation:"إجمالي الإيرادات مطروحاً منه المصروفات"});
-  ratios.profitability.push({name:"هامش الربح", value: (netIncome/totalRevenue*100).toFixed(2)+"%", explanation:"نسبة الربح من الإيرادات"});
+      // Debt
+      data.debt = [
+        {name:'نسبة الدين إلى حقوق الملكية', value:0.55, expl:'تعكس نسبة الدين مقابل حقوق المساهمين.'},
+        {name:'نسبة تغطية الفوائد', value:4.2, expl:'عدد مرات تغطية الأرباح للفوائد.'},
+        {name:'الدين القصير الأجل إلى الأصول', value:0.2, expl:'حجم الدين قصير الأجل مقارنة بالأصول.'}
+      ];
+      data.debt.forEach(r=>addRatio('debtRatios',r.name,r.value,r.expl));
+    }
 
-  // النشاط
-  ratios.activity.push({name:"معدل دوران الأصول", value: (totalRevenue/totalAssets).toFixed(2), explanation:"عدد مرات استخدام الأصول لتحقيق الإيرادات"});
-  ratios.activity.push({name:"معدل دوران المخزون", value: (totalExpense/totalAssets).toFixed(2), explanation:"تقدير سرعة استهلاك المخزون"});
+    // ====== Charts ======
+    function createChart(ctxId,label,dataArr){
+      const ctx = document.getElementById(ctxId).getContext('2d');
+      new Chart(ctx,{
+        type:'bar',
+        data:{
+          labels: dataArr.map(d=>d.name),
+          datasets:[{label:'القيمة', data:dataArr.map(d=>d.value), backgroundColor:'rgba(13,110,253,0.7)'}]
+        },
+        options:{ responsive:true, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
+      });
+    }
 
-  // المديونية
-  ratios.debt.push({name:"نسبة الدين", value: (totalLiabilities/totalAssets*100).toFixed(2)+"%", explanation:"نسبة التزام الشركة بالدين"});
-  ratios.debt.push({name:"نسبة الدين إلى حقوق الملكية", value: (totalLiabilities/totalEquity).toFixed(2), explanation:"مقارنة الدين بحقوق الملكية"});
+    function renderCharts(){
+      createChart('liquidityChart','نسب السيولة',data.liquidity);
+      createChart('profitabilityChart','نسب الربحية',data.profitability);
+      createChart('activityChart','نسب النشاط',data.activity);
+      createChart('debtChart','نسب المديونية',data.debt);
+    }
 
-  // مؤشرات متقدمة
-  ratios.advanced.push({name:"CAGR العائد السنوي المركب", value: ((Math.pow(totalRevenue/totalAssets,1/3)-1)*100).toFixed(2)+"%", explanation:"تقدير العائد السنوي المركب"});
-  ratios.advanced.push({name:"مؤشر المخاطر", value: (Math.random()*10).toFixed(2), explanation:"مؤشر المخاطر الافتراضي بناءً على تقلب العوائد"});
-  ratios.advanced.push({name:"العائد المتوقع", value: (netIncome/totalAssets*100).toFixed(2)+"%", explanation:"العائد المتوقع على الأصول"});
+    // ====== Event Listeners ======
+    document.getElementById('toggleDarkMode').addEventListener('click',()=>{
+      document.body.classList.toggle('dark-mode');
+      settings.theme = document.body.classList.contains('dark-mode')?'dark':'light';
+    });
 
-  return ratios;
-}
+    document.getElementById('toggleLanguage').addEventListener('click',()=>{
+      if(settings.lang==='ar'){ settings.lang='en'; document.dir='ltr'; }else{ settings.lang='ar'; document.dir='rtl'; }
+      location.reload();
+    });
 
-// Render جداول
-function renderRatios(r){
-  const fillTable = (id, arr)=>{
-    const tbody = document.getElementById(id);
-    tbody.innerHTML = arr.map(x=>`<tr><td>${x.name}</td><td>${x.value}</td><td>${x.explanation}</td></tr>`).join("");
-  };
-  fillTable("liquidityRatios", r.liquidity);
-  fillTable("profitabilityRatios", r.profitability);
-  fillTable("activityRatios", r.activity);
-  fillTable("debtRatios", r.debt);
-  fillTable("advancedRatios", r.advanced);
-}
+    document.getElementById('currencySelect').addEventListener('change',e=>{
+      settings.currency = e.target.value;
+      location.reload();
+    });
 
-// Render Charts
-function renderCharts(r){
-  function createBarChart(ctx, labels, data, color){
-    return new Chart(ctx,{type:"bar", data:{labels, datasets:[{label:"القيمة",data,color,backgroundColor:color}]}, options:{responsive:true, plugins:{legend:{display:false}}}});
-  }
-  const lc = document.getElementById("liquidityChart").getContext("2d");
-  createBarChart(lc, r.liquidity.map(x=>x.name), r.liquidity.map(x=>parseFloat(x.value)), 'rgba(0,123,255,0.7)');
-  const pc = document.getElementById("profitabilityChart").getContext("2d");
-  createBarChart(pc, r.profitability.map(x=>x.name), r.profitability.map(x=>parseFloat(x.value)), 'rgba(40,167,69,0.7)');
-  const ac = document.getElementById("activityChart").getContext("2d");
-  createBarChart(ac, r.activity.map(x=>x.name), r.activity.map(x=>parseFloat(x.value)), 'rgba(255,193,7,0.7)');
-  const dc = document.getElementById("debtChart").getContext("2d");
-  createBarChart(dc, r.debt.map(x=>x.name), r.debt.map(x=>parseFloat(x.value)), 'rgba(220,53,69,0.7)');
-
-  // Risk Chart
-  const rc = document.getElementById("riskChart").getContext("2d");
-  new Chart(rc, {
-    type:"line",
-    data:{
-      labels:r.advanced.map(x=>x.name),
-      datasets:[{label:"القيمة",data:r.advanced.map(x=>parseFloat(x.value)), borderColor:'rgba(23,162,184,1)', backgroundColor:'rgba(23,162,184,0.2)', tension:0.4}]
-    },
-    options:{responsive:true}
-  });
-}
-
-// Dark/Light Mode
-document.getElementById("toggleDarkMode").addEventListener("click",()=>{
-  document.body.classList.toggle("dark-mode");
-  document.body.classList.toggle("light-mode");
-});
-
-const ratios = calculateRatios(trialData);
-renderRatios(ratios);
-renderCharts(ratios);
-</script>
+    // ====== Init ======
+    generateRatios();
+    renderCharts();
+  </script>
 
 </body>
 </html>
