@@ -33,7 +33,6 @@
       transition: background .25s ease, color .25s ease;
     }
 
-    /* Header */
     header.site-header{
       position:sticky; top:0; z-index:1100;
       background:rgba(255,255,255,0.85);
@@ -47,11 +46,9 @@
     .brand { display:flex; align-items:center; gap:.6rem; font-weight:700; color:var(--accent); }
     .brand img{height:44px; border-radius:6px;}
 
-    /* Controls area */
     .controls { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
     .controls .form-select, .controls .form-control { min-width:140px; }
 
-    /* Page layout */
     main.container{
       padding-top:20px; padding-bottom:60px; max-width:1200px;
     }
@@ -65,7 +62,6 @@
       border:1px solid rgba(255,255,255,0.03);
     }
 
-    /* Table */
     .table thead th{ background:transparent; border-bottom:1px solid rgba(0,0,0,0.06); }
     [data-theme="dark"] .table thead th{ border-color: rgba(255,255,255,0.04); }
     td .form-control{ font-size:.92rem; padding:.375rem .5rem; }
@@ -73,20 +69,16 @@
     tr.balanced td{ background: rgba(16,185,129,0.06) !important; }
     tr.unbalanced td{ background: rgba(220,53,69,0.05) !important; }
 
-    /* Watermark */
     .watermark{
       position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
       pointer-events:none; z-index:0; opacity:0.04;
     }
     .watermark img{ max-width:420px; filter:grayscale(100%); opacity:0.12; }
 
-    /* Toast area */
     #fa_toast_area{ position:fixed; top:18px; left:18px; z-index:1200; }
 
-    /* Buttons */
     .icon-btn { display:inline-flex; align-items:center; gap:.5rem; }
 
-    /* Responsive tweaks */
     @media (max-width:768px){
       .controls { width:100%; justify-content:center; gap:8px; }
       .controls .form-select { min-width:unset; flex:1 1 48%; }
@@ -95,10 +87,8 @@
 </head>
 <body data-theme="light">
 
-<!-- Watermark (visual only) -->
 <div class="watermark"><img src="assets/logo.png" alt="logo"/></div>
 
-<!-- Header -->
 <header class="site-header py-2">
   <div class="container d-flex align-items-center justify-content-between">
     <div class="d-flex align-items-center gap-3">
@@ -136,9 +126,7 @@
   </div>
 </header>
 
-<!-- Main -->
 <main class="container">
-  <!-- Upload / actions card -->
   <section class="card-surface mb-3">
     <div class="row gx-3 gy-3 align-items-end">
       <div class="col-md-6">
@@ -147,8 +135,8 @@
         <div class="form-text" id="upload-hint" data-i18n="upload_hint">يدعم ملفات CSV و XLSX — يحاول اكتشاف رؤوس الأعمدة الشائعة.</div>
       </div>
 
-      <div class="col-md-6 text-md-end d-flex gap-2 justify-content-md-end">
-        <button id="addRow" class="btn btn-primary" title="Add Row"><i class="fa-solid fa-plus me-1"></i> <span data-i18n="add_row">إضافة صف</span></button>
+      <div class="col-md-6 text-md-end d-flex gap-2 justify-content-md-end flex-wrap">
+        <button id="addRow" class="btn btn-primary"><i class="fa-solid fa-plus me-1"></i> <span data-i18n="add_row">إضافة صف</span></button>
         <button id="validate" class="btn btn-outline-primary"><i class="fa-solid fa-check me-1"></i> <span data-i18n="check_balance">تحقق</span></button>
         <button id="saveSession" class="btn btn-outline-info"><i class="fa-solid fa-floppy-disk me-1"></i> <span data-i18n="save">حفظ</span></button>
         <button id="loadSession" class="btn btn-outline-warning"><i class="fa-solid fa-folder-open me-1"></i> <span data-i18n="load">استرجاع</span></button>
@@ -157,7 +145,6 @@
     </div>
   </section>
 
-  <!-- Table card -->
   <section class="card-surface">
     <div class="table-responsive">
       <table id="trialTable" class="table table-borderless align-middle">
@@ -180,20 +167,15 @@
   </section>
 </main>
 
-<!-- Toast area -->
 <div id="fa_toast_area"></div>
 
-<!-- Footer -->
 <footer class="text-center py-3 small">
   &copy; <span id="year">2025</span> <span data-i18n="app_title">المحلل المالي</span> — Moataz Madkour
 </footer>
 
-<!-- Libraries (keep CDN as before) -->
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-
-<!-- Main script -->
 <script src="js/input.js"></script>
 </body>
 </html>
