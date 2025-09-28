@@ -13,7 +13,7 @@ header { display:flex; justify-content:space-between; align-items:center; paddin
 header .logo { height:40px; margin-left:10px;}
 header button, header select { margin-left:10px; padding:5px 10px; cursor:pointer; border:none; border-radius:5px;}
 header button:hover, header select:hover { opacity:0.85;}
-.container { padding:20px;}
+.container { padding:20px; position:relative;}
 .card { background:#fff; border-radius:10px; padding:15px; margin-bottom:20px; box-shadow:0 2px 8px rgba(0,0,0,0.15); transition: transform 0.2s;}
 .card:hover { transform: translateY(-5px);}
 .dark-mode .card { background:#1e1e1e;}
@@ -40,6 +40,17 @@ canvas { width:100% !important; max-height:300px;}
 .badge-low { background:#198754; color:#fff;}
 .badge-medium { background:#ffc107; color:#212529;}
 .badge-high { background:#dc3545; color:#fff;}
+/* العلامة المائية */
+.watermark {
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  opacity:0.05;
+  z-index:0;
+  pointer-events:none;
+}
+.watermark img { max-width:400px; max-height:400px;}
 </style>
 </head>
 <body class="light-mode">
@@ -59,6 +70,11 @@ canvas { width:100% !important; max-height:300px;}
     <button id="toggleLanguage">EN/AR</button>
   </div>
 </header>
+
+<!-- العلامة المائية -->
+<div class="watermark">
+  <img src="assets/logo.png" alt="Watermark">
+</div>
 
 <div class="container">
   <h1 id="pageTitle">📊 التحليلات المالية الفائقة التفاعلية + تنبؤ 10 سنوات</h1>
