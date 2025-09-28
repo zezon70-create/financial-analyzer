@@ -7,32 +7,33 @@
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
 
   <style>
+    /* ---------- Base ---------- */
     body {
       margin: 0;
       font-family: 'Cairo', sans-serif;
-      background: #f4f7fa;
+      background: linear-gradient(120deg, #f4f7fa, #e0e7ff);
       color: #333;
       transition: background 0.3s, color 0.3s;
+      position: relative;
     }
-    body.dark { background: #121212; color: #eee; }
+    body.dark {
+      background: linear-gradient(120deg, #121212, #1e1e1e);
+      color: #eee;
+    }
 
-    /* Splash */
-    #splash {
+    /* ---------- Watermark ---------- */
+    body::before {
+      content: url('assets/watermark.png');
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: #0077b6;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 2000;
-      color: #fff;
-      font-size: 2rem;
-      font-weight: 700;
-      animation: fadeOut 1s ease 2.5s forwards;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      opacity: 0.05;
+      z-index: 0;
+      pointer-events: none;
     }
-    @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
 
+    /* ---------- Header ---------- */
     header {
       padding: 15px 30px;
       display: flex;
@@ -49,15 +50,15 @@
 
     .logo {
       font-weight: 700;
-      font-size: 1.3rem;
+      font-size: 1.4rem;
       color: #0077b6;
       display: flex;
       align-items: center;
       gap: 10px;
     }
-    .logo img { height: 40px; }
+    .logo img { height: 50px; }
 
-    .controls { display: flex; gap: 10px; }
+    .controls { display: flex; gap: 10px; align-items: center; }
     button, select {
       padding: 6px 12px;
       border: none;
@@ -70,7 +71,7 @@
     select { background: #eee; }
     body.dark select { background: #333; color: #fff; }
 
-    /* Hero */
+    /* ---------- Hero Section ---------- */
     .hero {
       height: calc(100vh - 80px);
       display: flex;
@@ -79,52 +80,32 @@
       align-items: center;
       text-align: center;
       padding: 20px;
+      z-index: 1;
+      position: relative;
     }
-    .hero h1 { font-size: 2.4rem; margin-bottom: 20px; color: #0077b6; }
-    .hero p { font-size: 1.2rem; margin-bottom: 30px; max-width: 600px; }
-    .cta { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
-    .cta a, .cta button {
-      padding: 12px 24px;
+    .hero h1 { font-size: 2.8rem; margin-bottom: 20px; color: #0077b6; animation: fadeInDown 1s ease; }
+    .hero p { font-size: 1.3rem; margin-bottom: 30px; max-width: 700px; animation: fadeIn 1.2s ease; }
+
+    .cta {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .cta a {
+      padding: 14px 28px;
       border-radius: 8px;
-      font-size: 1rem;
+      font-size: 1.1rem;
       font-weight: 700;
       text-decoration: none;
-      transition: 0.3s;
-    }
-    .btn-start { background: #0077b6; color: #fff; }
-    .btn-start:hover { background: #023e8a; }
-    .btn-upload { background: #48cae4; color: #fff; border: none; cursor: pointer; }
-    .btn-upload:hover { background: #0096c7; }
-
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.6);
-      justify-content: center;
-      align-items: center;
-      z-index: 3000;
-    }
-    .modal-content {
-      background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      text-align: center;
-      width: 90%; max-width: 400px;
-    }
-    body.dark .modal-content { background: #1e1e1e; color: #fff; }
-    .modal-content h2 { margin-bottom: 20px; }
-    .modal-content input[type="file"] { margin: 15px 0; }
-    .modal-content button {
-      margin-top: 15px;
-      background: #0077b6;
       color: #fff;
-      padding: 10px 20px;
-      border-radius: 6px;
+      background: #0077b6;
+      transition: 0.3s;
+      animation: fadeInUp 1.5s ease;
     }
+    .cta a:hover { background: #023e8a; }
 
+    /* ---------- Footer ---------- */
     footer {
       padding: 15px;
       text-align: center;
@@ -133,12 +114,14 @@
       font-size: 0.9rem;
     }
     body.dark footer { background: #1c1c1c; border-color: #333; }
+
+    /* ---------- Animations ---------- */
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-30px);} to {opacity:1; transform: translateY(0);} }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px);} to {opacity:1; transform: translateY(0);} }
+    @keyframes fadeIn { from { opacity:0;} to {opacity:1;} }
   </style>
 </head>
 <body>
-  <!-- Splash -->
-  <div id="splash">Financial Analyzer</div>
-
   <!-- Header -->
   <header>
     <div class="logo">
@@ -158,23 +141,14 @@
 
   <!-- Hero -->
   <section class="hero">
-    <h1 id="hero-title">أدخل بيانات ميزان المراجعة</h1>
-    <p id="hero-text">واستمتع بقوائم مالية دقيقة، تحليلات شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.</p>
+    <h1 id="hero-title">المحلل المالي الشامل</h1>
+    <p id="hero-text">تحليل مالي متقدم، قوائم مالية دقيقة، تقارير شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.</p>
     <div class="cta">
-      <a href="dashboard.html" class="btn-start" id="btn-start">ابدأ الآن</a>
-      <button class="btn-upload" id="btn-upload">رفع البيانات</button>
+      <a href="input.html" id="btn-start">ابدأ الآن</a>
+      <a href="dashboard.html" id="btn-dashboard">لوحة التحكم</a>
+      <a href="advanced.html" id="btn-advanced">التحليلات المتقدمة</a>
     </div>
   </section>
-
-  <!-- Modal رفع الملف -->
-  <div class="modal" id="uploadModal">
-    <div class="modal-content">
-      <h2 id="upload-title">رفع ملف ميزان المراجعة</h2>
-      <input type="file" id="fileInput" accept=".csv,.xlsx" />
-      <p id="upload-hint">الملف يجب أن يكون بصيغة CSV أو Excel</p>
-      <button id="confirmUpload">متابعة</button>
-    </div>
-  </div>
 
   <!-- Footer -->
   <footer>
@@ -182,7 +156,7 @@
   </footer>
 
   <script>
-    // استرجاع الإعدادات
+    // ---------- استرجاع الإعدادات ----------
     const savedTheme = localStorage.getItem("theme");
     const savedLang = localStorage.getItem("lang");
     const savedCurrency = localStorage.getItem("currency");
@@ -191,13 +165,13 @@
     if(savedLang === "en") switchToEnglish();
     if(savedCurrency) document.getElementById("currencySelect").value = savedCurrency;
 
-    // Dark Mode
+    // ---------- Dark Mode ----------
     document.getElementById("darkToggle").addEventListener("click", () => {
       document.body.classList.toggle("dark");
       localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
     });
 
-    // Language
+    // ---------- Language ----------
     document.getElementById("langToggle").addEventListener("click", () => {
       const currentLang = document.documentElement.lang;
       if(currentLang === "ar"){ switchToEnglish(); localStorage.setItem("lang","en"); }
@@ -209,13 +183,11 @@
       document.documentElement.dir = "ltr";
       document.getElementById("langToggle").textContent = "AR";
       document.getElementById("title").textContent = "Financial Analyzer";
-      document.getElementById("hero-title").textContent = "Enter Trial Balance Data";
-      document.getElementById("hero-text").textContent = "Get accurate financial statements, detailed analysis, and advanced forecasts with multi-language & currency support.";
+      document.getElementById("hero-title").textContent = "Comprehensive Financial Analyzer";
+      document.getElementById("hero-text").textContent = "Advanced financial analysis, accurate statements, detailed reports, and forecasts with multi-currency & language support.";
       document.getElementById("btn-start").textContent = "Start Now";
-      document.getElementById("btn-upload").textContent = "Upload Data";
-      document.getElementById("upload-title").textContent = "Upload Trial Balance File";
-      document.getElementById("upload-hint").textContent = "File must be in CSV or Excel format";
-      document.getElementById("confirmUpload").textContent = "Continue";
+      document.getElementById("btn-dashboard").textContent = "Dashboard";
+      document.getElementById("btn-advanced").textContent = "Advanced Analysis";
       document.querySelector("footer p").textContent = "© 2025 All rights reserved - Financial Analyzer";
     }
     function switchToArabic(){
@@ -223,37 +195,18 @@
       document.documentElement.dir = "rtl";
       document.getElementById("langToggle").textContent = "EN";
       document.getElementById("title").textContent = "المحلل المالي";
-      document.getElementById("hero-title").textContent = "أدخل بيانات ميزان المراجعة";
-      document.getElementById("hero-text").textContent = "واستمتع بقوائم مالية دقيقة، تحليلات شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.";
+      document.getElementById("hero-title").textContent = "المحلل المالي الشامل";
+      document.getElementById("hero-text").textContent = "تحليل مالي متقدم، قوائم مالية دقيقة، تقارير شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.";
       document.getElementById("btn-start").textContent = "ابدأ الآن";
-      document.getElementById("btn-upload").textContent = "رفع البيانات";
-      document.getElementById("upload-title").textContent = "رفع ملف ميزان المراجعة";
-      document.getElementById("upload-hint").textContent = "الملف يجب أن يكون بصيغة CSV أو Excel";
-      document.getElementById("confirmUpload").textContent = "متابعة";
+      document.getElementById("btn-dashboard").textContent = "لوحة التحكم";
+      document.getElementById("btn-advanced").textContent = "التحليلات المتقدمة";
       document.querySelector("footer p").textContent = "© 2025 جميع الحقوق محفوظة - Financial Analyzer";
     }
 
-    // Currency
+    // ---------- Currency ----------
     document.getElementById("currencySelect").addEventListener("change",(e)=>{
       localStorage.setItem("currency", e.target.value);
     });
-
-    // Modal logic
-    const uploadBtn = document.getElementById("btn-upload");
-    const uploadModal = document.getElementById("uploadModal");
-    const confirmUpload = document.getElementById("confirmUpload");
-    const fileInput = document.getElementById("fileInput");
-
-    uploadBtn.addEventListener("click", ()=> uploadModal.style.display = "flex");
-    confirmUpload.addEventListener("click", ()=>{
-      if(fileInput.files.length > 0){
-        localStorage.setItem("uploadedFileName", fileInput.files[0].name);
-        window.location.href = "dashboard.html";
-      } else {
-        alert("من فضلك اختر ملف أولاً.");
-      }
-    });
-    window.addEventListener("click", (e)=>{ if(e.target === uploadModal) uploadModal.style.display="none"; });
   </script>
 </body>
 </html>
