@@ -1,128 +1,259 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>المحلل المالي - Financial Analyzer</title>
-
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
 
-  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      background: #f4f7fa;
+      color: #333;
+      transition: background 0.3s, color 0.3s;
+    }
+    body.dark { background: #121212; color: #eee; }
 
-  <!-- Particles.js -->
-  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js" defer></script>
+    /* Splash */
+    #splash {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #0077b6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+      color: #fff;
+      font-size: 2rem;
+      font-weight: 700;
+      animation: fadeOut 1s ease 2.5s forwards;
+    }
+    @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+
+    header {
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid #ddd;
+      z-index: 1000;
+    }
+    body.dark header { background: rgba(18,18,18,0.95); border-color: #333; }
+
+    .logo {
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #0077b6;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo img { height: 40px; }
+
+    .controls { display: flex; gap: 10px; }
+    button, select {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .btn-dark { background: #333; color: #fff; }
+    .btn-lang { background: #0077b6; color: #fff; }
+    select { background: #eee; }
+    body.dark select { background: #333; color: #fff; }
+
+    /* Hero */
+    .hero {
+      height: calc(100vh - 80px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+    .hero h1 { font-size: 2.4rem; margin-bottom: 20px; color: #0077b6; }
+    .hero p { font-size: 1.2rem; margin-bottom: 30px; max-width: 600px; }
+    .cta { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+    .cta a, .cta button {
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+    .btn-start { background: #0077b6; color: #fff; }
+    .btn-start:hover { background: #023e8a; }
+    .btn-upload { background: #48cae4; color: #fff; border: none; cursor: pointer; }
+    .btn-upload:hover { background: #0096c7; }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      justify-content: center;
+      align-items: center;
+      z-index: 3000;
+    }
+    .modal-content {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      width: 90%; max-width: 400px;
+    }
+    body.dark .modal-content { background: #1e1e1e; color: #fff; }
+    .modal-content h2 { margin-bottom: 20px; }
+    .modal-content input[type="file"] { margin: 15px 0; }
+    .modal-content button {
+      margin-top: 15px;
+      background: #0077b6;
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 6px;
+    }
+
+    footer {
+      padding: 15px;
+      text-align: center;
+      background: #f0f0f0;
+      border-top: 1px solid #ddd;
+      font-size: 0.9rem;
+    }
+    body.dark footer { background: #1c1c1c; border-color: #333; }
+  </style>
 </head>
 <body>
   <!-- Splash -->
-  <div id="splash" class="fa-splash">Financial Analyzer</div>
+  <div id="splash">Financial Analyzer</div>
 
   <!-- Header -->
-  <header class="fa-header">
-    <div class="fa-brand">
-      <img src="assets/logo.png" alt="logo" class="fa-logo">
-      <span id="brandTitle">المحلل المالي</span>
+  <header>
+    <div class="logo">
+      <img src="assets/logo.png" alt="Logo">
+      <span id="title">المحلل المالي</span>
     </div>
-
-    <div class="fa-controls">
-      <select id="languageSelect" class="fa-select" title="Language">
-        <option value="ar">العربية</option>
-        <option value="en">English</option>
-      </select>
-
-      <select id="currencySelect" class="fa-select" title="Currency">
+    <div class="controls">
+      <button class="btn-dark" id="darkToggle">🌙</button>
+      <button class="btn-lang" id="langToggle">EN</button>
+      <select id="currencySelect">
         <option value="EGP">EGP</option>
         <option value="USD">USD</option>
         <option value="EUR">EUR</option>
       </select>
-
-      <button id="themeToggle" class="fa-btn" title="Theme">🌙</button>
     </div>
   </header>
 
-  <!-- Watermark (logo) -->
-  <div class="fa-watermark"><img src="assets/logo.png" alt="logo"></div>
-
-  <!-- Hero with particles -->
-  <section id="hero" class="fa-hero">
-    <div id="particles-js"></div>
-    <div class="fa-hero-inner">
-      <h1 id="hero-title" data-i18n="welcome_title">أهلاً بك في المحلل المالي</h1>
-      <p id="hero-desc" data-i18n="welcome_desc">أدخل بيانات ميزان المراجعة لتحصل على قوائم مالية وتحليل شامل.</p>
-
-      <div class="fa-cta">
-        <a href="input.html" class="fa-primary" id="goInput"><i class="bi bi-upload"></i> <span data-i18n="input_btn">إدخال البيانات</span></a>
-        <a href="dashboard.html" class="fa-outline" id="goDashboard"><i class="bi bi-speedometer2"></i> <span data-i18n="dashboard_btn">لوحة التحكم</span></a>
-      </div>
+  <!-- Hero -->
+  <section class="hero">
+    <h1 id="hero-title">أدخل بيانات ميزان المراجعة</h1>
+    <p id="hero-text">واستمتع بقوائم مالية دقيقة، تحليلات شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.</p>
+    <div class="cta">
+      <a href="dashboard.html" class="btn-start" id="btn-start">ابدأ الآن</a>
+      <button class="btn-upload" id="btn-upload">رفع البيانات</button>
     </div>
   </section>
 
-  <!-- Features -->
-  <main class="fa-main container">
-    <section class="fa-feats">
-      <div class="fa-feat">
-        <h3 data-i18n="feat_fast">سريع وآمن</h3>
-        <p data-i18n="feat_fast_desc">رفع ملفات CSV/XLSX وتحليل محلي دون إرسال بيانات للخادم.</p>
-      </div>
-      <div class="fa-feat">
-        <h3 data-i18n="feat_analysis">تحليلات متقدمة</h3>
-        <p data-i18n="feat_analysis_desc">قوائم مالية، نسب، رسوم بيانية وتنبؤات مبسطة.</p>
-      </div>
-      <div class="fa-feat">
-        <h3 data-i18n="feat_export">تصدير مرن</h3>
-        <p data-i18n="feat_export_desc">تصدير PDF و Excel يتضمن اللوجو والعلامة المائية.</p>
-      </div>
-    </section>
-  </main>
+  <!-- Modal رفع الملف -->
+  <div class="modal" id="uploadModal">
+    <div class="modal-content">
+      <h2 id="upload-title">رفع ملف ميزان المراجعة</h2>
+      <input type="file" id="fileInput" accept=".csv,.xlsx" />
+      <p id="upload-hint">الملف يجب أن يكون بصيغة CSV أو Excel</p>
+      <button id="confirmUpload">متابعة</button>
+    </div>
+  </div>
 
-  <footer class="fa-footer">
-    <div>© 2025 المحلل المالي — Moataz Madkour</div>
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 جميع الحقوق محفوظة - Financial Analyzer</p>
   </footer>
 
-  <!-- Libraries used in pages -->
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.js" defer></script>
-
-  <!-- Page script: theme/lang/currency/particles -->
   <script>
-    // Basic behavior: theme, lang, currency, particles, splash
-    (function(){
-      const splash = document.getElementById('splash');
-      setTimeout(()=>{ if(splash) splash.style.opacity='0'; setTimeout(()=>splash.remove(),900); }, 2000);
+    // استرجاع الإعدادات
+    const savedTheme = localStorage.getItem("theme");
+    const savedLang = localStorage.getItem("lang");
+    const savedCurrency = localStorage.getItem("currency");
 
-      // Elements
-      const themeToggle = document.getElementById('themeToggle');
-      const langSelect = document.getElementById('languageSelect');
-      const currencySelect = document.getElementById('currencySelect');
+    if(savedTheme === "dark") document.body.classList.add("dark");
+    if(savedLang === "en") switchToEnglish();
+    if(savedCurrency) document.getElementById("currencySelect").value = savedCurrency;
 
-      // Load saved
-      const settings = JSON.parse(localStorage.getItem('fa_settings_v1') || '{}');
-      if(settings.theme === 'dark'){ document.documentElement.classList.add('fa-dark'); themeToggle.textContent='☀️'; }
-      if(settings.lang){ langSelect.value = settings.lang; }
-      if(settings.currency){ currencySelect.value = settings.currency; }
+    // Dark Mode
+    document.getElementById("darkToggle").addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+      localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+    });
 
-      // Theme toggle
-      themeToggle.addEventListener('click', ()=>{
-        document.documentElement.classList.toggle('fa-dark');
-        const isDark = document.documentElement.classList.contains('fa-dark');
-        themeToggle.textContent = isDark ? '☀️' : '🌙';
-        settings.theme = isDark ? 'dark' : 'light';
-        localStorage.setItem('fa_settings_v1', JSON.stringify(settings));
-      });
+    // Language
+    document.getElementById("langToggle").addEventListener("click", () => {
+      const currentLang = document.documentElement.lang;
+      if(currentLang === "ar"){ switchToEnglish(); localStorage.setItem("lang","en"); }
+      else { switchToArabic(); localStorage.setItem("lang","ar"); }
+    });
 
-      // Lang change (store only; pages should load translations)
-      langSelect.addEventListener('change', ()=>{ settings.lang = langSelect.value; localStorage.setItem('fa_settings_v1', JSON.stringify(settings)); });
+    function switchToEnglish(){
+      document.documentElement.lang = "en";
+      document.documentElement.dir = "ltr";
+      document.getElementById("langToggle").textContent = "AR";
+      document.getElementById("title").textContent = "Financial Analyzer";
+      document.getElementById("hero-title").textContent = "Enter Trial Balance Data";
+      document.getElementById("hero-text").textContent = "Get accurate financial statements, detailed analysis, and advanced forecasts with multi-language & currency support.";
+      document.getElementById("btn-start").textContent = "Start Now";
+      document.getElementById("btn-upload").textContent = "Upload Data";
+      document.getElementById("upload-title").textContent = "Upload Trial Balance File";
+      document.getElementById("upload-hint").textContent = "File must be in CSV or Excel format";
+      document.getElementById("confirmUpload").textContent = "Continue";
+      document.querySelector("footer p").textContent = "© 2025 All rights reserved - Financial Analyzer";
+    }
+    function switchToArabic(){
+      document.documentElement.lang = "ar";
+      document.documentElement.dir = "rtl";
+      document.getElementById("langToggle").textContent = "EN";
+      document.getElementById("title").textContent = "المحلل المالي";
+      document.getElementById("hero-title").textContent = "أدخل بيانات ميزان المراجعة";
+      document.getElementById("hero-text").textContent = "واستمتع بقوائم مالية دقيقة، تحليلات شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.";
+      document.getElementById("btn-start").textContent = "ابدأ الآن";
+      document.getElementById("btn-upload").textContent = "رفع البيانات";
+      document.getElementById("upload-title").textContent = "رفع ملف ميزان المراجعة";
+      document.getElementById("upload-hint").textContent = "الملف يجب أن يكون بصيغة CSV أو Excel";
+      document.getElementById("confirmUpload").textContent = "متابعة";
+      document.querySelector("footer p").textContent = "© 2025 جميع الحقوق محفوظة - Financial Analyzer";
+    }
 
-      // Currency change
-      currencySelect.addEventListener('change', ()=>{ settings.currency = currencySelect.value; localStorage.setItem('fa_settings_v1', JSON.stringify(settings)); });
+    // Currency
+    document.getElementById("currencySelect").addEventListener("change",(e)=>{
+      localStorage.setItem("currency", e.target.value);
+    });
 
-      // Particles
-      if(window.particlesJS){
-        // loads particles.json from same folder
-        particlesJS.load('particles-js','particles.json', function(){ /* loaded */ });
+    // Modal logic
+    const uploadBtn = document.getElementById("btn-upload");
+    const uploadModal = document.getElementById("uploadModal");
+    const confirmUpload = document.getElementById("confirmUpload");
+    const fileInput = document.getElementById("fileInput");
+
+    uploadBtn.addEventListener("click", ()=> uploadModal.style.display = "flex");
+    confirmUpload.addEventListener("click", ()=>{
+      if(fileInput.files.length > 0){
+        localStorage.setItem("uploadedFileName", fileInput.files[0].name);
+        window.location.href = "dashboard.html";
+      } else {
+        alert("من فضلك اختر ملف أولاً.");
       }
-    })();
+    });
+    window.addEventListener("click", (e)=>{ if(e.target === uploadModal) uploadModal.style.display="none"; });
   </script>
 </body>
 </html>
