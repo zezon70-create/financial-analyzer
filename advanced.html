@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>التحليلات المتقدمة | Financial Analyzer</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>التحليلات المتقدمة | Financial Analyzer</title>
 
-  <!-- Bootstrap RTL -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
-  <!-- المشروع CSS -->
-  <link rel="stylesheet" href="css/styles.css">
+<!-- Bootstrap RTL -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
+<!-- خطوط عربية -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+<!-- المشروع CSS -->
+<link rel="stylesheet" href="css/styles.css">
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- html2pdf.js للتصدير PDF -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <!-- SheetJS لتصدير Excel -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<style>
+body { font-family: 'Cairo', Tahoma, sans-serif; }
+.card { border-radius: 1rem; }
+.card-header { font-weight: 700; font-size: 1rem; }
+.table th, .table td { vertical-align: middle; }
+.table tbody tr:hover { background-color: #f2f2f2; }
+.watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.08; z-index: -1; pointer-events: none; }
+</style>
 </head>
 <body class="light-mode">
 
@@ -26,40 +32,47 @@
       <div><strong id="siteTitle">Financial Analyzer</strong></div>
     </a>
   </div>
+
   <div class="ms-auto d-flex align-items-center gap-2 no-print">
     <select id="currencySelect" class="form-select form-select-sm" title="Currency">
       <option value="EGP">جنيه</option>
       <option value="USD">USD</option>
       <option value="EUR">EUR</option>
     </select>
+
     <button id="toggleDarkMode" class="btn btn-outline-light btn-sm" title="Dark / Light">
       <i class="fa fa-moon"></i> وضع
     </button>
+
     <button id="toggleLanguage" class="btn btn-outline-light btn-sm" title="EN/AR">
       EN / AR
     </button>
   </div>
 </header>
 
+<div class="watermark">
+  <img src="assets/logo.png" alt="watermark" height="300">
+</div>
+
 <main class="container py-4">
   <div class="text-center mb-4">
     <h1 id="advancedTitle">📊 التحليلات المالية المتقدمة</h1>
-    <p class="lead">عرض النسب المالية المخصصة و الرسوم البيانية المباشرة استناداً إلى ميزان المراجعة المحمّل.</p>
-    <div class="d-flex justify-content-center gap-2 mb-3">
-      <button id="exportPdfBtn" class="btn btn-outline-primary btn-sm">تصدير PDF</button>
-      <button id="exportExcelBtn" class="btn btn-outline-success btn-sm">تصدير Excel</button>
-    </div>
+    <p class="lead">عرض كل النسب المالية الجديدة، المؤشرات المبتكرة، الرسوم البيانية التفاعلية والتنبؤات المستقبلية استناداً إلى ميزان المراجعة.</p>
   </div>
 
-  <!-- Ratios Cards & Tables -->
   <div class="row g-4">
+    <!-- سيولة -->
     <div class="col-lg-6">
       <div class="card shadow-sm h-100">
-        <div class="card-header bg-primary text-white"><strong>نسب السيولة</strong></div>
+        <div class="card-header bg-primary text-white">
+          <strong id="liquidityTitle">نسب السيولة</strong>
+        </div>
         <div class="card-body">
           <div class="table-responsive">
             <table class="table table-sm table-bordered mb-0">
-              <thead class="table-light"><tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr></thead>
+              <thead class="table-light">
+                <tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr>
+              </thead>
               <tbody id="liquidityRatios"></tbody>
             </table>
           </div>
@@ -67,9 +80,12 @@
       </div>
     </div>
 
+    <!-- ربحية -->
     <div class="col-lg-6">
       <div class="card shadow-sm h-100">
-        <div class="card-header bg-success text-white"><strong>نسب الربحية</strong></div>
+        <div class="card-header bg-success text-white">
+          <strong id="profitabilityTitle">نسب الربحية</strong>
+        </div>
         <div class="card-body">
           <div class="table-responsive">
             <table class="table table-sm table-bordered mb-0">
@@ -81,9 +97,12 @@
       </div>
     </div>
 
+    <!-- نشاط -->
     <div class="col-lg-6">
       <div class="card shadow-sm h-100">
-        <div class="card-header bg-warning"><strong>نسب النشاط</strong></div>
+        <div class="card-header bg-warning text-dark">
+          <strong id="activityTitle">نسب النشاط</strong>
+        </div>
         <div class="card-body">
           <div class="table-responsive">
             <table class="table table-sm table-bordered mb-0">
@@ -95,9 +114,12 @@
       </div>
     </div>
 
+    <!-- مديونية -->
     <div class="col-lg-6">
       <div class="card shadow-sm h-100">
-        <div class="card-header bg-danger text-white"><strong>نسب المديونية والمخاطر</strong></div>
+        <div class="card-header bg-danger text-white">
+          <strong id="debtTitle">نسب المديونية</strong>
+        </div>
         <div class="card-body">
           <div class="table-responsive">
             <table class="table table-sm table-bordered mb-0">
@@ -108,23 +130,66 @@
         </div>
       </div>
     </div>
+
+    <!-- مؤشرات مبتكرة / تنبؤ -->
+    <div class="col-12">
+      <div class="card shadow-sm h-100">
+        <div class="card-header bg-info text-white">
+          <strong id="advancedIndicatorsTitle">مؤشرات مبتكرة و توقعات</strong>
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered mb-0">
+              <thead class="table-light"><tr><th>المؤشر</th><th>القيمة</th><th>التفسير</th></tr></thead>
+              <tbody id="advancedIndicators"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Charts -->
-  <div class="row g-4 mt-1">
-    <div class="col-md-6"><div class="card shadow-sm p-3 h-100"><h6>نسب السيولة</h6><canvas id="liquidityChart" height="200"></canvas></div></div>
-    <div class="col-md-6"><div class="card shadow-sm p-3 h-100"><h6>نسب الربحية</h6><canvas id="profitabilityChart" height="200"></canvas></div></div>
-    <div class="col-md-6"><div class="card shadow-sm p-3 h-100"><h6>نسب النشاط</h6><canvas id="activityChart" height="200"></canvas></div></div>
-    <div class="col-md-6"><div class="card shadow-sm p-3 h-100"><h6>نسب المديونية والمخاطر</h6><canvas id="debtChart" height="200"></canvas></div></div>
+  <div class="row g-4 mt-4">
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3 h-100">
+        <h6 class="card-title fw-bold">نسب السيولة</h6>
+        <canvas id="liquidityChart" height="200"></canvas>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3 h-100">
+        <h6 class="card-title fw-bold">نسب الربحية</h6>
+        <canvas id="profitabilityChart" height="200"></canvas>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3 h-100">
+        <h6 class="card-title fw-bold">نسب النشاط</h6>
+        <canvas id="activityChart" height="200"></canvas>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card shadow-sm p-3 h-100">
+        <h6 class="card-title fw-bold">نسب المديونية</h6>
+        <canvas id="debtChart" height="200"></canvas>
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="card shadow-sm p-3 h-100">
+        <h6 class="card-title fw-bold">المؤشرات المبتكرة والتنبؤات</h6>
+        <canvas id="advancedChart" height="300"></canvas>
+      </div>
+    </div>
   </div>
+
 </main>
 
 <footer class="bg-light text-center py-3 small">
   &copy; 2025 المحلل المالي — Financial Analyzer
 </footer>
 
-<!-- advanced.js -->
 <script src="js/advanced.js"></script>
-
 </body>
 </html>
