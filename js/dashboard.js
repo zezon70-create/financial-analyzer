@@ -1,4 +1,4 @@
-// dashboard.js - النسخة النهائية والمحسّنة
+// dashboard.js — النسخة النهائية الموحدة والمحسّنة
 document.addEventListener('DOMContentLoaded', () => {
   const noDataEl = document.getElementById('noData');
   const contentEl = document.getElementById('dashboardContent');
@@ -170,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ----- Render -----
   const render = () => {
-    const trial = loadSession();
+    const trial = normalizeTrialRows(loadSession());
     if (!trial.length) {
       noDataEl.style.display = 'block';
       contentEl.style.display = 'none';
@@ -285,8 +285,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ----- Export PDF -----
   exportPdfBtn.addEventListener('click', () => {
-    const opt = { margin: 0.5, filename: 'financial_dashboard.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' } };
-    html2pdf().set(opt).from(document.getElementById('report-area')).save();
+    html2pdf().set({
+      margin: 0.5,
+      filename: 'financial_dashboard.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+    }).from(document.getElementById('report-area')).save();
   });
 
   // ----- Export Excel -----
