@@ -1,183 +1,224 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>التحليلات المالية الفائقة | Financial Analyzer</title>
-
-  <!-- Bootstrap RTL -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
-  
-  <!-- FontAwesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <style>
-    body[data-theme="dark"] {
-      background: #121212; color: #eee;
-    }
-    .card { border-radius: 12px; }
-    .card-header { font-size: 1.05rem; font-weight: bold; }
-    .table th, .table td { vertical-align: middle; }
-    .chart-container { position: relative; height: 250px; }
-    .watermark { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.05; z-index:0; }
-    .toast-container { position: fixed; top: 20px; left: 20px; z-index:12000; }
-    .toast { padding:10px 14px; border-radius:8px; color:#fff; margin-top:8px; box-shadow:0 8px 20px rgba(0,0,0,0.08); transition: all .35s ease; }
-    .toast-success { background:#198754; }
-    .toast-error { background:#d63333; }
-    .toast-info { background:#0d6efd; }
-    .btn-toggle { min-width:100px; }
-  </style>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>التحليلات المالية الفائقة | Financial Analyzer</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+/* ======= تصميم كامل وشامل ======= */
+body { font-family:'Segoe UI', Tahoma, sans-serif; margin:0; padding:0; background:#f4f6f9; color:#333; transition: all 0.3s; }
+body[data-theme="dark"] { background:#121212; color:#f0f0f0; }
+header { display:flex; justify-content:space-between; align-items:center; padding:10px 20px; background:#0d6efd; color:#fff; }
+header img.logo { height:40px; margin-left:10px; }
+header .controls button, header .controls select { margin-left:10px; padding:5px 10px; border:none; border-radius:6px; cursor:pointer; }
+header .controls button:hover, header .controls select:hover { opacity:0.85; }
+main { padding:20px; max-width:1400px; margin:auto; }
+.card { border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.08); background:#fff; padding:15px; transition: transform 0.3s, box-shadow 0.3s; }
+.card:hover { transform:translateY(-4px); box-shadow:0 8px 30px rgba(0,0,0,0.12); }
+.table th, .table td { text-align:right; vertical-align:middle; padding:6px 10px; font-size:0.9rem; }
+.table th { background:#f8f9fa; }
+.watermark { position:fixed; bottom:10px; left:10px; opacity:0.05; z-index:0; }
+.watermark img { height:120px; }
+.toast-area { position:fixed; top:20px; left:20px; z-index:12000; }
+.toast { padding:10px 16px; border-radius:8px; margin-top:8px; color:#fff; opacity:1; transition: all 0.4s ease; box-shadow:0 6px 15px rgba(0,0,0,0.08); }
+.toast-success { background:#198754; }
+.toast-error { background:#d63333; }
+.toast-info { background:#0d6efd; }
+canvas { background:#fff; border-radius:8px; }
+.card-header { font-weight:bold; border-radius:12px 12px 0 0; padding:10px; }
+.alert { padding:8px 12px; border-radius:8px; margin-top:10px; font-size:0.9rem; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(350px,1fr)); gap:20px; }
+/* مؤشرات مبتكرة */
+.innovative { color:#ff5733; font-weight:bold; }
+</style>
 </head>
 <body data-theme="light">
 
-  <!-- Header -->
-  <header class="navbar navbar-expand-lg navbar-dark bg-primary px-3">
-    <a class="navbar-brand d-flex align-items-center" href="index.html">
-      <img src="assets/logo.png" alt="logo" height="40" class="me-2">
-      <span>Financial Analyzer</span>
-    </a>
-    <div class="ms-auto d-flex align-items-center gap-2">
-      <select id="currencySelect" class="form-select form-select-sm">
-        <option value="EGP">جنيه</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-      </select>
-      <button id="toggleDarkMode" class="btn btn-outline-light btn-sm btn-toggle">
-        <i class="fa fa-moon"></i> وضع
-      </button>
-      <button id="toggleLanguage" class="btn btn-outline-light btn-sm btn-toggle">EN / AR</button>
-    </div>
-  </header>
+<header>
+  <div class="brand">
+    <img src="assets/logo.png" alt="logo" class="logo">
+    <span>Financial Analyzer</span>
+  </div>
+  <div class="controls">
+    <select id="currencySelect">
+      <option value="EGP">جنيه</option>
+      <option value="USD">USD</option>
+      <option value="EUR">EUR</option>
+    </select>
+    <button id="toggleDarkMode">Dark/Light</button>
+    <button id="toggleLanguage">AR/EN</button>
+  </div>
+</header>
 
-  <!-- Watermark -->
-  <div class="watermark">
-    <img src="assets/logo.png" alt="watermark" style="max-width:300px;">
+<div class="watermark">
+  <img src="assets/logo.png" alt="watermark">
+</div>
+
+<main>
+  <div style="text-align:center; margin-bottom:20px;">
+    <h1>🚀 التحليلات المالية الفائقة</h1>
+    <p>جميع النسب المالية، المؤشرات المبتكرة، التنبؤات المستقبلية، ومؤشرات العائد والمخاطرة.</p>
   </div>
 
-  <main class="container py-4">
-    <div class="text-center mb-4">
-      <h1>📊 التحليلات المالية الفائقة</h1>
-      <p class="lead">عرض جميع المؤشرات المالية، التفسيرات، المخاطر، العائدات، والنسب المخصصة المتقدمة.</p>
-    </div>
+  <div class="grid">
 
-    <!-- Cards for advanced metrics -->
-    <div class="row g-4">
-
-      <div class="col-lg-6">
-        <div class="card shadow-sm h-100">
-          <div class="card-header bg-primary text-white">نسب السيولة</div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table table-sm table-bordered mb-0">
-                <thead class="table-light"><tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr></thead>
-                <tbody id="liquidityRatios"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-6">
-        <div class="card shadow-sm h-100">
-          <div class="card-header bg-success text-white">نسب الربحية</div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table table-sm table-bordered mb-0">
-                <thead class="table-light"><tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr></thead>
-                <tbody id="profitabilityRatios"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-6">
-        <div class="card shadow-sm h-100">
-          <div class="card-header bg-warning text-dark">نسب النشاط</div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table table-sm table-bordered mb-0">
-                <thead class="table-light"><tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr></thead>
-                <tbody id="activityRatios"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-lg-6">
-        <div class="card shadow-sm h-100">
-          <div class="card-header bg-danger text-white">نسب المديونية</div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table table-sm table-bordered mb-0">
-                <thead class="table-light"><tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr></thead>
-                <tbody id="debtRatios"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-12">
-        <div class="card shadow-sm h-100">
-          <div class="card-header bg-info text-white">المؤشرات المتقدمة وقياس المخاطر والعائد</div>
-          <div class="card-body">
-            <div class="table-responsive">
-              <table class="table table-sm table-bordered mb-0">
-                <thead class="table-light"><tr><th>المؤشر</th><th>القيمة</th><th>التفسير</th></tr></thead>
-                <tbody id="advancedIndicators"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Charts -->
-    <div class="row g-4 mt-3">
-      <div class="col-md-6">
-        <div class="card shadow-sm p-3 h-100">
-          <h6 class="card-title">نسب السيولة</h6>
-          <canvas id="liquidityChart"></canvas>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="card shadow-sm p-3 h-100">
-          <h6 class="card-title">نسب الربحية</h6>
-          <canvas id="profitabilityChart"></canvas>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="card shadow-sm p-3 h-100">
-          <h6 class="card-title">نسب النشاط</h6>
-          <canvas id="activityChart"></canvas>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="card shadow-sm p-3 h-100">
-          <h6 class="card-title">نسب المديونية</h6>
-          <canvas id="debtChart"></canvas>
-        </div>
-      </div>
-      <div class="col-12">
-        <div class="card shadow-sm p-3 h-100">
-          <h6 class="card-title">المؤشرات المتقدمة</h6>
-          <canvas id="advancedChart"></canvas>
-        </div>
+    <!-- السيولة -->
+    <div class="card">
+      <div class="card-header" style="background:#0d6efd; color:#fff;">نسب السيولة</div>
+      <div class="card-body">
+        <table class="table table-bordered">
+          <thead><tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr></thead>
+          <tbody id="liquidityRatios"></tbody>
+        </table>
+        <canvas id="liquidityChart" height="150"></canvas>
       </div>
     </div>
 
-  </main>
+    <!-- الربحية -->
+    <div class="card">
+      <div class="card-header" style="background:#198754; color:#fff;">نسب الربحية</div>
+      <div class="card-body">
+        <table class="table table-bordered">
+          <thead><tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr></thead>
+          <tbody id="profitabilityRatios"></tbody>
+        </table>
+        <canvas id="profitabilityChart" height="150"></canvas>
+      </div>
+    </div>
 
-  <footer class="bg-light text-center py-3 small">
-    &copy; 2025 Financial Analyzer — كل الحقوق محفوظة
-  </footer>
+    <!-- النشاط -->
+    <div class="card">
+      <div class="card-header" style="background:#ffc107; color:#000;">نسب النشاط</div>
+      <div class="card-body">
+        <table class="table table-bordered">
+          <thead><tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr></thead>
+          <tbody id="activityRatios"></tbody>
+        </table>
+        <canvas id="activityChart" height="150"></canvas>
+      </div>
+    </div>
 
-  <!-- JS -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="js/advanced.js"></script>
+    <!-- المديونية -->
+    <div class="card">
+      <div class="card-header" style="background:#dc3545; color:#fff;">نسب المديونية</div>
+      <div class="card-body">
+        <table class="table table-bordered">
+          <thead><tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr></thead>
+          <tbody id="debtRatios"></tbody>
+        </table>
+        <canvas id="debtChart" height="150"></canvas>
+      </div>
+    </div>
+
+    <!-- مؤشرات مبتكرة -->
+    <div class="card">
+      <div class="card-header" style="background:#ff5733; color:#fff;">مؤشرات مبتكرة</div>
+      <div class="card-body">
+        <table class="table table-bordered">
+          <thead><tr><th>المؤشر</th><th>القيمة</th><th>التفسير</th></tr></thead>
+          <tbody id="innovativeRatios"></tbody>
+        </table>
+        <canvas id="innovativeChart" height="150"></canvas>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<div class="toast-area" id="toastArea"></div>
+
+<script>
+// ======= بيانات وهمية شاملة =======
+let data = {
+  liquidity:[
+    {name:'النقدية / الالتزامات قصيرة الأجل', value:1.2, explanation:'السيولة جيدة لتغطية الالتزامات.'},
+    {name:'النقدية + المكافئات / الالتزامات', value:1.5, explanation:'تضمن قدرة الشركة على تغطية الالتزامات.'}
+  ],
+  profitability:[
+    {name:'العائد على الأصول ROA', value:12, explanation:'عائد جيد على الأصول المستثمرة.'},
+    {name:'هامش الربح الصافي', value:18, explanation:'الربحية مناسبة بالنسبة للإيرادات.'}
+  ],
+  activity:[
+    {name:'دوران المخزون', value:8, explanation:'دوران المخزون سريع وفعال.'},
+    {name:'دوران الحسابات المدينة', value:7, explanation:'جمع الحسابات المدينة بسرعة.'}
+  ],
+  debt:[
+    {name:'نسبة الدين / حقوق الملكية', value:0.5, explanation:'المستوى متوازن للمخاطر.'},
+    {name:'الالتزامات طويلة الأجل / الأصول', value:0.3, explanation:'نسبة منخفضة تعكس مرونة مالية.'}
+  ],
+  innovative:[
+    {name:'مؤشر المخاطرة الديناميكي', value:0.45, explanation:'مؤشر مبتكر يعكس المخاطر المحتملة.'},
+    {name:'تنبؤ العائد المستقبلي', value:14, explanation:'تقدير مبتكر للعائد المتوقع بناءً على البيانات.'}
+  ]
+};
+
+// ======= Toast =======
+function showToast(msg,type='info'){
+  const area=document.getElementById('toastArea');
+  const div=document.createElement('div');
+  div.className='toast toast-'+type;
+  div.textContent=msg;
+  area.appendChild(div);
+  setTimeout(()=>{ div.style.opacity='0'; div.style.transform='translateX(20px)'; },3000);
+  setTimeout(()=>{ area.removeChild(div); },3500);
+}
+
+// ======= Render الجداول =======
+function renderTables(){
+  function render(section,id){
+    const tbody=document.getElementById(id);
+    tbody.innerHTML='';
+    section.forEach(s=>{
+      const tr=document.createElement('tr');
+      tr.innerHTML=`<td>${s.name}</td><td>${s.value}</td><td>${s.explanation}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
+  render(data.liquidity,'liquidityRatios');
+  render(data.profitability,'profitabilityRatios');
+  render(data.activity,'activityRatios');
+  render(data.debt,'debtRatios');
+  render(data.innovative,'innovativeRatios');
+}
+
+// ======= Render الرسوم البيانية =======
+function renderCharts(){
+  function createChart(ctx,section,color){
+    return new Chart(ctx,{
+      type:'bar',
+      data:{ labels:section.map(s=>s.name), datasets:[{label:'القيمة', data:section.map(s=>s.value), backgroundColor:color}] },
+      options:{ responsive:true, plugins:{ legend:{display:false} } }
+    });
+  }
+  createChart(document.getElementById('liquidityChart').getContext('2d'),data.liquidity,'#0d6efd');
+  createChart(document.getElementById('profitabilityChart').getContext('2d'),data.profitability,'#198754');
+  createChart(document.getElementById('activityChart').getContext('2d'),data.activity,'#ffc107');
+  createChart(document.getElementById('debtChart').getContext('2d'),data.debt,'#dc3545');
+  createChart(document.getElementById('innovativeChart').getContext('2d'),data.innovative,'#ff5733');
+}
+
+// ======= Dark/Light Mode =======
+document.getElementById('toggleDarkMode').addEventListener('click',()=>{
+  document.body.dataset.theme=document.body.dataset.theme==='light'?'dark':'light';
+  showToast('تم تغيير وضع الشاشة','success');
+});
+
+// ======= العملة =======
+document.getElementById('currencySelect').addEventListener('change',(e)=>{
+  showToast('تم تغيير العملة إلى '+e.target.value,'info');
+});
+
+// ======= اللغة =======
+document.getElementById('toggleLanguage').addEventListener('click',()=>{
+  showToast('تم تغيير اللغة','info');
+});
+
+// ======= Init =======
+renderTables();
+renderCharts();
+showToast('تم تحميل التحليلات المالية الفائقة','success');
+</script>
+
 </body>
 </html>
