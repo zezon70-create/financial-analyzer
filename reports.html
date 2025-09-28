@@ -3,219 +3,162 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>التقارير المتقدمة | Financial Analyzer</title>
-
-<!-- Bootstrap RTL -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.rtl.min.css">
-
-<!-- Chart.js -->
+<title>Financial Analyzer - Tabs Navigation</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <style>
-  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; padding:0; background:#f9f9f9; transition:0.3s; }
-  header { background:#007bff; color:white; padding:0.5rem 1rem; display:flex; justify-content:space-between; align-items:center; }
-  header .logo { height:40px; margin-left:0.5rem; }
-  header .controls select, header .controls button { margin-left:0.5rem; }
-  .watermark { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); opacity:0.05; z-index:0; pointer-events:none; }
-  main { position:relative; z-index:1; padding:2rem; }
-  .card { box-shadow:0 0 10px rgba(0,0,0,0.1); }
-  table { width:100%; border-collapse:collapse; }
-  th, td { padding:8px; text-align:center; border:1px solid #ccc; }
-  th { background:#f0f0f0; }
-  .tab { display:flex; border-bottom:1px solid #ddd; margin-bottom:1rem; }
-  .tab button { background:none; border:none; padding:0.5rem 1rem; cursor:pointer; }
-  .tab button.active { border-bottom:2px solid #007bff; font-weight:bold; }
-  .dark-mode { background:#121212; color:#f0f0f0; }
-  .dark-mode table th { background:#1f1f1f; }
-  .dark-mode table td, .dark-mode table th { border-color:#333; }
+body {font-family: Arial, sans-serif; transition: background 0.3s,color 0.3s;}
+.dark-mode {background:#121212;color:#f5f5f5;}
+.dark-mode .card {background:#1e1e1e;color:#f5f5f5;}
+header {background:#0d6efd;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;}
+header img.logo {height:40px;margin-left:10px;}
+.control-btn, .control-select {margin-left:5px;}
+.watermark {position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);opacity:0.05;z-index:-1;}
 </style>
 </head>
-<body class="light-mode">
+<body>
 
 <header>
   <div class="d-flex align-items-center">
-    <img src="assets/logo.png" alt="logo" class="logo">
-    <strong>Financial Analyzer</strong>
+    <img src="assets/logo.png" class="logo" alt="logo">
+    <strong id="siteTitle">Financial Analyzer</strong>
   </div>
-  <div class="controls d-flex align-items-center">
+  <div class="d-flex align-items-center">
     <select id="currencySelect" class="form-select form-select-sm">
       <option value="EGP">جنيه</option>
       <option value="USD">USD</option>
       <option value="EUR">EUR</option>
     </select>
-    <button id="toggleDarkMode" class="btn btn-outline-light btn-sm">Dark/Light</button>
-    <select id="langSelect" class="form-select form-select-sm">
-      <option value="ar">العربية</option>
-      <option value="en">English</option>
-    </select>
+    <button id="toggleDarkMode" class="control-btn btn btn-outline-light btn-sm">Dark/Light</button>
+    <button id="toggleLanguage" class="control-btn btn btn-outline-light btn-sm">EN/AR</button>
   </div>
 </header>
 
-<div class="watermark">
-  <img src="assets/logo.png" alt="watermark" style="height:200px;">
-</div>
+<div class="watermark"><img src="assets/logo.png" alt="watermark" height="300"></div>
 
-<main>
-  <h2 class="mb-4 text-center">📊 التقارير المتقدمة المالية</h2>
-
+<main class="container py-4">
   <!-- Tabs -->
-  <div class="tab mb-3">
-    <button class="tablinks active" data-tab="trialBalance">ميزان المراجعة</button>
-    <button class="tablinks" data-tab="incomeStatement">قائمة الدخل</button>
-    <button class="tablinks" data-tab="balanceSheet">الميزانية العمومية</button>
-    <button class="tablinks" data-tab="cashFlow">التدفقات النقدية</button>
-    <button class="tablinks" data-tab="advancedAnalysis">تحليل متقدم</button>
-  </div>
+  <ul class="nav nav-tabs" id="mainTabs">
+    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#dashboardTab">Dashboard</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#reportTab">Reports</a></li>
+    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#advancedTab">Advanced</a></li>
+  </ul>
 
-  <!-- Tab Contents -->
-  <div id="trialBalance" class="tabcontent">
-    <div class="card p-3 mb-3">
-      <h5>📊 ميزان المراجعة</h5>
-      <div id="trialBalanceReport"></div>
+  <div class="tab-content mt-3">
+    <!-- Dashboard -->
+    <div id="dashboardTab" class="tab-pane fade show active">
+      <div class="card p-3"><h4>Dashboard</h4><p>واجهة عرض النتائج والتحليلات السريعة.</p></div>
     </div>
-  </div>
 
-  <div id="incomeStatement" class="tabcontent" style="display:none;">
-    <div class="card p-3 mb-3">
-      <h5>📑 قائمة الدخل</h5>
-      <div id="incomeStatementReport"></div>
+    <!-- Reports -->
+    <div id="reportTab" class="tab-pane fade">
+      <div class="row g-3">
+        <div class="col-lg-6"><div class="card shadow-sm p-3"><h5>📊 ميزان المراجعة</h5><div id="trialBalanceReport"></div></div></div>
+        <div class="col-lg-6"><div class="card shadow-sm p-3"><h5>📑 قائمة الدخل</h5><div id="incomeStatementReport"></div></div></div>
+        <div class="col-lg-6"><div class="card shadow-sm p-3"><h5>💰 الميزانية العمومية</h5><div id="balanceSheetReport"></div></div></div>
+        <div class="col-lg-6"><div class="card shadow-sm p-3"><h5>💵 التدفقات النقدية</h5><div id="cashFlowReport"></div></div></div>
+      </div>
+      <div class="mt-3 text-center">
+        <button id="exportAll" class="btn btn-warning">📤 تصدير Excel</button>
+        <button id="printReport" class="btn btn-secondary">🖨️ طباعة PDF</button>
+      </div>
     </div>
-  </div>
 
-  <div id="balanceSheet" class="tabcontent" style="display:none;">
-    <div class="card p-3 mb-3">
-      <h5>💰 الميزانية العمومية</h5>
-      <div id="balanceSheetReport"></div>
+    <!-- Advanced -->
+    <div id="advancedTab" class="tab-pane fade">
+      <div class="row g-3">
+        <div class="col-lg-6"><div class="card shadow-sm p-3"><h5>📈 النسب والمؤشرات</h5><table><thead><tr><th>النسبة / المؤشر</th><th>القيمة</th><th>التفسير</th></tr></thead><tbody id="ratiosTable"></tbody></table></div></div>
+        <div class="col-lg-6"><div class="card shadow-sm p-3"><h5>🔮 التنبؤ والعائد والمخاطر</h5><table><thead><tr><th>التحليل</th><th>القيمة</th><th>التفسير</th></tr></thead><tbody id="forecastTable"></tbody></table></div></div>
+        <div class="col-lg-6"><div class="card shadow-sm p-3"><h6>توقع التدفقات النقدية المستقبلية</h6><canvas id="cashFlowForecastChart" height="200"></canvas></div></div>
+        <div class="col-lg-6"><div class="card shadow-sm p-3"><h6>العائد والمخاطر</h6><canvas id="roiRiskChart" height="200"></canvas></div></div>
+      </div>
     </div>
-  </div>
-
-  <div id="cashFlow" class="tabcontent" style="display:none;">
-    <div class="card p-3 mb-3">
-      <h5>💵 التدفقات النقدية</h5>
-      <div id="cashFlowReport"></div>
-    </div>
-  </div>
-
-  <div id="advancedAnalysis" class="tabcontent" style="display:none;">
-    <div class="card p-3 mb-3">
-      <h5>⚡ التحليل المالي المتقدم</h5>
-      <div id="advancedRatios"></div>
-      <canvas id="advancedChart" height="300"></canvas>
-    </div>
-  </div>
-
-  <div class="mt-4 text-center">
-    <button id="exportExcel" class="btn btn-success">📤 تصدير Excel</button>
-    <button id="exportPDF" class="btn btn-primary">🖨️ تصدير PDF</button>
   </div>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  // ---- Tabs ----
-  const tablinks = document.querySelectorAll(".tablinks");
-  const tabcontents = document.querySelectorAll(".tabcontent");
-  tablinks.forEach(btn => {
-    btn.addEventListener("click", () => {
-      tabcontents.forEach(tc => tc.style.display = "none");
-      tablinks.forEach(tl => tl.classList.remove("active"));
-      document.getElementById(btn.dataset.tab).style.display = "block";
-      btn.classList.add("active");
-    });
+// بيانات تجريبية
+function loadReportsData(){
+  return window.parent?.reportData || {
+    trialBalance:[{account:"النقدية", debit:5000, credit:0},{account:"المبيعات", debit:0, credit:2000}],
+    incomeStatement:[{item:"الإيرادات", value:2000},{item:"المصروفات", value:1200}],
+    balanceSheet:[{item:"الأصول", value:5000},{item:"الخصوم", value:3000}],
+    cashFlow:[{item:"التدفقات الداخلة", value:4000},{item:"التدفقات الخارجة", value:2000}]
+  };
+}
+
+function renderTable(id,data,columns){
+  const tbody=document.getElementById(id);tbody.innerHTML='';
+  data.forEach(row=>{const tr=document.createElement('tr');columns.forEach(col=>{const td=document.createElement('td');td.textContent=row[col]||'';tr.appendChild(td);});tbody.appendChild(tr);});
+}
+
+function calculateRatios(data){
+  const assets=data.balanceSheet.find(x=>x.item==="الأصول")?.value||0;
+  const liabilities=data.balanceSheet.find(x=>x.item==="الخصوم")?.value||0;
+  const equity=assets-liabilities;
+  const revenue=data.incomeStatement.find(x=>x.item==="الإيرادات")?.value||0;
+  const expense=data.incomeStatement.find(x=>x.item==="المصروفات")?.value||0;
+  return [
+    {ratio:"نسبة السيولة", value:(assets/liabilities).toFixed(2), explanation:"السيولة محسوبة ديناميكياً"},
+    {ratio:"نسبة الدين", value:(liabilities/assets).toFixed(2), explanation:"المستوى المقبول للمديونية"},
+    {ratio:"ROE", value:((revenue-expense)/equity*100).toFixed(2)+"%", explanation:"العائد على رأس المال"},
+    {ratio:"معدل دوران المخزون", value:"5 مرات", explanation:"مؤشر توضيحي ديناميكي"},
+    {ratio:"معدل التحصيل", value:"30 يوم", explanation:"متوسط مدة تحصيل المدفوعات"}
+  ];
+}
+
+function calculateForecasts(data){
+  const revenue=data.incomeStatement.find(x=>x.item==="الإيرادات")?.value||0;
+  const expense=data.incomeStatement.find(x=>x.item==="المصروفات")?.value||0;
+  const netIncome=revenue-expense;
+  return [
+    {analysis:"العائد المتوقع", value:netIncome, explanation:"صافي الدخل الحالي"},
+    {analysis:"النمو المتوقع", value:(netIncome/revenue*100).toFixed(2)+"%", explanation:"نسبة النمو"},
+    {analysis:"المخاطر المتوقعة", value:"متوسطة", explanation:"تحليل تقريبي"}
+  ];
+}
+
+function renderCharts(data){
+  const netCashFlow=data.cashFlow.find(x=>x.item==="التدفقات الداخلة")?.value - data.cashFlow.find(x=>x.item==="التدفقات الخارجة")?.value;
+  new Chart(document.getElementById('cashFlowForecastChart'),{
+    type:'line', data:{labels:['الشهر 1','الشهر 2','الشهر 3'], datasets:[{label:'توقع التدفقات',data:[netCashFlow,netCashFlow*1.2,netCashFlow*1.5],borderColor:'blue',fill:false}]}
   });
-
-  // ---- Dark Mode ----
-  document.getElementById("toggleDarkMode").addEventListener("click", () => {
-    document.body.classList.toggle("dark-mode");
+  const roi=(data.incomeStatement[0].value-data.incomeStatement[1].value)/data.balanceSheet.find(x=>x.item==="الأصول").value*100;
+  new Chart(document.getElementById('roiRiskChart'),{
+    type:'bar', data:{labels:['ROE','مخاطر'], datasets:[{label:'القيم',data:[roi,50],backgroundColor:['green','red']}]}
   });
+}
 
-  // ---- Language Change ----
-  document.getElementById("langSelect").addEventListener("change", (e) => {
-    const lang = e.target.value;
-    // مثال: تغيير النصوص حسب اللغة
-    document.querySelectorAll("[data-i18n]").forEach(el=>{
-      if(lang==="en"){ el.innerText = el.dataset.i18n; }
-      else{ el.innerText = el.dataset.i18n; } // يمكن إضافة ترجمة فعلية
-    });
-  });
+// التصدير والطباعة
+document.getElementById('exportAll').addEventListener('click', ()=>{
+  const data=loadReportsData(); const wb=XLSX.utils.book_new();
+  wb.SheetNames.push("ميزان المراجعة"); wb.Sheets["ميزان المراجعة"]=XLSX.utils.json_to_sheet(data.trialBalance);
+  wb.SheetNames.push("قائمة الدخل"); wb.Sheets["قائمة الدخل"]=XLSX.utils.json_to_sheet(data.incomeStatement);
+  wb.SheetNames.push("الميزانية العمومية"); wb.Sheets["الميزانية العمومية"]=XLSX.utils.json_to_sheet(data.balanceSheet);
+  wb.SheetNames.push("التدفقات النقدية"); wb.Sheets["التدفقات النقدية"]=XLSX.utils.json_to_sheet(data.cashFlow);
+  XLSX.writeFile(wb,'financial-report.xlsx');
+});
+document.getElementById('printReport').addEventListener('click', ()=>window.print());
 
-  // ---- Currency Change ----
-  document.getElementById("currencySelect").addEventListener("change", (e)=>{
-    const currency = e.target.value;
-    // تحويل العملات حسب الاختيار
-    // مثال: تحديث القيم في التقارير
-  });
+// Dark Mode & اللغة
+document.getElementById('toggleDarkMode').addEventListener('click', ()=>{document.body.classList.toggle('dark-mode');});
+let isArabic=true;
+document.getElementById('toggleLanguage').addEventListener('click', ()=>{
+  isArabic=!isArabic;
+  document.getElementById('siteTitle').textContent=isArabic?"Financial Analyzer":"Financial Analyzer (EN)";
+});
 
-  // ---- تحميل البيانات من صفحة الـReport ----
-  function loadReportData() {
-    // مثال: البيانات من الـsessionStorage أو أي مصدر
-    const data = JSON.parse(sessionStorage.getItem("financialReport"));
-    return data || {};
-  }
-
-  function renderReports() {
-    const data = loadReportData();
-    if(!data.trialBalance){ document.getElementById("trialBalanceReport").innerHTML = "لا توجد بيانات"; return; }
-
-    // --- مثال للتقارير المفصلة ---
-    const trialTable = `<table>
-      <thead><tr><th>الحساب</th><th>مدين</th><th>دائن</th></tr></thead>
-      <tbody>
-        ${data.trialBalance.map(r=>`<tr><td>${r.account}</td><td>${r.debit}</td><td>${r.credit}</td></tr>`).join("")}
-      </tbody>
-    </table>`;
-    document.getElementById("trialBalanceReport").innerHTML = trialTable;
-
-    // نفس الفكرة لبقية القوائم
-    document.getElementById("incomeStatementReport").innerHTML = `<pre>${JSON.stringify(data.incomeStatement,null,2)}</pre>`;
-    document.getElementById("balanceSheetReport").innerHTML = `<pre>${JSON.stringify(data.balanceSheet,null,2)}</pre>`;
-    document.getElementById("cashFlowReport").innerHTML = `<pre>${JSON.stringify(data.cashFlow,null,2)}</pre>`;
-
-    // ---- التحليل المالي المتقدم ----
-    const advancedRatiosHTML = `
-      <table>
-        <thead><tr><th>المؤشر</th><th>القيمة</th><th>الشرح</th></tr></thead>
-        <tbody>
-          <tr><td>العائد المتوقع</td><td>${(Math.random()*20+5).toFixed(2)}%</td><td>توقع نمو الأرباح المستقبلية بناءً على البيانات الحالية</td></tr>
-          <tr><td>مخاطر الديناميك</td><td>${(Math.random()*10).toFixed(2)}</td><td>تقييم تقلبات السوق وتأثيرها على التدفقات النقدية</td></tr>
-          <tr><td>القيمة المضافة</td><td>${(Math.random()*5000).toFixed(0)}</td><td>قيمة مضافة تقديرية على رأس المال</td></tr>
-        </tbody>
-      </table>
-    `;
-    document.getElementById("advancedRatios").innerHTML = advancedRatiosHTML;
-
-    // ---- رسم بياني متقدم ----
-    const ctx = document.getElementById("advancedChart").getContext("2d");
-    new Chart(ctx,{
-      type:'bar',
-      data:{
-        labels:['العائد المتوقع','مخاطر الديناميك','القيمة المضافة'],
-        datasets:[{label:'القيمة',data:[15,5,3000],backgroundColor:['#007bff','#dc3545','#28a745'] }]
-      },
-      options:{ responsive:true, plugins:{legend:{display:false}} }
-    });
-  }
-
-  // ---- Export Excel ----
-  document.getElementById("exportExcel").addEventListener("click",()=>{
-    const data = loadReportData();
-    if(!data.trialBalance){ alert("لا توجد بيانات للتصدير"); return; }
-    const wb = XLSX.utils.book_new();
-    wb.Props = {Title:"التقارير المتقدمة", Author:"Financial Analyzer"};
-    wb.SheetNames.push("ميزان المراجعة");
-    wb.Sheets["ميزان المراجعة"] = XLSX.utils.json_to_sheet(data.trialBalance);
-    XLSX.writeFile(wb,"advanced-financial-report.xlsx");
-  });
-
-  // ---- Export PDF ----
-  document.getElementById("exportPDF").addEventListener("click",()=>{
-    const element = document.body;
-    html2pdf().set({margin:0.5,filename:"advanced-financial-report.pdf"}).from(element).save();
-  });
-
-  renderReports();
+// Render الجدول الأولي
+const data=loadReportsData();
+renderTable('trialBalanceReport',data.trialBalance,['account','debit','credit']);
+renderTable('incomeStatementReport',data.incomeStatement,['item','value']);
+renderTable('balanceSheetReport',data.balanceSheet,['item','value']);
+renderTable('cashFlowReport',data.cashFlow,['item','value']);
+renderTable('ratiosTable',calculateRatios(data),['ratio','value','explanation']);
+renderTable('forecastTable',calculateForecasts(data),['analysis','value','explanation']);
+renderCharts(data);
 </script>
 </body>
 </html>
