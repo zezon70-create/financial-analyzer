@@ -1,307 +1,196 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>إدخال ميزان المراجعة — المحلل المالي</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
-
 <style>
 :root{
-  --accent:#0d6efd;
-  --bg-light:#f7f9fc;
-  --card-bg:#ffffff;
-  --text:#222;
+  --accent:#0d6efd; --bg-light:#f7f9fc; --card-bg:#ffffff; --text:#222;
 }
 [data-theme="dark"]{
-  --bg-light:#111217;
-  --card-bg:#141418;
-  --text:#e9ecef;
+  --bg-light:#111217; --card-bg:#141418; --text:#e9ecef;
 }
-html,body{height:100%}
-body{
-  margin:0;
-  min-height:100%;
-  font-family: "Cairo", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-  background:var(--bg-light);
-  color:var(--text);
-  transition: background .25s ease, color .25s ease;
-}
-header.site-header{
-  position:sticky; top:0; z-index:1100;
-  background:rgba(255,255,255,0.85);
-  backdrop-filter: blur(6px);
-  border-bottom:1px solid rgba(13,110,253,0.06);
-}
-[data-theme="dark"] header.site-header{
-  background:rgba(12,12,12,0.85);
-  border-color: rgba(255,255,255,0.04);
-}
-.brand { display:flex; align-items:center; gap:.6rem; font-weight:700; color:var(--accent); }
+body{margin:0; font-family:"Cairo",system-ui; background:var(--bg-light); color:var(--text); transition: .25s;}
+header.site-header{position:sticky; top:0; z-index:1100; background:rgba(255,255,255,0.85); backdrop-filter: blur(6px); border-bottom:1px solid rgba(13,110,253,0.06);}
+[data-theme="dark"] header.site-header{background:rgba(12,12,12,0.85); border-color: rgba(255,255,255,0.04);}
+.brand{display:flex; align-items:center; gap:.6rem; font-weight:700; color:var(--accent);}
 .brand img{height:44px; border-radius:6px;}
-.controls { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
-.controls .form-select, .controls .form-control { min-width:140px; }
-main.container{ padding-top:20px; padding-bottom:60px; max-width:1200px; }
-.card-surface{
-  background:var(--card-bg); border-radius:12px; padding:18px;
-  box-shadow: 0 8px 20px rgba(15,15,15,0.04);
-  border:1px solid rgba(13,110,253,0.03);
-}
-[data-theme="dark"] .card-surface{
-  box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-  border:1px solid rgba(255,255,255,0.03);
-}
-.table thead th{ background:transparent; border-bottom:1px solid rgba(0,0,0,0.06); }
-[data-theme="dark"] .table thead th{ border-color: rgba(255,255,255,0.04); }
-td .form-control{ font-size:.92rem; padding:.375rem .5rem; }
-tr.balanced td{ background: rgba(16,185,129,0.06) !important; }
-tr.unbalanced td{ background: rgba(220,53,69,0.05) !important; }
-.watermark{
-  position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
-  pointer-events:none; z-index:0; opacity:0.04;
-}
-.watermark img{ max-width:420px; filter:grayscale(100%); opacity:0.12; }
-.icon-btn { display:inline-flex; align-items:center; gap:.5rem; }
+.controls{display:flex; gap:.5rem; align-items:center; flex-wrap:wrap;}
+.controls .form-select,.controls .form-control{min-width:140px;}
+main.container{padding-top:20px; padding-bottom:60px; max-width:1200px;}
+.card-surface{background:var(--card-bg); border-radius:12px; padding:18px; box-shadow: 0 8px 20px rgba(15,15,15,0.04); border:1px solid rgba(13,110,253,0.03);}
+[data-theme="dark"] .card-surface{box-shadow:0 8px 24px rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.03);}
+.table thead th{background:transparent; border-bottom:1px solid rgba(0,0,0,0.06);}
+[data-theme="dark"] .table thead th{border-color: rgba(255,255,255,0.04);}
+td .form-control{font-size:.92rem; padding:.375rem .5rem;}
+tr.balanced td{background: rgba(16,185,129,0.06) !important;}
+tr.unbalanced td{background: rgba(220,53,69,0.05) !important;}
+.watermark{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:0; opacity:0.04;}
+.watermark img{max-width:420px; filter:grayscale(100%); opacity:0.12;}
+.icon-btn{display:inline-flex; align-items:center; gap:.5rem;}
+@media (max-width:768px){.controls{width:100%; justify-content:center; gap:8px;}.controls .form-select{min-width:unset; flex:1 1 48%;}}
 </style>
 </head>
-<body>
+<body data-theme="light">
 
 <div class="watermark"><img src="assets/logo.png" alt="logo"/></div>
 
 <header class="site-header py-2">
-  <div class="container d-flex align-items-center justify-content-between">
-    <div class="d-flex align-items-center gap-3">
-      <a class="brand" href="index.html">
-        <img src="assets/logo.png" alt="logo">
-        <span>المحلل المالي</span>
-      </a>
-      <div class="small text-muted d-none d-md-block">حول ميزان المراجعة إلى قوائم مالية وتحليلات</div>
-    </div>
-
-    <div class="controls">
-      <select id="currencySelect" class="form-select form-select-sm">
-        <option value="EGP">EGP</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-      </select>
-
-      <select id="languageSelect" class="form-select form-select-sm">
-        <option value="ar">العربية</option>
-        <option value="en">English</option>
-      </select>
-
-      <div class="form-check form-switch mb-0">
-        <input class="form-check-input" id="darkModeToggle" type="checkbox" />
-        <label class="form-check-label small" for="darkModeToggle">الوضع الليلي</label>
-      </div>
-
-      <button id="exportPdfBtn" class="btn btn-outline-primary btn-sm icon-btn">
-        <i class="fa-regular fa-file-pdf"></i> PDF
-      </button>
-      <button id="exportExcelBtn" class="btn btn-outline-success btn-sm icon-btn">
-        <i class="fa-regular fa-file-excel"></i> Excel
-      </button>
-    </div>
+<div class="container d-flex align-items-center justify-content-between">
+  <div class="d-flex align-items-center gap-3">
+    <a class="brand" href="index.html">
+      <img src="assets/logo.png" alt="logo">
+      <span>المحلل المالي</span>
+    </a>
   </div>
+  <div class="controls">
+    <select id="currencySelect" class="form-select form-select-sm">
+      <option value="EGP">EGP</option>
+      <option value="USD">USD</option>
+      <option value="EUR">EUR</option>
+    </select>
+
+    <select id="languageSelect" class="form-select form-select-sm">
+      <option value="ar">العربية</option>
+      <option value="en">English</option>
+    </select>
+
+    <div class="form-check form-switch mb-0">
+      <input class="form-check-input" id="darkModeToggle" type="checkbox" />
+      <label class="form-check-label small" for="darkModeToggle">الوضع الليلي</label>
+    </div>
+
+    <button id="exportPdfBtn" class="btn btn-outline-primary btn-sm icon-btn"><i class="fa-regular fa-file-pdf"></i> PDF</button>
+    <button id="exportExcelBtn" class="btn btn-outline-success btn-sm icon-btn"><i class="fa-regular fa-file-excel"></i> Excel</button>
+  </div>
+</div>
 </header>
 
 <main class="container">
-  <section class="card-surface mb-3">
-    <div class="row gx-3 gy-3 align-items-end">
-      <div class="col-md-6">
-        <label class="form-label">تحميل ملف ميزان المراجعة (CSV / XLSX)</label>
-        <input type="file" id="fileInput" class="form-control" accept=".csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" />
-        <div class="form-text">يدعم ملفات CSV و XLSX — يحاول اكتشاف رؤوس الأعمدة الشائعة.</div>
-      </div>
-
-      <div class="col-md-6 text-md-end d-flex gap-2 justify-content-md-end flex-wrap">
-        <button id="addRow" class="btn btn-primary"><i class="fa-solid fa-plus me-1"></i> إضافة صف</button>
-        <button id="validate" class="btn btn-outline-primary"><i class="fa-solid fa-check me-1"></i> تحقق</button>
-        <button id="saveSession" class="btn btn-outline-info"><i class="fa-solid fa-floppy-disk me-1"></i> حفظ</button>
-        <button id="loadSession" class="btn btn-outline-warning"><i class="fa-solid fa-folder-open me-1"></i> استرجاع</button>
-        <button id="clearAll" class="btn btn-outline-danger"><i class="fa-solid fa-trash me-1"></i> مسح الكل</button>
-      </div>
+<section class="card-surface mb-3">
+  <div class="row gx-3 gy-3 align-items-end">
+    <div class="col-md-6">
+      <label>تحميل ملف ميزان المراجعة (CSV / XLSX)</label>
+      <input type="file" id="fileInput" class="form-control" accept=".csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" />
+      <div class="form-text">يدعم ملفات CSV و XLSX — يحاول اكتشاف رؤوس الأعمدة الشائعة.</div>
     </div>
-  </section>
-
-  <section class="card-surface">
-    <div class="table-responsive">
-      <table id="trialTable" class="table table-borderless align-middle">
-        <thead>
-          <tr>
-            <th>الحساب</th>
-            <th>النوع</th>
-            <th>الكود</th>
-            <th>مدين</th>
-            <th>دائن</th>
-            <th>إجراء</th>
-          </tr>
-        </thead>
-        <tbody id="tbBody"></tbody>
-      </table>
+    <div class="col-md-6 text-md-end d-flex gap-2 justify-content-md-end flex-wrap">
+      <button id="addRow" class="btn btn-primary"><i class="fa-solid fa-plus me-1"></i> إضافة صف</button>
+      <button id="validate" class="btn btn-outline-primary"><i class="fa-solid fa-check me-1"></i> تحقق</button>
+      <button id="saveSession" class="btn btn-outline-info"><i class="fa-solid fa-floppy-disk me-1"></i> حفظ</button>
+      <button id="loadSession" class="btn btn-outline-warning"><i class="fa-solid fa-folder-open me-1"></i> استرجاع</button>
+      <button id="clearAll" class="btn btn-outline-danger"><i class="fa-solid fa-trash me-1"></i> مسح الكل</button>
     </div>
-    <div id="validationResult" class="mt-3"></div>
-  </section>
+  </div>
+</section>
+
+<section class="card-surface">
+<div class="table-responsive">
+<table id="trialTable" class="table table-borderless align-middle">
+<thead>
+<tr><th>الحساب</th><th>النوع</th><th>الكود</th><th>مدين</th><th>دائن</th><th>إجراء</th></tr>
+</thead>
+<tbody id="tbBody"></tbody>
+</table>
+</div>
+<div id="validationResult" class="mt-3"></div>
+<div class="small text-muted mt-2">البيانات تُخزّن محلياً — لا تُرسل لأي خادم.</div>
+</section>
 </main>
 
-<footer class="text-center py-3 small">
-  &copy; 2025 المحلل المالي
-</footer>
+<footer class="text-center py-3 small">&copy; 2025 المحلل المالي — Moataz Madkour</footer>
 
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 <script>
-const tbBody = document.getElementById('tbBody');
-const validationResult = document.getElementById('validationResult');
+let trialData = JSON.parse(localStorage.getItem('trialData')||'[]');
 
-// ---------------- Dark Mode ----------------
-const darkToggle = document.getElementById('darkModeToggle');
-if(localStorage.getItem('theme')==='dark'){ document.body.setAttribute('data-theme','dark'); darkToggle.checked=true;}
-darkToggle.addEventListener('change', ()=> {
-  if(darkToggle.checked){ document.body.setAttribute('data-theme','dark'); localStorage.setItem('theme','dark');}
-  else{ document.body.removeAttribute('data-theme'); localStorage.setItem('theme','light');}
-});
-
-// ---------------- Language ----------------
-const languageSelect = document.getElementById('languageSelect');
-languageSelect.value = localStorage.getItem('lang')||'ar';
-languageSelect.addEventListener('change', ()=>{
-  localStorage.setItem('lang', languageSelect.value);
-  alert('تم تغيير اللغة إلى '+languageSelect.value.toUpperCase());
-});
-
-// ---------------- Currency ----------------
-const currencySelect = document.getElementById('currencySelect');
-currencySelect.value = localStorage.getItem('currency')||'EGP';
-currencySelect.addEventListener('change', ()=>{
-  localStorage.setItem('currency', currencySelect.value);
-  alert('تم تغيير العملة إلى '+currencySelect.value);
-});
-
-// ---------------- ميزان المراجعة ----------------
-function checkBalance(){
-  let totalDebit=0, totalCredit=0;
-  tbBody.querySelectorAll('tr').forEach(tr=>{
-    const debit=parseFloat(tr.querySelector('.debit').value)||0;
-    const credit=parseFloat(tr.querySelector('.credit').value)||0;
-    totalDebit+=debit;
-    totalCredit+=credit;
-  });
-  if(totalDebit.toFixed(2)===totalCredit.toFixed(2)){
-    validationResult.innerHTML='<span class="text-success fw-bold">✔ الميزان متوازن</span>';
-  }else{
-    validationResult.innerHTML='<span class="text-danger fw-bold">✖ الميزان غير متوازن</span>';
-  }
-}
-
-// ---------------- إضافة صف ----------------
-document.getElementById('addRow').addEventListener('click', ()=>{
-  const tr=document.createElement('tr');
-  tr.innerHTML=`
-    <td><input class="form-control account" placeholder="اسم الحساب"></td>
-    <td><input class="form-control type" placeholder="نوع"></td>
-    <td><input class="form-control code" placeholder="الكود"></td>
-    <td><input class="form-control debit" type="number" value="0" oninput="checkBalance()"></td>
-    <td><input class="form-control credit" type="number" value="0" oninput="checkBalance()"></td>
-    <td><button class="btn btn-sm btn-danger removeRow"><i class="fa-solid fa-trash"></i></button></td>
-  `;
-  tbBody.appendChild(tr);
-  tr.querySelector('.removeRow').addEventListener('click', ()=>{ tr.remove(); checkBalance(); });
-  checkBalance();
-});
-
-// ---------------- تحقق ----------------
-document.getElementById('validate').addEventListener('click', checkBalance);
-
-// ---------------- مسح الكل ----------------
-document.getElementById('clearAll').addEventListener('click', ()=>{
-  tbBody.innerHTML='';
-  validationResult.innerHTML='';
-});
-
-// ---------------- حفظ واسترجاع محلي ----------------
-document.getElementById('saveSession').addEventListener('click', ()=>{
-  const data=[];
-  tbBody.querySelectorAll('tr').forEach(tr=>{
-    data.push({
-      account: tr.querySelector('.account').value,
-      type: tr.querySelector('.type').value,
-      code: tr.querySelector('.code').value,
-      debit: tr.querySelector('.debit').value,
-      credit: tr.querySelector('.credit').value
-    });
-  });
-  localStorage.setItem('trialData', JSON.stringify(data));
-  alert('تم حفظ الجلسة محليًا');
-});
-
-document.getElementById('loadSession').addEventListener('click', ()=>{
-  const data=JSON.parse(localStorage.getItem('trialData')||'[]');
-  tbBody.innerHTML='';
-  data.forEach(row=>{
+function renderTable(){
+  const tb=document.getElementById('tbBody'); tb.innerHTML='';
+  trialData.forEach((row,index)=>{
     const tr=document.createElement('tr');
     tr.innerHTML=`
-      <td><input class="form-control account" value="${row.account}"></td>
-      <td><input class="form-control type" value="${row.type}"></td>
-      <td><input class="form-control code" value="${row.code}"></td>
-      <td><input class="form-control debit" type="number" value="${row.debit}" oninput="checkBalance()"></td>
-      <td><input class="form-control credit" type="number" value="${row.credit}" oninput="checkBalance()"></td>
-      <td><button class="btn btn-sm btn-danger removeRow"><i class="fa-solid fa-trash"></i></button></td>
+      <td><input class="form-control" value="${row.Account||''}"></td>
+      <td><input class="form-control" value="${row.Type||''}"></td>
+      <td><input class="form-control" value="${row.Code||''}"></td>
+      <td><input type="number" class="form-control" value="${row.Debit||0}"></td>
+      <td><input type="number" class="form-control" value="${row.Credit||0}"></td>
+      <td><button class="btn btn-sm btn-danger deleteRow"><i class="fa-solid fa-trash"></i></button></td>
     `;
-    tbBody.appendChild(tr);
-    tr.querySelector('.removeRow').addEventListener('click', ()=>{ tr.remove(); checkBalance(); });
-  });
-  checkBalance();
-});
+    tb.appendChild(tr);
 
-// ---------------- تحميل ملفات ----------------
-document.getElementById('fileInput').addEventListener('change', (e)=>{
-  const file = e.target.files[0];
-  if(!file) return;
-  if(file.name.endsWith('.csv')){
-    Papa.parse(file, {header:true, complete:(results)=>{
-      tbBody.innerHTML='';
-      results.data.forEach(row=>{
-        const tr=document.createElement('tr');
-        tr.innerHTML=`
-          <td><input class="form-control account" value="${row.Account||''}"></td>
-          <td><input class="form-control type" value="${row.Type||''}"></td>
-          <td><input class="form-control code" value="${row.Code||''}"></td>
-          <td><input class="form-control debit" type="number" value="${row.Debit||0}" oninput="checkBalance()"></td>
-          <td><input class="form-control credit" type="number" value="${row.Credit||0}" oninput="checkBalance()"></td>
-          <td><button class="btn btn-sm btn-danger removeRow"><i class="fa-solid fa-trash"></i></button></td>
-        `;
-        tbBody.appendChild(tr);
-        tr.querySelector('.removeRow').addEventListener('click', ()=>{ tr.remove(); checkBalance(); });
-      });
-      checkBalance();
-    }});
-  } else {
-    const reader = new FileReader();
-    reader.onload = (evt)=>{
-      const wb = XLSX.read(evt.target.result, {type:'binary'});
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const json = XLSX.utils.sheet_to_json(ws);
-      tbBody.innerHTML='';
-      json.forEach(row=>{
-        const tr=document.createElement('tr');
-        tr.innerHTML=`
-          <td><input class="form-control account" value="${row.Account||''}"></td>
-          <td><input class="form-control type" value="${row.Type||''}"></td>
-          <td><input class="form-control code" value="${row.Code||''}"></td>
-          <td><input class="form-control debit" type="number" value="${row.Debit||0}" oninput="checkBalance()"></td>
-          <td><input class="form-control credit" type="number" value="${row.Credit||0}" oninput="checkBalance()"></td>
-          <td><button class="btn btn-sm btn-danger removeRow"><i class="fa-solid fa-trash"></i></button></td>
-        `;
-        tbBody.appendChild(tr);
-        tr.querySelector('.removeRow').addEventListener('click', ()=>{ tr.remove(); checkBalance(); });
-      });
-      checkBalance();
+    tr.querySelector('.deleteRow').onclick = ()=>{
+      trialData.splice(index,1); saveData(); renderTable();
     };
-    reader.readAsBinaryString(file);
-  }
-});
+    Array.from(tr.querySelectorAll('input')).forEach((inp,key)=>{
+      inp.oninput = ()=>{ 
+        const keys=['Account','Type','Code','Debit','Credit'];
+        trialData[index][keys[key]]=inp.value;
+        saveData();
+      };
+    });
+  });
+  validateBalance();
+}
+
+function saveData(){ localStorage.setItem('trialData',JSON.stringify(trialData)); }
+function loadData(){ trialData=JSON.parse(localStorage.getItem('trialData')||'[]'); renderTable(); }
+
+function validateBalance(){
+  const totalDebit=trialData.reduce((a,b)=>a+parseFloat(b.Debit||0),0);
+  const totalCredit=trialData.reduce((a,b)=>a+parseFloat(b.Credit||0),0);
+  const resultDiv=document.getElementById('validationResult');
+  if(totalDebit===totalCredit){ resultDiv.innerHTML='<span class="text-success">ميزان المراجعة متوازن ✅</span>'; }
+  else{ resultDiv.innerHTML='<span class="text-danger">ميزان المراجعة غير متوازن ❌</span>'; }
+}
+
+document.getElementById('addRow').onclick=()=>{
+  trialData.push({Account:'',Type:'',Code:'',Debit:0,Credit:0}); renderTable();
+};
+document.getElementById('validate').onclick=validateBalance;
+document.getElementById('saveSession').onclick=saveData;
+document.getElementById('loadSession').onclick=loadData;
+document.getElementById('clearAll').onclick=()=>{ trialData=[]; saveData(); renderTable(); };
+
+document.getElementById('darkModeToggle').onchange=(e)=>{
+  document.body.dataset.theme=e.target.checked?'dark':'light';
+};
+
+document.getElementById('languageSelect').onchange=(e)=>{
+  localStorage.setItem('lang',e.target.value);
+  alert('تم تغيير اللغة إلى '+e.target.value);
+};
+
+document.getElementById('currencySelect').onchange=(e)=>{
+  localStorage.setItem('currency',e.target.value);
+  alert('تم تغيير العملة إلى '+e.target.value);
+};
+
+document.getElementById('fileInput').onchange=(e)=>{
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=function(evt){
+    let data; try{
+      if(file.name.endsWith('.csv')){
+        data=Papa.parse(evt.target.result,{header:true,skipEmptyLines:true}).data;
+      }else{
+        const workbook=XLSX.read(evt.target.result,{type:'binary'});
+        const sheetName=workbook.SheetNames[0];
+        data=XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+      }
+      trialData=data.map(row=>({Account:row.Account||'',Type:row.Type||'',Code:row.Code||'',Debit:row.Debit||0,Credit:row.Credit||0}));
+      saveData(); renderTable();
+    }catch(err){ alert('خطأ في قراءة الملف'); }
+  };
+  if(file.name.endsWith('.csv')) reader.readAsText(file);
+  else reader.readAsBinaryString(file);
+};
+
+renderTable();
 </script>
 </body>
 </html>
