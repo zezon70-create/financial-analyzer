@@ -3,79 +3,172 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>إدخال ميزان المراجعة — المحلل المالي</title>
+  <title data-i18n="page_title">إدخال ميزان المراجعة — المحلل المالي</title>
 
+  <!-- Bootstrap RTL -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css">
+  <!-- FontAwesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+
+  <style>
+    :root{
+      --accent:#0d6efd;
+      --bg-light:#f7f9fc;
+      --card-bg:#ffffff;
+      --text:#222;
+    }
+    [data-theme="dark"]{
+      --bg-light:#111217;
+      --card-bg:#141418;
+      --text:#e9ecef;
+    }
+
+    html,body{height:100%}
+    body{
+      margin:0;
+      min-height:100%;
+      font-family: "Cairo", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background:var(--bg-light);
+      color:var(--text);
+      transition: background .25s ease, color .25s ease;
+    }
+
+    /* Header */
+    header.site-header{
+      position:sticky; top:0; z-index:1100;
+      background:rgba(255,255,255,0.85);
+      backdrop-filter: blur(6px);
+      border-bottom:1px solid rgba(13,110,253,0.06);
+    }
+    [data-theme="dark"] header.site-header{
+      background:rgba(12,12,12,0.85);
+      border-color: rgba(255,255,255,0.04);
+    }
+    .brand { display:flex; align-items:center; gap:.6rem; font-weight:700; color:var(--accent); }
+    .brand img{height:44px; border-radius:6px;}
+
+    /* Controls area */
+    .controls { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
+    .controls .form-select, .controls .form-control { min-width:140px; }
+
+    /* Page layout */
+    main.container{
+      padding-top:20px; padding-bottom:60px; max-width:1200px;
+    }
+    .card-surface{
+      background:var(--card-bg); border-radius:12px; padding:18px;
+      box-shadow: 0 8px 20px rgba(15,15,15,0.04);
+      border:1px solid rgba(13,110,253,0.03);
+    }
+    [data-theme="dark"] .card-surface{
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+      border:1px solid rgba(255,255,255,0.03);
+    }
+
+    /* Table */
+    .table thead th{ background:transparent; border-bottom:1px solid rgba(0,0,0,0.06); }
+    [data-theme="dark"] .table thead th{ border-color: rgba(255,255,255,0.04); }
+    td .form-control{ font-size:.92rem; padding:.375rem .5rem; }
+
+    tr.balanced td{ background: rgba(16,185,129,0.06) !important; }
+    tr.unbalanced td{ background: rgba(220,53,69,0.05) !important; }
+
+    /* Watermark */
+    .watermark{
+      position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+      pointer-events:none; z-index:0; opacity:0.04;
+    }
+    .watermark img{ max-width:420px; filter:grayscale(100%); opacity:0.12; }
+
+    /* Toast area */
+    #fa_toast_area{ position:fixed; top:18px; left:18px; z-index:1200; }
+
+    /* Buttons */
+    .icon-btn { display:inline-flex; align-items:center; gap:.5rem; }
+
+    /* Responsive tweaks */
+    @media (max-width:768px){
+      .controls { width:100%; justify-content:center; gap:8px; }
+      .controls .form-select { min-width:unset; flex:1 1 48%; }
+    }
+  </style>
 </head>
-<body>
-<header class="container mb-3">
-  <div class="d-flex justify-content-between align-items-center py-2">
-    <div class="d-flex align-items-center gap-2">
-      <img src="assets/logo.png" alt="logo" class="fa-small-logo">
-      <div>
-        <h4 class="mb-0">المحلل المالي</h4>
-        <small class="text-muted">أدخل ميزان المراجعة لتحليل القوائم المالية</small>
-      </div>
+<body data-theme="light">
+
+<!-- Watermark (visual only) -->
+<div class="watermark"><img src="assets/logo.png" alt="logo"/></div>
+
+<!-- Header -->
+<header class="site-header py-2">
+  <div class="container d-flex align-items-center justify-content-between">
+    <div class="d-flex align-items-center gap-3">
+      <a class="brand" href="index.html">
+        <img src="assets/logo.png" alt="logo">
+        <span data-i18n="app_title">المحلل المالي</span>
+      </a>
+      <div class="small text-muted d-none d-md-block" data-i18n="subtitle">حول ميزان المراجعة إلى قوائم مالية وتحليلات</div>
     </div>
 
-    <div class="controls d-flex gap-2 align-items-center">
-      <label class="form-check form-switch mb-0">
-        <input class="form-check-input" id="darkModeToggle" type="checkbox" />
-        <span class="form-check-label">الوضع الليلي</span>
-      </label>
-
-      <select id="currencySelect" class="form-select form-select-sm" style="min-width:110px;">
-        <option value="EGP">جنيه (EGP)</option>
-        <option value="USD">دولار (USD)</option>
-        <option value="EUR">يورو (EUR)</option>
+    <div class="controls">
+      <select id="currencySelect" class="form-select form-select-sm" title="Currency" aria-label="currency">
+        <option value="EGP">EGP</option>
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
       </select>
 
-      <select id="languageSelect" class="form-select form-select-sm" style="min-width:120px;">
+      <select id="languageSelect" class="form-select form-select-sm" title="Language" aria-label="language">
         <option value="ar">العربية</option>
         <option value="en">English</option>
       </select>
 
-      <button id="exportPdfBtn" class="btn btn-outline-primary btn-sm">تصدير PDF</button>
-      <button id="exportExcelBtn" class="btn btn-outline-success btn-sm">Excel</button>
+      <div class="form-check form-switch mb-0">
+        <input class="form-check-input" id="darkModeToggle" type="checkbox" />
+        <label class="form-check-label small" for="darkModeToggle" data-i18n="toggle_dark">الوضع الليلي</label>
+      </div>
+
+      <button id="exportPdfBtn" class="btn btn-outline-primary btn-sm icon-btn" title="Export PDF">
+        <i class="fa-regular fa-file-pdf"></i> <span class="d-none d-sm-inline">PDF</span>
+      </button>
+      <button id="exportExcelBtn" class="btn btn-outline-success btn-sm icon-btn" title="Export Excel">
+        <i class="fa-regular fa-file-excel"></i> <span class="d-none d-sm-inline">Excel</span>
+      </button>
     </div>
   </div>
 </header>
 
-<div class="container position-relative">
-  <div class="fa-watermark-large">
-    <img src="assets/logo.png" alt="logo">
-  </div>
-
-  <main class="card p-3 mb-4 shadow-sm">
-    <div class="row g-3">
+<!-- Main -->
+<main class="container">
+  <!-- Upload / actions card -->
+  <section class="card-surface mb-3">
+    <div class="row gx-3 gy-3 align-items-end">
       <div class="col-md-6">
-        <label class="form-label">تحميل ملف ميزان المراجعة (CSV أو Excel)</label>
+        <label class="form-label" data-i18n="upload_label">تحميل ملف ميزان المراجعة (CSV / XLSX)</label>
         <input type="file" id="fileInput" class="form-control" accept=".csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel" />
-        <div class="form-text">يدعم CSV و XLSX — يحاول اكتشاف رؤوس الأعمدة الشائعة.</div>
+        <div class="form-text" id="upload-hint" data-i18n="upload_hint">يدعم ملفات CSV و XLSX — يحاول اكتشاف رؤوس الأعمدة الشائعة.</div>
       </div>
 
-      <div class="col-md-6 d-flex align-items-end gap-2 flex-wrap">
-        <button id="addRow" class="btn btn-success btn-add">➕ إضافة صف</button>
-        <button id="validate" class="btn btn-primary">✅ تحقق</button>
-        <button id="saveSession" class="btn btn-info">💾 حفظ</button>
-        <button id="loadSession" class="btn btn-warning">📂 استرجاع</button>
-        <button id="clearAll" class="btn btn-danger">🗑️ مسح الكل</button>
+      <div class="col-md-6 text-md-end d-flex gap-2 justify-content-md-end">
+        <button id="addRow" class="btn btn-primary" title="Add Row"><i class="fa-solid fa-plus me-1"></i> <span data-i18n="add_row">إضافة صف</span></button>
+        <button id="validate" class="btn btn-outline-primary"><i class="fa-solid fa-check me-1"></i> <span data-i18n="check_balance">تحقق</span></button>
+        <button id="saveSession" class="btn btn-outline-info"><i class="fa-solid fa-floppy-disk me-1"></i> <span data-i18n="save">حفظ</span></button>
+        <button id="loadSession" class="btn btn-outline-warning"><i class="fa-solid fa-folder-open me-1"></i> <span data-i18n="load">استرجاع</span></button>
+        <button id="clearAll" class="btn btn-outline-danger"><i class="fa-solid fa-trash me-1"></i> <span data-i18n="clear">مسح الكل</span></button>
       </div>
     </div>
-  </main>
+  </section>
 
-  <section class="card p-3 shadow-sm">
+  <!-- Table card -->
+  <section class="card-surface">
     <div class="table-responsive">
-      <table class="table table-bordered table-hover align-middle">
-        <thead class="table-light">
+      <table id="trialTable" class="table table-borderless align-middle">
+        <thead>
           <tr>
-            <th>الحساب</th>
-            <th>النوع</th>
-            <th>الكود</th>
-            <th>مدين</th>
-            <th>دائن</th>
-            <th>إجراء</th>
+            <th data-i18n="col_account">الحساب</th>
+            <th data-i18n="col_type">النوع</th>
+            <th data-i18n="col_code">الكود</th>
+            <th data-i18n="col_debit">مدين</th>
+            <th data-i18n="col_credit">دائن</th>
+            <th data-i18n="col_actions">إجراء</th>
           </tr>
         </thead>
         <tbody id="tbBody"></tbody>
@@ -83,20 +176,24 @@
     </div>
 
     <div id="validationResult" class="mt-3"></div>
-    <div class="small text-muted mt-2">البيانات تُخزّن محلياً — لا تُرسل لأي خادم.</div>
+    <div class="small text-muted mt-2" data-i18n="local_note">البيانات تُخزّن محلياً — لا تُرسل لأي خادم.</div>
   </section>
-</div>
+</main>
 
+<!-- Toast area -->
+<div id="fa_toast_area"></div>
+
+<!-- Footer -->
 <footer class="text-center py-3 small">
-  &copy; 2025 المحلل المالي — Moataz Madkour
+  &copy; <span id="year">2025</span> <span data-i18n="app_title">المحلل المالي</span> — Moataz Madkour
 </footer>
 
-<!-- Libraries -->
+<!-- Libraries (keep CDN as before) -->
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 
-<!-- Our script -->
+<!-- Main script -->
 <script src="js/input.js"></script>
 </body>
 </html>
