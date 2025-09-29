@@ -101,21 +101,38 @@
     }
     body.dark .features { background: #1a1a1a; }
     .card-feature {
-      background: #fff;
+      background: linear-gradient(145deg,#fff,#e6f0fb);
       color: #333;
-      width: 250px;
-      padding: 25px;
-      border-radius: 15px;
+      width: 260px;
+      padding: 30px;
+      border-radius: 20px;
       text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+      transition: transform 0.4s, box-shadow 0.4s, background 0.4s;
+      position: relative;
+      overflow: hidden;
     }
-    body.dark .card-feature { background: #222; color: #eee; box-shadow: 0 10px 25px rgba(0,0,0,0.5);}
-    .card-feature:hover { transform: translateY(-10px); box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
-    .card-feature i { font-size: 2.5rem; margin-bottom: 15px; color: #0077b6; transition: transform 0.3s; }
-    .card-feature:hover i { transform: rotate(15deg) scale(1.2); }
-    .card-feature h5 { margin-bottom: 10px; font-size: 1.2rem; }
-    .card-feature p { font-size: 0.95rem; line-height: 1.4; }
+    body.dark .card-feature { background: linear-gradient(145deg,#222,#333); color: #eee; box-shadow: 0 15px 30px rgba(0,0,0,0.5);}
+    .card-feature::before {
+      content:"";
+      position: absolute;
+      top:-50%; left:-50%;
+      width:200%; height:200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+      transform: rotate(45deg);
+      transition: all 0.5s;
+    }
+    .card-feature:hover::before { top: -70%; left: -70%; }
+    .card-feature:hover { transform: translateY(-15px); box-shadow: 0 25px 45px rgba(0,0,0,0.25); }
+    .card-feature i {
+      font-size: 3rem;
+      margin-bottom: 15px;
+      color: #0077b6;
+      transition: transform 0.5s, color 0.3s;
+    }
+    .card-feature:hover i { transform: rotate(20deg) scale(1.3); color: #023e8a; }
+    .card-feature h5 { margin-bottom: 10px; font-size: 1.3rem; font-weight: 700; }
+    .card-feature p { font-size: 0.95rem; line-height: 1.5; }
 
     footer {
       padding: 15px;
@@ -185,7 +202,7 @@
   </footer>
 
   <script>
-    // إعدادات Dark Mode, Language, Currency
+    // Dark Mode, Language, Currency
     const savedTheme = localStorage.getItem("theme");
     const savedLang = localStorage.getItem("lang");
     const savedCurrency = localStorage.getItem("currency");
@@ -213,12 +230,13 @@
       document.getElementById("hero-text").textContent = "Get accurate financial statements, detailed analysis, and advanced forecasts with multi-language & currency support.";
       document.getElementById("startBtn").textContent = "Start Now";
       document.querySelector("footer p").textContent = "© 2025 All rights reserved - Financial Analyzer";
-      document.querySelectorAll(".card-feature").forEach(card=>{
-        card.querySelector("h5").textContent = card.querySelector("h5").dataset.en;
-        card.querySelector("p").textContent = card.querySelector("p").dataset.en;
+      document.querySelectorAll('.card-feature h5').forEach(el=>{
+        el.textContent = el.dataset.en;
+      });
+      document.querySelectorAll('.card-feature p').forEach(el=>{
+        el.textContent = el.dataset.en;
       });
     }
-
     function switchToArabic(){
       document.documentElement.lang = "ar";
       document.documentElement.dir = "rtl";
@@ -227,10 +245,12 @@
       document.getElementById("hero-title").textContent = "أدخل بيانات ميزان المراجعة";
       document.getElementById("hero-text").textContent = "واستمتع بقوائم مالية دقيقة، تحليلات شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.";
       document.getElementById("startBtn").textContent = "ابدأ الآن";
-      document.querySelector("footer p").textContent = "© 2025 جميع الحقوق محفوظة - Moataz Madkour";
-      document.querySelectorAll(".card-feature").forEach(card=>{
-        card.querySelector("h5").textContent = card.querySelector("h5").dataset.ar;
-        card.querySelector("p").textContent = card.querySelector("p").dataset.ar;
+      document.querySelector("footer p").textContent = "© 2025 جميع الحقوق محفوظة - Financial Analyzer";
+      document.querySelectorAll('.card-feature h5').forEach(el=>{
+        el.textContent = el.dataset.ar;
+      });
+      document.querySelectorAll('.card-feature p').forEach(el=>{
+        el.textContent = el.dataset.ar;
       });
     }
 
@@ -238,20 +258,21 @@
       localStorage.setItem("currency", e.target.value);
     });
 
+    // Start Button
     document.getElementById("startBtn").onclick = (e) => {
       e.preventDefault();
       window.location.href = "input.html";
     };
 
-    // Particles for Hero
+    // Hero Particles
     const canvas = document.getElementById('heroCanvas');
     const ctx = canvas.getContext('2d');
-    let particlesArray;
+    let particlesArray = [];
     function initCanvas(){
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
       particlesArray = [];
-      for(let i=0;i<80;i++){
+      for(let i=0;i<120;i++){
         particlesArray.push({
           x: Math.random()*canvas.width,
           y: Math.random()*canvas.height,
@@ -280,7 +301,6 @@
     window.addEventListener('resize', initCanvas);
     initCanvas();
     animate();
-
   </script>
 </body>
 </html>
