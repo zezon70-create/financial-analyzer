@@ -1,249 +1,252 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>المحلل المالي - Financial Analyzer</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
-  <style>
-    /* ===== Body & Theme ===== */
-    body {
-      margin: 0;
-      font-family: 'Cairo', sans-serif;
-      background: #f4f7fa;
-      color: #333;
-      overflow-x: hidden;
-      transition: background 0.3s, color 0.3s;
-    }
-    body.dark { background: #121212; color: #eee; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>المحلل المالي - Financial Analyzer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
 
-    /* ===== Header ===== */
-    header {
-      padding: 15px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid #ddd;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      transition: all 0.3s;
-    }
-    body.dark header { background: rgba(18,18,18,0.95); border-color: #333; }
+<style>
+  body {
+    margin: 0;
+    font-family: 'Cairo', sans-serif;
+    background: #f4f7fa;
+    color: #333;
+    overflow-x: hidden;
+    transition: background 0.3s, color 0.3s;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+  }
+  body.dark { background: #121212; color: #eee; }
 
-    .logo {
-      font-weight: 700;
-      font-size: 1.4rem;
-      color: #0077b6;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      animation: logoGlow 2s infinite alternate;
-    }
-    .logo img { height: 45px; }
+  @keyframes fadeIn { to { opacity: 1; } }
 
-    @keyframes logoGlow {
-      0% { filter: drop-shadow(0 0 0px #0077b6); }
-      100% { filter: drop-shadow(0 0 10px #48cae4); }
-    }
+  header {
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid #ddd;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    transition: all 0.3s;
+  }
+  body.dark header { background: rgba(18,18,18,0.95); border-color: #333; }
 
-    .controls { display: flex; gap: 12px; align-items: center; }
-    button, select {
-      padding: 7px 14px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s;
-    }
-    .btn-dark { background: #333; color: #fff; }
-    .btn-dark:hover { background: #555; transform: scale(1.05); }
-    .btn-lang { background: #0077b6; color: #fff; }
-    .btn-lang:hover { background: #005f8a; transform: scale(1.05); }
-    select { background: #eee; }
-    body.dark select { background: #333; color: #fff; }
+  .logo { font-weight: 700; font-size: 1.4rem; color: #0077b6; display: flex; align-items: center; gap: 12px; animation: logoGlow 2s infinite alternate; }
+  .logo img { height: 45px; }
+  @keyframes logoGlow { 0% { filter: drop-shadow(0 0 0px #0077b6); } 100% { filter: drop-shadow(0 0 10px #48cae4); } }
 
-    /* ===== Hero ===== */
-    .hero {
-      height: calc(100vh - 80px);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 20px;
-      position: relative;
-      overflow: hidden;
-      color: #fff;
-      background: linear-gradient(135deg,#0077b6,#48cae4);
-    }
+  .controls { display: flex; gap: 12px; align-items: center; }
+  button, select {
+    padding: 7px 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+  .btn-dark { background: #333; color: #fff; }
+  .btn-dark:hover { background: #555; transform: scale(1.05); }
+  .btn-lang { background: #0077b6; color: #fff; }
+  .btn-lang:hover { background: #005f8a; transform: scale(1.05); }
+  select { background: #eee; }
+  body.dark select { background: #333; color: #fff; }
 
-    /* Moving gradient animation */
-    .hero::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(270deg, #0077b6, #48cae4, #023e8a, #0077b6);
-      background-size: 800% 800%;
-      animation: gradientMove 15s ease infinite;
-      opacity: 0.25;
-      z-index: 0;
-    }
-    @keyframes gradientMove {
-      0%{background-position:0% 50%;}
-      50%{background-position:100% 50%;}
-      100%{background-position:0% 50%;}
-    }
+  /* Hero */
+  .hero {
+    height: calc(100vh - 80px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    background: linear-gradient(135deg,#0077b6,#48cae4);
+  }
+  .hero::before {
+    content:""; position:absolute; inset:0;
+    background: linear-gradient(270deg,#0077b6,#48cae4,#023e8a,#0077b6);
+    background-size: 800% 800%;
+    animation: gradientMove 15s ease infinite;
+    opacity:0.25; z-index:0;
+  }
+  @keyframes gradientMove { 0%{background-position:0% 50%;} 50%{background-position:100% 50%;} 100%{background-position:0% 50%;} }
 
-    .hero h1 {
-      font-size: 3rem;
-      margin-bottom: 20px;
-      font-weight: 700;
-      position: relative;
-      z-index: 1;
-      text-shadow: 2px 2px 15px rgba(0,0,0,0.3);
-    }
-    .hero p {
-      font-size: 1.3rem;
-      margin-bottom: 35px;
-      max-width: 700px;
-      line-height: 1.5;
-      position: relative;
-      z-index: 1;
-    }
+  .particle { position:absolute; border-radius:50%; background: rgba(255,255,255,0.7); width:8px; height:8px; pointer-events:none; animation: float 10s linear infinite; }
+  @keyframes float { 0%{transform:translateY(100vh) translateX(0);} 100%{transform:translateY(-10vh) translateX(200px);} }
 
-    .cta {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-      z-index: 1;
-    }
-    .cta a, .cta button {
-      padding: 16px 32px;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    }
-    .btn-start {
-      background: #fff;
-      color: #0077b6;
-    }
-    .btn-start:hover {
-      background: #f0f0f0;
-      transform: translateY(-4px) scale(1.05);
-      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
-    }
+  .hero h1 { font-size: 3rem; margin-bottom: 20px; font-weight: 700; position: relative; z-index: 1; text-shadow: 2px 2px 15px rgba(0,0,0,0.3); }
+  .hero p { font-size: 1.3rem; margin-bottom: 35px; max-width: 700px; line-height: 1.5; position: relative; z-index: 1; }
 
-    /* ===== Footer ===== */
-    footer {
-      padding: 18px;
-      text-align: center;
-      background: #f0f0f0;
-      border-top: 1px solid #ddd;
-      font-size: 0.95rem;
-      letter-spacing: 0.5px;
-      transition: all 0.3s;
-    }
-    body.dark footer { background: #1c1c1c; border-color: #333; color:#aaa; }
+  .cta { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; z-index:1; }
+  .cta a, .cta button {
+    padding: 16px 32px;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+  }
+  .btn-start { background:#fff; color:#0077b6; }
+  .btn-start:hover { background:#f0f0f0; transform: translateY(-4px) scale(1.05); box-shadow:0 8px 25px rgba(0,0,0,0.4); }
 
-    /* ===== Page load fade-in ===== */
-    body { opacity: 0; animation: fadeIn 1s forwards; }
-    @keyframes fadeIn { to { opacity: 1; } }
-  </style>
+  /* Info Cards */
+  .cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 25px;
+    padding: 60px 20px;
+    background: #f9fafb;
+  }
+  body.dark .cards-container { background:#1a1a1a; }
+
+  .card {
+    background: linear-gradient(145deg, #ffffff, #e0f7ff);
+    border-radius: 16px;
+    width: 250px;
+    padding: 25px;
+    text-align: center;
+    transition: all 0.4s ease;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+  }
+  body.dark .card { background: linear-gradient(145deg, #222, #333); color:#fff; }
+
+  .card:hover { transform: translateY(-10px) scale(1.05); box-shadow: 0 15px 35px rgba(0,0,0,0.3); }
+
+  .card-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color:#0077b6;
+    transition: all 0.4s;
+  }
+  body.dark .card-icon { color:#48cae4; }
+  .card:hover .card-icon { transform: rotate(15deg) scale(1.2); }
+
+  .card h3 { margin-bottom: 10px; font-size: 1.3rem; }
+  .card p { font-size: 1rem; line-height: 1.4; }
+
+  /* Footer */
+  footer { padding:18px; text-align:center; background:#f0f0f0; border-top:1px solid #ddd; font-size:0.95rem; letter-spacing:0.5px; transition: all 0.3s; }
+  body.dark footer { background:#1c1c1c; border-color:#333; color:#aaa; }
+</style>
 </head>
-
 <body>
-  <!-- Header -->
-  <header>
-    <div class="logo">
-      <img src="assets/logo.png" alt="Logo">
-      <span id="title">المحلل المالي</span>
-    </div>
-    <div class="controls">
-      <button class="btn-dark" id="darkToggle">🌙</button>
-      <button class="btn-lang" id="langToggle">EN</button>
-      <select id="currencySelect">
-        <option value="EGP">EGP</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-      </select>
-    </div>
-  </header>
 
-  <!-- Hero -->
-  <section class="hero">
-    <h1 id="hero-title">أدخل بيانات ميزان المراجعة</h1>
-    <p id="hero-text">واستمتع بقوائم مالية دقيقة، تحليلات شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.</p>
-    <div class="cta">
-      <a href="#" class="btn-start" id="startBtn">ابدأ الآن</a>
-    </div>
-  </section>
+<header>
+  <div class="logo"><img src="assets/logo.png" alt="Logo"><span id="title">المحلل المالي</span></div>
+  <div class="controls">
+    <button class="btn-dark" id="darkToggle">🌙</button>
+    <button class="btn-lang" id="langToggle">EN</button>
+    <select id="currencySelect">
+      <option value="EGP">EGP</option>
+      <option value="USD">USD</option>
+      <option value="EUR">EUR</option>
+    </select>
+  </div>
+</header>
 
-  <!-- Footer -->
-  <footer>
-    <p>© 2025 جميع الحقوق محفوظة - Financial Analyzer</p>
-  </footer>
+<section class="hero">
+  <h1 id="hero-title">أدخل بيانات ميزان المراجعة</h1>
+  <p id="hero-text">واستمتع بقوائم مالية دقيقة، تحليلات شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.</p>
+  <div class="cta"><a href="#" class="btn-start" id="startBtn">ابدأ الآن</a></div>
+</section>
 
-  <script>
-    // ===== استرجاع الإعدادات =====
-    const savedTheme = localStorage.getItem("theme");
-    const savedLang = localStorage.getItem("lang");
-    const savedCurrency = localStorage.getItem("currency");
-    if(savedTheme === "dark") document.body.classList.add("dark");
-    if(savedLang === "en") switchToEnglish();
-    if(savedCurrency) document.getElementById("currencySelect").value = savedCurrency;
+<!-- Info Cards -->
+<section class="cards-container">
+  <div class="card">
+    <div class="card-icon">📊</div>
+    <h3>تحليل مالي شامل</h3>
+    <p>احصل على تحليلات دقيقة ومفصلة لقوائمك المالية بسهولة وبطريقة بصرية.</p>
+  </div>
+  <div class="card">
+    <div class="card-icon">💡</div>
+    <h3>تنبؤات متقدمة</h3>
+    <p>اكتشف التنبؤات المستقبلية لعملك بمساعدة تقنيات تحليل البيانات الحديثة.</p>
+  </div>
+  <div class="card">
+    <div class="card-icon">🌐</div>
+    <h3>دعم متعدد العملات</h3>
+    <p>تابع بياناتك المالية بأي عملة واختر الأنسب لك بسهولة وسرعة.</p>
+  </div>
+  <div class="card">
+    <div class="card-icon">⚡</div>
+    <h3>واجهة سريعة وسلسة</h3>
+    <p>استمتع بتجربة مستخدم سلسة وسريعة مع تصميم حديث وجذاب.</p>
+  </div>
+</section>
 
-    // ===== Dark Mode =====
-    document.getElementById("darkToggle").addEventListener("click", () => {
-      document.body.classList.toggle("dark");
-      localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
-    });
+<footer><p>© 2025 جميع الحقوق محفوظة - Financial Analyzer</p></footer>
 
-    // ===== Language =====
-    document.getElementById("langToggle").addEventListener("click", () => {
-      const currentLang = document.documentElement.lang;
-      if(currentLang === "ar"){ switchToEnglish(); localStorage.setItem("lang","en"); }
-      else { switchToArabic(); localStorage.setItem("lang","ar"); }
-    });
+<script>
+  // استرجاع الإعدادات
+  const savedTheme = localStorage.getItem("theme");
+  const savedLang = localStorage.getItem("lang");
+  const savedCurrency = localStorage.getItem("currency");
+  if(savedTheme === "dark") document.body.classList.add("dark");
+  if(savedLang === "en") switchToEnglish();
+  if(savedCurrency) document.getElementById("currencySelect").value = savedCurrency;
 
-    function switchToEnglish(){
-      document.documentElement.lang = "en";
-      document.documentElement.dir = "ltr";
-      document.getElementById("langToggle").textContent = "AR";
-      document.getElementById("title").textContent = "Financial Analyzer";
-      document.getElementById("hero-title").textContent = "Enter Trial Balance Data";
-      document.getElementById("hero-text").textContent = "Get accurate financial statements, detailed analysis, and advanced forecasts with multi-language & currency support.";
-      document.getElementById("startBtn").textContent = "Start Now";
-      document.querySelector("footer p").textContent = "© 2025 All rights reserved - Financial Analyzer";
-    }
-    function switchToArabic(){
-      document.documentElement.lang = "ar";
-      document.documentElement.dir = "rtl";
-      document.getElementById("langToggle").textContent = "EN";
-      document.getElementById("title").textContent = "المحلل المالي";
-      document.getElementById("hero-title").textContent = "أدخل بيانات ميزان المراجعة";
-      document.getElementById("hero-text").textContent = "واستمتع بقوائم مالية دقيقة، تحليلات شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.";
-      document.getElementById("startBtn").textContent = "ابدأ الآن";
-      document.querySelector("footer p").textContent = "© 2025 جميع الحقوق محفوظة - Financial Analyzer";
-    }
+  // Dark Mode
+  document.getElementById("darkToggle").addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+    localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
+  });
 
-    // ===== Currency =====
-    document.getElementById("currencySelect").addEventListener("change",(e)=>{
-      localStorage.setItem("currency", e.target.value);
-    });
+  // Language
+  document.getElementById("langToggle").addEventListener("click", () => {
+    const currentLang = document.documentElement.lang;
+    if(currentLang === "ar"){ switchToEnglish(); localStorage.setItem("lang","en"); }
+    else { switchToArabic(); localStorage.setItem("lang","ar"); }
+  });
+  function switchToEnglish(){
+    document.documentElement.lang="en";
+    document.documentElement.dir="ltr";
+    document.getElementById("langToggle").textContent="AR";
+    document.getElementById("title").textContent="Financial Analyzer";
+    document.getElementById("hero-title").textContent="Enter Trial Balance Data";
+    document.getElementById("hero-text").textContent="Get accurate financial statements, detailed analysis, and advanced forecasts with multi-language & currency support.";
+    document.getElementById("startBtn").textContent="Start Now";
+    document.querySelector("footer p").textContent="© 2025 All rights reserved - Financial Analyzer";
+  }
+  function switchToArabic(){
+    document.documentElement.lang="ar";
+    document.documentElement.dir="rtl";
+    document.getElementById("langToggle").textContent="EN";
+    document.getElementById("title").textContent="المحلل المالي";
+    document.getElementById("hero-title").textContent="أدخل بيانات ميزان المراجعة";
+    document.getElementById("hero-text").textContent="واستمتع بقوائم مالية دقيقة، تحليلات شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.";
+    document.getElementById("startBtn").textContent="ابدأ الآن";
+    document.querySelector("footer p").textContent="© 2025 جميع الحقوق محفوظة - Financial Analyzer";
+  }
 
-    // ===== Start Button =====
-    document.getElementById("startBtn").onclick = (e) => {
-      e.preventDefault();
-      window.location.href = "input.html"; // يذهب مباشرة لصفحة إدخال البيانات
-    };
-  </script>
+  // Currency
+  document.getElementById("currencySelect").addEventListener("change",(e)=>{ localStorage.setItem("currency", e.target.value); });
+
+  // Start Button
+  document.getElementById("startBtn").onclick = (e) => { e.preventDefault(); window.location.href="input.html"; };
+
+  // Particles Hero
+  const hero = document.querySelector('.hero');
+  for(let i=0;i<30;i++){
+    let p=document.createElement('div');
+    p.className='particle';
+    p.style.left=Math.random()*100+'%';
+    p.style.width=p.style.height=(Math.random()*6+4)+'px';
+    p.style.animationDuration=(Math.random()*10+5)+'s';
+    p.style.opacity=Math.random()*0.7+0.3;
+    hero.appendChild(p);
+  }
+</script>
+
 </body>
 </html>
