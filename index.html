@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>المحلل المالي - Financial Analyzer</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-p1Uu4+nM3nnYPlsb4xNyp6K6/1g7lZq9zQ+oK8r0pEhRDCzB/q+K5V+dyU0hOCu9vQ6R7UyEcszPB4J8ib62hg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -136,17 +137,21 @@
       text-align: center;
       box-shadow: 0 5px 20px rgba(0,0,0,0.1);
       transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
     }
     body.dark .feature-card { background: #333; }
     .feature-card:hover {
       transform: translateY(-8px) scale(1.03);
       box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     }
-    .feature-card h3 {
+    .feature-card i {
+      font-size: 2.5rem;
       color: #0077b6;
-      margin-bottom: 15px;
-      font-size: 1.4rem;
     }
+    .feature-card h3 { color: #0077b6; margin-bottom: 10px; font-size: 1.4rem; }
     .feature-card p { font-size: 1rem; }
 
     footer {
@@ -187,21 +192,24 @@
 
   <section class="features">
     <div class="feature-card">
+      <i class="fas fa-chart-line"></i>
       <h3 id="f1-title">تحليلات مالية متقدمة</h3>
       <p id="f1-text">استمتع بأدوات تحليل ذكية تُظهر نتائجك بشكل دقيق واحترافي.</p>
     </div>
     <div class="feature-card">
+      <i class="fas fa-coins"></i>
       <h3 id="f2-title">دعم متعدد العملات</h3>
       <p id="f2-text">حوّل القوائم المالية بين عملات مختلفة بسهولة وسرعة.</p>
     </div>
     <div class="feature-card">
+      <i class="fas fa-language"></i>
       <h3 id="f3-title">تعدد اللغات</h3>
       <p id="f3-text">واجهة سهلة الاستخدام باللغتين العربية والإنجليزية.</p>
     </div>
   </section>
 
   <footer>
-    <p>© 2025 جميع الحقوق محفوظة - Moataz Madkour</p>
+    <p>© 2025 جميع الحقوق محفوظة - Financial Analyzer</p>
   </footer>
 
   <script>
@@ -235,7 +243,7 @@
       document.getElementById("hero-title").textContent = "Enter Trial Balance Data";
       document.getElementById("hero-text").textContent = "Get accurate financial statements, detailed analysis, and advanced forecasts with multi-language & currency support.";
       document.getElementById("startBtn").textContent = "Start Now";
-      document.querySelector("footer p").textContent = "© 2025 All rights reserved - Moataz Madkour";
+      document.querySelector("footer p").textContent = "© 2025 All rights reserved - Financial Analyzer";
       document.getElementById("f1-title").textContent = "Advanced Financial Analysis";
       document.getElementById("f1-text").textContent = "Enjoy smart analytical tools showing results accurately and professionally.";
       document.getElementById("f2-title").textContent = "Multi-Currency Support";
@@ -251,7 +259,7 @@
       document.getElementById("hero-title").textContent = "أدخل بيانات ميزان المراجعة";
       document.getElementById("hero-text").textContent = "واستمتع بقوائم مالية دقيقة، تحليلات شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.";
       document.getElementById("startBtn").textContent = "ابدأ الآن";
-      document.querySelector("footer p").textContent = "© 2025 جميع الحقوق محفوظة - Moataz Madkour";
+      document.querySelector("footer p").textContent = "© 2025 جميع الحقوق محفوظة - Financial Analyzer";
       document.getElementById("f1-title").textContent = "تحليلات مالية متقدمة";
       document.getElementById("f1-text").textContent = "استمتع بأدوات تحليل ذكية تُظهر نتائجك بشكل دقيق واحترافي.";
       document.getElementById("f2-title").textContent = "دعم متعدد العملات";
@@ -268,7 +276,7 @@
     // Start Button
     document.getElementById("startBtn").onclick = (e) => {
       e.preventDefault();
-      window.location.href = "input.html"; // يذهب مباشرة لصفحة إدخال البيانات
+      window.location.href = "input.html";
     };
   </script>
 </body>
