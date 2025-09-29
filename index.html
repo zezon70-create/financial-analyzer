@@ -26,11 +26,22 @@ body {
   transition: background .3s, color .3s;
   overflow-x:hidden;
 }
+
+/* Splash */
+#splash {
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background:var(--accent); display:flex; justify-content:center; align-items:center;
+  color:#fff; font-size:2.5rem; font-weight:700; z-index:2000;
+  animation:fadeOut 1s ease 2.5s forwards;
+}
+@keyframes fadeOut { to { opacity:0; visibility:hidden; } }
+
 header {
   position:sticky; top:0; z-index:999;
   background:rgba(255,255,255,.85);
   backdrop-filter:blur(8px);
   border-bottom:1px solid rgba(0,0,0,0.05);
+  transition:.3s;
 }
 [data-theme="dark"] header {
   background:rgba(17,17,23,.95);
@@ -41,6 +52,7 @@ header {
   display:flex; align-items:center; gap:.5rem;
 }
 .navbar-brand img {height:40px;}
+
 .hero {
   text-align:center; padding:120px 20px;
   background:linear-gradient(135deg,var(--accent)20%,#6610f2 100%);
@@ -54,14 +66,19 @@ header {
   background:url('assets/logo.png') no-repeat center/300px;
   opacity:0.05;
 }
+
 .card-feature {
   background:var(--card);
   border-radius:14px; padding:30px;
   box-shadow:0 8px 22px rgba(0,0,0,.08);
   text-align:center; transition:.3s;
+  opacity:0; transform:translateY(30px);
 }
 [data-theme="dark"] .card-feature {box-shadow:0 6px 18px rgba(0,0,0,.6);}
 .card-feature:hover {transform:translateY(-7px);}
+.fade-up {animation:fadeUp .8s ease forwards;}
+@keyframes fadeUp {from{opacity:0; transform:translateY(30px);} to{opacity:1; transform:translateY(0);} }
+
 footer {
   text-align:center; padding:20px; font-size:.9rem;
   border-top:1px solid rgba(0,0,0,.05);
@@ -73,12 +90,11 @@ footer {
   pointer-events:none; opacity:0.04; z-index:0;
 }
 .watermark img {max-width:400px; filter:grayscale(100%);}
-.fade-up {animation:fadeUp .8s ease;}
-@keyframes fadeUp {from{opacity:0; transform:translateY(30px);} to{opacity:1; transform:translateY(0);} }
 </style>
 </head>
 
 <body>
+<div id="splash">المحلل المالي</div>
 <div class="watermark"><img src="assets/logo.png" alt="logo"></div>
 
 <header>
@@ -104,7 +120,7 @@ footer {
   </nav>
 </header>
 
-<section class="hero fade-up">
+<section class="hero">
   <div class="container">
     <h1 id="heroTitle">أهلاً بك في المحلل المالي</h1>
     <p id="heroDesc">منصة ذكية لتحليل القوائم المالية بسهولة واحترافية</p>
@@ -115,21 +131,21 @@ footer {
 <main class="container my-5">
   <div class="row g-4">
     <div class="col-md-4">
-      <div class="card-feature fade-up">
+      <div class="card-feature" data-delay="0">
         <i class="fa-solid fa-chart-line fa-2x mb-3 text-primary"></i>
         <h5 id="f1Title">تحليل مالي متكامل</h5>
         <p id="f1Desc">احصل على نسب مالية دقيقة ورسوم بيانية تفاعلية.</p>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card-feature fade-up">
+      <div class="card-feature" data-delay="200">
         <i class="fa-solid fa-file-excel fa-2x mb-3 text-success"></i>
         <h5 id="f2Title">استيراد وتصدير</h5>
         <p id="f2Desc">تحميل البيانات من Excel أو CSV وحفظ النتائج كـ PDF/Excel.</p>
       </div>
     </div>
     <div class="col-md-4">
-      <div class="card-feature fade-up">
+      <div class="card-feature" data-delay="400">
         <i class="fa-solid fa-shield-halved fa-2x mb-3 text-warning"></i>
         <h5 id="f3Title">آمن وسهل</h5>
         <p id="f3Desc">كل البيانات تبقى محلياً على جهازك بدون إرسال للخادم.</p>
@@ -143,47 +159,34 @@ footer {
 </footer>
 
 <script>
-// Load saved preferences
-window.onload = () => {
-  const savedTheme = localStorage.getItem("theme") || "light";
-  const savedLang = localStorage.getItem("lang") || "ar";
-  const savedCurrency = localStorage.getItem("currency") || "EGP";
+// Splash
+window.addEventListener('load', ()=>{
+  setTimeout(()=>{document.getElementById('splash').style.display='none';},2800);
+});
 
-  document.body.dataset.theme = savedTheme;
-  document.getElementById("darkModeToggle").checked = savedTheme === "dark";
-  document.getElementById("languageSelect").value = savedLang;
-  document.getElementById("currencySelect").value = savedCurrency;
-  applyLanguage(savedLang);
+// Load preferences
+window.onload = () => {
+  const theme = localStorage.getItem("theme") || "light";
+  const lang = localStorage.getItem("lang") || "ar";
+  const currency = localStorage.getItem("currency") || "EGP";
+
+  document.body.dataset.theme = theme;
+  document.getElementById("darkModeToggle").checked = theme === "dark";
+  document.getElementById("languageSelect").value = lang;
+  document.getElementById("currencySelect").value = currency;
+  applyLanguage(lang);
 };
 
 // Dark Mode
-document.getElementById("darkModeToggle").onchange = (e) => {
-  document.body.dataset.theme = e.target.checked ? "dark" : "light";
+document.getElementById("darkModeToggle").onchange = (e)=>{
+  document.body.dataset.theme = e.target.checked ? "dark":"light";
   localStorage.setItem("theme", document.body.dataset.theme);
 };
 
 // Translations
-const translations = {
-  en:{
-    brandText:"Financial Analyzer",
-    heroTitle:"Welcome to Financial Analyzer",
-    heroDesc:"A smart platform for financial analysis with ease & professionalism.",
-    startText:"Start Now",
-    f1Title:"Comprehensive Analysis", f1Desc:"Get accurate ratios and interactive charts.",
-    f2Title:"Import & Export", f2Desc:"Load data from Excel/CSV and export to PDF/Excel.",
-    f3Title:"Secure & Easy", f3Desc:"Your data stays local — nothing sent to server.",
-    footerText:"© 2025 Financial Analyzer — Moataz Madkour"
-  },
-  ar:{
-    brandText:"المحلل المالي",
-    heroTitle:"أهلاً بك في المحلل المالي",
-    heroDesc:"منصة ذكية لتحليل القوائم المالية بسهولة واحترافية",
-    startText:"ابدأ الآن",
-    f1Title:"تحليل مالي متكامل", f1Desc:"احصل على نسب مالية دقيقة ورسوم بيانية تفاعلية.",
-    f2Title:"استيراد وتصدير", f2Desc:"تحميل البيانات من Excel أو CSV وحفظ النتائج كـ PDF/Excel.",
-    f3Title:"آمن وسهل", f3Desc:"كل البيانات تبقى محلياً على جهازك بدون إرسال للخادم.",
-    footerText:"© 2025 المحلل المالي — Moataz Madkour"
-  }
+const translations={
+  en:{brandText:"Financial Analyzer", heroTitle:"Welcome to Financial Analyzer", heroDesc:"A smart platform for financial analysis with ease & professionalism.", startText:"Start Now", f1Title:"Comprehensive Analysis", f1Desc:"Get accurate ratios and interactive charts.", f2Title:"Import & Export", f2Desc:"Load data from Excel/CSV and export to PDF/Excel.", f3Title:"Secure & Easy", f3Desc:"Your data stays local — nothing sent to server.", footerText:"© 2025 Financial Analyzer — Moataz Madkour"},
+  ar:{brandText:"المحلل المالي", heroTitle:"أهلاً بك في المحلل المالي", heroDesc:"منصة ذكية لتحليل القوائم المالية بسهولة واحترافية", startText:"ابدأ الآن", f1Title:"تحليل مالي متكامل", f1Desc:"احصل على نسب مالية دقيقة ورسوم بيانية تفاعلية.", f2Title:"استيراد وتصدير", f2Desc:"تحميل البيانات من Excel أو CSV وحفظ النتائج كـ PDF/Excel.", f3Title:"آمن وسهل", f3Desc:"كل البيانات تبقى محلياً على جهازك بدون إرسال للخادم.", footerText:"© 2025 المحلل المالي — Moataz Madkour"}
 };
 function applyLanguage(lang){
   const t=translations[lang];
@@ -200,11 +203,23 @@ document.getElementById("currencySelect").onchange=(e)=>{
   localStorage.setItem("currency", e.target.value);
 };
 
-// Start Button Routing directly to input.html
+// Start button to input.html
 document.getElementById("startBtn").onclick=(e)=>{
   e.preventDefault();
   window.location.href="input.html";
 };
+
+// Scroll animations for cards
+const cards=document.querySelectorAll('.card-feature');
+window.addEventListener('scroll', ()=>{
+  const triggerBottom=window.innerHeight*0.85;
+  cards.forEach((card,i)=>{
+    const cardTop=card.getBoundingClientRect().top;
+    if(cardTop<triggerBottom){
+      setTimeout(()=>{card.classList.add('fade-up');},card.dataset.delay||0);
+    }
+  });
+});
 </script>
 </body>
 </html>
