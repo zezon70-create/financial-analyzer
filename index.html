@@ -143,73 +143,82 @@ footer {
 </footer>
 
 <script>
-// Load saved preferences
+// --- Load preferences ---
 window.onload = () => {
-  const savedTheme = localStorage.getItem("theme") || "light";
-  const savedLang = localStorage.getItem("lang") || "ar";
-  const savedCurrency = localStorage.getItem("currency") || "EGP";
+  const theme = localStorage.getItem("theme") || "light";
+  const lang = localStorage.getItem("lang") || "ar";
+  const currency = localStorage.getItem("currency") || "EGP";
 
-  document.body.dataset.theme = savedTheme;
-  document.getElementById("darkModeToggle").checked = savedTheme === "dark";
-  document.getElementById("languageSelect").value = savedLang;
-  document.getElementById("currencySelect").value = savedCurrency;
-  applyLanguage(savedLang);
+  document.body.dataset.theme = theme;
+  document.getElementById("darkModeToggle").checked = theme === "dark";
+  document.getElementById("languageSelect").value = lang;
+  document.getElementById("currencySelect").value = currency;
+
+  applyLanguage(lang);
 };
 
-// Dark Mode
+// --- Dark Mode ---
 document.getElementById("darkModeToggle").onchange = (e) => {
-  document.body.dataset.theme = e.target.checked ? "dark" : "light";
-  localStorage.setItem("theme", document.body.dataset.theme);
+  const mode = e.target.checked ? "dark" : "light";
+  document.body.dataset.theme = mode;
+  localStorage.setItem("theme", mode);
 };
 
-// Translations
+// --- Translations ---
 const translations = {
-  en:{
-    brandText:"Financial Analyzer",
-    heroTitle:"Welcome to Financial Analyzer",
-    heroDesc:"A smart platform for financial analysis with ease & professionalism.",
-    startText:"Start Now",
-    f1Title:"Comprehensive Analysis", f1Desc:"Get accurate ratios and interactive charts.",
-    f2Title:"Import & Export", f2Desc:"Load data from Excel/CSV and export to PDF/Excel.",
-    f3Title:"Secure & Easy", f3Desc:"Your data stays local — nothing sent to server.",
-    footerText:"© 2025 Financial Analyzer — Moataz Madkour"
+  en: {
+    brandText: "Financial Analyzer",
+    heroTitle: "Welcome to Financial Analyzer",
+    heroDesc: "A smart platform for financial analysis with ease & professionalism.",
+    startText: "Start Now",
+    f1Title: "Comprehensive Analysis", f1Desc: "Get accurate ratios and interactive charts.",
+    f2Title: "Import & Export", f2Desc: "Load data from Excel/CSV and export to PDF/Excel.",
+    f3Title: "Secure & Easy", f3Desc: "Your data stays local — nothing sent to server.",
+    footerText: "© 2025 Financial Analyzer — Moataz Madkour"
   },
-  ar:{
-    brandText:"المحلل المالي",
-    heroTitle:"أهلاً بك في المحلل المالي",
-    heroDesc:"منصة ذكية لتحليل القوائم المالية بسهولة واحترافية",
-    startText:"ابدأ الآن",
-    f1Title:"تحليل مالي متكامل", f1Desc:"احصل على نسب مالية دقيقة ورسوم بيانية تفاعلية.",
-    f2Title:"استيراد وتصدير", f2Desc:"تحميل البيانات من Excel أو CSV وحفظ النتائج كـ PDF/Excel.",
-    f3Title:"آمن وسهل", f3Desc:"كل البيانات تبقى محلياً على جهازك بدون إرسال للخادم.",
-    footerText:"© 2025 المحلل المالي — Moataz Madkour"
+  ar: {
+    brandText: "المحلل المالي",
+    heroTitle: "أهلاً بك في المحلل المالي",
+    heroDesc: "منصة ذكية لتحليل القوائم المالية بسهولة واحترافية",
+    startText: "ابدأ الآن",
+    f1Title: "تحليل مالي متكامل", f1Desc: "احصل على نسب مالية دقيقة ورسوم بيانية تفاعلية.",
+    f2Title: "استيراد وتصدير", f2Desc: "تحميل البيانات من Excel أو CSV وحفظ النتائج كـ PDF/Excel.",
+    f3Title: "آمن وسهل", f3Desc: "كل البيانات تبقى محلياً على جهازك بدون إرسال للخادم.",
+    footerText: "© 2025 المحلل المالي — Moataz Madkour"
   }
 };
+
 function applyLanguage(lang){
-  const t=translations[lang];
-  for(const id in t){if(document.getElementById(id)){document.getElementById(id).innerText=t[id];}}
-  document.body.dir=(lang==="ar"?"rtl":"ltr");
+  const t = translations[lang];
+  for(const id in t){
+    if(document.getElementById(id)){
+      document.getElementById(id).innerText = t[id];
+    }
+  }
+  document.body.dir = (lang === "ar" ? "rtl" : "ltr");
 }
-document.getElementById("languageSelect").onchange=(e)=>{
+
+document.getElementById("languageSelect").onchange = (e) => {
   localStorage.setItem("lang", e.target.value);
   applyLanguage(e.target.value);
 };
 
-// Currency
-document.getElementById("currencySelect").onchange=(e)=>{
+// --- Currency ---
+document.getElementById("currencySelect").onchange = (e) => {
   localStorage.setItem("currency", e.target.value);
 };
 
-// Start Button with proper page routing
-document.getElementById("startBtn").onclick=(e)=>{
+// --- Start Button Routing ---
+document.getElementById("startBtn").onclick = (e) => {
   e.preventDefault();
   const hasData = localStorage.getItem("financialData");
   if(hasData && hasData !== "null"){
-    window.location.href="dashboard.html"; // اذا فيه بيانات يروح للدashboard
+    window.location.href = "dashboard.html";
   } else {
-    window.location.href="input.html"; // لو مفيش بيانات يروح للصفحة الادخال
+    window.location.href = "input.html";
   }
 };
 </script>
+
 </body>
 </html>
