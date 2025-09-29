@@ -28,12 +28,12 @@ body {
 }
 header {
   position:sticky; top:0; z-index:999;
-  background:rgba(255,255,255,.8);
+  background:rgba(255,255,255,.85);
   backdrop-filter:blur(8px);
   border-bottom:1px solid rgba(0,0,0,0.05);
 }
 [data-theme="dark"] header {
-  background:rgba(17,17,23,.9);
+  background:rgba(17,17,23,.95);
   border-color:rgba(255,255,255,0.08);
 }
 .navbar-brand {
@@ -42,13 +42,13 @@ header {
 }
 .navbar-brand img {height:40px;}
 .hero {
-  text-align:center; padding:100px 20px;
+  text-align:center; padding:120px 20px;
   background:linear-gradient(135deg,var(--accent)20%,#6610f2 100%);
   color:#fff; position:relative; overflow:hidden;
 }
 .hero h1 {font-size:2.8rem; font-weight:700;}
 .hero p {font-size:1.2rem; margin-top:15px;}
-.hero .btn {margin-top:20px;}
+.hero .btn {margin-top:25px; font-size:1.1rem;}
 .hero::after {
   content:""; position:absolute; inset:0;
   background:url('assets/logo.png') no-repeat center/300px;
@@ -56,12 +56,12 @@ header {
 }
 .card-feature {
   background:var(--card);
-  border-radius:12px; padding:25px;
-  box-shadow:0 8px 20px rgba(0,0,0,.05);
+  border-radius:14px; padding:30px;
+  box-shadow:0 8px 22px rgba(0,0,0,.08);
   text-align:center; transition:.3s;
 }
-[data-theme="dark"] .card-feature {box-shadow:0 6px 16px rgba(0,0,0,.6);}
-.card-feature:hover {transform:translateY(-5px);}
+[data-theme="dark"] .card-feature {box-shadow:0 6px 18px rgba(0,0,0,.6);}
+.card-feature:hover {transform:translateY(-7px);}
 footer {
   text-align:center; padding:20px; font-size:.9rem;
   border-top:1px solid rgba(0,0,0,.05);
@@ -83,8 +83,8 @@ footer {
 
 <header>
   <nav class="navbar container py-2">
-    <a class="navbar-brand" href="#">
-      <img src="assets/logo.png" alt="logo"> <span>المحلل المالي</span>
+    <a class="navbar-brand" href="index.html">
+      <img src="assets/logo.png" alt="logo"> <span id="brandText">المحلل المالي</span>
     </a>
     <div class="controls ms-auto">
       <select id="currencySelect" class="form-select form-select-sm">
@@ -108,7 +108,7 @@ footer {
   <div class="container">
     <h1 id="heroTitle">أهلاً بك في المحلل المالي</h1>
     <p id="heroDesc">منصة ذكية لتحليل القوائم المالية بسهولة واحترافية</p>
-    <a id="startBtn" href="#" class="btn btn-light btn-lg"><i class="fa-solid fa-play"></i> ابدأ الآن</a>
+    <a id="startBtn" href="#" class="btn btn-light btn-lg"><i class="fa-solid fa-play"></i> <span id="startText">ابدأ الآن</span></a>
   </div>
 </section>
 
@@ -139,7 +139,7 @@ footer {
 </main>
 
 <footer>
-  &copy; 2025 المحلل المالي — Moataz Madkour
+  <span id="footerText">&copy; 2025 المحلل المالي — Moataz Madkour</span>
 </footer>
 
 <script>
@@ -162,26 +162,32 @@ document.getElementById("darkModeToggle").onchange = (e) => {
   localStorage.setItem("theme", document.body.dataset.theme);
 };
 
-// Language
+// Translations
 const translations = {
   en:{
+    brandText:"Financial Analyzer",
     heroTitle:"Welcome to Financial Analyzer",
     heroDesc:"A smart platform for financial analysis with ease & professionalism.",
+    startText:"Start Now",
     f1Title:"Comprehensive Analysis", f1Desc:"Get accurate ratios and interactive charts.",
     f2Title:"Import & Export", f2Desc:"Load data from Excel/CSV and export to PDF/Excel.",
-    f3Title:"Secure & Easy", f3Desc:"Your data stays local — nothing sent to server."
+    f3Title:"Secure & Easy", f3Desc:"Your data stays local — nothing sent to server.",
+    footerText:"© 2025 Financial Analyzer — Moataz Madkour"
   },
   ar:{
+    brandText:"المحلل المالي",
     heroTitle:"أهلاً بك في المحلل المالي",
     heroDesc:"منصة ذكية لتحليل القوائم المالية بسهولة واحترافية",
+    startText:"ابدأ الآن",
     f1Title:"تحليل مالي متكامل", f1Desc:"احصل على نسب مالية دقيقة ورسوم بيانية تفاعلية.",
     f2Title:"استيراد وتصدير", f2Desc:"تحميل البيانات من Excel أو CSV وحفظ النتائج كـ PDF/Excel.",
-    f3Title:"آمن وسهل", f3Desc:"كل البيانات تبقى محلياً على جهازك بدون إرسال للخادم."
+    f3Title:"آمن وسهل", f3Desc:"كل البيانات تبقى محلياً على جهازك بدون إرسال للخادم.",
+    footerText:"© 2025 المحلل المالي — Moataz Madkour"
   }
 };
 function applyLanguage(lang){
   const t=translations[lang];
-  for(const id in t){document.getElementById(id).innerText=t[id];}
+  for(const id in t){if(document.getElementById(id)){document.getElementById(id).innerText=t[id];}}
   document.body.dir=(lang==="ar"?"rtl":"ltr");
 }
 document.getElementById("languageSelect").onchange=(e)=>{
