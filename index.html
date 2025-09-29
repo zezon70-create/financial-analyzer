@@ -200,14 +200,14 @@ document.getElementById("currencySelect").onchange=(e)=>{
   localStorage.setItem("currency", e.target.value);
 };
 
-// Start Button
+// Start Button with proper page routing
 document.getElementById("startBtn").onclick=(e)=>{
   e.preventDefault();
   const hasData = localStorage.getItem("financialData");
-  if(hasData){
-    window.location.href="dashboard.html";
+  if(hasData && hasData !== "null"){
+    window.location.href="dashboard.html"; // اذا فيه بيانات يروح للدashboard
   } else {
-    window.location.href="input.html";
+    window.location.href="input.html"; // لو مفيش بيانات يروح للصفحة الادخال
   }
 };
 </script>
