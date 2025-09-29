@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>إدخال ميزان المراجعة — المحلل المالي (سوبر)</title>
+<title>إدخال ميزان المراجعة — المحلل المالي</title>
 
 <!-- Bootstrap RTL & Icons -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
@@ -61,7 +61,7 @@ body[data-theme="dark"] .table thead th{border-color:rgba(255,255,255,0.04)}
 @media (max-width:768px){ .controls{width:100%;justify-content:center} }
 </style>
 </head>
-<body data-theme="light">
+<body>
 
 <div class="watermark"><img src="assets/logo.png" alt="logo"/></div>
 <div class="toast-area" id="toastArea"></div>
@@ -71,28 +71,20 @@ body[data-theme="dark"] .table thead th{border-color:rgba(255,255,255,0.04)}
     <div class="d-flex align-items-center gap-3">
       <a class="brand" href="index.html">
         <img src="assets/logo.png" alt="logo">
-        <div style="font-weight:700">المحلل المالي</div>
+        <div style="font-weight:700" id="brandText">المحلل المالي</div>
       </a>
     </div>
     <div class="controls">
-      <select id="currencySelect" class="form-select form-select-sm">
-        <option value="EGP">جنيه (EGP)</option>
-        <option value="USD">دولار (USD)</option>
-        <option value="EUR">يورو (EUR)</option>
-      </select>
-      <select id="langSelect" class="form-select form-select-sm">
-        <option value="ar">العربية</option>
-        <option value="en">English</option>
-      </select>
+      <select id="currencySelect" class="form-select form-select-sm"></select>
+      <select id="languageSelect" class="form-select form-select-sm"></select>
       <div class="form-check form-switch mb-0">
-        <input class="form-check-input" id="darkToggle" type="checkbox">
+        <input class="form-check-input" id="darkModeToggle" type="checkbox">
       </div>
     </div>
   </div>
 </header>
 
 <main class="container-main">
-
 <section class="card-surface mb-3">
   <div class="row g-3 align-items-end">
     <div class="col-md-5">
@@ -106,6 +98,7 @@ body[data-theme="dark"] .table thead th{border-color:rgba(255,255,255,0.04)}
       <button id="saveBtn" class="btn btn-outline-info"><i class="bi bi-save"></i> حفظ</button>
       <button id="loadBtn" class="btn btn-outline-warning"><i class="bi bi-folder-symlink"></i> استرجاع</button>
       <button id="clearBtn" class="btn btn-outline-danger"><i class="bi bi-trash"></i> مسح الكل</button>
+      <button id="goDashboardBtn" class="btn btn-success"><i class="bi bi-speedometer2"></i> لوحة التحكم</button>
     </div>
   </div>
 </section>
@@ -153,13 +146,13 @@ body[data-theme="dark"] .table thead th{border-color:rgba(255,255,255,0.04)}
 <footer class="text-center py-3 small">&copy; 2025 المحلل المالي — جميع الحقوق محفوظة</footer>
 
 <script>
-const $ = id => document.getElementById(id);
-const toNum = v => Number(v)||0;
-const esc = s => String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
+const $ = id=>document.getElementById(id);
+const toNum=v=>Number(v)||0;
+const esc=s=>String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
 
 let trialData = JSON.parse(localStorage.getItem('trialData')||'[]');
 const FX_DEFAULT = {USD:31,EUR:34};
-let fxRates = JSON.parse(localStorage.getItem('fa_fx')||'null') || FX_DEFAULT;
+let fxRates = JSON.parse(localStorage.getItem('fa_fx')||'null')||FX_DEFAULT;
 
 const ACCOUNT_LIST = [
   {Account:'النقد', Type:'أصل متداول', Code:'101'},
@@ -171,117 +164,105 @@ const ACCOUNT_LIST = [
   {Account:'المصروفات', Type:'مصروف', Code:'501'}
 ];
 
-/* ============================ Helpers ============================ */
-function saveLocal(){ localStorage.setItem('trialData', JSON.stringify(trialData)); }
-function showToast(msg,type='info'){
-  const area = $('toastArea');
-  const el = document.createElement('div');
-  el.className = `toast align-items-center text-bg-${type} border-0 show`;
-  el.style.minWidth='200px'; el.style.marginTop='6px';
-  el.innerHTML = `<div class="d-flex"><div class="toast-body">${msg}</div>
-    <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.closest('.toast').remove()"></button></div>`;
-  area.appendChild(el); setTimeout(()=> el.remove(),3000);
-}
-function formatNumber(v){ return Number(v).toLocaleString(undefined,{maximumFractionDigits:2,minimumFractionDigits:0}); }
-function convertCurrency(v){ const cur=$('currencySelect').value||'EGP'; return cur==='EGP'?toNum(v):toNum(v)/ (fxRates[cur]||FX_DEFAULT[cur]); }
+// ======== Language & Currency & Theme ========
+const translations = {
+  en:{brandText:"Financial Analyzer",uploadLabel:"Upload Trial Balance File (CSV/XLSX)",uploadHint:"Supports CSV/Excel — will try to detect account/type/debit/credit",goDashboard:"Go to Dashboard"},
+  ar:{brandText:"المحلل المالي",uploadLabel:"تحميل ملف ميزان المراجعة (CSV / XLSX)",uploadHint:"يدعم CSV و Excel — سيحاول اكتشاف اسم الحساب/النوع/المدين/الدائن",goDashboard:"لوحة التحكم"}
+};
+const LANGS = ['ar','en'];
+const CURRENCIES = ['EGP','USD','EUR'];
 
-/* ============================ Table ============================ */
+function applyLanguage(lang){
+  const t=translations[lang];
+  document.getElementById('brandText').innerText=t.brandText;
+  document.getElementById('uploadLabel').innerText=t.uploadLabel;
+  document.getElementById('uploadHint').innerText=t.uploadHint;
+  document.getElementById('goDashboardBtn').innerText=t.goDashboard;
+  document.body.dir=(lang==='ar'?'rtl':'ltr');
+}
+function loadPreferences(){
+  const lang = localStorage.getItem('lang')||'ar';
+  const theme = localStorage.getItem('theme')||'light';
+  const currency = localStorage.getItem('currency')||'EGP';
+  document.body.dataset.theme=theme;
+  $('darkModeToggle').checked=theme==='dark';
+  $('languageSelect').value=lang;
+  $('currencySelect').value=currency;
+  applyLanguage(lang);
+}
+function saveTheme(){ localStorage.setItem('theme',document.body.dataset.theme);}
+function saveLang(){ localStorage.setItem('lang',$('languageSelect').value);}
+function saveCurrency(){ localStorage.setItem('currency',$('currencySelect').value);}
+
+LANGS.forEach(l=>{$('languageSelect').innerHTML+=`<option value="${l}">${l==='ar'?'العربية':'English'}</option>`;});
+CURRENCIES.forEach(c=>{$('currencySelect').innerHTML+=`<option value="${c}">${c}</option>`;});
+
+// Dark Mode
+$('darkModeToggle').addEventListener('change',e=>{document.body.dataset.theme=e.target.checked?'dark':'light';saveTheme();});
+$('languageSelect').addEventListener('change',()=>{applyLanguage($('languageSelect').value);saveLang();renderTable();renderSummary();renderValidation();});
+$('currencySelect').addEventListener('change',()=>{saveCurrency();renderSummary();});
+
+loadPreferences();
+
+// ======== Table & KPIs & Validation ========
+function saveLocal(){localStorage.setItem('trialData',JSON.stringify(trialData));}
+function showToast(msg,type='info'){const area=$('toastArea');const el=document.createElement('div');el.className=`toast align-items-center text-bg-${type} border-0 show`;el.style.minWidth='200px';el.style.marginTop='6px';el.innerHTML=`<div class="d-flex"><div class="toast-body">${msg}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.closest('.toast').remove()"></button></div>`;area.appendChild(el); setTimeout(()=> el.remove(),3000);}
+function formatNumber(v){return Number(v).toLocaleString(undefined,{maximumFractionDigits:2,minimumFractionDigits:0});}
+function convertCurrency(v){const cur=$('currencySelect').value||'EGP'; return cur==='EGP'?toNum(v):toNum(v)/(fxRates[cur]||FX_DEFAULT[cur]);}
+
 function renderTable(){
-  const tbody = $('tbBody'); tbody.innerHTML='';
+  const tbody=$('tbBody'); tbody.innerHTML='';
   trialData.forEach((row,idx)=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td style="position:relative"><input class="form-control form-control-sm" value="${esc(row.Account||'')}" data-field="Account" data-idx="${idx}"></td>
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="position:relative"><input class="form-control form-control-sm" value="${esc(row.Account||'')}" data-field="Account" data-idx="${idx}"></td>
       <td><input class="form-control form-control-sm" value="${esc(row.Type||'')}" data-field="Type" data-idx="${idx}"></td>
       <td><input class="form-control form-control-sm" value="${esc(row.Code||'')}" data-field="Code" data-idx="${idx}"></td>
       <td><input type="number" class="form-control form-control-sm text-end" value="${toNum(row.Debit)}" data-field="Debit" data-idx="${idx}"></td>
       <td><input type="number" class="form-control form-control-sm text-end" value="${toNum(row.Credit)}" data-field="Credit" data-idx="${idx}"></td>
-      <td><button class="btn btn-sm btn-danger btn-delete" data-idx="${idx}"><i class="bi bi-trash"></i></button></td>
-    `;
+      <td><button class="btn btn-sm btn-danger btn-delete" data-idx="${idx}"><i class="bi bi-trash"></i></button></td>`;
     tbody.appendChild(tr);
   });
 
-  // Input handlers
-  tbody.querySelectorAll('input').forEach(inp=>{
-    inp.addEventListener('input', e=>{
-      const i=Number(e.target.dataset.idx);
-      const f=e.target.dataset.field;
-      trialData[i][f]=(f==='Debit'||f==='Credit')?toNum(e.target.value):e.target.value;
-      saveLocal(); setTimeout(()=>{renderTable(); renderSummary();},100);
-    });
-  });
+  tbody.querySelectorAll('input').forEach(inp=>{inp.addEventListener('input',e=>{const i=Number(e.target.dataset.idx); const f=e.target.dataset.field; trialData[i][f]=(f==='Debit'||f==='Credit')?toNum(e.target.value):e.target.value; saveLocal(); setTimeout(()=>{renderTable(); renderSummary();},100);});});
 
-  // Delete
-  tbody.querySelectorAll('.btn-delete').forEach(btn=>{
-    btn.addEventListener('click',e=>{
-      const i=Number(e.target.closest('button').dataset.idx);
-      trialData.splice(i,1); saveLocal(); renderTable(); renderSummary(); showToast('تم حذف الصف','danger');
-    });
-  });
+  tbody.querySelectorAll('.btn-delete').forEach(btn=>{btn.addEventListener('click',e=>{const i=Number(e.target.closest('button').dataset.idx); trialData.splice(i,1); saveLocal(); renderTable(); renderSummary(); showToast('تم حذف الصف','danger');});});
 
-  // Autocomplete
   tbody.querySelectorAll('input[data-field="Account"]').forEach(inp=>{
-    inp.addEventListener('input', e=>{
-      const val=e.target.value.toLowerCase();
-      const tr=e.target.closest('tr');
-      const suggestions = ACCOUNT_LIST.filter(a=>a.Account.toLowerCase().includes(val));
-      let list=tr.querySelector('.autocomplete-suggestions');
-      if(!list){ list=document.createElement('div'); list.className='autocomplete-suggestions'; tr.children[0].appendChild(list);}
+    inp.addEventListener('input',e=>{
+      const val=e.target.value.toLowerCase(); const tr=e.target.closest('tr');
+      const suggestions=ACCOUNT_LIST.filter(a=>a.Account.toLowerCase().includes(val));
+      let list=tr.querySelector('.autocomplete-suggestions'); if(!list){list=document.createElement('div'); list.className='autocomplete-suggestions'; tr.children[0].appendChild(list);}
       list.innerHTML='';
-      suggestions.forEach(s=>{
-        const div=document.createElement('div'); div.className='autocomplete-suggestion'; div.textContent=s.Account;
-        div.addEventListener('click', ()=>{ inp.value=s.Account; tr.querySelector('input[data-field="Type"]').value=s.Type; tr.querySelector('input[data-field="Code"]').value=s.Code; list.innerHTML=''; inp.dispatchEvent(new Event('input')); });
-        list.appendChild(div);
-      });
+      suggestions.forEach(s=>{const div=document.createElement('div'); div.className='autocomplete-suggestion'; div.textContent=s.Account; div.addEventListener('click',()=>{inp.value=s.Account; tr.querySelector('input[data-field="Type"]').value=s.Type; tr.querySelector('input[data-field="Code"]').value=s.Code; list.innerHTML=''; inp.dispatchEvent(new Event('input'));}); list.appendChild(div);});
     });
-    inp.addEventListener('blur', ()=>{ setTimeout(()=>{const l=inp.parentElement.querySelector('.autocomplete-suggestions'); if(l) l.innerHTML='';},200); });
+    inp.addEventListener('blur',()=>{setTimeout(()=>{const l=inp.parentElement.querySelector('.autocomplete-suggestions'); if(l) l.innerHTML='';},200);});
   });
 
   renderValidation();
 }
 
-/* ============================ KPIs & Charts ============================ */
 let categoryChart=null;
 function renderSummary(){
   const agg={assets:0,liabilities:0,equity:0,revenue:0,expense:0,other:0};
-  trialData.forEach(r=>{
-    const net = toNum(r.Debit)-toNum(r.Credit);
-    const acc = r.Account||'';
-    if(acc.includes('النقد')||acc.includes('البنك')) agg.assets+=net;
-    else if(acc.includes('الموردون')) agg.liabilities+=(-net);
-    else if(acc.includes('رأس')) agg.equity+=(-net);
-    else if(acc.includes('الإيرادات')) agg.revenue+=(-net);
-    else if(acc.includes('المصروفات')) agg.expense+=net;
-    else agg.other+=net;
-  });
+  trialData.forEach(r=>{const net=toNum(r.Debit)-toNum(r.Credit); const acc=r.Account||''; if(acc.includes('النقد')||acc.includes('البنك')) agg.assets+=net; else if(acc.includes('الموردون')) agg.liabilities+=(-net); else if(acc.includes('رأس')) agg.equity+=(-net); else if(acc.includes('الإيرادات')) agg.revenue+=(-net); else if(acc.includes('المصروفات')) agg.expense+=net; else agg.other+=net;});
 
-  // KPIs
   const kpiRow=$('kpiRow'); kpiRow.innerHTML='';
-  const lang=$('langSelect').value||'ar';
-  const items=[
-    {label_ar:'عدد الحسابات',label_en:'Accounts',value:trialData.length},
+  const lang=$('languageSelect').value||'ar';
+  const items=[{label_ar:'عدد الحسابات',label_en:'Accounts',value:trialData.length},
     {label_ar:'الأصول (تقريبي)',label_en:'Assets',value:agg.assets},
     {label_ar:'الخصوم (تقريبي)',label_en:'Liabilities',value:agg.liabilities},
     {label_ar:'الإيرادات',label_en:'Revenue',value:agg.revenue},
     {label_ar:'المصروفات',label_en:'Expense',value:agg.expense},
-    {label_ar:'أخرى',label_en:'Other',value:agg.other},
-  ];
-  items.forEach(it=>{
-    const div=document.createElement('div'); div.className='kpi';
-    const label=(lang==='ar')?it.label_ar:it.label_en;
-    div.innerHTML=`<div class="fw-semibold small text-muted">${esc(label)}</div><div style="font-size:1.15rem;font-weight:800;margin-top:6px">${formatNumber(it.value)}</div>`;
-    kpiRow.appendChild(div);
-  });
+    {label_ar:'أخرى',label_en:'Other',value:agg.other}];
+  items.forEach(it=>{const div=document.createElement('div'); div.className='kpi'; const label=(lang==='ar')?it.label_ar:it.label_en; div.innerHTML=`<div class="fw-semibold small text-muted">${esc(label)}</div><div style="font-size:1.15rem;font-weight:800;margin-top:6px">${formatNumber(it.value)}</div>`; kpiRow.appendChild(div);});
 
-  // Chart
   const ctx=$('categoryChart').getContext('2d');
   const dataVals=[agg.assets,agg.liabilities,agg.revenue,agg.expense,agg.other].map(Math.abs);
   const labels=[lang==='ar'?'الأصول':'Assets',lang==='ar'?'الخصوم':'Liabilities',lang==='ar'?'الإيرادات':'Revenue',lang==='ar'?'المصروفات':'Expenses',lang==='ar'?'أخرى':'Other'];
   if(categoryChart) try{categoryChart.destroy();}catch{}
-  categoryChart=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data:dataVals,backgroundColor:['#0d6efd','#dc3545','#198754','#ffc107','#6c757d']}]}});
+  categoryChart=new Chart(ctx,{type:'doughnut',data:{labels,datasets:[{data:dataVals,backgroundColor:['#0d6efd','#dc3545','#198754','#ffc107','#6c757d']}]}})
 }
 
-/* ============================ Validation ============================ */
 function renderValidation(){
   const totalDebit=trialData.reduce((s,r)=>s+toNum(r.Debit),0);
   const totalCredit=trialData.reduce((s,r)=>s+toNum(r.Credit),0);
@@ -290,18 +271,15 @@ function renderValidation(){
   res.innerHTML=(Math.abs(totalDebit-totalCredit)<1e-6)?`<span class="text-success">ميزان المراجعة متوازن ✅ — ${formatNumber(totalDebit)}</span>`:`<span class="text-danger">ميزان المراجعة غير متوازن ❌ — مدين: ${formatNumber(totalDebit)} / دائن: ${formatNumber(totalCredit)}</span>`;
 }
 
-/* ============================ Events ============================ */
+// ======== Events ========
 $('addRowBtn').addEventListener('click',()=>{trialData.push({Account:'',Type:'',Code:'',Debit:0,Credit:0});saveLocal();renderTable();showToast('تم إضافة صف جديد','success');});
 $('clearBtn').addEventListener('click',()=>{if(confirm('هل أنت متأكد؟')){trialData=[];saveLocal();renderTable();showToast('تم مسح البيانات','danger');}});
 $('validateBtn').addEventListener('click',()=>{renderValidation();showToast('تم التحقق من الميزان','info');});
-$('saveBtn').addEventListener('click',()=>{localStorage.setItem('trialData',JSON.stringify(trialData));showToast('تم الحفظ محلياً','success');});
+$('saveBtn').addEventListener('click',()=>{saveLocal();showToast('تم الحفظ محلياً','success');});
 $('loadBtn').addEventListener('click',()=>{trialData=JSON.parse(localStorage.getItem('trialData')||'[]');renderTable();renderSummary();showToast('تم استرجاع البيانات','info');});
+$('goDashboardBtn').addEventListener('click',()=>{window.location.href='dashboard.html';});
 
-$('darkToggle').addEventListener('change',e=>{document.body.setAttribute('data-theme',e.target.checked?'dark':'light');});
-$('langSelect').addEventListener('change',()=>{renderTable();renderSummary();renderValidation();});
-$('currencySelect').addEventListener('change',()=>{renderSummary();});
-
-/* ============================ File Input ============================ */
+// ======== File Input ========
 $('fileInput').addEventListener('change',e=>{
   const file=e.target.files[0]; if(!file) return;
   const reader=new FileReader();
@@ -323,9 +301,7 @@ $('fileInput').addEventListener('change',e=>{
   if(ext==='csv'){reader.readAsText(file);} else {reader.readAsBinaryString(file);}
 });
 
-/* ============================ Init ============================ */
 renderTable(); renderSummary(); renderValidation();
 </script>
-
 </body>
 </html>
