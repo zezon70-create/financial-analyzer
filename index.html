@@ -78,7 +78,7 @@ footer {
 </style>
 </head>
 
-<body data-theme="light">
+<body>
 <div class="watermark"><img src="assets/logo.png" alt="logo"></div>
 
 <header>
@@ -108,7 +108,7 @@ footer {
   <div class="container">
     <h1 id="heroTitle">أهلاً بك في المحلل المالي</h1>
     <p id="heroDesc">منصة ذكية لتحليل القوائم المالية بسهولة واحترافية</p>
-    <a href="input.html" class="btn btn-light btn-lg"><i class="fa-solid fa-play"></i> ابدأ الآن</a>
+    <a id="startBtn" href="#" class="btn btn-light btn-lg"><i class="fa-solid fa-play"></i> ابدأ الآن</a>
   </div>
 </section>
 
@@ -143,13 +143,27 @@ footer {
 </footer>
 
 <script>
+// Load saved preferences
+window.onload = () => {
+  const savedTheme = localStorage.getItem("theme") || "light";
+  const savedLang = localStorage.getItem("lang") || "ar";
+  const savedCurrency = localStorage.getItem("currency") || "EGP";
+
+  document.body.dataset.theme = savedTheme;
+  document.getElementById("darkModeToggle").checked = savedTheme === "dark";
+  document.getElementById("languageSelect").value = savedLang;
+  document.getElementById("currencySelect").value = savedCurrency;
+  applyLanguage(savedLang);
+};
+
 // Dark Mode
-const toggle=document.getElementById("darkModeToggle");
-toggle.onchange=()=>document.body.dataset.theme=toggle.checked?"dark":"light";
+document.getElementById("darkModeToggle").onchange = (e) => {
+  document.body.dataset.theme = e.target.checked ? "dark" : "light";
+  localStorage.setItem("theme", document.body.dataset.theme);
+};
 
 // Language
-const langSelect=document.getElementById("languageSelect");
-const translations={
+const translations = {
   en:{
     heroTitle:"Welcome to Financial Analyzer",
     heroDesc:"A smart platform for financial analysis with ease & professionalism.",
@@ -165,16 +179,30 @@ const translations={
     f3Title:"آمن وسهل", f3Desc:"كل البيانات تبقى محلياً على جهازك بدون إرسال للخادم."
   }
 };
-langSelect.onchange=()=>{
-  const lang=langSelect.value;
+function applyLanguage(lang){
   const t=translations[lang];
   for(const id in t){document.getElementById(id).innerText=t[id];}
   document.body.dir=(lang==="ar"?"rtl":"ltr");
+}
+document.getElementById("languageSelect").onchange=(e)=>{
+  localStorage.setItem("lang", e.target.value);
+  applyLanguage(e.target.value);
 };
 
 // Currency
 document.getElementById("currencySelect").onchange=(e)=>{
-  alert("تم اختيار العملة: "+e.target.value);
+  localStorage.setItem("currency", e.target.value);
+};
+
+// Start Button
+document.getElementById("startBtn").onclick=(e)=>{
+  e.preventDefault();
+  const hasData = localStorage.getItem("financialData");
+  if(hasData){
+    window.location.href="dashboard.html";
+  } else {
+    window.location.href="input.html";
+  }
 };
 </script>
 </body>
