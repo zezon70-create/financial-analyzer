@@ -1,159 +1,163 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>المحلل المالي - Financial Analyzer</title>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-
-<!-- Font Awesome for icons -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
 <style>
-:root {
-  --primary:#0077b6;
-  --secondary:#48cae4;
-  --light:#fff;
-  --dark:#121212;
-  --text:#333;
-}
-
 body {
   margin:0;
-  font-family:'Cairo', sans-serif;
-  background:#f4f7fa;
-  color:var(--text);
+  font-family:'Cairo',sans-serif;
+  background:#0d1b2a;
+  color:#eee;
   overflow-x:hidden;
-  transition:background .3s,color .3s;
+  transition: background 0.3s, color 0.3s;
 }
-body.dark { background:var(--dark); color:#eee; }
+body.light{background:#f4f7fa;color:#333;}
 
-header {
+/* Particle Background */
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+/* Header */
+header{
   padding:15px 30px;
   display:flex;
   justify-content:space-between;
   align-items:center;
   position:sticky;
   top:0;
-  background:rgba(255,255,255,0.9);
+  background:rgba(0,0,0,0.6);
   backdrop-filter:blur(8px);
-  border-bottom:1px solid #ddd;
   z-index:1000;
+  border-bottom:1px solid rgba(255,255,255,0.1);
 }
-body.dark header { background:rgba(18,18,18,0.95); border-color:#333; }
+body.light header{background:rgba(255,255,255,0.9);border-color:#ddd;}
 
-.logo {
+.logo{
   font-weight:700;
   font-size:1.3rem;
-  color:var(--primary);
+  color:#00b4d8;
   display:flex;
   align-items:center;
   gap:10px;
 }
-.logo img { height:40px; }
+.logo img{height:40px;}
 
-.controls { display:flex; gap:10px; }
-button, select {
+.controls{display:flex;gap:10px;}
+button,select{
   padding:6px 12px;
   border:none;
   border-radius:6px;
   cursor:pointer;
   font-weight:600;
 }
-.btn-dark { background:#333; color:#fff; }
-.btn-lang { background:var(--primary); color:#fff; }
-select { background:#eee; }
-body.dark select { background:#333; color:#fff; }
+.btn-dark{background:#333;color:#fff;}
+.btn-lang{background:#00b4d8;color:#fff;}
+select{background:#eee;}
+body.dark select{background:#333;color:#fff;}
 
 /* Hero */
-.hero {
-  height:calc(100vh - 80px);
+.hero{
+  height:calc(100vh-80px);
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
   text-align:center;
   padding:20px;
-  background:linear-gradient(135deg,var(--primary),var(--secondary));
+  background:linear-gradient(135deg,#0077b6,#48cae4);
   color:#fff;
   position:relative;
   overflow:hidden;
 }
-.hero::after {
-  content:"";
-  position:absolute;
-  inset:0;
-  background:url('assets/logo.png') no-repeat center/400px;
-  opacity:0.05;
+.hero h1{
+  font-size:3rem;
+  margin-bottom:15px;
+  opacity:0;
+  transform:translateY(40px);
+  animation:fadeUp 1s forwards;
 }
-.hero h1 { font-size:2.8rem; margin-bottom:20px; text-shadow:0 0 10px rgba(0,0,0,0.3); }
-.hero p { font-size:1.2rem; margin-bottom:30px; max-width:650px; text-shadow:0 0 8px rgba(0,0,0,0.2); }
-
-.cta { display:flex; gap:15px; flex-wrap:wrap; justify-content:center; }
-.cta a {
-  padding:14px 28px;
-  border-radius:8px;
-  font-size:1rem;
+.hero p{
+  font-size:1.25rem;
+  margin-bottom:30px;
+  max-width:650px;
+  opacity:0;
+  transform:translateY(40px);
+  animation:fadeUp 1.2s forwards;
+}
+.cta{
+  display:flex;
+  gap:15px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+.cta a, .cta button{
+  padding:16px 32px;
+  border-radius:10px;
+  font-size:1.1rem;
   font-weight:700;
   text-decoration:none;
-  background:#fff;
-  color:var(--primary);
-  transition:0.3s;
-}
-.cta a:hover { background:#f0f0f0; }
-
-/* Info Cards */
-.cards {
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-  gap:20px;
-  margin:50px auto;
-  max-width:1200px;
-  padding:0 20px;
-}
-.card {
-  background:#fff;
-  border-radius:15px;
-  padding:25px;
-  text-align:center;
-  box-shadow:0 8px 20px rgba(0,0,0,0.1);
-  transition:transform .3s,box-shadow .3s;
+  transition:0.4s;
   position:relative;
-  overflow:hidden;
+  z-index:2;
 }
-body.dark .card { background:#1c1c1c; color:#eee; box-shadow:0 8px 20px rgba(0,0,0,0.6); }
-.card:hover { transform:translateY(-8px); box-shadow:0 12px 30px rgba(0,0,0,0.2); }
-.card i {
-  font-size:3rem;
-  color:var(--primary);
-  margin-bottom:15px;
-  transition:transform .3s;
+.btn-start{background:#fff;color:#0077b6;}
+.btn-start:hover{background:#f0f0f0; transform:scale(1.08);}
+.btn-upload{background:#023e8a;color:#fff;}
+.btn-upload:hover{background:#03045e; transform:scale(1.08);}
+
+/* Feature Cards */
+.features{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:25px;
+  margin:50px 0;
+  z-index:1;
+  position:relative;
 }
-.card:hover i { transform:rotate(20deg); }
-.card h3 { margin-bottom:10px; }
-.card p { font-size:0.95rem; line-height:1.5; }
+.feature-card{
+  background:rgba(255,255,255,0.05);
+  border-radius:20px;
+  padding:30px;
+  width:280px;
+  text-align:center;
+  backdrop-filter:blur(8px);
+  box-shadow:0 10px 25px rgba(0,0,0,0.5);
+  transition:0.5s;
+  opacity:0;
+  transform:translateY(50px);
+  animation:fadeUpCard 1s forwards;
+}
+.feature-card:nth-child(1){animation-delay:0.5s;}
+.feature-card:nth-child(2){animation-delay:0.7s;}
+.feature-card:nth-child(3){animation-delay:0.9s;}
+.feature-card:hover{transform:translateY(-10px) scale(1.05);box-shadow:0 15px 30px rgba(0,0,0,0.7);}
+.feature-card i{font-size:2.2rem;margin-bottom:15px;color:#00b4d8;transition:0.3s;}
+.feature-card h3{margin-bottom:10px;font-size:1.3rem;}
+.feature-card p{font-size:1rem;line-height:1.5;}
 
 /* Footer */
-footer {
+footer{
   padding:20px;
   text-align:center;
-  background:#f0f0f0;
-  border-top:1px solid #ddd;
-  font-size:0.9rem;
+  background:rgba(0,0,0,0.6);
+  color:#aaa;
+  border-top:1px solid rgba(255,255,255,0.1);
 }
-body.dark footer { background:#1c1c1c; border-color:#333; color:#aaa; }
 
-/* Particle Background */
-#particles {
-  position:absolute;
-  inset:0;
-  z-index:0;
-}
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(40px);} to{opacity:1; transform:translateY(0);}}
+@keyframes fadeUpCard{from{opacity:0;transform:translateY(50px);} to{opacity:1;transform:translateY(0);}}
+
+canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0;}
 </style>
 </head>
-<body>
+<body class="dark">
 
-<!-- Header -->
+<div id="particles"></div>
+
 <header>
   <div class="logo">
     <img src="assets/logo.png" alt="Logo">
@@ -170,46 +174,46 @@ body.dark footer { background:#1c1c1c; border-color:#333; color:#aaa; }
   </div>
 </header>
 
-<!-- Hero -->
 <section class="hero">
   <h1 id="hero-title">أدخل بيانات ميزان المراجعة</h1>
   <p id="hero-text">واستمتع بقوائم مالية دقيقة، تحليلات شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.</p>
   <div class="cta">
-    <a href="#" id="startBtn">ابدأ الآن</a>
+    <a href="#" class="btn-start" id="startBtn">ابدأ الآن</a>
   </div>
 </section>
 
-<!-- Info Cards -->
-<section class="cards">
-  <div class="card" data-title-ar="تحليل مالي متكامل" data-title-en="Comprehensive Analysis" data-desc-ar="احصل على نسب مالية دقيقة ورسوم بيانية تفاعلية." data-desc-en="Get accurate ratios and interactive charts.">
+<div class="features">
+  <div class="feature-card">
     <i class="fa-solid fa-chart-line"></i>
-    <h3>تحليل مالي متكامل</h3>
-    <p>احصل على نسب مالية دقيقة ورسوم بيانية تفاعلية.</p>
+    <h3 id="f1Title">تحليل مالي متكامل</h3>
+    <p id="f1Desc">احصل على نسب مالية دقيقة ورسوم بيانية تفاعلية.</p>
   </div>
-  <div class="card" data-title-ar="استيراد وتصدير" data-title-en="Import & Export" data-desc-ar="تحميل البيانات من Excel أو CSV وحفظ النتائج كـ PDF/Excel." data-desc-en="Load data from Excel/CSV and export to PDF/Excel.">
+  <div class="feature-card">
     <i class="fa-solid fa-file-excel"></i>
-    <h3>استيراد وتصدير</h3>
-    <p>تحميل البيانات من Excel أو CSV وحفظ النتائج كـ PDF/Excel.</p>
+    <h3 id="f2Title">استيراد وتصدير</h3>
+    <p id="f2Desc">تحميل البيانات من Excel أو CSV وحفظ النتائج كـ PDF/Excel.</p>
   </div>
-  <div class="card" data-title-ar="آمن وسهل" data-title-en="Secure & Easy" data-desc-ar="كل البيانات تبقى محلياً على جهازك بدون إرسال للخادم." data-desc-en="Your data stays local — nothing sent to server.">
+  <div class="feature-card">
     <i class="fa-solid fa-shield-halved"></i>
-    <h3>آمن وسهل</h3>
-    <p>كل البيانات تبقى محلياً على جهازك بدون إرسال للخادم.</p>
+    <h3 id="f3Title">آمن وسهل</h3>
+    <p id="f3Desc">كل البيانات تبقى محلياً على جهازك بدون إرسال للخادم.</p>
   </div>
-</section>
+</div>
 
-<!-- Footer -->
 <footer>
-  <p>© 2025 جميع الحقوق محفوظة - Financial Analyzer</p>
+  <p>© 2025 جميع الحقوق محفوظة - معتز مدكور</p>
 </footer>
 
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <script>
-// Load settings
+// LocalStorage settings
 const savedTheme = localStorage.getItem("theme");
 const savedLang = localStorage.getItem("lang");
 const savedCurrency = localStorage.getItem("currency");
-if(savedTheme==="dark") document.body.classList.add("dark");
-if(savedCurrency) document.getElementById("currencySelect").value=savedCurrency;
+
+if(savedTheme==="light")document.body.classList.remove("dark");
+if(savedLang==="en")switchToEnglish();
+if(savedCurrency)document.getElementById("currencySelect").value=savedCurrency;
 
 // Dark Mode
 document.getElementById("darkToggle").addEventListener("click",()=>{
@@ -219,9 +223,9 @@ document.getElementById("darkToggle").addEventListener("click",()=>{
 
 // Language
 document.getElementById("langToggle").addEventListener("click",()=>{
-  const current=document.documentElement.lang;
-  if(current==="ar"){ switchToEnglish(); localStorage.setItem("lang","en"); }
-  else { switchToArabic(); localStorage.setItem("lang","ar"); }
+  const currentLang=document.documentElement.lang;
+  if(currentLang==="ar"){switchToEnglish();localStorage.setItem("lang","en");}
+  else{switchToArabic();localStorage.setItem("lang","ar");}
 });
 
 function switchToEnglish(){
@@ -232,11 +236,13 @@ function switchToEnglish(){
   document.getElementById("hero-title").textContent="Enter Trial Balance Data";
   document.getElementById("hero-text").textContent="Get accurate financial statements, detailed analysis, and advanced forecasts with multi-language & currency support.";
   document.getElementById("startBtn").textContent="Start Now";
-  document.querySelector("footer p").textContent="© 2025 All rights reserved - Financial Analyzer";
-  document.querySelectorAll('.card').forEach(card=>{
-    card.querySelector('h3').textContent=card.dataset.titleEn;
-    card.querySelector('p').textContent=card.dataset.descEn;
-  });
+  document.getElementById("f1Title").textContent="Comprehensive Analysis";
+  document.getElementById("f1Desc").textContent="Get accurate ratios and interactive charts.";
+  document.getElementById("f2Title").textContent="Import & Export";
+  document.getElementById("f2Desc").textContent="Load data from Excel/CSV and export to PDF/Excel.";
+  document.getElementById("f3Title").textContent="Secure & Easy";
+  document.getElementById("f3Desc").textContent="Your data stays local — nothing sent to server.";
+  document.querySelector("footer p").textContent="© 2025 All rights reserved - Moataz Madkour";
 }
 function switchToArabic(){
   document.documentElement.lang="ar";
@@ -246,11 +252,13 @@ function switchToArabic(){
   document.getElementById("hero-title").textContent="أدخل بيانات ميزان المراجعة";
   document.getElementById("hero-text").textContent="واستمتع بقوائم مالية دقيقة، تحليلات شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.";
   document.getElementById("startBtn").textContent="ابدأ الآن";
-  document.querySelector("footer p").textContent="© 2025 جميع الحقوق محفوظة - Financial Analyzer";
-  document.querySelectorAll('.card').forEach(card=>{
-    card.querySelector('h3').textContent=card.dataset.titleAr;
-    card.querySelector('p').textContent=card.dataset.descAr;
-  });
+  document.getElementById("f1Title").textContent="تحليل مالي متكامل";
+  document.getElementById("f1Desc").textContent="احصل على نسب مالية دقيقة ورسوم بيانية تفاعلية.";
+  document.getElementById("f2Title").textContent="استيراد وتصدير";
+  document.getElementById("f2Desc").textContent="تحميل البيانات من Excel أو CSV وحفظ النتائج كـ PDF/Excel.";
+  document.getElementById("f3Title").textContent="آمن وسهل";
+  document.getElementById("f3Desc").textContent="كل البيانات تبقى محلياً على جهازك بدون إرسال للخادم.";
+  document.querySelector("footer p").textContent="© 2025 جميع الحقوق محفوظة - معتز مدكور";
 }
 
 // Currency
@@ -263,6 +271,39 @@ document.getElementById("startBtn").onclick=(e)=>{
   e.preventDefault();
   window.location.href="input.html";
 };
+
+// Particle Background
+const canvas=document.createElement("canvas");
+canvas.id="particleCanvas";
+document.getElementById("particles").appendChild(canvas);
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+let particles=[];
+for(let i=0;i<150;i++){
+  particles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    r:Math.random()*2+1,
+    dx:(Math.random()-0.5)/2,
+    dy:(Math.random()-0.5)/2
+  });
+}
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(let p of particles){
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle="rgba(255,255,255,0.3)";
+    ctx.fill();
+    p.x+=p.dx; p.y+=p.dy;
+    if(p.x<0||p.x>canvas.width)p.dx*=-1;
+    if(p.y<0||p.y>canvas.height)p.dy*=-1;
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
 </script>
 </body>
 </html>
