@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>المحلل المالي | Financial Analyzer</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
 <style>
 :root {
@@ -31,26 +32,44 @@ header {
 .controls {display:flex; gap:10px; align-items:center;}
 select, .btn {padding:6px 12px; border:none; border-radius:6px; cursor:pointer; font-weight:600;}
 .btn-light-mode {background:#eee;} .btn-dark-mode {background:#333;color:#fff;}
+
+/* Hero */
 .hero {
-  text-align:center; padding:100px 20px;
+  text-align:center; padding:120px 20px;
   background:linear-gradient(135deg,var(--accent)20%,#6610f2 100%);
   color:#fff; position:relative; overflow:hidden;
 }
-.hero h1 {font-size:3rem; margin-bottom:20px;}
-.hero p {font-size:1.2rem; margin-bottom:30px;}
+.hero h1 {font-size:3rem; margin-bottom:20px; opacity:0; transform:translateY(30px); animation:fadeUp 1s forwards 0.2s;}
+.hero p {font-size:1.2rem; margin-bottom:30px; max-width:600px; opacity:0; transform:translateY(30px); animation:fadeUp 1s forwards 0.4s;}
 .cta {display:flex; gap:15px; justify-content:center; flex-wrap:wrap;}
 .cta a, .cta button {padding:12px 24px; border-radius:8px; font-size:1.1rem; font-weight:700; text-decoration:none; transition:.3s;}
 .btn-start {background:#fff;color:#0d6efd;}
-.btn-start:hover {background:#e0e0e0;}
+.btn-start:hover {transform:scale(1.05); background:#e0e0e0;}
 .btn-upload {background:#ffc107;color:#111;}
-.btn-upload:hover {background:#ffca2c;}
-.card-feature {background:var(--card); border-radius:14px; padding:30px; text-align:center; box-shadow:0 8px 22px rgba(0,0,0,.08); transition:.3s;}
-[data-theme="dark"] .card-feature {box-shadow:0 6px 18px rgba(0,0,0,.6);}
+.btn-upload:hover {transform:scale(1.05); background:#ffca2c;}
+
+/* Cards */
+.card-feature {
+  background:var(--card); border-radius:14px; padding:30px; text-align:center;
+  box-shadow:0 8px 22px rgba(0,0,0,.08); transition:.3s; opacity:0; transform:translateY(30px);
+}
 .card-feature:hover {transform:translateY(-7px);}
+[data-theme="dark"] .card-feature {box-shadow:0 6px 18px rgba(0,0,0,.6);}
+
+/* Footer */
 footer {text-align:center; padding:20px; border-top:1px solid rgba(0,0,0,.05);}
 [data-theme="dark"] footer {border-color:rgba(255,255,255,0.1);}
-.fade-up {animation:fadeUp .8s ease;}
-@keyframes fadeUp {from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+
+/* Watermark */
+.watermark {
+  position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+  pointer-events:none; opacity:0.04; z-index:0;
+}
+.watermark img {max-width:400px; filter:grayscale(100%);}
+
+/* Animations */
+@keyframes fadeUp {to{opacity:1; transform:translateY(0);}}
+
 .modal {display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); justify-content:center; align-items:center; z-index:2000;}
 .modal-content {background:var(--card); padding:30px; border-radius:10px; text-align:center; width:90%; max-width:400px;}
 .modal-content h2{margin-bottom:15px;}
@@ -59,6 +78,8 @@ footer {text-align:center; padding:20px; border-top:1px solid rgba(0,0,0,.05);}
 </style>
 </head>
 <body data-theme="light">
+
+<div class="watermark"><img src="assets/logo.png" alt="logo"></div>
 
 <header>
   <a href="index.html" class="navbar-brand"><img src="assets/logo.png" alt="logo">المحلل المالي</a>
@@ -73,7 +94,7 @@ footer {text-align:center; padding:20px; border-top:1px solid rgba(0,0,0,.05);}
   </div>
 </header>
 
-<section class="hero fade-up">
+<section class="hero">
   <h1 id="heroTitle">أهلاً بك في المحلل المالي</h1>
   <p id="heroDesc">منصة ذكية لتحليل القوائم المالية بسهولة واحترافية</p>
   <div class="cta">
@@ -84,9 +105,9 @@ footer {text-align:center; padding:20px; border-top:1px solid rgba(0,0,0,.05);}
 
 <main class="container my-5">
   <div class="row g-4">
-    <div class="col-md-4"><div class="card-feature fade-up"><i class="fa-solid fa-chart-line fa-2x mb-3 text-primary"></i><h5>تحليل مالي متكامل</h5><p>احصل على نسب مالية دقيقة ورسوم بيانية تفاعلية.</p></div></div>
-    <div class="col-md-4"><div class="card-feature fade-up"><i class="fa-solid fa-file-excel fa-2x mb-3 text-success"></i><h5>استيراد وتصدير</h5><p>تحميل البيانات من Excel أو CSV وحفظ النتائج كـ PDF/Excel.</p></div></div>
-    <div class="col-md-4"><div class="card-feature fade-up"><i class="fa-solid fa-shield-halved fa-2x mb-3 text-warning"></i><h5>آمن وسهل</h5><p>كل البيانات تبقى محلياً على جهازك بدون إرسال للخادم.</p></div></div>
+    <div class="col-md-4"><div class="card-feature"><i class="fa-solid fa-chart-line fa-2x mb-3 text-primary"></i><h5>تحليل مالي متكامل</h5><p>احصل على نسب مالية دقيقة ورسوم بيانية تفاعلية.</p></div></div>
+    <div class="col-md-4"><div class="card-feature"><i class="fa-solid fa-file-excel fa-2x mb-3 text-success"></i><h5>استيراد وتصدير</h5><p>تحميل البيانات من Excel أو CSV وحفظ النتائج كـ PDF/Excel.</p></div></div>
+    <div class="col-md-4"><div class="card-feature"><i class="fa-solid fa-shield-halved fa-2x mb-3 text-warning"></i><h5>آمن وسهل</h5><p>كل البيانات تبقى محلياً على جهازك بدون إرسال للخادم.</p></div></div>
   </div>
 </main>
 
@@ -103,34 +124,33 @@ footer {text-align:center; padding:20px; border-top:1px solid rgba(0,0,0,.05);}
   </div>
 </div>
 
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 <script>
-// Load saved preferences
+// Preferences
 window.onload = ()=>{
-  const theme = localStorage.getItem("theme") || "light";
-  const lang = localStorage.getItem("lang") || "ar";
-  const currency = localStorage.getItem("currency") || "EGP";
-  document.body.dataset.theme = theme;
+  const theme = localStorage.getItem("theme")||"light";
+  const lang = localStorage.getItem("lang")||"ar";
+  const currency = localStorage.getItem("currency")||"EGP";
+  document.body.dataset.theme=theme;
   if(theme==="dark") document.getElementById("darkModeToggle").textContent="☀️";
-  document.getElementById("currencySelect").value = currency;
+  document.getElementById("currencySelect").value=currency;
   applyLanguage(lang);
+  animateCards();
 };
 
 // Dark Mode
-document.getElementById("darkModeToggle").onclick = ()=>{
-  const isDark = document.body.dataset.theme==="dark";
-  document.body.dataset.theme = isDark?"light":"dark";
-  document.getElementById("darkModeToggle").textContent = isDark?"🌙":"☀️";
+document.getElementById("darkModeToggle").onclick=()=>{
+  const isDark=document.body.dataset.theme==="dark";
+  document.body.dataset.theme=isDark?"light":"dark";
+  document.getElementById("darkModeToggle").textContent=isDark?"🌙":"☀️";
   localStorage.setItem("theme", document.body.dataset.theme);
 };
 
 // Language
-document.getElementById("langToggle").onclick = ()=>{
-  const lang = document.documentElement.lang==="ar"?"en":"ar";
+document.getElementById("langToggle").onclick=()=>{
+  const lang=document.documentElement.lang==="ar"?"en":"ar";
   applyLanguage(lang);
   localStorage.setItem("lang", lang);
 };
-
 function applyLanguage(lang){
   if(lang==="en"){
     document.documentElement.lang="en"; document.documentElement.dir="ltr";
@@ -163,23 +183,36 @@ const uploadBtn=document.getElementById("uploadBtn");
 const uploadModal=document.getElementById("uploadModal");
 const confirmUpload=document.getElementById("confirmUpload");
 const fileInput=document.getElementById("fileInput");
-
 uploadBtn.onclick=()=>uploadModal.style.display="flex";
 confirmUpload.onclick=()=>{
   if(fileInput.files.length>0){
     localStorage.setItem("financialData", JSON.stringify({fileName:fileInput.files[0].name}));
     window.location.href="dashboard.html";
-  }else{ alert("من فضلك اختر ملف أولاً."); }
+  }else alert("من فضلك اختر ملف أولاً.");
 };
 window.onclick=(e)=>{ if(e.target===uploadModal) uploadModal.style.display="none"; };
 
 // Start Button
 document.getElementById("startBtn").onclick=(e)=>{
   e.preventDefault();
-  const hasData = localStorage.getItem("financialData");
-  if(hasData && hasData!=="null"){ window.location.href="dashboard.html"; }
-  else{ uploadModal.style.display="flex"; }
+  const hasData=localStorage.getItem("financialData");
+  if(hasData && hasData!=="null") window.location.href="dashboard.html";
+  else uploadModal.style.display="flex";
 };
+
+// Cards fade-up on scroll
+function animateCards(){
+  const cards=document.querySelectorAll(".card-feature");
+  const observer=new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.style.opacity="1";
+        entry.target.style.transform="translateY(0)";
+      }
+    });
+  }, {threshold:0.2});
+  cards.forEach(c=>observer.observe(c));
+}
 </script>
 </body>
 </html>
