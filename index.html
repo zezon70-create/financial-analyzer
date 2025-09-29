@@ -1,283 +1,288 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>المحلل المالي - Financial Analyzer</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-p1Uu4+nM3nnYPlsb4xNyp6K6/1g7lZq9zQ+oK8r0pEhRDCzB/q+K5V+dyU0hOCu9vQ6R7UyEcszPB4J8ib62hg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>المحلل المالي - Financial Analyzer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet" />
 
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: 'Cairo', sans-serif;
-      background: #0e1117;
-      color: #fff;
-      overflow-x: hidden;
-      transition: background 0.3s, color 0.3s;
-    }
-    body.dark { background: #121212; color: #eee; }
+<style>
+body {
+  margin: 0;
+  font-family: 'Cairo', sans-serif;
+  background: #0d1b2a;
+  color: #eee;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+body.light { background: #f4f7fa; color: #333; }
 
-    header {
-      padding: 15px 30px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      position: sticky;
-      top: 0;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      z-index: 1000;
-    }
+/* Particle Background */
+#particles {
+  position: fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+}
 
-    .logo {
-      font-weight: 700;
-      font-size: 1.3rem;
-      color: #48cae4;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .logo img { height: 40px; }
+/* Header */
+header {
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  z-index:1000;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+body.light header { background: rgba(255,255,255,0.9); border-color:#ddd; }
 
-    .controls { display: flex; gap: 10px; }
-    button, select {
-      padding: 6px 12px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-    .btn-dark { background: #333; color: #fff; }
-    .btn-lang { background: #0077b6; color: #fff; }
-    select { background: #eee; color: #333; }
-    body.dark select { background: #333; color: #fff; }
+.logo {
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: #00b4d8;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo img { height:40px; }
 
-    /* خلفية متحركة */
-    .hero {
-      position: relative;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 20px;
-      overflow: hidden;
-    }
-    .hero::before {
-      content: "";
-      position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle at 30% 30%, #0077b6, #03045e);
-      animation: moveBG 10s linear infinite alternate;
-      z-index: -1;
-    }
-    @keyframes moveBG {
-      0% { transform: rotate(0deg) scale(1); }
-      100% { transform: rotate(360deg) scale(1.2); }
-    }
+.controls { display:flex; gap:10px; }
+button, select {
+  padding:6px 12px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:600;
+}
+.btn-dark { background:#333; color:#fff; }
+.btn-lang { background:#00b4d8; color:#fff; }
+select { background:#eee; }
+body.dark select { background:#333; color:#fff; }
 
-    .hero h1 {
-      font-size: 2.8rem;
-      margin-bottom: 20px;
-      animation: fadeDown 1s ease;
-    }
-    .hero p {
-      font-size: 1.2rem;
-      margin-bottom: 30px;
-      max-width: 650px;
-      animation: fadeUp 1.5s ease;
-    }
-    @keyframes fadeDown { from {opacity:0;transform:translateY(-30px);} to{opacity:1;transform:translateY(0);} }
-    @keyframes fadeUp { from {opacity:0;transform:translateY(30px);} to{opacity:1;transform:translateY(0);} }
+/* Hero Section */
+.hero {
+  height: calc(100vh - 80px);
+  display:flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align:center;
+  padding:20px;
+  background: linear-gradient(135deg,#0077b6,#48cae4);
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.hero h1 { font-size:2.8rem; margin-bottom:15px; animation:fadeUp 1s ease forwards; }
+.hero p { font-size:1.2rem; margin-bottom:30px; max-width:650px; animation:fadeUp 1.2s ease forwards; }
+.cta { display:flex; gap:15px; flex-wrap:wrap; justify-content:center; }
+.cta a, .cta button {
+  padding:14px 28px;
+  border-radius:8px;
+  font-size:1rem;
+  font-weight:700;
+  text-decoration:none;
+  transition:0.3s;
+  position:relative;
+  z-index:2;
+}
+.btn-start { background:#fff; color:#0077b6; }
+.btn-start:hover { background:#f0f0f0; transform: scale(1.05); }
+.btn-upload { background:#023e8a; color:#fff; }
+.btn-upload:hover { background:#03045e; transform: scale(1.05); }
 
-    .cta {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
-      justify-content: center;
-      animation: fadeUp 2s ease;
-    }
-    .cta a {
-      padding: 14px 28px;
-      border-radius: 8px;
-      font-size: 1rem;
-      font-weight: 700;
-      text-decoration: none;
-      background: #fff;
-      color: #0077b6;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      transition: 0.3s;
-    }
-    .cta a:hover {
-      transform: scale(1.05);
-      background: #f0f0f0;
-    }
+/* Feature Cards */
+.features {
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:20px;
+  margin:50px 0;
+  z-index:1;
+  position:relative;
+}
+.feature-card {
+  background: rgba(255,255,255,0.05);
+  border-radius:15px;
+  padding:30px;
+  width:250px;
+  text-align:center;
+  backdrop-filter:blur(6px);
+  box-shadow:0 8px 20px rgba(0,0,0,0.4);
+  transition:0.4s;
+}
+.feature-card:hover {
+  transform: translateY(-10px) scale(1.05);
+  box-shadow:0 12px 25px rgba(0,0,0,0.6);
+}
+.feature-card i { font-size:2rem; margin-bottom:15px; color:#00b4d8; transition:0.3s; }
+.feature-card h3 { margin-bottom:10px; font-size:1.2rem; }
+.feature-card p { font-size:0.95rem; line-height:1.4; }
 
-    /* بطاقات تعريفية */
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
-      gap: 20px;
-      padding: 60px 30px;
-      background: #f4f7fa;
-      color: #333;
-    }
-    body.dark .features { background: #1c1c1c; color:#eee; }
+/* Footer */
+footer {
+  padding:15px;
+  text-align:center;
+  background: rgba(0,0,0,0.6);
+  color:#aaa;
+  border-top:1px solid rgba(255,255,255,0.1);
+}
 
-    .feature-card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 25px;
-      text-align: center;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-      transition: transform 0.3s, box-shadow 0.3s;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
-    }
-    body.dark .feature-card { background: #333; }
-    .feature-card:hover {
-      transform: translateY(-8px) scale(1.03);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    }
-    .feature-card i {
-      font-size: 2.5rem;
-      color: #0077b6;
-    }
-    .feature-card h3 { color: #0077b6; margin-bottom: 10px; font-size: 1.4rem; }
-    .feature-card p { font-size: 1rem; }
+/* Animations */
+@keyframes fadeUp { from{opacity:0; transform:translateY(30px);} to{opacity:1; transform:translateY(0);} }
 
-    footer {
-      padding: 15px;
-      text-align: center;
-      background: #f0f0f0;
-      border-top: 1px solid #ddd;
-      font-size: 0.9rem;
-      color:#333;
-    }
-    body.dark footer { background: #1c1c1c; border-color: #333; color:#aaa; }
-  </style>
+/* Particles Canvas */
+canvas { position:absolute; top:0; left:0; width:100%; height:100%; z-index:0; }
+</style>
 </head>
-<body>
-  <header>
-    <div class="logo">
-      <img src="assets/logo.png" alt="Logo">
-      <span id="title">المحلل المالي</span>
-    </div>
-    <div class="controls">
-      <button class="btn-dark" id="darkToggle">🌙</button>
-      <button class="btn-lang" id="langToggle">EN</button>
-      <select id="currencySelect">
-        <option value="EGP">EGP</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-      </select>
-    </div>
-  </header>
+<body class="dark">
 
-  <section class="hero">
-    <h1 id="hero-title">أدخل بيانات ميزان المراجعة</h1>
-    <p id="hero-text">واستمتع بقوائم مالية دقيقة، تحليلات شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.</p>
-    <div class="cta">
-      <a href="#" id="startBtn">ابدأ الآن</a>
-    </div>
-  </section>
+<div id="particles"></div>
 
-  <section class="features">
-    <div class="feature-card">
-      <i class="fas fa-chart-line"></i>
-      <h3 id="f1-title">تحليلات مالية متقدمة</h3>
-      <p id="f1-text">استمتع بأدوات تحليل ذكية تُظهر نتائجك بشكل دقيق واحترافي.</p>
-    </div>
-    <div class="feature-card">
-      <i class="fas fa-coins"></i>
-      <h3 id="f2-title">دعم متعدد العملات</h3>
-      <p id="f2-text">حوّل القوائم المالية بين عملات مختلفة بسهولة وسرعة.</p>
-    </div>
-    <div class="feature-card">
-      <i class="fas fa-language"></i>
-      <h3 id="f3-title">تعدد اللغات</h3>
-      <p id="f3-text">واجهة سهلة الاستخدام باللغتين العربية والإنجليزية.</p>
-    </div>
-  </section>
+<header>
+  <div class="logo">
+    <img src="assets/logo.png" alt="Logo">
+    <span id="title">المحلل المالي</span>
+  </div>
+  <div class="controls">
+    <button class="btn-dark" id="darkToggle">🌙</button>
+    <button class="btn-lang" id="langToggle">EN</button>
+    <select id="currencySelect">
+      <option value="EGP">EGP</option>
+      <option value="USD">USD</option>
+      <option value="EUR">EUR</option>
+    </select>
+  </div>
+</header>
 
-  <footer>
-    <p>© 2025 جميع الحقوق محفوظة - معتز مدكور</p>
-  </footer>
+<section class="hero">
+  <h1 id="hero-title">أدخل بيانات ميزان المراجعة</h1>
+  <p id="hero-text">واستمتع بقوائم مالية دقيقة، تحليلات شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.</p>
+  <div class="cta">
+    <a href="#" class="btn-start" id="startBtn">ابدأ الآن</a>
+  </div>
+</section>
 
-  <script>
-    // إعدادات سابقة
-    const savedTheme = localStorage.getItem("theme");
-    const savedLang = localStorage.getItem("lang");
-    const savedCurrency = localStorage.getItem("currency");
+<div class="features">
+  <div class="feature-card">
+    <i class="fa-solid fa-chart-line"></i>
+    <h3 id="f1Title">تحليل مالي متكامل</h3>
+    <p id="f1Desc">احصل على نسب مالية دقيقة ورسوم بيانية تفاعلية.</p>
+  </div>
+  <div class="feature-card">
+    <i class="fa-solid fa-file-excel"></i>
+    <h3 id="f2Title">استيراد وتصدير</h3>
+    <p id="f2Desc">تحميل البيانات من Excel أو CSV وحفظ النتائج كـ PDF/Excel.</p>
+  </div>
+  <div class="feature-card">
+    <i class="fa-solid fa-shield-halved"></i>
+    <h3 id="f3Title">آمن وسهل</h3>
+    <p id="f3Desc">كل البيانات تبقى محلياً على جهازك بدون إرسال للخادم.</p>
+  </div>
+</div>
 
-    if(savedTheme === "dark") document.body.classList.add("dark");
-    if(savedLang === "en") switchToEnglish();
-    if(savedCurrency) document.getElementById("currencySelect").value = savedCurrency;
+<footer>
+  <p>© 2025 جميع الحقوق محفوظة - معتز مدكور</p>
+</footer>
 
-    // Dark Mode
-    document.getElementById("darkToggle").addEventListener("click", () => {
-      document.body.classList.toggle("dark");
-      localStorage.setItem("theme", document.body.classList.contains("dark") ? "dark" : "light");
-    });
+<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
-    // Language
-    document.getElementById("langToggle").addEventListener("click", () => {
-      const currentLang = document.documentElement.lang;
-      if(currentLang === "ar"){ switchToEnglish(); localStorage.setItem("lang","en"); }
-      else { switchToArabic(); localStorage.setItem("lang","ar"); }
-    });
+<script>
+// LocalStorage settings
+const savedTheme = localStorage.getItem("theme");
+const savedLang = localStorage.getItem("lang");
+const savedCurrency = localStorage.getItem("currency");
 
-    function switchToEnglish(){
-      document.documentElement.lang = "en";
-      document.documentElement.dir = "ltr";
-      document.getElementById("langToggle").textContent = "AR";
-      document.getElementById("title").textContent = "Financial Analyzer";
-      document.getElementById("hero-title").textContent = "Enter Trial Balance Data";
-      document.getElementById("hero-text").textContent = "Get accurate financial statements, detailed analysis, and advanced forecasts with multi-language & currency support.";
-      document.getElementById("startBtn").textContent = "Start Now";
-      document.querySelector("footer p").textContent = "© 2025 All rights reserved - Moataz Madkour";
-      document.getElementById("f1-title").textContent = "Advanced Financial Analysis";
-      document.getElementById("f1-text").textContent = "Enjoy smart analytical tools showing results accurately and professionally.";
-      document.getElementById("f2-title").textContent = "Multi-Currency Support";
-      document.getElementById("f2-text").textContent = "Switch your financial statements between currencies easily and quickly.";
-      document.getElementById("f3-title").textContent = "Multi-Language";
-      document.getElementById("f3-text").textContent = "Easy to use interface in Arabic and English.";
-    }
-    function switchToArabic(){
-      document.documentElement.lang = "ar";
-      document.documentElement.dir = "rtl";
-      document.getElementById("langToggle").textContent = "EN";
-      document.getElementById("title").textContent = "المحلل المالي";
-      document.getElementById("hero-title").textContent = "أدخل بيانات ميزان المراجعة";
-      document.getElementById("hero-text").textContent = "واستمتع بقوائم مالية دقيقة، تحليلات شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.";
-      document.getElementById("startBtn").textContent = "ابدأ الآن";
-      document.querySelector("footer p").textContent = "© 2025 جميع الحقوق محفوظة - معتز مدكور";
-      document.getElementById("f1-title").textContent = "تحليلات مالية متقدمة";
-      document.getElementById("f1-text").textContent = "استمتع بأدوات تحليل ذكية تُظهر نتائجك بشكل دقيق واحترافي.";
-      document.getElementById("f2-title").textContent = "دعم متعدد العملات";
-      document.getElementById("f2-text").textContent = "حوّل القوائم المالية بين عملات مختلفة بسهولة وسرعة.";
-      document.getElementById("f3-title").textContent = "تعدد اللغات";
-      document.getElementById("f3-text").textContent = "واجهة سهلة الاستخدام باللغتين العربية والإنجليزية.";
-    }
+if(savedTheme === "light") document.body.classList.remove("dark");
+if(savedLang === "en") switchToEnglish();
+if(savedCurrency) document.getElementById("currencySelect").value = savedCurrency;
 
-    // Currency
-    document.getElementById("currencySelect").addEventListener("change",(e)=>{
-      localStorage.setItem("currency", e.target.value);
-    });
+// Dark Mode
+document.getElementById("darkToggle").addEventListener("click",()=>{
+  document.body.classList.toggle("dark");
+  localStorage.setItem("theme", document.body.classList.contains("dark")?"dark":"light");
+});
 
-    // Start Button
-    document.getElementById("startBtn").onclick = (e) => {
-      e.preventDefault();
-      window.location.href = "input.html";
-    };
-  </script>
+// Language
+document.getElementById("langToggle").addEventListener("click",()=>{
+  const currentLang = document.documentElement.lang;
+  if(currentLang==="ar"){ switchToEnglish(); localStorage.setItem("lang","en"); }
+  else { switchToArabic(); localStorage.setItem("lang","ar"); }
+});
+
+function switchToEnglish(){
+  document.documentElement.lang="en";
+  document.documentElement.dir="ltr";
+  document.getElementById("langToggle").textContent="AR";
+  document.getElementById("title").textContent="Financial Analyzer";
+  document.getElementById("hero-title").textContent="Enter Trial Balance Data";
+  document.getElementById("hero-text").textContent="Get accurate financial statements, detailed analysis, and advanced forecasts with multi-language & currency support.";
+  document.getElementById("startBtn").textContent="Start Now";
+  document.getElementById("f1Title").textContent="Comprehensive Analysis";
+  document.getElementById("f1Desc").textContent="Get accurate ratios and interactive charts.";
+  document.getElementById("f2Title").textContent="Import & Export";
+  document.getElementById("f2Desc").textContent="Load data from Excel/CSV and export to PDF/Excel.";
+  document.getElementById("f3Title").textContent="Secure & Easy";
+  document.getElementById("f3Desc").textContent="Your data stays local — nothing sent to server.";
+  document.querySelector("footer p").textContent="© 2025 All rights reserved - Moataz Madkour";
+}
+function switchToArabic(){
+  document.documentElement.lang="ar";
+  document.documentElement.dir="rtl";
+  document.getElementById("langToggle").textContent="EN";
+  document.getElementById("title").textContent="المحلل المالي";
+  document.getElementById("hero-title").textContent="أدخل بيانات ميزان المراجعة";
+  document.getElementById("hero-text").textContent="واستمتع بقوائم مالية دقيقة، تحليلات شاملة، وتنبؤات متقدمة مع دعم العملات واللغات.";
+  document.getElementById("startBtn").textContent="ابدأ الآن";
+  document.getElementById("f1Title").textContent="تحليل مالي متكامل";
+  document.getElementById("f1Desc").textContent="احصل على نسب مالية دقيقة ورسوم بيانية تفاعلية.";
+  document.getElementById("f2Title").textContent="استيراد وتصدير";
+  document.getElementById("f2Desc").textContent="تحميل البيانات من Excel أو CSV وحفظ النتائج كـ PDF/Excel.";
+  document.getElementById("f3Title").textContent="آمن وسهل";
+  document.getElementById("f3Desc").textContent="كل البيانات تبقى محلياً على جهازك بدون إرسال للخادم.";
+  document.querySelector("footer p").textContent="© 2025 جميع الحقوق محفوظة - معتز مدكور";
+}
+
+// Currency
+document.getElementById("currencySelect").addEventListener("change",(e)=>{
+  localStorage.setItem("currency", e.target.value);
+});
+
+// Start Button
+document.getElementById("startBtn").onclick=(e)=>{
+  e.preventDefault();
+  window.location.href="input.html";
+};
+
+// Particle Animation
+const canvas=document.createElement('canvas');
+canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+document.getElementById('particles').appendChild(canvas);
+const ctx=canvas.getContext('2d');
+let particles=[];
+for(let i=0;i<100;i++){
+  particles.push({x:Math.random()*canvas.width, y:Math.random()*canvas.height, r:Math.random()*2+1, dx:(Math.random()-0.5)/2, dy:(Math.random()-0.5)/2});
+}
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  for(let p of particles){
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle="rgba(255,255,255,0.3)";
+    ctx.fill();
+    p.x+=p.dx; p.y+=p.dy;
+    if(p.x<0||p.x>canvas.width)p.dx*=-1;
+    if(p.y<0||p.y>canvas.height)p.dy*=-1;
+  }
+  requestAnimationFrame(animate);
+}
+animate();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth; canvas.height=window.innerHeight;});
+</script>
+
 </body>
 </html>
