@@ -1,15 +1,16 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>إدخال ميزان المراجعة — المحلل المالي </title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>إدخال ميزان المراجعة — المحلل المالي (واو)</title>
 
-<!-- External libs -->
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet"/>
 
+<!-- Libraries -->
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -17,147 +18,225 @@
 
 <style>
 :root{
-  --accent:linear-gradient(90deg,#0d6efd,#6610f2);
-  --primary:#0d6efd;
   --bg:#f4f7fb;
   --card:#ffffff;
   --text:#0b1220;
-  --muted:#6c757d;
+  --muted:#5f6b78;
+  --accent-1:#0d6efd; /* bootstrap blue */
+  --accent-2:#6610f2; /* violet */
   --glass: rgba(255,255,255,0.6);
   --glass-border: rgba(13,110,253,0.06);
+  --success:#16a34a;
+  --danger:#dc3545;
+  --card-radius:14px;
+  --shadow: 0 14px 40px rgba(2,6,23,0.06);
 }
-body{font-family:"Cairo",system-ui,sans-serif;margin:0;background:var(--bg);color:var(--text);transition: background .25s, color .25s;}
-body[data-theme="dark"]{ --bg:#061018; --card:#07121a; --text:#e6eef6; --muted:#9aa6b2; --glass: rgba(10,14,20,0.5); --glass-border: rgba(255,255,255,0.04); background:var(--bg); color:var(--text); }
 
-header.site-header{position:sticky;top:0;z-index:1200;padding:10px 18px;backdrop-filter: blur(8px);background:var(--glass);border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+/* Dark theme variables - high contrast */
+body[data-theme="dark"]{
+  --bg:#07101a;
+  --card:#071421;
+  --text:#e6eef6;
+  --muted:#9aa6b2;
+  --glass: rgba(10,14,20,0.65);
+  --glass-border: rgba(255,255,255,0.035);
+  --shadow: 0 14px 40px rgba(0,0,0,0.6);
+}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0; font-family:"Cairo",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased;
+  transition: background .22s ease,color .22s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* decorative hero background (subtle) */
+.hero-bg{
+  position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.08;
+  background:
+    radial-gradient(800px 400px at 10% 20%, rgba(102,16,242,0.14), transparent 12%),
+    radial-gradient(600px 300px at 90% 80%, rgba(13,110,253,0.12), transparent 10%);
+  mix-blend-mode:overlay;
+}
+
+/* Header */
+header.site-header{
+  position:sticky; top:0; z-index:1200;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding:10px 18px; background:var(--glass); backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--glass-border);
+}
 .brand{display:flex;align-items:center;gap:.8rem}
-.brand img{height:44px;border-radius:8px;box-shadow:0 6px 18px rgba(13,110,253,0.08)}
-.brand .title{font-weight:800}
-.controls{display:flex;gap:.5rem;align-items:center}
+.brand img{height:46px;border-radius:10px;box-shadow:0 8px 24px rgba(13,110,253,0.06)}
+.brand .title{font-weight:800; font-size:1rem}
+.brand .tag{font-size:.82rem; color:var(--muted)}
 
-.container-main{max-width:1200px;margin:20px auto;padding:16px}
+/* Controls */
+.controls{display:flex;align-items:center;gap:.5rem}
+.controls select, .controls .form-check{height:36px}
+.controls .btn {height:36px; padding:6px 10px}
 
+/* Main container */
+.container-main{max-width:1200px;margin:20px auto;padding:16px; position:relative; z-index:2}
+
+/* ribbon / hero CTA */
 .ribbon{
-  position:relative;padding:14px;border-radius:12px;background:linear-gradient(180deg,rgba(13,110,253,0.06),rgba(102,16,242,0.02));box-shadow:0 10px 30px rgba(2,6,23,0.04);border:1px solid rgba(13,110,253,0.04);margin-bottom:16px;
+  border-radius:var(--card-radius); padding:16px; display:flex; gap:14px; align-items:center; flex-wrap:wrap;
+  background: linear-gradient(180deg, rgba(255,255,255,0.8), rgba(250,252,255,0.95));
+  box-shadow: var(--shadow); border:1px solid var(--glass-border);
 }
-.hero-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.hero-left{flex:1}
-.hero-right{width:340px;min-width:260px}
+body[data-theme="dark"] .ribbon{ background: linear-gradient(180deg, rgba(10,14,20,0.6), rgba(10,14,20,0.72)); }
 
-.card-surface{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 12px 30px rgba(2,6,23,0.04);border:1px solid rgba(13,110,253,0.03);margin-bottom:16px}
-body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03)}
+.ribbon-left{flex:1}
+.ribbon-right{width:320px;min-width:220px}
 
-.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:12px 0}
-.kpi{background:linear-gradient(180deg,var(--card),#f8fbff);padding:12px;border-radius:10px;text-align:center;box-shadow:0 8px 20px rgba(2,6,23,0.04)}
-.kpi .num{font-weight:800;font-size:1.1rem;margin-top:6px}
+.ribbon h3{margin:0; font-size:1.1rem}
+.ribbon p{margin:6px 0 0;color:var(--muted)}
 
-.table thead th{border-bottom:1px solid rgba(0,0,0,0.06)}
-.table tbody tr:hover{background:rgba(13,110,253,0.03)}
-.input-sm{height:36px;padding:.4rem .6rem}
+/* buttons */
+.btn-glow{
+  background: linear-gradient(90deg,var(--accent-1),var(--accent-2));
+  color:#fff; border:none; padding:8px 14px; border-radius:10px; font-weight:700;
+  box-shadow: 0 12px 36px rgba(102,16,242,0.12);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.btn-glow:hover{ transform: translateY(-4px); box-shadow: 0 20px 50px rgba(102,16,242,0.18); }
+.btn-outline-muted{ border:1px solid rgba(0,0,0,0.06); background:transparent; color:var(--text); padding:7px 12px; border-radius:10px; }
 
-.toast-area{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:2000;pointer-events:none}
+/* cards */
+.card-surface{
+  background:var(--card); border-radius:12px; padding:18px; margin-top:16px;
+  box-shadow: var(--shadow); border:1px solid var(--glass-border);
+}
 
-.watermark{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;opacity:0.06}
-.watermark img{max-width:520px;filter:grayscale(100%);opacity:0.1}
+/* KPIs */
+.kpi-row{display:grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap:12px; margin-top:14px}
+.kpi{
+  background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(250,252,255,0.98));
+  padding:12px; border-radius:10px; text-align:center; transition: transform .12s ease;
+  border:1px solid rgba(0,0,0,0.04);
+}
+body[data-theme="dark"] .kpi{ background: linear-gradient(180deg, rgba(10,14,20,0.6), rgba(10,14,20,0.55)); border:1px solid rgba(255,255,255,0.02); }
+.kpi:hover{ transform: translateY(-6px); }
+.kpi .label{font-size:.86rem; color:var(--muted)}
+.kpi .value{font-weight:900; font-size:1.18rem; margin-top:6px; color:var(--text)}
 
-.autocomplete-suggestions{position:absolute;background:var(--card);border:1px solid rgba(0,0,0,0.06);border-radius:8px;max-height:180px;overflow:auto;z-index:2500;box-shadow:0 10px 30px rgba(2,6,23,0.06)}
-.autocomplete-suggestion{padding:8px 10px;cursor:pointer}
-.autocomplete-suggestion:hover{background:linear-gradient(90deg,rgba(13,110,253,0.12),rgba(102,16,242,0.08));color:var(--text)}
+/* table styles */
+.table thead th{border-bottom:1px solid rgba(0,0,0,0.06); font-weight:700}
+.table input{height:36px; padding:6px 8px; border-radius:8px}
+.table tbody tr:hover{ background: linear-gradient(90deg, rgba(13,110,253,0.02), transparent); }
 
-.btn-glow{background:linear-gradient(90deg,#0d6efd,#6610f2);border:none;color:#fff;box-shadow:0 8px 30px rgba(102,16,242,0.12);transition:transform .12s, box-shadow .12s}
-.btn-glow:hover{transform:translateY(-3px);box-shadow:0 18px 45px rgba(102,16,242,0.18)}
+/* autocomplete */
+.autocomplete-suggestions{position:absolute; background:var(--card); border:1px solid rgba(0,0,0,0.06); border-radius:8px; max-height:180px; overflow:auto; z-index:2500; box-shadow:0 10px 30px rgba(2,6,23,0.06)}
+.autocomplete-suggestion{padding:8px 10px; cursor:pointer}
+.autocomplete-suggestion:hover{background:linear-gradient(90deg,rgba(13,110,253,0.12),rgba(102,16,242,0.08)); color:var(--text)}
 
-.badge-need{background:linear-gradient(90deg,#ffc107,#ffb020);padding:5px 10px;border-radius:999px;color:#111;font-weight:800}
+/* preview table & canvas */
+.table-fixed{max-height:300px; overflow:auto; border-radius:8px; padding:6px}
 
-.small-muted{color:var(--muted);font-size:.92rem}
+/* watermark */
+.watermark{position:fixed; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:0; opacity:0.06}
+.watermark img{max-width:520px; filter:grayscale(100%); opacity:0.12}
 
-.table-fixed{max-height:300px;overflow:auto;border-radius:8px;padding:6px}
+/* toast */
+.toast-area{position:fixed; top:18px; left:50%; transform:translateX(-50%); z-index:4000; pointer-events:none}
 
 /* responsive */
-@media (max-width:900px){ .hero-right{width:100%} .controls{gap:.4rem} }
+@media (max-width:900px){
+  .ribbon-right{width:100%}
+  header.site-header{padding:8px}
+}
+
+/* animated counter small style */
+.count-anim{display:block;font-weight:900;font-size:1.15rem}
 </style>
 </head>
 <body data-theme="light">
 
-<!-- Watermark -->
-<div class="watermark"><img src="assets/logo.png" alt="logo"></div>
+<!-- decorative background + watermark -->
+<div class="hero-bg" aria-hidden="true"></div>
+<div class="watermark" aria-hidden="true"><img src="assets/logo.png" alt="logo"></div>
 
-<!-- Toasts -->
-<div class="toast-area" id="toastArea"></div>
+<!-- Toast area -->
+<div class="toast-area" id="toastArea" aria-live="polite"></div>
 
 <!-- Header -->
 <header class="site-header" role="banner">
-  <div class="brand">
+  <div class="brand" role="link" onclick="location.href='index.html'">
     <img src="assets/logo.png" alt="logo">
     <div>
       <div class="title" id="brandText">المحلل المالي</div>
-      <div class="small-muted" id="brandDesc">أداة ذكية لتحليل القوائم المالية</div>
+      <div class="tag" id="brandDesc">أداة ذكية لتحليل القوائم المالية</div>
     </div>
   </div>
 
-  <div class="controls">
-    <select id="currencySelect" class="form-select form-select-sm" title="اختر العملة" style="min-width:92px"></select>
-    <select id="languageSelect" class="form-select form-select-sm" title="اللغة" style="min-width:110px"></select>
-    <div class="form-check form-switch mb-0" title="الوضع الليلي">
-      <input class="form-check-input" id="darkModeToggle" type="checkbox">
+  <div class="controls" role="region" aria-label="controls">
+    <select id="currencySelect" class="form-select form-select-sm" title="اختر العملة" aria-label="currency"></select>
+    <select id="languageSelect" class="form-select form-select-sm" title="اللغة" aria-label="language"></select>
+    <div class="form-check form-switch mb-0" title="الوضع الليلي" aria-label="dark-mode">
+      <input class="form-check-input" id="darkModeToggle" type="checkbox" />
     </div>
-    <button id="exportPdfBtnHeader" class="btn btn-outline-primary btn-sm ms-2" title="تصدير PDF"><i class="bi bi-file-earmark-pdf"></i></button>
+    <button id="exportPdfBtnHeader" class="btn btn-outline-primary btn-sm" title="تصدير PDF" aria-label="export-pdf"><i class="bi bi-file-earmark-pdf"></i></button>
   </div>
 </header>
 
-<!-- Main -->
+<!-- Main container -->
 <main class="container-main" role="main">
 
-  <!-- Hero ribbon -->
-  <section class="ribbon">
-    <div class="hero-row">
-      <div class="hero-left">
-        <h3 style="margin:0">مرحبًا بك في <span style="background:var(--accent);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:900">المحلل المالي</span></h3>
-        <p class="small-muted" style="margin-top:6px">ارفع ميزان المراجعة أو أدخلها يدويًا — سنعرض لك مؤشرات فورية، رسوم بيانية وتصدير احترافي.</p>
-
-        <div class="mt-3 d-flex gap-2 flex-wrap">
-          <button id="addRowBtn" class="btn btn-glow btn-sm"><i class="bi bi-plus-lg"></i> إضافة صف</button>
-          <button id="validateBtn" class="btn btn-outline-primary btn-sm"><i class="bi bi-check-lg"></i> تحقق</button>
-          <button id="saveBtn" class="btn btn-outline-info btn-sm"><i class="bi bi-save"></i> حفظ</button>
-          <button id="loadBtn" class="btn btn-outline-warning btn-sm"><i class="bi bi-folder-symlink"></i> استرجاع</button>
-          <button id="clearBtn" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> مسح الكل</button>
-          <button id="goDashboardBtn" class="btn btn-success btn-sm ms-2"><i class="bi bi-speedometer2"></i> لوحة التحكم</button>
-        </div>
+  <!-- ribbon / hero -->
+  <section class="ribbon" aria-labelledby="ribbonTitle">
+    <div class="ribbon-left">
+      <h3 id="ribbonTitle">مرحبًا بك في <span style="background:linear-gradient(90deg,var(--accent-1),var(--accent-2)); -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:900">المحلل المالي</span></h3>
+      <p class="small-muted" id="ribbonDesc">ارفع ميزان المراجعة أو أدخل الصفوف يدويًا — ستحصل فورًا على مؤشرات ورسوم بيانية قابلة للتصدير.</p>
+      <div style="margin-top:10px; display:flex; gap:8px; flex-wrap:wrap;">
+        <button id="addRowBtn" class="btn-glow"><i class="bi bi-plus-lg"></i> إضافة صف</button>
+        <button id="validateBtn" class="btn-outline-muted">تحقق</button>
+        <button id="saveBtn" class="btn-outline-muted">حفظ</button>
+        <button id="loadBtn" class="btn-outline-muted">استرجاع</button>
+        <button id="clearBtn" class="btn-outline-muted">مسح الكل</button>
+        <button id="goDashboardBtn" class="btn btn-success">لوحة التحكم</button>
       </div>
+    </div>
 
-      <div class="hero-right">
-        <label class="form-label fw-bold mb-1" id="uploadLabel">تحميل ملف ميزان المراجعة (CSV / XLSX)</label>
-        <input type="file" id="fileInput" class="form-control input-sm" accept=".csv,.xlsx" />
-        <div class="small-muted mt-2" id="uploadHint">يدعم CSV و Excel — سيحاول اكتشاف اسم الحساب/النوع/المدين/الدائن.</div>
-      </div>
+    <div class="ribbon-right">
+      <label class="form-label fw-bold" id="uploadLabel">تحميل ملف ميزان المراجعة (CSV / XLSX)</label>
+      <input type="file" id="fileInput" class="form-control" accept=".csv,.xlsx" aria-label="file-input" />
+      <div class="small-muted" id="uploadHint">يدعم CSV و Excel — سيحاول اكتشاف اسم الحساب/النوع/المدين/الدائن.</div>
     </div>
   </section>
 
   <!-- KPIs -->
-  <section id="kpiSection">
-    <div class="kpi-row" id="kpiRow"></div>
+  <section id="kpiSection" class="kpi-row" aria-live="polite" aria-atomic="true">
+    <div class="kpi"><div class="label">عدد الحسابات</div><div class="value"><span class="count-anim" data-target="0">0</span></div></div>
+    <div class="kpi"><div class="label">الأصول (تقريبي)</div><div class="value"><span class="count-anim" data-target="0">0</span></div></div>
+    <div class="kpi"><div class="label">الخصوم (تقريبي)</div><div class="value"><span class="count-anim" data-target="0">0</span></div></div>
+    <div class="kpi"><div class="label">الإيرادات</div><div class="value"><span class="count-anim" data-target="0">0</span></div></div>
+    <div class="kpi"><div class="label">المصروفات</div><div class="value"><span class="count-anim" data-target="0">0</span></div></div>
+    <div class="kpi"><div class="label">أخرى</div><div class="value"><span class="count-anim" data-target="0">0</span></div></div>
   </section>
 
   <!-- Table -->
-  <section class="card-surface" aria-labelledby="trial-table-title">
-    <h6 id="trial-table-title">ميزان المراجعة — البيانات</h6>
-    <div class="table-responsive mt-2">
-      <table id="trialTable" class="table table-borderless align-middle">
+  <section class="card-surface" aria-labelledby="trialTitle">
+    <h6 id="trialTitle">ميزان المراجعة — البيانات</h6>
+    <div class="table-responsive" style="margin-top:10px;">
+      <table id="trialTable" class="table table-borderless align-middle" role="table" aria-describedby="trialTitle">
         <thead>
           <tr>
-            <th>الحساب</th>
-            <th>النوع</th>
-            <th>كود</th>
-            <th class="text-end">مدين</th>
-            <th class="text-end">دائن</th>
-            <th>إجراء</th>
+            <th scope="col">الحساب</th>
+            <th scope="col">النوع</th>
+            <th scope="col">كود</th>
+            <th scope="col" class="text-end">مدين</th>
+            <th scope="col" class="text-end">دائن</th>
+            <th scope="col">إجراء</th>
           </tr>
         </thead>
         <tbody id="tbBody"></tbody>
       </table>
     </div>
 
-    <div class="row-status mt-3">
+    <div class="row-status mt-3" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
       <div id="validationResult" class="me-2"></div>
       <div id="warningNote" class="small-muted"></div>
     </div>
@@ -168,35 +247,42 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
     <div class="row g-3">
       <div class="col-lg-6">
         <h6>توزيع الفئات</h6>
-        <canvas id="categoryChart" height="220"></canvas>
+        <canvas id="categoryChart" height="220" aria-label="category-chart"></canvas>
       </div>
-
       <div class="col-lg-6">
         <h6>معاينة القيم (ميزان المراجعة)</h6>
-        <div id="tablePreview" class="table-fixed mt-2"></div>
+        <div id="tablePreview" class="table-fixed mt-2" aria-live="polite"></div>
       </div>
     </div>
   </section>
 
-  <footer class="text-center py-3 small">&copy; 2025 معتز مدكور — جميع الحقوق محفوظة</footer>
+  <footer style="text-align:center;margin-top:14px;color:var(--muted)">&copy; 2025 المحلل المالي — جميع الحقوق محفوظة</footer>
 </main>
 
-<!-- Script -->
 <script>
-/* =========================
-   Helpers & Init
-   ========================= */
+/* ===========================
+   Utilities & data
+   =========================== */
 const $ = id => document.getElementById(id);
-function showToast(msg, type='info'){ const area=$('toastArea'); const el=document.createElement('div'); el.className=`toast align-items-center text-bg-${type} border-0 show`; el.style.minWidth='220px'; el.style.marginTop='6px'; el.style.pointerEvents='auto'; el.innerHTML=`<div class="d-flex"><div class="toast-body">${msg}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.closest('.toast').remove()"></button></div>`; area.appendChild(el); setTimeout(()=> el.remove(), 3500); }
-const toNum = v => { const n = Number(String(v).replace(/[, ]+/g,'')); return isNaN(n)?0:n; };
+function showToast(text, type='info'){
+  const area = $('toastArea');
+  const el = document.createElement('div');
+  el.className = `toast align-items-center text-bg-${type} border-0 show`;
+  el.style.minWidth = '220px';
+  el.style.marginTop = '8px';
+  el.style.pointerEvents = 'auto';
+  el.innerHTML = `<div class="d-flex"><div class="toast-body">${text}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.closest('.toast').remove()"></button></div>`;
+  area.appendChild(el);
+  setTimeout(()=> el.remove(), 3600);
+}
+const toNum = v => { const s = String(v||'').toString().replace(/[, ]+/g,''); const n = Number(s); return isNaN(n)?0:n; };
 const esc = s => String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
 
-/* Local data */
-let trialData = JSON.parse(localStorage.getItem('trialData')||'[]');
+let trialData = JSON.parse(localStorage.getItem('trialData') || '[]');
 const FX_DEFAULT = { USD:31.0, EUR:34.0 };
 let fxRates = JSON.parse(localStorage.getItem('fa_fx')||'null') || FX_DEFAULT;
 
-/* Small account hints for autocomplete */
+/* ACCOUNT hints */
 const ACCOUNT_LIST = [
   {Account:'النقد', Type:'أصل متداول', Code:'101'},
   {Account:'البنك', Type:'أصل متداول', Code:'102'},
@@ -207,12 +293,12 @@ const ACCOUNT_LIST = [
   {Account:'المصروفات', Type:'مصروف', Code:'501'}
 ];
 
-/* Translations */
+/* translations (small) */
 const translations = {
   en:{
     brandText:"Financial Analyzer",
     uploadLabel:"Upload Trial Balance (CSV / XLSX)",
-    uploadHint:"Supports CSV and Excel — will attempt to detect common headers.",
+    uploadHint:"Supports CSV/Excel — will attempt to detect common headers.",
     goDashboard:"Go to Dashboard",
     addedRow:"New row added",
     fileImported:"File imported successfully",
@@ -240,22 +326,21 @@ const translations = {
     noDataExport:"لا توجد بيانات للتصدير"
   }
 };
+function t(key){
+  const lang = $('languageSelect')?.value || localStorage.getItem('fa_lang') || 'ar';
+  return (translations[lang] && translations[lang][key]) ? translations[lang][key] : (translations['ar'][key]||key);
+}
 
-function t(k){ const lang = $('languageSelect')?.value || localStorage.getItem('fa_lang') || 'ar'; return (translations[lang] && translations[lang][k])? translations[lang][k] : (translations['ar'][k]||k); }
-
-/* =========================
-   UI: Populate selects and load preferences
-   ========================= */
+/* ===========================
+   Populate Controls & Prefs
+   =========================== */
 const LANGS = [{v:'ar',label:'العربية'},{v:'en',label:'English'}];
 const CURRENCIES = ['EGP','USD','EUR'];
 function populateControls(){
-  const langSelect = $('languageSelect');
-  LANGS.forEach(l => {
-    const o = document.createElement('option'); o.value = l.v; o.textContent = l.label; langSelect.appendChild(o);
-  });
-  const cur = $('currencySelect');
-  CURRENCIES.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; cur.appendChild(o); });
+  const langSelect = $('languageSelect'); LANGS.forEach(l => { const o=document.createElement('option'); o.value=l.v; o.textContent=l.label; langSelect.appendChild(o); });
+  const curSel = $('currencySelect'); CURRENCIES.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; curSel.appendChild(o); });
 }
+populateControls();
 
 function loadPreferences(){
   const theme = localStorage.getItem('fa_theme') || localStorage.getItem('theme') || 'light';
@@ -274,47 +359,42 @@ function applyLanguage(){
   $('uploadHint').textContent = translations[lang].uploadHint;
   $('goDashboardBtn').textContent = translations[lang].goDashboard;
 }
-populateControls();
 loadPreferences();
 
-/* Events for controls */
+/* control events */
 $('darkModeToggle').addEventListener('change', e => { document.body.dataset.theme = e.target.checked ? 'dark' : 'light'; localStorage.setItem('fa_theme', document.body.dataset.theme); });
-$('languageSelect').addEventListener('change', ()=> { localStorage.setItem('fa_lang', $('languageSelect').value); applyLanguage(); renderTable(); renderSummary(); renderValidation(); });
-$('currencySelect').addEventListener('change', ()=> { localStorage.setItem('fa_currency', $('currencySelect').value); renderSummary(); });
+$('languageSelect').addEventListener('change', ()=>{ localStorage.setItem('fa_lang', $('languageSelect').value); applyLanguage(); renderTable(); renderSummary(); renderValidation(); });
+$('currencySelect').addEventListener('change', ()=>{ localStorage.setItem('fa_currency', $('currencySelect').value); renderSummary(); });
 
-/* =========================
-   Save / Toast helpers
-   ========================= */
+/* basic save/toast helper */
 function saveLocal(){ localStorage.setItem('trialData', JSON.stringify(trialData)); }
-function show(msgKeyOrText, type='info'){ const txt = translations[$('languageSelect').value] && translations[$('languageSelect').value][msgKeyOrText]? translations[$('languageSelect').value][msgKeyOrText] : msgKeyOrText; showToast(txt,type); }
+function notify(keyOrText, type='info'){ const text = (translations[$('languageSelect').value] && translations[$('languageSelect').value][keyOrText])? translations[$('languageSelect').value][keyOrText] : keyOrText; showToast(text,type); }
 
-/* =========================
-   Table rendering & editing
-   ========================= */
+/* ===========================
+   Table render & events
+   =========================== */
 function renderTable(){
   const tbody = $('tbBody'); tbody.innerHTML = '';
   trialData.forEach((row, idx) => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td style="position:relative"><input class="form-control form-control-sm input-sm" value="${esc(row.Account||'')}" data-field="Account" data-idx="${idx}"></td>
-      <td><input class="form-control form-control-sm input-sm" value="${esc(row.Type||'')}" data-field="Type" data-idx="${idx}"></td>
-      <td><input class="form-control form-control-sm input-sm" value="${esc(row.Code||'')}" data-field="Code" data-idx="${idx}"></td>
-      <td><input type="number" class="form-control form-control-sm input-sm text-end" value="${toNum(row.Debit)}" data-field="Debit" data-idx="${idx}"></td>
-      <td><input type="number" class="form-control form-control-sm input-sm text-end" value="${toNum(row.Credit)}" data-field="Credit" data-idx="${idx}"></td>
+      <td style="position:relative"><input class="form-control form-control-sm" value="${esc(row.Account||'')}" data-field="Account" data-idx="${idx}"></td>
+      <td><input class="form-control form-control-sm" value="${esc(row.Type||'')}" data-field="Type" data-idx="${idx}"></td>
+      <td><input class="form-control form-control-sm" value="${esc(row.Code||'')}" data-field="Code" data-idx="${idx}"></td>
+      <td><input type="number" class="form-control form-control-sm text-end" value="${toNum(row.Debit)}" data-field="Debit" data-idx="${idx}"></td>
+      <td><input type="number" class="form-control form-control-sm text-end" value="${toNum(row.Credit)}" data-field="Credit" data-idx="${idx}"></td>
       <td><button class="btn btn-sm btn-danger btn-delete" data-idx="${idx}" title="حذف"><i class="bi bi-trash"></i></button></td>
     `;
     tbody.appendChild(tr);
   });
 
-  // attach input handlers
+  // input handlers
   tbody.querySelectorAll('input').forEach(inp => {
     inp.addEventListener('input', e => {
-      const i = Number(e.target.dataset.idx);
-      const f = e.target.dataset.field;
+      const i = Number(e.target.dataset.idx); const f = e.target.dataset.field;
       trialData[i][f] = (f==='Debit' || f==='Credit') ? toNum(e.target.value) : e.target.value;
       saveLocal();
-      // render summary with lightweight debounce
-      clearTimeout(inp._deb); inp._deb = setTimeout(()=>{ renderSummary(); renderValidation(); }, 120);
+      clearTimeout(inp._deb); inp._deb = setTimeout(()=>{ renderSummary(); renderValidation(); }, 140);
     });
   });
 
@@ -322,18 +402,17 @@ function renderTable(){
   tbody.querySelectorAll('.btn-delete').forEach(btn => {
     btn.addEventListener('click', e => {
       const i = Number(e.target.closest('button').dataset.idx);
-      trialData.splice(i,1); saveLocal(); renderTable(); renderSummary(); show('deletedRow','danger');
+      trialData.splice(i,1); saveLocal(); renderTable(); renderSummary(); notify('deletedRow','danger');
     });
   });
 
-  // Autocomplete on Account inputs
+  // autocomplete for Account
   tbody.querySelectorAll('input[data-field="Account"]').forEach(inp => {
     inp.addEventListener('input', e => {
-      const val = e.target.value.trim().toLowerCase();
-      const tr = e.target.closest('tr');
-      let list = tr.querySelector('.autocomplete-suggestions');
+      const val = e.target.value.trim().toLowerCase(); const tr = e.target.closest('tr');
       const matches = ACCOUNT_LIST.filter(a => a.Account.toLowerCase().includes(val) && val.length>0).slice(0,8);
-      if(!list && matches.length) { list = document.createElement('div'); list.className='autocomplete-suggestions'; tr.children[0].appendChild(list); }
+      let list = tr.querySelector('.autocomplete-suggestions');
+      if(!list && matches.length){ list = document.createElement('div'); list.className='autocomplete-suggestions'; tr.children[0].appendChild(list); }
       if(list){
         list.innerHTML = '';
         if(matches.length===0){ list.remove(); return; }
@@ -343,14 +422,14 @@ function renderTable(){
             inp.value = m.Account;
             tr.querySelector('input[data-field="Type"]').value = m.Type;
             tr.querySelector('input[data-field="Code"]').value = m.Code;
-            list.innerHTML = '';
+            list.remove();
             inp.dispatchEvent(new Event('input'));
           });
           list.appendChild(div);
         });
       }
     });
-    inp.addEventListener('blur', ()=> { setTimeout(()=>{ const l = inp.parentElement.querySelector('.autocomplete-suggestions'); if(l) l.remove(); },120); });
+    inp.addEventListener('blur', ()=> { setTimeout(()=> { const l = inp.parentElement.querySelector('.autocomplete-suggestions'); if(l) l.remove(); }, 160); });
   });
 
   renderValidation();
@@ -359,26 +438,26 @@ function renderTable(){
 /* add row */
 $('addRowBtn').addEventListener('click', ()=> {
   trialData.push({Account:'',Type:'',Code:'',Debit:0,Credit:0});
-  saveLocal(); renderTable(); renderSummary(); show('addedRow','success');
+  saveLocal(); renderTable(); renderSummary(); notify('addedRow','success');
 });
 
-/* clear all */
+/* clear */
 $('clearBtn').addEventListener('click', ()=> {
-  if(confirm(( $('languageSelect').value==='ar' ? 'هل أنت متأكد أنك تريد مسح جميع البيانات؟' : 'Are you sure you want to clear all data?' ))){
-    trialData = []; saveLocal(); renderTable(); renderSummary(); show('cleared','danger');
+  if(confirm(($('languageSelect').value==='ar' ? 'هل أنت متأكد أنك تريد مسح جميع البيانات؟' : 'Are you sure you want to clear all data?'))){
+    trialData = []; saveLocal(); renderTable(); renderSummary(); notify('cleared','danger');
   }
 });
 
-/* save/load */
-$('saveBtn').addEventListener('click', ()=> { saveLocal(); show('saved','success'); });
-$('loadBtn').addEventListener('click', ()=> { trialData = JSON.parse(localStorage.getItem('trialData')||'[]'); renderTable(); renderSummary(); show('restored','info'); });
+/* save / load */
+$('saveBtn').addEventListener('click', ()=> { saveLocal(); notify('saved','success'); });
+$('loadBtn').addEventListener('click', ()=> { trialData = JSON.parse(localStorage.getItem('trialData')||'[]'); renderTable(); renderSummary(); notify('restored','info'); });
 
-/* go dashboard */
+/* goto dashboard */
 $('goDashboardBtn').addEventListener('click', ()=> { window.location.href = 'dashboard.html'; });
 
-/* =========================
+/* ===========================
    Validation & Summary
-   ========================= */
+   =========================== */
 function renderValidation(){
   const totalDebit = trialData.reduce((s,r)=> s + toNum(r.Debit), 0);
   const totalCredit = trialData.reduce((s,r)=> s + toNum(r.Credit), 0);
@@ -390,12 +469,32 @@ function renderValidation(){
     res.innerHTML = `<span class="text-danger">ميزان المراجعة غير متوازن ❌ — مدين: ${formatNumber(totalDebit)} / دائن: ${formatNumber(totalCredit)}</span>`;
   }
 }
-
 function formatNumber(v){ return Number(v).toLocaleString(undefined,{maximumFractionDigits:2,minimumFractionDigits:0}); }
 
-/* summary + chart */
+/* counters animation */
+function animateCounters(values){
+  // values: array of strings/numbers length == number of .count-anim elements in KPI section
+  const els = document.querySelectorAll('.kpi .count-anim');
+  els.forEach((el, idx) => {
+    const target = Number(values[idx]) || 0;
+    const start = Number(el.textContent.replace(/,/g,'')) || 0;
+    const duration = 800 + Math.min(1200, Math.abs(target-start)*2);
+    const startTime = performance.now();
+    function step(now){
+      const t = Math.min(1, (now - startTime)/duration);
+      const eased = t < 0.5 ? (2*t*t) : (-1 + (4-2*t)*t); // small ease
+      const val = Math.round(start + (target - start) * eased);
+      el.textContent = formatNumber(val);
+      if(t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  });
+}
+
+/* summary & chart */
 let categoryChart = null;
 function renderSummary(){
+  // classification
   const agg = { assets:0, liabilities:0, equity:0, revenue:0, expense:0, other:0 };
   trialData.forEach(r => {
     const net = toNum(r.Debit) - toNum(r.Credit);
@@ -408,32 +507,24 @@ function renderSummary(){
     else agg.other += net;
   });
 
-  // KPIs
-  const kpiRow = $('kpiRow'); kpiRow.innerHTML = '';
-  const lang = $('languageSelect').value || 'ar';
+  // KPIs: populate counters
   const items = [
-    {label_ar:'عدد الحسابات', label_en:'Accounts', value: trialData.length},
-    {label_ar:'الأصول (تقريبي)', label_en:'Assets', value: agg.assets},
-    {label_ar:'الخصوم (تقريبي)', label_en:'Liabilities', value: agg.liabilities},
-    {label_ar:'الإيرادات', label_en:'Revenue', value: agg.revenue},
-    {label_ar:'المصروفات', label_en:'Expense', value: agg.expense},
-    {label_ar:'أخرى', label_en:'Other', value: agg.other},
+    trialData.length,
+    Math.round(agg.assets),
+    Math.round(agg.liabilities),
+    Math.round(agg.revenue),
+    Math.round(agg.expense),
+    Math.round(agg.other)
   ];
-  items.forEach(it=>{
-    const div = document.createElement('div'); div.className='kpi';
-    const label = (lang === 'ar') ? it.label_ar : it.label_en;
-    const val = (typeof it.value === 'number') ? formatNumber(it.value) : esc(it.value);
-    div.innerHTML = `<div class="fw-semibold small text-muted">${esc(label)}</div><div class="num">${val}</div>`;
-    kpiRow.appendChild(div);
-  });
+  animateCounters(items);
 
   // preview table
   const preview = $('tablePreview');
   if(trialData.length === 0){
-    preview.innerHTML = '<div class="small-muted">لا توجد بيانات للعرض.</div>';
+    preview.innerHTML = `<div class="small-muted">${$('languageSelect').value==='ar' ? 'لا توجد بيانات للعرض.' : 'No data to preview.'}</div>`;
   } else {
-    let html = '<table class="table table-sm table-striped"><thead><tr><th>الحساب</th><th class="text-end">مدين</th><th class="text-end">دائن</th></tr></thead><tbody>';
-    trialData.slice(0,30).forEach(r=>{
+    let html = `<table class="table table-sm table-striped"><thead><tr><th>الحساب</th><th class="text-end">مدين</th><th class="text-end">دائن</th></tr></thead><tbody>`;
+    trialData.slice(0,30).forEach(r => {
       html += `<tr><td>${esc(r.Account)}</td><td class="text-end">${formatNumber(convertCurrency(r.Debit))}</td><td class="text-end">${formatNumber(convertCurrency(r.Credit))}</td></tr>`;
     });
     html += '</tbody></table>';
@@ -443,21 +534,22 @@ function renderSummary(){
   // chart
   const ctx = $('categoryChart').getContext('2d');
   const dataVals = [agg.assets, agg.liabilities, agg.revenue, agg.expense, agg.other].map(v => Math.abs(v));
+  const lang = $('languageSelect').value || 'ar';
   const labels = [lang==='ar'?'الأصول':'Assets', lang==='ar'?'الخصوم':'Liabilities', lang==='ar'?'الإيرادات':'Revenue', lang==='ar'?'المصروفات':'Expenses', lang==='ar'?'أخرى':'Other'];
   if(categoryChart) try{ categoryChart.destroy(); }catch(e){}
   categoryChart = new Chart(ctx, {
     type: 'doughnut',
-    data: { labels, datasets: [{ data: dataVals, backgroundColor:['#0d6efd','#dc3545','#198754','#ffc107','#6c757d'], hoverOffset:8 }] },
+    data: { labels, datasets:[{ data: dataVals, backgroundColor:['#0d6efd','#dc3545','#198754','#ffc107','#6c757d'] }] },
     options: { responsive:true, plugins:{legend:{position:'bottom'}, tooltip:{callbacks:{label: ctx => `${ctx.label}: ${formatNumber(ctx.parsed)}`}}} }
   });
 
   renderValidation();
 }
 
-/* =========================
+/* ===========================
    File parsing (CSV / XLSX)
-   ========================= */
-$('fileInput').addEventListener('change', (e)=>{
+   =========================== */
+$('fileInput').addEventListener('change', (e) => {
   const file = e.target.files[0]; if(!file) return;
   const name = file.name.toLowerCase();
   const reader = new FileReader();
@@ -480,38 +572,35 @@ $('fileInput').addEventListener('change', (e)=>{
         const Credit = r.Credit || r.credit || r['Cr'] || r['دائن'] || r['Credit'] || 0;
         return { Account, Type, Code, Debit: toNum(Debit), Credit: toNum(Credit) };
       });
-      saveLocal(); renderTable(); renderSummary(); show('fileImported','success');
+      saveLocal(); renderTable(); renderSummary(); notify('fileImported','success');
     }catch(err){
-      console.error(err); show('fileError','danger');
+      console.error(err); notify('fileError','danger');
     }
   };
   if(name.endsWith('.csv')) reader.readAsText(file);
   else reader.readAsBinaryString(file);
 });
 
-/* =========================
+/* ===========================
    Exports: PDF & Excel
-   ========================= */
+   =========================== */
 $('exportPdfBtnHeader').addEventListener('click', ()=>{
-  const el = document.querySelector('main');
   const opt = { margin:0.4, filename:'trialbalance_report.pdf', image:{type:'jpeg',quality:0.95}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'in', format:'a4', orientation:'landscape'} };
-  html2pdf().set(opt).from(el).save();
+  html2pdf().set(opt).from(document.querySelector('main')).save();
 });
-
 function exportExcel(){
-  if(!trialData.length){ show('noDataExport','warning'); return; }
+  if(!trialData.length){ notify('noDataExport','warning'); return; }
   const ws = XLSX.utils.json_to_sheet(trialData);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'TrialBalance');
   XLSX.writeFile(wb, 'trialbalance.xlsx');
 }
-
-/* Add export Excel to Save button long-press? Simple: ctrl+click on save to export */
+/* ctrl+click save for quick excel */
 $('saveBtn').addEventListener('click', (e)=>{ if(e.ctrlKey) exportExcel(); });
 
-/* =========================
-   Currency FX (attempt fetch)
-   ========================= */
+/* ===========================
+   Currency FX
+   =========================== */
 async function fetchFx(){
   try{
     const resp = await fetch('https://api.exchangerate.host/latest?base=EGP&symbols=USD,EUR');
@@ -531,14 +620,21 @@ function convertCurrency(value){
   return toNum(value) / rate;
 }
 
-/* =========================
+/* ===========================
+   Storage sync across tabs
+   =========================== */
+window.addEventListener('storage', (e) => {
+  if(e.key === 'trialData'){
+    trialData = JSON.parse(e.newValue || '[]');
+    renderTable(); renderSummary(); notify('restored','info');
+  }
+});
+
+/* ===========================
    Init
-   ========================= */
+   =========================== */
 (function init(){
-  // initial render and fx
   renderTable(); renderSummary(); fetchFx();
-  // storage listener across tabs
-  window.addEventListener('storage', (e)=> { if(e.key === 'trialData'){ trialData = JSON.parse(e.newValue || '[]'); renderTable(); renderSummary(); show('restored','info'); } });
 })();
 </script>
 </body>
