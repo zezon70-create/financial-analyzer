@@ -1,683 +1,268 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>إدخال ميزان المراجعة — المحلل المالي</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>إدخال ميزان المراجعة - Financial Analyzer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<!-- External libs -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet"/>
-
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-
-<style>
-:root{
-  --accent-1:#0d6efd;
-  --accent-2:#6610f2;
-  --bg:#f6f8fb; --card:#fff; --text:#0b1220; --muted:#6c757d;
-  --glass: rgba(255,255,255,0.65);
-  --glass-border: rgba(13,110,253,0.06);
-  --glass-shadow: 0 12px 30px rgba(2,6,23,0.04);
-  --radius:12px;
-}
-html,body{height:100%}
-body{font-family:"Cairo",system-ui,sans-serif;margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;transition: background .22s, color .22s;}
-body[data-theme="dark"]{
-  --bg:#071018; --card:#07131a; --text:#e6eef6; --muted:#9aa6b2; --glass:rgba(6,10,15,0.5);
-  --glass-border: rgba(255,255,255,0.04); --glass-shadow: 0 10px 30px rgba(0,0,0,0.6);
-  background:var(--bg); color:var(--text);
-}
-
-/* layout */
-.container-main{max-width:1200px;margin:22px auto;padding:16px}
-.site-header{position:sticky;top:0;z-index:1400;padding:10px 18px;backdrop-filter: blur(8px);background:var(--glass);border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;gap:12px;border-radius:0 0 8px 8px}
-.brand{display:flex;align-items:center;gap:.8rem}
-.brand img{height:44px;border-radius:8px;box-shadow:0 8px 28px rgba(13,110,253,0.06)}
-.brand .title{font-weight:800}
-.controls{display:flex;gap:.5rem;align-items:center}
-
-/* hero ribbon */
-.ribbon{position:relative;padding:18px;border-radius:var(--radius);background:linear-gradient(180deg,rgba(13,110,253,0.06),rgba(102,16,242,0.02));box-shadow:var(--glass-shadow);border:1px solid rgba(13,110,253,0.04);margin-bottom:16px}
-.hero-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.hero-left{flex:1}
-.hero-right{width:360px;min-width:260px}
-
-/* card surface */
-.card-surface{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--glass-shadow);border:1px solid rgba(13,110,253,0.03);margin-bottom:16px}
-body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03)}
-
-/* KPIs */
-.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:12px 0}
-.kpi{background:linear-gradient(180deg,var(--card),#f8fbff);padding:14px;border-radius:10px;text-align:center;box-shadow:0 8px 20px rgba(2,6,23,0.04);transition:transform .12s}
-.kpi:hover{transform:translateY(-6px)}
-.kpi .num{font-weight:800;font-size:1.12rem;margin-top:6px}
-.kpi .label{font-size:.85rem;color:var(--muted)}
-
-/* table */
-.table thead th{border-bottom:1px solid rgba(0,0,0,0.06)}
-.table tbody tr:hover{background:rgba(13,110,253,0.03)}
-.input-sm{height:40px;padding:.45rem .6rem}
-.select-type{min-width:160px}
-
-/* watermark */
-.watermark{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;opacity:0.06}
-.watermark img{max-width:520px;filter:grayscale(100%);opacity:0.12}
-
-/* toast */
-.toast-area{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:2000;pointer-events:none}
-
-/* autocomplete */
-.autocomplete-suggestions{position:absolute;background:var(--card);border:1px solid rgba(0,0,0,0.06);border-radius:8px;max-height:180px;overflow:auto;z-index:2500;box-shadow:0 10px 30px rgba(2,6,23,0.06)}
-.autocomplete-suggestion{padding:8px 10px;cursor:pointer}
-.autocomplete-suggestion:hover{background:linear-gradient(90deg,rgba(13,110,253,0.12),rgba(102,16,242,0.08));color:var(--text)}
-
-/* buttons */
-.btn-glow{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));border:none;color:#fff;box-shadow:0 10px 40px rgba(102,16,242,0.12);transition:transform .12s, box-shadow .12s}
-.btn-glow:hover{transform:translateY(-3px);box-shadow:0 18px 55px rgba(102,16,242,0.18)}
-
-/* helper styles */
-.small-muted{color:var(--muted);font-size:.95rem}
-.badge-note{background:linear-gradient(90deg,#ffc107,#ffb020);padding:6px 10px;border-radius:999px;color:#111;font-weight:800}
-.empty-hint{padding:18px;text-align:center;color:var(--muted)}
-
-/* responsive */
-@media (max-width:900px){ .hero-right{width:100%} .controls{gap:.4rem} .kpi-row{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))} }
-</style>
-</head>
-<body data-theme="light">
-
-<!-- watermark for PDF (DOM element — will be captured by html2pdf) -->
-<div class="watermark" aria-hidden="true"><img src="assets/logo.png" alt="logo" id="wmLogo"></div>
-
-<!-- toasts -->
-<div class="toast-area" id="toastArea" role="status" aria-live="polite"></div>
-
-<!-- header -->
-<header class="site-header" role="banner">
-  <div class="brand" title="المحلل المالي">
-    <img src="assets/logo.png" alt="logo" id="brandLogo">
-    <div>
-      <div class="title" id="brandText">المحلل المالي</div>
-      <div class="small-muted" id="brandDesc">أداة ذكية لتحليل القوائم المالية</div>
-    </div>
-  </div>
-
-  <div class="controls" role="navigation" aria-label="controls">
-    <a class="btn btn-sm btn-outline-secondary" href="index.html" id="backHome" title="الرجوع للرئيسية" aria-label="عودة للرئيسية"><i class="bi bi-house"></i></a>
-
-    <select id="currencySelect" class="form-select form-select-sm" title="اختر العملة" aria-label="اختر العملة" style="min-width:92px"></select>
-    <select id="languageSelect" class="form-select form-select-sm" title="اللغة" aria-label="اختر اللغة" style="min-width:110px"></select>
-    <div class="form-check form-switch mb-0" title="الوضع الليلي" aria-label="وضع ليلي">
-      <input class="form-check-input" id="darkModeToggle" type="checkbox" role="switch" aria-checked="false">
-    </div>
-
-    <button id="exportPdfBtnHeader" class="btn btn-outline-primary btn-sm ms-2" title="تصدير PDF" aria-label="تصدير PDF"><i class="bi bi-file-earmark-pdf"></i></button>
-    <button id="exportExcelBtn" class="btn btn-outline-success btn-sm ms-1" title="تصدير Excel" aria-label="تصدير Excel"><i class="bi bi-file-earmark-excel"></i></button>
-  </div>
-</header>
-
-<!-- main content -->
-<main class="container-main" role="main" id="mainArea">
-  <!-- hero -->
-  <section class="ribbon" aria-labelledby="ribbonTitle">
-    <div class="hero-row">
-      <div class="hero-left">
-        <h3 id="ribbonTitle" style="margin:0">مرحبًا بك في <span style="background:linear-gradient(90deg,var(--accent-1),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:900">المحلل المالي</span></h3>
-        <p class="small-muted" id="ribbonDesc" style="margin-top:6px">ارفع ملف ميزان المراجعة أو أدخلها يدويًا — ستحصل فورًا على مؤشرات ورسوم بيانية وتصدير احترافي مع لوجو وعلامة مائية.</p>
-
-        <div class="mt-3 d-flex gap-2 flex-wrap" role="toolbar" aria-label="actions">
-          <button id="addRowBtn" class="btn btn-glow btn-sm" title="إضافة صف"><i class="bi bi-plus-lg"></i> <span id="btnAddText">إضافة صف</span></button>
-          <button id="validateBtn" class="btn btn-outline-primary btn-sm" title="تحقق"><i class="bi bi-check-lg"></i> <span id="btnValidateText">تحقق</span></button>
-          <button id="saveBtn" class="btn btn-outline-info btn-sm" title="حفظ"><i class="bi bi-save"></i> <span id="btnSaveText">حفظ</span></button>
-          <button id="loadBtn" class="btn btn-outline-warning btn-sm" title="استرجاع"><i class="bi bi-folder-symlink"></i> <span id="btnLoadText">استرجاع</span></button>
-          <button id="clearBtn" class="btn btn-outline-danger btn-sm" title="مسح الكل"><i class="bi bi-trash"></i> <span id="btnClearText">مسح الكل</span></button>
-          <button id="goDashboardBtn" class="btn btn-success btn-sm ms-2" title="لوحة التحكم"><i class="bi bi-speedometer2"></i> <span id="btnDashText">لوحة التحكم</span></button>
-        </div>
-      </div>
-
-      <div class="hero-right">
-        <label class="form-label fw-bold mb-1" id="uploadLabel">تحميل ملف ميزان المراجعة (CSV / XLSX)</label>
-        <input type="file" id="fileInput" class="form-control input-sm" accept=".csv,.xlsx" aria-label="رفع ملف ميزان المراجعة" />
-        <div class="small-muted mt-2" id="uploadHint">يدعم CSV و Excel — سيحاول اكتشاف اسم الحساب/النوع/المدين/الدائن.</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- KPIs -->
-  <section id="kpiSection" class="mb-3" aria-live="polite">
-    <div class="kpi-row" id="kpiRow"></div>
-  </section>
-
-  <!-- table -->
-  <section class="card-surface" aria-labelledby="trial-table-title">
-    <h6 id="trial-table-title">ميزان المراجعة — البيانات</h6>
-    <div class="table-responsive mt-2">
-      <table id="trialTable" class="table table-borderless align-middle" role="table" aria-describedby="trial-table-title">
-        <thead>
-          <tr>
-            <th scope="col">الحساب</th>
-            <th scope="col">النوع</th>
-            <th scope="col">كود</th>
-            <th scope="col" class="text-end">مدين</th>
-            <th scope="col" class="text-end">دائن</th>
-            <th scope="col">إجراء</th>
-          </tr>
-        </thead>
-        <tbody id="tbBody"></tbody>
-      </table>
-    </div>
-
-    <div class="row-status mt-3">
-      <div id="validationResult" class="me-2" aria-live="polite"></div>
-      <div id="warningNote" class="small-muted"></div>
-    </div>
-  </section>
-
-  <!-- charts -->
-  <section class="card-surface mt-3">
-    <div class="row g-3">
-      <div class="col-lg-6">
-        <h6 id="catTitle">توزيع الفئات</h6>
-        <canvas id="categoryChart" height="220" aria-label="رسم توزيع الفئات"></canvas>
-      </div>
-
-      <div class="col-lg-6">
-        <h6 id="previewTitle">معاينة القيم (ميزان المراجعة)</h6>
-        <div id="tablePreview" class="table-fixed mt-2"></div>
-      </div>
-    </div>
-  </section>
-
-  <footer class="text-center py-3 small">&copy; 2025 المحلل المالي — جميع الحقوق محفوظة</footer>
-</main>
-
-<!-- script -->
-<script>
-/* =========================
-   Helpers & Init
-   ========================= */
-const $ = id => document.getElementById(id);
-function showToast(msg, type='info'){
-  const area = $('toastArea');
-  const el = document.createElement('div');
-  el.className = `toast align-items-center text-bg-${type} border-0 show`;
-  el.style.minWidth = '220px';
-  el.style.marginTop = '6px';
-  el.style.pointerEvents = 'auto';
-  el.innerHTML = `<div class="d-flex"><div class="toast-body">${msg}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" aria-label="اغلاق" onclick="this.closest('.toast').remove()"></button></div>`;
-  area.appendChild(el);
-  setTimeout(()=> el.remove(), 3500);
-}
-const toNum = v => { const n = Number(String(v).replace(/[, ]+/g,'')); return isNaN(n) ? 0 : n; };
-const esc = s => String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
-
-/* =========================
-   Data & defaults
-   ========================= */
-let trialData = JSON.parse(localStorage.getItem('trialData')||'[]');
-const FX_DEFAULT = { USD:31.0, EUR:34.0 };
-let fxRates = JSON.parse(localStorage.getItem('fa_fx')||'null') || FX_DEFAULT;
-
-/* comprehensive account types for select */
-const ACCOUNT_TYPES = [
-  "أصل متداول / Current Asset",
-  "أصل غير متداول / Non-current Asset",
-  "نقد / Cash",
-  "بنك / Bank",
-  "ذمم مدينة / Accounts Receivable",
-  "مخزون / Inventory",
-  "مقدمات / Prepayments",
-  "أصول ثابتة / Fixed Assets",
-  "خصوم متداولة / Current Liabilities",
-  "خصوم غير متداولة / Non-current Liabilities",
-  "ذمم دائنة / Accounts Payable",
-  "قروض قصيرة الأجل / Short-term Loans",
-  "قروض طويلة الأجل / Long-term Loans",
-  "حقوق الملكية / Equity",
-  "الأرباح المحتجزة / Retained Earnings",
-  "إيرادات / Revenue",
-  "مبيعات / Sales",
-  "تكلفة المبيعات / COGS",
-  "مصروفات تشغيلية / Operating Expense",
-  "مصروفات إدارية / Admin Expense",
-  "اهتلاك / Depreciation",
-  "مصروفات فوائد / Interest Expense",
-  "مصاريف ضريبية / Tax Expense",
-  "إيرادات أخرى / Other Income",
-  "مصروفات أخرى / Other Expense"
-];
-
-/* small account hints for autocomplete */
-const ACCOUNT_LIST = [
-  {Account:'النقد', Type:'نقد / Cash', Code:'101'},
-  {Account:'البنك', Type:'بنك / Bank', Code:'102'},
-  {Account:'الزبائن', Type:'ذمم مدينة / Accounts Receivable', Code:'103'},
-  {Account:'الموردون', Type:'ذمم دائنة / Accounts Payable', Code:'201'},
-  {Account:'رأس المال', Type:'حقوق الملكية / Equity', Code:'301'},
-  {Account:'المبيعات', Type:'إيرادات / Revenue', Code:'401'},
-  {Account:'المصروفات', Type:'مصروفات تشغيلية / Operating Expense', Code:'501'}
-];
-
-/* Translations */
-const translations = {
-  ar:{
-    brandText:"المحلل المالي",
-    brandDesc:"أداة ذكية لتحليل القوائم المالية",
-    uploadLabel:"تحميل ملف ميزان المراجعة (CSV / XLSX)",
-    uploadHint:"يدعم CSV و Excel — سيحاول اكتشاف اسم الحساب/النوع/المدين/الدائن.",
-    goDashboard:"لوحة التحكم",
-    addedRow:"تم إضافة صف جديد",
-    fileImported:"تم استيراد الملف بنجاح",
-    fileError:"خطأ في قراءة الملف — تأكد من التنسيق",
-    saved:"تم الحفظ محليًا",
-    restored:"تم استرجاع البيانات",
-    deletedRow:"تم حذف الصف",
-    cleared:"تم مسح البيانات",
-    validated:"تم التحقق",
-    noDataExport:"لا توجد بيانات للتصدير",
-    add:"إضافة صف",
-    validate:"تحقق",
-    save:"حفظ",
-    load:"استرجاع",
-    clear:"مسح الكل",
-    dashboard:"لوحة التحكم",
-    accounts:"عدد الحسابات",
-    assets:"الأصول (تقريبي)",
-    liabilities:"الخصوم (تقريبي)",
-    revenue:"الإيرادات",
-    expense:"المصروفات",
-    other:"أخرى",
-    noData:"لم تُدخل بيانات بعد.",
-    placeholderAccount:"اكتب اسم الحساب"
-  },
-  en:{
-    brandText:"Financial Analyzer",
-    brandDesc:"Smart tool for financial statements analysis",
-    uploadLabel:"Upload Trial Balance (CSV / XLSX)",
-    uploadHint:"Supports CSV and Excel — will attempt to detect account/type/debit/credit.",
-    goDashboard:"Go to Dashboard",
-    addedRow:"New row added",
-    fileImported:"File imported successfully",
-    fileError:"File read error — check format",
-    saved:"Saved locally",
-    restored:"Data restored",
-    deletedRow:"Row removed",
-    cleared:"All data cleared",
-    validated:"Validation complete",
-    noDataExport:"No data to export",
-    add:"Add Row",
-    validate:"Validate",
-    save:"Save",
-    load:"Load",
-    clear:"Clear All",
-    dashboard:"Dashboard",
-    accounts:"Accounts",
-    assets:"Assets (approx)",
-    liabilities:"Liabilities (approx)",
-    revenue:"Revenue",
-    expense:"Expense",
-    other:"Other",
-    noData:"No data entered yet.",
-    placeholderAccount:"Type account name"
-  }
-};
-function t(key){
-  const lang = $('languageSelect')?.value || localStorage.getItem('fa_lang') || 'ar';
-  return (translations[lang] && translations[lang][key]) ? translations[lang][key] : key;
-}
-
-/* =========================
-   Controls populate + preferences
-   ========================= */
-const LANGS = [{v:'ar',label:'العربية'},{v:'en',label:'English'}];
-const CURRENCIES = ['EGP','USD','EUR'];
-
-function populateControls(){
-  const ls = $('languageSelect'); ls.innerHTML='';
-  LANGS.forEach(l => { const o=document.createElement('option'); o.value=l.v; o.textContent=l.label; ls.appendChild(o); });
-  const cs = $('currencySelect'); cs.innerHTML='';
-  CURRENCIES.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; cs.appendChild(o); });
-}
-
-function loadPreferences(){
-  const theme = localStorage.getItem('fa_theme') || localStorage.getItem('theme') || 'light';
-  const lang = localStorage.getItem('fa_lang') || localStorage.getItem('lang') || 'ar';
-  const currency = localStorage.getItem('fa_currency') || localStorage.getItem('currency') || 'EGP';
-  document.body.dataset.theme = theme;
-  $('darkModeToggle').checked = (theme === 'dark');
-  $('languageSelect').value = lang;
-  $('currencySelect').value = currency;
-  applyLanguage();
-}
-function applyLanguage(){
-  const lang = $('languageSelect').value || 'ar';
-  $('brandText').textContent = translations[lang].brandText;
-  $('brandDesc').textContent = translations[lang].brandDesc;
-  $('uploadLabel').textContent = translations[lang].uploadLabel;
-  $('uploadHint').textContent = translations[lang].uploadHint;
-  $('btnAddText').textContent = translations[lang].add;
-  $('btnValidateText').textContent = translations[lang].validate;
-  $('btnSaveText').textContent = translations[lang].save;
-  $('btnLoadText').textContent = translations[lang].load;
-  $('btnClearText').textContent = translations[lang].clear;
-  $('btnDashText').textContent = translations[lang].dashboard;
-  // placeholder text update for newly rendered inputs
-}
-
-/* attach events for controls */
-populateControls();
-loadPreferences();
-$('darkModeToggle').addEventListener('change', e => { document.body.dataset.theme = e.target.checked ? 'dark' : 'light'; localStorage.setItem('fa_theme', document.body.dataset.theme); });
-$('languageSelect').addEventListener('change', ()=> { localStorage.setItem('fa_lang', $('languageSelect').value); applyLanguage(); renderTable(); renderSummary(); renderValidation(); });
-$('currencySelect').addEventListener('change', ()=> { localStorage.setItem('fa_currency', $('currencySelect').value); renderSummary(); });
-
-/* =========================
-   Local storage helpers
-   ========================= */
-function saveLocal(){ localStorage.setItem('trialData', JSON.stringify(trialData)); }
-function show(keyOrText, type='info'){ const lang = $('languageSelect')?.value || 'ar'; const text = translations[lang][keyOrText] || keyOrText; showToast(text, type); }
-
-/* =========================
-   Table render & edit (Type is SELECT, and custom allowed)
-   ========================= */
-function renderTable(){
-  const tbody = $('tbBody'); tbody.innerHTML = '';
-  trialData.forEach((row, idx) => {
-    const tr = document.createElement('tr');
-
-    // create options for Type select (we keep displayed value & allow custom)
-    const typeOptions = ACCOUNT_TYPES.map(opt => `<option value="${esc(opt)}"${(row.Type===opt?' selected':'')}>${esc(opt)}</option>`).join('');
-
-    tr.innerHTML = `
-      <td style="position:relative">
-        <input class="form-control form-control-sm input-sm" value="${esc(row.Account||'')}" data-field="Account" data-idx="${idx}" placeholder="${t('placeholderAccount')}">
-      </td>
-      <td>
-        <div class="d-flex gap-1 align-items-center">
-          <select class="form-select form-select-sm input-sm select-type" data-field="Type" data-idx="${idx}" aria-label="نوع الحساب">
-            <option value="">--</option>
-            ${typeOptions}
-          </select>
-          <button class="btn btn-sm btn-outline-secondary" title="أخرى" data-add-type data-idx="${idx}" aria-label="أضف نوع جديد"><i class="bi bi-pencil-square"></i></button>
-        </div>
-      </td>
-      <td><input class="form-control form-control-sm input-sm" value="${esc(row.Code||'')}" data-field="Code" data-idx="${idx}"></td>
-      <td><input type="number" class="form-control form-control-sm input-sm text-end" value="${toNum(row.Debit)}" data-field="Debit" data-idx="${idx}"></td>
-      <td><input type="number" class="form-control form-control-sm input-sm text-end" value="${toNum(row.Credit)}" data-field="Credit" data-idx="${idx}"></td>
-      <td><button class="btn btn-sm btn-danger btn-delete" data-idx="${idx}" title="${t('deletedRow')}"><i class="bi bi-trash"></i></button></td>
-    `;
-    tbody.appendChild(tr);
-  });
-
-  // attach input handlers
-  tbody.querySelectorAll('input, select').forEach(inp => {
-    inp.addEventListener('input', e => {
-      const i = Number(e.target.dataset.idx);
-      const f = e.target.dataset.field;
-      if(!isFinite(i)) return;
-      trialData[i][f] = (f==='Debit' || f==='Credit') ? toNum(e.target.value) : e.target.value;
-      saveLocal();
-      clearTimeout(inp._deb); inp._deb = setTimeout(()=>{ renderSummary(); renderValidation(); }, 120);
-    });
-  });
-
-  // add custom type button handler
-  tbody.querySelectorAll('button[data-add-type]').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      const idx = Number(e.currentTarget.dataset.idx);
-      const newType = prompt($('languageSelect').value==='ar' ? 'أدخل اسم نوع الحساب الجديد' : 'Enter custom account type');
-      if(newType && newType.trim()){
-        ACCOUNT_TYPES.unshift(newType.trim()); // add to top
-        trialData[idx].Type = newType.trim();
-        saveLocal(); renderTable(); renderSummary(); show('addedRow','success');
-      }
-    });
-  });
-
-  // delete handlers
-  tbody.querySelectorAll('.btn-delete').forEach(btn => {
-    btn.addEventListener('click', e => {
-      const i = Number(e.target.closest('button').dataset.idx);
-      trialData.splice(i,1); saveLocal(); renderTable(); renderSummary(); show('deletedRow','danger');
-    });
-  });
-
-  // autocomplete for account input
-  tbody.querySelectorAll('input[data-field="Account"]').forEach(inp => {
-    inp.addEventListener('input', e => {
-      const val = e.target.value.trim().toLowerCase();
-      const tr = e.target.closest('tr');
-      let list = tr.querySelector('.autocomplete-suggestions');
-      const matches = ACCOUNT_LIST.filter(a => a.Account.toLowerCase().includes(val) && val.length>0).slice(0,8);
-      if(!list && matches.length){ list = document.createElement('div'); list.className='autocomplete-suggestions'; tr.children[0].appendChild(list); }
-      if(list){
-        list.innerHTML = '';
-        if(matches.length === 0){ list.remove(); return; }
-        matches.forEach(m => {
-          const div = document.createElement('div'); div.className='autocomplete-suggestion'; div.textContent = m.Account;
-          div.addEventListener('click', ()=> {
-            inp.value = m.Account;
-            tr.querySelector('select[data-field="Type"]').value = m.Type || '';
-            tr.querySelector('input[data-field="Code"]').value = m.Code || '';
-            list.remove();
-            inp.dispatchEvent(new Event('input'));
-          });
-          list.appendChild(div);
-        });
-      }
-    });
-    inp.addEventListener('blur', ()=> { setTimeout(()=>{ const l = inp.parentElement.querySelector('.autocomplete-suggestions'); if(l) l.remove(); },120); });
-  });
-
-  renderValidation();
-}
-
-/* add row */
-$('addRowBtn').addEventListener('click', ()=> {
-  trialData.push({Account:'',Type:'',Code:'',Debit:0,Credit:0});
-  saveLocal(); renderTable(); renderSummary(); show('addedRow','success');
-});
-
-/* clear all */
-$('clearBtn').addEventListener('click', ()=> {
-  const confirmMsg = $('languageSelect').value === 'ar' ? 'هل أنت متأكد أنك تريد مسح جميع البيانات؟' : 'Are you sure you want to clear all data?';
-  if(confirm(confirmMsg)){ trialData = []; saveLocal(); renderTable(); renderSummary(); show('cleared','danger'); }
-});
-
-/* save/load */
-$('saveBtn').addEventListener('click', ()=> { saveLocal(); show('saved','success'); });
-$('loadBtn').addEventListener('click', ()=> { trialData = JSON.parse(localStorage.getItem('trialData')||'[]'); renderTable(); renderSummary(); show('restored','info'); });
-$('goDashboardBtn').addEventListener('click', ()=> { window.location.href = 'dashboard.html'; });
-
-/* validation */
-function renderValidation(){
-  const totalDebit = trialData.reduce((s,r)=> s + toNum(r.Debit), 0);
-  const totalCredit = trialData.reduce((s,r)=> s + toNum(r.Credit), 0);
-  const res = $('validationResult');
-  if(trialData.length === 0){ res.innerHTML = `<span class="small-muted">${t('noData')}</span>`; return; }
-  if(Math.abs(totalDebit - totalCredit) < 1e-6){
-    res.innerHTML = `<span class="text-success">ميزان المراجعة متوازن ✅ — ${formatNumber(totalDebit)}</span>`;
-  } else {
-    res.innerHTML = `<span class="text-danger">ميزان المراجعة غير متوازن ❌ — مدين: ${formatNumber(totalDebit)} / دائن: ${formatNumber(totalCredit)}</span>`;
-  }
-}
-function formatNumber(v){ return Number(v).toLocaleString(undefined,{maximumFractionDigits:2,minimumFractionDigits:0}); }
-
-/* summary + chart */
-let categoryChart = null;
-function renderSummary(){
-  const agg = { assets:0, liabilities:0, equity:0, revenue:0, expense:0, other:0 };
-  trialData.forEach(r => {
-    const net = toNum(r.Debit) - toNum(r.Credit);
-    const s = (r.Type || r.Account || '').toString().toLowerCase();
-    // classify by Type first, else fallback to account keywords
-    if(/asset|أصل|cash|bank|current asset|نقد|bank/i.test(s)){
-      agg.assets += net;
-    } else if(/liab|خصوم|payable|loan|دائن|قرض/i.test(s)){
-      agg.liabilities += (-net);
-    } else if(/equity|حقوق|رأس/i.test(s)){
-      agg.equity += (-net);
-    } else if(/revenue|sales|إيراد|مبيعات/i.test(s)){
-      agg.revenue += (-net);
-    } else if(/expense|مصروف|cogs|تكلفة|مصاريف/i.test(s)){
-      agg.expense += net;
-    } else {
-      const acc = (r.Account||'').toLowerCase();
-      if(/النقد|bank|cash|نقد/.test(acc)) agg.assets += net;
-      else if(/المورد|payable|دائن/.test(acc)) agg.liabilities += (-net);
-      else if(/رأس|equity/.test(acc)) agg.equity += (-net);
-      else if(/إيراد|sales/.test(acc)) agg.revenue += (-net);
-      else if(/مصروف|expense|تكلفة/.test(acc)) agg.expense += net;
-      else agg.other += net;
+  <style>
+    body {
+      margin: 0;
+      font-family: "Cairo", sans-serif;
+      background: #f4f7fa;
+      color: #333;
+      transition: background 0.3s, color 0.3s;
     }
-  });
+    body.dark { background: #121212; color: #eee; }
 
-  // KPIs
-  const kpiRow = $('kpiRow'); kpiRow.innerHTML = '';
-  const items = [
-    {label: t('accounts'), value: trialData.length},
-    {label: t('assets'), value: agg.assets},
-    {label: t('liabilities'), value: agg.liabilities},
-    {label: t('revenue'), value: agg.revenue},
-    {label: t('expense'), value: agg.expense},
-    {label: t('other'), value: agg.other},
-  ];
-  items.forEach(it => {
-    const div = document.createElement('div'); div.className='kpi';
-    const val = (typeof it.value === 'number') ? formatNumber(convertCurrency(it.value)) : esc(it.value);
-    div.innerHTML = `<div class="label">${esc(it.label)}</div><div class="num">${val}</div>`;
-    kpiRow.appendChild(div);
-  });
+    header {
+      padding: 15px 30px;
+      display: flex; justify-content: space-between; align-items: center;
+      background: #0077b6; color: #fff;
+    }
+    body.dark header { background: #1c1c1c; }
 
-  // preview table
-  const preview = $('tablePreview');
-  if(trialData.length === 0){ preview.innerHTML = `<div class="empty-hint">${t('noData')}</div>`; }
-  else {
-    let html = '<table class="table table-sm table-striped"><thead><tr><th>الحساب</th><th class="text-end">مدين</th><th class="text-end">دائن</th></tr></thead><tbody>';
-    trialData.slice(0,30).forEach(r => {
-      html += `<tr><td>${esc(r.Account)}</td><td class="text-end">${formatNumber(convertCurrency(r.Debit))}</td><td class="text-end">${formatNumber(convertCurrency(r.Credit))}</td></tr>`;
-    });
-    html += '</tbody></table>';
-    preview.innerHTML = html;
-  }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; }
+    .logo img { height: 35px; }
 
-  // draw chart
-  const ctx = $('categoryChart').getContext('2d');
-  const dataVals = [agg.assets, agg.liabilities, agg.revenue, agg.expense, agg.other].map(v => Math.abs(v));
-  const labels = [ $('languageSelect').value === 'ar' ? 'الأصول' : 'Assets', $('languageSelect').value === 'ar' ? 'الخصوم' : 'Liabilities', $('languageSelect').value === 'ar' ? 'الإيرادات' : 'Revenue', $('languageSelect').value === 'ar' ? 'المصروفات' : 'Expenses', $('languageSelect').value === 'ar' ? 'أخرى' : 'Other' ];
-  if(categoryChart) try{ categoryChart.destroy(); }catch(e){}
-  categoryChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: { labels, datasets: [{ data: dataVals, backgroundColor:['#0d6efd','#dc3545','#198754','#ffc107','#6c757d'], hoverOffset:8 }] },
-    options: { responsive:true, plugins:{legend:{position:'bottom'}, tooltip:{callbacks:{label: ctx => `${ctx.label}: ${formatNumber(ctx.parsed)}`}} } }
-  });
+    .controls { display: flex; gap: 10px; }
+    button, select, input {
+      padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer;
+    }
+    .btn-dark { background: #333; color: #fff; }
+    .btn-lang { background: #023e8a; color: #fff; }
+    select, input { border: 1px solid #ccc; }
+    body.dark select, body.dark input { background: #333; color: #fff; border: 1px solid #666; }
 
-  renderValidation();
-}
+    main { padding: 20px; max-width: 1200px; margin: auto; }
+    h1 { text-align: center; margin-bottom: 20px; }
 
-/* =========================
-   File parsing (CSV/XLSX) robust mapping
-   ========================= */
-$('fileInput').addEventListener('change', (e) => {
-  const file = e.target.files[0]; if(!file) return;
-  const name = file.name.toLowerCase();
-  const reader = new FileReader();
-  reader.onload = (evt) => {
-    try{
-      let parsed = [];
-      if(name.endsWith('.csv')){
-        const p = Papa.parse(evt.target.result, { header:true, skipEmptyLines:true, dynamicTyping:false });
-        parsed = p.data;
-      } else {
-        const wb = XLSX.read(evt.target.result, { type:'binary' });
-        const sheet = wb.SheetNames[0];
-        parsed = XLSX.utils.sheet_to_json(wb.Sheets[sheet], { defval:'' });
-      }
+    table {
+      width: 100%; border-collapse: collapse; margin-bottom: 20px;
+    }
+    th, td {
+      padding: 10px; border: 1px solid #ccc; text-align: center;
+    }
+    body.dark th, body.dark td { border-color: #444; }
 
-      // normalize common header names
-      trialData = parsed.map(r => {
-        const Account = r.Account || r.account || r['Account Name'] || r['اسم الحساب'] || r['الحساب'] || r['Name'] || '';
-        const Type = r.Type || r.type || r['Type'] || r['نوع'] || '';
-        const Code = r.Code || r.code || r['Code'] || r['كود'] || '';
-        const Debit = r.Debit || r.debit || r['Dr'] || r['مدين'] || r['Debit'] || 0;
-        const Credit = r.Credit || r.credit || r['Cr'] || r['دائن'] || r['Credit'] || 0;
-        return { Account, Type, Code, Debit: toNum(Debit), Credit: toNum(Credit) };
+    .actions { display: flex; gap: 10px; justify-content: center; margin-top: 15px; flex-wrap: wrap; }
+    .actions button { background: #0077b6; color: #fff; font-weight: 600; }
+    .actions button:hover { background: #023e8a; }
+
+    .totals { text-align: center; margin: 20px 0; font-weight: bold; }
+
+    footer {
+      padding: 10px; text-align: center; font-size: 0.9rem;
+      background: #f0f0f0; border-top: 1px solid #ddd;
+    }
+    body.dark footer { background: #1c1c1c; border-color: #333; color: #aaa; }
+
+    canvas { max-width: 600px; margin: 20px auto; display: block; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <img src="assets/logo.png" alt="Logo">
+      <span id="title">إدخال ميزان المراجعة</span>
+    </div>
+    <div class="controls">
+      <button class="btn-dark" id="darkToggle">🌙</button>
+      <button class="btn-lang" id="langToggle">EN</button>
+      <select id="currencySelect">
+        <option value="EGP">EGP</option>
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+      </select>
+      <input type="number" id="exchangeRate" placeholder="سعر الصرف" step="0.01"/>
+      <button onclick="window.location.href='index.html'">🏠 الرئيسية</button>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main>
+    <h1 id="pageTitle">أدخل بيانات ميزان المراجعة</h1>
+
+    <table id="trialTable">
+      <thead>
+        <tr>
+          <th>اسم الحساب</th>
+          <th>نوع الحساب</th>
+          <th>مدين</th>
+          <th>دائن</th>
+          <th>إجراءات</th>
+        </tr>
+      </thead>
+      <tbody id="tbBody"></tbody>
+    </table>
+
+    <div class="actions">
+      <button id="addRow">➕ إضافة صف</button>
+      <button id="exportExcel">📊 تصدير Excel</button>
+      <button id="exportPDF">📄 تصدير PDF</button>
+    </div>
+
+    <div class="totals">
+      <p id="totalsText">الإجمالي مدين: 0 | الإجمالي دائن: 0</p>
+    </div>
+
+    <canvas id="chart"></canvas>
+  </main>
+
+  <footer>
+    <p>© 2025 جميع الحقوق محفوظة - Financial Analyzer</p>
+  </footer>
+
+  <script>
+    const tbBody = document.getElementById("tbBody");
+    const totalsText = document.getElementById("totalsText");
+    const currencySelect = document.getElementById("currencySelect");
+    const exchangeRateInput = document.getElementById("exchangeRate");
+
+    const accountTypes = [
+      "أصول","خصوم","إيرادات","مصروفات","حقوق ملكية","أرباح محتجزة","أخرى"
+    ];
+
+    // إضافة صف جديد
+    function addRow(name="", type="", debit="", credit="") {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td><input type="text" value="${name}" placeholder="اسم الحساب"></td>
+        <td>
+          <select onchange="checkCustomType(this)">
+            ${accountTypes.map(t => `<option ${t===type?"selected":""}>${t}</option>`).join("")}
+          </select>
+        </td>
+        <td><input type="number" value="${debit}" step="0.01" class="debit"></td>
+        <td><input type="number" value="${credit}" step="0.01" class="credit"></td>
+        <td><button onclick="this.closest('tr').remove(); updateTotals();">🗑️</button></td>
+      `;
+      tbBody.appendChild(row);
+    }
+
+    // صف افتراضي أول
+    addRow();
+
+    // زر إضافة
+    document.getElementById("addRow").addEventListener("click", () => addRow());
+
+    // حساب الإجماليات
+    function updateTotals(){
+      let totalDebit=0, totalCredit=0;
+      tbBody.querySelectorAll("tr").forEach(r=>{
+        const d = parseFloat(r.querySelector(".debit").value)||0;
+        const c = parseFloat(r.querySelector(".credit").value)||0;
+        totalDebit += d;
+        totalCredit += c;
       });
 
-      saveLocal(); renderTable(); renderSummary(); show('fileImported','success');
-    }catch(err){ console.error(err); show('fileError','danger'); }
-  };
-  if(name.endsWith('.csv')) reader.readAsText(file);
-  else reader.readAsBinaryString(file);
-});
+      let currency = currencySelect.value;
+      let rate = parseFloat(exchangeRateInput.value)||1;
 
-/* =========================
-   Exports: PDF & Excel (PDF captures watermark element in DOM)
-   ========================= */
-$('exportPdfBtnHeader').addEventListener('click', ()=> {
-  // temporarily show watermark strongly for export (subtle effect)
-  const wm = $('wmLogo');
-  const oldOpacity = wm.style.opacity;
-  wm.style.opacity = '0.12';
-  const el = document.querySelector('main');
-  const opt = { margin:0.35, filename:'trialbalance_report.pdf', image:{type:'jpeg',quality:0.95}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'in', format:'a4', orientation:'landscape'} };
-  html2pdf().set(opt).from(el).toPdf().get('pdf').then(function(pdf){
-    // optionally add header logo on each page (jsPDF hooks could be used here; for now html2pdf captures watermark)
-  }).save().finally(()=> { wm.style.opacity = oldOpacity; });
-});
+      totalsText.textContent = `الإجمالي مدين: ${(totalDebit*rate).toFixed(2)} ${currency} | الإجمالي دائن: ${(totalCredit*rate).toFixed(2)} ${currency}`;
 
-$('exportExcelBtn').addEventListener('click', ()=> {
-  if(!trialData.length){ show('noDataExport','warning'); return; }
-  const ws = XLSX.utils.json_to_sheet(trialData);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'TrialBalance');
-  XLSX.writeFile(wb, 'trialbalance.xlsx');
-});
-
-/* ctrl+click save -> export excel for power user */
-$('saveBtn').addEventListener('click', (e)=> { if(e.ctrlKey) $('exportExcelBtn').click(); else { saveLocal(); show('saved','success'); } });
-
-/* =========================
-   Currency FX
-   ========================= */
-async function fetchFx(){
-  try{
-    const resp = await fetch('https://api.exchangerate.host/latest?base=EGP&symbols=USD,EUR');
-    if(!resp.ok) throw new Error('no fx');
-    const data = await resp.json();
-    if(data && data.rates){
-      if(data.rates.USD) fxRates.USD = 1 / data.rates.USD;
-      if(data.rates.EUR) fxRates.EUR = 1 / data.rates.EUR;
-      localStorage.setItem('fa_fx', JSON.stringify(fxRates));
+      drawChart(totalDebit*rate, totalCredit*rate);
     }
-  }catch(e){ console.warn('FX fetch failed; using defaults'); }
-}
-function convertCurrency(value){
-  const cur = $('currencySelect').value || 'EGP';
-  if(cur === 'EGP') return toNum(value);
-  const rate = fxRates[cur] || FX_DEFAULT[cur];
-  return toNum(value) / rate;
-}
 
-/* =========================
-   Init
-   ========================= */
-(function init(){
-  populateControls();
-  loadPreferences();
-  renderTable(); renderSummary(); fetchFx();
+    tbBody.addEventListener("input", updateTotals);
+    currencySelect.addEventListener("change", updateTotals);
+    exchangeRateInput.addEventListener("input", updateTotals);
 
-  // ensure at least one empty row for quick start
-  if(!trialData.length){ trialData.push({Account:'',Type:'',Code:'',Debit:0,Credit:0}); saveLocal(); renderTable(); }
+    // Chart
+    let chart;
+    function drawChart(debit, credit){
+      if(chart) chart.destroy();
+      chart = new Chart(document.getElementById("chart"),{
+        type:"doughnut",
+        data:{
+          labels:["مدين","دائن"],
+          datasets:[{data:[debit,credit], backgroundColor:["#0077b6","#ef233c"]}]
+        }
+      });
+    }
 
-  // storage listener across tabs
-  window.addEventListener('storage', (e)=> { if(e.key === 'trialData'){ trialData = JSON.parse(e.newValue || '[]'); renderTable(); renderSummary(); show('restored','info'); } });
-})();
-</script>
+    // Excel
+    document.getElementById("exportExcel").addEventListener("click", ()=>{
+      const wb = XLSX.utils.book_new();
+      const ws_data = [["اسم الحساب","نوع الحساب","مدين","دائن"]];
+      tbBody.querySelectorAll("tr").forEach(r=>{
+        const vals=[...r.querySelectorAll("input,select")].map(el=>el.value);
+        ws_data.push(vals);
+      });
+      const ws = XLSX.utils.aoa_to_sheet(ws_data);
+      XLSX.utils.book_append_sheet(wb,ws,"Trial Balance");
+      XLSX.writeFile(wb,"trial_balance.xlsx");
+    });
+
+    // PDF
+    document.getElementById("exportPDF").addEventListener("click", ()=>{
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.addImage("assets/logo.png","PNG",10,10,20,20);
+      doc.text("ميزان المراجعة",105,20,null,null,"center");
+
+      let y=40;
+      doc.text("اسم الحساب | نوع الحساب | مدين | دائن",10,y);
+      y+=10;
+      tbBody.querySelectorAll("tr").forEach(r=>{
+        const vals=[...r.querySelectorAll("input,select")].map(el=>el.value);
+        doc.text(vals.join(" | "),10,y);
+        y+=10;
+      });
+
+      doc.setFontSize(40);
+      doc.setTextColor(150,150,150);
+      doc.text("Financial Analyzer",35,150,{angle:45,opacity:0.2});
+
+      doc.save("trial_balance.pdf");
+    });
+
+    // Custom type
+    function checkCustomType(sel){
+      if(sel.value==="أخرى"){
+        const custom=prompt("أدخل نوع الحساب:");
+        if(custom){ sel.innerHTML+=`<option selected>${custom}</option>`; }
+      }
+    }
+
+    // Dark mode
+    const savedTheme = localStorage.getItem("theme");
+    if(savedTheme==="dark") document.body.classList.add("dark");
+    document.getElementById("darkToggle").addEventListener("click",()=>{
+      document.body.classList.toggle("dark");
+      localStorage.setItem("theme",document.body.classList.contains("dark")?"dark":"light");
+    });
+
+    // Language toggle
+    document.getElementById("langToggle").addEventListener("click",()=>{
+      const lang=document.documentElement.lang;
+      if(lang==="ar"){ switchToEnglish(); localStorage.setItem("lang","en"); }
+      else { switchToArabic(); localStorage.setItem("lang","ar"); }
+    });
+
+    function switchToEnglish(){
+      document.documentElement.lang="en"; document.documentElement.dir="ltr";
+      document.getElementById("title").textContent="Trial Balance Input";
+      document.getElementById("pageTitle").textContent="Enter Trial Balance Data";
+      document.getElementById("langToggle").textContent="AR";
+      document.getElementById("exportExcel").textContent="📊 Export Excel";
+      document.getElementById("exportPDF").textContent="📄 Export PDF";
+      document.querySelector("footer p").textContent="© 2025 All rights reserved - Financial Analyzer";
+    }
+    function switchToArabic(){
+      document.documentElement.lang="ar"; document.documentElement.dir="rtl";
+      document.getElementById("title").textContent="إدخال ميزان المراجعة";
+      document.getElementById("pageTitle").textContent="أدخل بيانات ميزان المراجعة";
+      document.getElementById("langToggle").textContent="EN";
+      document.getElementById("exportExcel").textContent="📊 تصدير Excel";
+      document.getElementById("exportPDF").textContent="📄 تصدير PDF";
+      document.querySelector("footer p").textContent="© 2025 جميع الحقوق محفوظة - Financial Analyzer";
+    }
+  </script>
 </body>
 </html>
