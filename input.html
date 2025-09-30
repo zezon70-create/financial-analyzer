@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>إدخال ميزان المراجعة — المحلل المالي</title>
 
-<!-- External libs (CDN) -->
+<!-- External libs -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet"/>
@@ -20,41 +20,49 @@
   --accent-1:#0d6efd;
   --accent-2:#6610f2;
   --bg:#f6f8fb; --card:#fff; --text:#0b1220; --muted:#6c757d;
-  --glass: rgba(255,255,255,0.6);
+  --glass: rgba(255,255,255,0.65);
   --glass-border: rgba(13,110,253,0.06);
+  --glass-shadow: 0 12px 30px rgba(2,6,23,0.04);
+  --radius:12px;
 }
+html,body{height:100%}
 body{font-family:"Cairo",system-ui,sans-serif;margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;transition: background .22s, color .22s;}
-body[data-theme="dark"]{ --bg:#071018; --card:#07131a; --text:#e6eef6; --muted:#9aa6b2; --glass:rgba(6,10,15,0.5); --glass-border: rgba(255,255,255,0.04); background:var(--bg); color:var(--text); }
+body[data-theme="dark"]{
+  --bg:#071018; --card:#07131a; --text:#e6eef6; --muted:#9aa6b2; --glass:rgba(6,10,15,0.5);
+  --glass-border: rgba(255,255,255,0.04); --glass-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  background:var(--bg); color:var(--text);
+}
 
-.container-main{max-width:1200px;margin:20px auto;padding:16px}
-
-/* Header */
-.site-header{position:sticky;top:0;z-index:1200;padding:10px 18px;backdrop-filter: blur(8px);background:var(--glass);border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+/* layout */
+.container-main{max-width:1200px;margin:22px auto;padding:16px}
+.site-header{position:sticky;top:0;z-index:1400;padding:10px 18px;backdrop-filter: blur(8px);background:var(--glass);border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;gap:12px;border-radius:0 0 8px 8px}
 .brand{display:flex;align-items:center;gap:.8rem}
 .brand img{height:44px;border-radius:8px;box-shadow:0 8px 28px rgba(13,110,253,0.06)}
 .brand .title{font-weight:800}
 .controls{display:flex;gap:.5rem;align-items:center}
 
 /* hero ribbon */
-.ribbon{position:relative;padding:16px;border-radius:12px;background:linear-gradient(180deg,rgba(13,110,253,0.06),rgba(102,16,242,0.02));box-shadow:0 10px 30px rgba(2,6,23,0.04);border:1px solid rgba(13,110,253,0.04);margin-bottom:16px}
+.ribbon{position:relative;padding:18px;border-radius:var(--radius);background:linear-gradient(180deg,rgba(13,110,253,0.06),rgba(102,16,242,0.02));box-shadow:var(--glass-shadow);border:1px solid rgba(13,110,253,0.04);margin-bottom:16px}
 .hero-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .hero-left{flex:1}
-.hero-right{width:340px;min-width:260px}
+.hero-right{width:360px;min-width:260px}
 
 /* card surface */
-.card-surface{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 12px 30px rgba(2,6,23,0.04);border:1px solid rgba(13,110,253,0.03);margin-bottom:16px}
+.card-surface{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--glass-shadow);border:1px solid rgba(13,110,253,0.03);margin-bottom:16px}
 body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03)}
 
 /* KPIs */
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:12px 0}
-.kpi{background:linear-gradient(180deg,var(--card),#f8fbff);padding:12px;border-radius:10px;text-align:center;box-shadow:0 8px 20px rgba(2,6,23,0.04)}
-.kpi .num{font-weight:800;font-size:1.1rem;margin-top:6px}
+.kpi{background:linear-gradient(180deg,var(--card),#f8fbff);padding:14px;border-radius:10px;text-align:center;box-shadow:0 8px 20px rgba(2,6,23,0.04);transition:transform .12s}
+.kpi:hover{transform:translateY(-6px)}
+.kpi .num{font-weight:800;font-size:1.12rem;margin-top:6px}
 .kpi .label{font-size:.85rem;color:var(--muted)}
 
 /* table */
 .table thead th{border-bottom:1px solid rgba(0,0,0,0.06)}
 .table tbody tr:hover{background:rgba(13,110,253,0.03)}
-.input-sm{height:36px;padding:.4rem .6rem}
+.input-sm{height:40px;padding:.45rem .6rem}
+.select-type{min-width:160px}
 
 /* watermark */
 .watermark{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;opacity:0.06}
@@ -72,25 +80,26 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
 .btn-glow{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));border:none;color:#fff;box-shadow:0 10px 40px rgba(102,16,242,0.12);transition:transform .12s, box-shadow .12s}
 .btn-glow:hover{transform:translateY(-3px);box-shadow:0 18px 55px rgba(102,16,242,0.18)}
 
-/* small helpers */
+/* helper styles */
 .small-muted{color:var(--muted);font-size:.95rem}
-.select-type{min-width:160px}
+.badge-note{background:linear-gradient(90deg,#ffc107,#ffb020);padding:6px 10px;border-radius:999px;color:#111;font-weight:800}
+.empty-hint{padding:18px;text-align:center;color:var(--muted)}
 
 /* responsive */
-@media (max-width:900px){ .hero-right{width:100%} .controls{gap:.4rem} }
+@media (max-width:900px){ .hero-right{width:100%} .controls{gap:.4rem} .kpi-row{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))} }
 </style>
 </head>
 <body data-theme="light">
 
-<!-- watermark for PDF -->
-<div class="watermark"><img src="assets/logo.png" alt="logo" id="wmLogo"></div>
+<!-- watermark for PDF (DOM element — will be captured by html2pdf) -->
+<div class="watermark" aria-hidden="true"><img src="assets/logo.png" alt="logo" id="wmLogo"></div>
 
 <!-- toasts -->
-<div class="toast-area" id="toastArea"></div>
+<div class="toast-area" id="toastArea" role="status" aria-live="polite"></div>
 
 <!-- header -->
 <header class="site-header" role="banner">
-  <div class="brand">
+  <div class="brand" title="المحلل المالي">
     <img src="assets/logo.png" alt="logo" id="brandLogo">
     <div>
       <div class="title" id="brandText">المحلل المالي</div>
@@ -98,16 +107,17 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
     </div>
   </div>
 
-  <div class="controls">
-    <a class="btn btn-sm btn-outline-secondary" href="index.html" id="backHome" title="الرجوع للرئيسية"><i class="bi bi-house"></i></a>
+  <div class="controls" role="navigation" aria-label="controls">
+    <a class="btn btn-sm btn-outline-secondary" href="index.html" id="backHome" title="الرجوع للرئيسية" aria-label="عودة للرئيسية"><i class="bi bi-house"></i></a>
 
-    <select id="currencySelect" class="form-select form-select-sm" title="اختر العملة" style="min-width:92px"></select>
-    <select id="languageSelect" class="form-select form-select-sm" title="اللغة" style="min-width:110px"></select>
-    <div class="form-check form-switch mb-0" title="الوضع الليلي">
-      <input class="form-check-input" id="darkModeToggle" type="checkbox">
+    <select id="currencySelect" class="form-select form-select-sm" title="اختر العملة" aria-label="اختر العملة" style="min-width:92px"></select>
+    <select id="languageSelect" class="form-select form-select-sm" title="اللغة" aria-label="اختر اللغة" style="min-width:110px"></select>
+    <div class="form-check form-switch mb-0" title="الوضع الليلي" aria-label="وضع ليلي">
+      <input class="form-check-input" id="darkModeToggle" type="checkbox" role="switch" aria-checked="false">
     </div>
-    <button id="exportPdfBtnHeader" class="btn btn-outline-primary btn-sm ms-2" title="تصدير PDF"><i class="bi bi-file-earmark-pdf"></i></button>
-    <button id="exportExcelBtn" class="btn btn-outline-success btn-sm ms-1" title="تصدير Excel"><i class="bi bi-file-earmark-excel"></i></button>
+
+    <button id="exportPdfBtnHeader" class="btn btn-outline-primary btn-sm ms-2" title="تصدير PDF" aria-label="تصدير PDF"><i class="bi bi-file-earmark-pdf"></i></button>
+    <button id="exportExcelBtn" class="btn btn-outline-success btn-sm ms-1" title="تصدير Excel" aria-label="تصدير Excel"><i class="bi bi-file-earmark-excel"></i></button>
   </div>
 </header>
 
@@ -118,28 +128,28 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
     <div class="hero-row">
       <div class="hero-left">
         <h3 id="ribbonTitle" style="margin:0">مرحبًا بك في <span style="background:linear-gradient(90deg,var(--accent-1),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:900">المحلل المالي</span></h3>
-        <p class="small-muted" id="ribbonDesc" style="margin-top:6px">ارفع ملف ميزان المراجعة أو أدخلها يدويًا — ستحصل فورًا على مؤشرات ورسوم بيانية وتصدير احترافي.</p>
+        <p class="small-muted" id="ribbonDesc" style="margin-top:6px">ارفع ملف ميزان المراجعة أو أدخلها يدويًا — ستحصل فورًا على مؤشرات ورسوم بيانية وتصدير احترافي مع لوجو وعلامة مائية.</p>
 
-        <div class="mt-3 d-flex gap-2 flex-wrap">
-          <button id="addRowBtn" class="btn btn-glow btn-sm"><i class="bi bi-plus-lg"></i> <span id="btnAddText">إضافة صف</span></button>
-          <button id="validateBtn" class="btn btn-outline-primary btn-sm"><i class="bi bi-check-lg"></i> <span id="btnValidateText">تحقق</span></button>
-          <button id="saveBtn" class="btn btn-outline-info btn-sm"><i class="bi bi-save"></i> <span id="btnSaveText">حفظ</span></button>
-          <button id="loadBtn" class="btn btn-outline-warning btn-sm"><i class="bi bi-folder-symlink"></i> <span id="btnLoadText">استرجاع</span></button>
-          <button id="clearBtn" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> <span id="btnClearText">مسح الكل</span></button>
-          <button id="goDashboardBtn" class="btn btn-success btn-sm ms-2"><i class="bi bi-speedometer2"></i> <span id="btnDashText">لوحة التحكم</span></button>
+        <div class="mt-3 d-flex gap-2 flex-wrap" role="toolbar" aria-label="actions">
+          <button id="addRowBtn" class="btn btn-glow btn-sm" title="إضافة صف"><i class="bi bi-plus-lg"></i> <span id="btnAddText">إضافة صف</span></button>
+          <button id="validateBtn" class="btn btn-outline-primary btn-sm" title="تحقق"><i class="bi bi-check-lg"></i> <span id="btnValidateText">تحقق</span></button>
+          <button id="saveBtn" class="btn btn-outline-info btn-sm" title="حفظ"><i class="bi bi-save"></i> <span id="btnSaveText">حفظ</span></button>
+          <button id="loadBtn" class="btn btn-outline-warning btn-sm" title="استرجاع"><i class="bi bi-folder-symlink"></i> <span id="btnLoadText">استرجاع</span></button>
+          <button id="clearBtn" class="btn btn-outline-danger btn-sm" title="مسح الكل"><i class="bi bi-trash"></i> <span id="btnClearText">مسح الكل</span></button>
+          <button id="goDashboardBtn" class="btn btn-success btn-sm ms-2" title="لوحة التحكم"><i class="bi bi-speedometer2"></i> <span id="btnDashText">لوحة التحكم</span></button>
         </div>
       </div>
 
       <div class="hero-right">
         <label class="form-label fw-bold mb-1" id="uploadLabel">تحميل ملف ميزان المراجعة (CSV / XLSX)</label>
-        <input type="file" id="fileInput" class="form-control input-sm" accept=".csv,.xlsx" />
+        <input type="file" id="fileInput" class="form-control input-sm" accept=".csv,.xlsx" aria-label="رفع ملف ميزان المراجعة" />
         <div class="small-muted mt-2" id="uploadHint">يدعم CSV و Excel — سيحاول اكتشاف اسم الحساب/النوع/المدين/الدائن.</div>
       </div>
     </div>
   </section>
 
   <!-- KPIs -->
-  <section id="kpiSection" class="mb-3">
+  <section id="kpiSection" class="mb-3" aria-live="polite">
     <div class="kpi-row" id="kpiRow"></div>
   </section>
 
@@ -147,15 +157,15 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
   <section class="card-surface" aria-labelledby="trial-table-title">
     <h6 id="trial-table-title">ميزان المراجعة — البيانات</h6>
     <div class="table-responsive mt-2">
-      <table id="trialTable" class="table table-borderless align-middle">
+      <table id="trialTable" class="table table-borderless align-middle" role="table" aria-describedby="trial-table-title">
         <thead>
           <tr>
-            <th>الحساب</th>
-            <th>النوع</th>
-            <th>كود</th>
-            <th class="text-end">مدين</th>
-            <th class="text-end">دائن</th>
-            <th>إجراء</th>
+            <th scope="col">الحساب</th>
+            <th scope="col">النوع</th>
+            <th scope="col">كود</th>
+            <th scope="col" class="text-end">مدين</th>
+            <th scope="col" class="text-end">دائن</th>
+            <th scope="col">إجراء</th>
           </tr>
         </thead>
         <tbody id="tbBody"></tbody>
@@ -163,7 +173,7 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
     </div>
 
     <div class="row-status mt-3">
-      <div id="validationResult" class="me-2"></div>
+      <div id="validationResult" class="me-2" aria-live="polite"></div>
       <div id="warningNote" class="small-muted"></div>
     </div>
   </section>
@@ -173,7 +183,7 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
     <div class="row g-3">
       <div class="col-lg-6">
         <h6 id="catTitle">توزيع الفئات</h6>
-        <canvas id="categoryChart" height="220"></canvas>
+        <canvas id="categoryChart" height="220" aria-label="رسم توزيع الفئات"></canvas>
       </div>
 
       <div class="col-lg-6">
@@ -199,8 +209,9 @@ function showToast(msg, type='info'){
   el.style.minWidth = '220px';
   el.style.marginTop = '6px';
   el.style.pointerEvents = 'auto';
-  el.innerHTML = `<div class="d-flex"><div class="toast-body">${msg}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.closest('.toast').remove()"></button></div>`;
-  area.appendChild(el); setTimeout(()=> el.remove(), 3500);
+  el.innerHTML = `<div class="d-flex"><div class="toast-body">${msg}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" aria-label="اغلاق" onclick="this.closest('.toast').remove()"></button></div>`;
+  area.appendChild(el);
+  setTimeout(()=> el.remove(), 3500);
 }
 const toNum = v => { const n = Number(String(v).replace(/[, ]+/g,'')); return isNaN(n) ? 0 : n; };
 const esc = s => String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
@@ -212,7 +223,7 @@ let trialData = JSON.parse(localStorage.getItem('trialData')||'[]');
 const FX_DEFAULT = { USD:31.0, EUR:34.0 };
 let fxRates = JSON.parse(localStorage.getItem('fa_fx')||'null') || FX_DEFAULT;
 
-/* comprehensive account types for select (covers most reporting needs) */
+/* comprehensive account types for select */
 const ACCOUNT_TYPES = [
   "أصل متداول / Current Asset",
   "أصل غير متداول / Non-current Asset",
@@ -252,7 +263,7 @@ const ACCOUNT_LIST = [
   {Account:'المصروفات', Type:'مصروفات تشغيلية / Operating Expense', Code:'501'}
 ];
 
-/* Translations (labels & messages) */
+/* Translations */
 const translations = {
   ar:{
     brandText:"المحلل المالي",
@@ -281,7 +292,8 @@ const translations = {
     revenue:"الإيرادات",
     expense:"المصروفات",
     other:"أخرى",
-    noData:"لم تُدخل بيانات بعد."
+    noData:"لم تُدخل بيانات بعد.",
+    placeholderAccount:"اكتب اسم الحساب"
   },
   en:{
     brandText:"Financial Analyzer",
@@ -310,7 +322,8 @@ const translations = {
     revenue:"Revenue",
     expense:"Expense",
     other:"Other",
-    noData:"No data entered yet."
+    noData:"No data entered yet.",
+    placeholderAccount:"Type account name"
   }
 };
 function t(key){
@@ -319,16 +332,15 @@ function t(key){
 }
 
 /* =========================
-   Controls population + preferences
+   Controls populate + preferences
    ========================= */
 const LANGS = [{v:'ar',label:'العربية'},{v:'en',label:'English'}];
 const CURRENCIES = ['EGP','USD','EUR'];
 
 function populateControls(){
-  const ls = $('languageSelect');
-  ls.innerHTML = '';
+  const ls = $('languageSelect'); ls.innerHTML='';
   LANGS.forEach(l => { const o=document.createElement('option'); o.value=l.v; o.textContent=l.label; ls.appendChild(o); });
-  const cs = $('currencySelect'); cs.innerHTML = '';
+  const cs = $('currencySelect'); cs.innerHTML='';
   CURRENCIES.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; cs.appendChild(o); });
 }
 
@@ -354,12 +366,12 @@ function applyLanguage(){
   $('btnLoadText').textContent = translations[lang].load;
   $('btnClearText').textContent = translations[lang].clear;
   $('btnDashText').textContent = translations[lang].dashboard;
-  // redraw labels if necessary
+  // placeholder text update for newly rendered inputs
 }
+
+/* attach events for controls */
 populateControls();
 loadPreferences();
-
-/* controls events */
 $('darkModeToggle').addEventListener('change', e => { document.body.dataset.theme = e.target.checked ? 'dark' : 'light'; localStorage.setItem('fa_theme', document.body.dataset.theme); });
 $('languageSelect').addEventListener('change', ()=> { localStorage.setItem('fa_lang', $('languageSelect').value); applyLanguage(); renderTable(); renderSummary(); renderValidation(); });
 $('currencySelect').addEventListener('change', ()=> { localStorage.setItem('fa_currency', $('currencySelect').value); renderSummary(); });
@@ -371,23 +383,28 @@ function saveLocal(){ localStorage.setItem('trialData', JSON.stringify(trialData
 function show(keyOrText, type='info'){ const lang = $('languageSelect')?.value || 'ar'; const text = translations[lang][keyOrText] || keyOrText; showToast(text, type); }
 
 /* =========================
-   Table render & edit (Type is a SELECT now)
+   Table render & edit (Type is SELECT, and custom allowed)
    ========================= */
 function renderTable(){
   const tbody = $('tbBody'); tbody.innerHTML = '';
   trialData.forEach((row, idx) => {
     const tr = document.createElement('tr');
-    // build type select
-    let typeOptions = ACCOUNT_TYPES.map(opt => `<option value="${esc(opt)}"${(row.Type===opt?' selected':'')}>${esc(opt)}</option>`).join('');
+
+    // create options for Type select (we keep displayed value & allow custom)
+    const typeOptions = ACCOUNT_TYPES.map(opt => `<option value="${esc(opt)}"${(row.Type===opt?' selected':'')}>${esc(opt)}</option>`).join('');
+
     tr.innerHTML = `
       <td style="position:relative">
-        <input class="form-control form-control-sm input-sm" value="${esc(row.Account||'')}" data-field="Account" data-idx="${idx}" placeholder="${$('languageSelect').value==='ar'?'اكتب اسم الحساب':'Type account name'}">
+        <input class="form-control form-control-sm input-sm" value="${esc(row.Account||'')}" data-field="Account" data-idx="${idx}" placeholder="${t('placeholderAccount')}">
       </td>
       <td>
-        <select class="form-select form-select-sm input-sm select-type" data-field="Type" data-idx="${idx}">
-          <option value="">--</option>
-          ${typeOptions}
-        </select>
+        <div class="d-flex gap-1 align-items-center">
+          <select class="form-select form-select-sm input-sm select-type" data-field="Type" data-idx="${idx}" aria-label="نوع الحساب">
+            <option value="">--</option>
+            ${typeOptions}
+          </select>
+          <button class="btn btn-sm btn-outline-secondary" title="أخرى" data-add-type data-idx="${idx}" aria-label="أضف نوع جديد"><i class="bi bi-pencil-square"></i></button>
+        </div>
       </td>
       <td><input class="form-control form-control-sm input-sm" value="${esc(row.Code||'')}" data-field="Code" data-idx="${idx}"></td>
       <td><input type="number" class="form-control form-control-sm input-sm text-end" value="${toNum(row.Debit)}" data-field="Debit" data-idx="${idx}"></td>
@@ -409,6 +426,19 @@ function renderTable(){
     });
   });
 
+  // add custom type button handler
+  tbody.querySelectorAll('button[data-add-type]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const idx = Number(e.currentTarget.dataset.idx);
+      const newType = prompt($('languageSelect').value==='ar' ? 'أدخل اسم نوع الحساب الجديد' : 'Enter custom account type');
+      if(newType && newType.trim()){
+        ACCOUNT_TYPES.unshift(newType.trim()); // add to top
+        trialData[idx].Type = newType.trim();
+        saveLocal(); renderTable(); renderSummary(); show('addedRow','success');
+      }
+    });
+  });
+
   // delete handlers
   tbody.querySelectorAll('.btn-delete').forEach(btn => {
     btn.addEventListener('click', e => {
@@ -417,7 +447,7 @@ function renderTable(){
     });
   });
 
-  // autocomplete for account (input field)
+  // autocomplete for account input
   tbody.querySelectorAll('input[data-field="Account"]').forEach(inp => {
     inp.addEventListener('input', e => {
       const val = e.target.value.trim().toLowerCase();
@@ -485,32 +515,30 @@ function renderSummary(){
   trialData.forEach(r => {
     const net = toNum(r.Debit) - toNum(r.Credit);
     const s = (r.Type || r.Account || '').toString().toLowerCase();
-    // classify by Type first (more reliable), else by keywords in Account
-    if(s.includes('asset')||s.includes('أصل')||s.includes('cash')||s.includes('bank')||s.includes('current asset')||s.includes('نقد')){
+    // classify by Type first, else fallback to account keywords
+    if(/asset|أصل|cash|bank|current asset|نقد|bank/i.test(s)){
       agg.assets += net;
-    } else if(s.includes('liab')||s.includes('خصم')||s.includes('payable')||s.includes('loan')||s.includes('خصوم')){
+    } else if(/liab|خصوم|payable|loan|دائن|قرض/i.test(s)){
       agg.liabilities += (-net);
-    } else if(s.includes('equity')||s.includes('حقوق')){
+    } else if(/equity|حقوق|رأس/i.test(s)){
       agg.equity += (-net);
-    } else if(s.includes('revenue')||s.includes('sales')||s.includes('إيراد')||s.includes('مبيعات')){
+    } else if(/revenue|sales|إيراد|مبيعات/i.test(s)){
       agg.revenue += (-net);
-    } else if(s.includes('expense')||s.includes('مصروف')||s.includes('cogs')||s.includes('تكلفة')){
+    } else if(/expense|مصروف|cogs|تكلفة|مصاريف/i.test(s)){
       agg.expense += net;
     } else {
-      // fallback keyword search on account name
       const acc = (r.Account||'').toLowerCase();
-      if(acc.includes('النقد')||acc.includes('bank')||acc.includes('cash')||acc.includes('نقد')) agg.assets += net;
-      else if(acc.includes('المورد')||acc.includes('payable')||acc.includes('دائن')) agg.liabilities += (-net);
-      else if(acc.includes('رأس')||acc.includes('equity')) agg.equity += (-net);
-      else if(acc.includes('إيراد')||acc.includes('sales')) agg.revenue += (-net);
-      else if(acc.includes('مصروف')||acc.includes('expense')||acc.includes('تكلفة')) agg.expense += net;
+      if(/النقد|bank|cash|نقد/.test(acc)) agg.assets += net;
+      else if(/المورد|payable|دائن/.test(acc)) agg.liabilities += (-net);
+      else if(/رأس|equity/.test(acc)) agg.equity += (-net);
+      else if(/إيراد|sales/.test(acc)) agg.revenue += (-net);
+      else if(/مصروف|expense|تكلفة/.test(acc)) agg.expense += net;
       else agg.other += net;
     }
   });
 
   // KPIs
   const kpiRow = $('kpiRow'); kpiRow.innerHTML = '';
-  const lang = $('languageSelect').value || 'ar';
   const items = [
     {label: t('accounts'), value: trialData.length},
     {label: t('assets'), value: agg.assets},
@@ -528,7 +556,7 @@ function renderSummary(){
 
   // preview table
   const preview = $('tablePreview');
-  if(trialData.length === 0){ preview.innerHTML = `<div class="small-muted">${t('noData')}</div>`; }
+  if(trialData.length === 0){ preview.innerHTML = `<div class="empty-hint">${t('noData')}</div>`; }
   else {
     let html = '<table class="table table-sm table-striped"><thead><tr><th>الحساب</th><th class="text-end">مدين</th><th class="text-end">دائن</th></tr></thead><tbody>';
     trialData.slice(0,30).forEach(r => {
@@ -553,7 +581,7 @@ function renderSummary(){
 }
 
 /* =========================
-   File parsing (CSV/XLSX)
+   File parsing (CSV/XLSX) robust mapping
    ========================= */
 $('fileInput').addEventListener('change', (e) => {
   const file = e.target.files[0]; if(!file) return;
@@ -563,13 +591,15 @@ $('fileInput').addEventListener('change', (e) => {
     try{
       let parsed = [];
       if(name.endsWith('.csv')){
-        const p = Papa.parse(evt.target.result, { header:true, skipEmptyLines:true });
+        const p = Papa.parse(evt.target.result, { header:true, skipEmptyLines:true, dynamicTyping:false });
         parsed = p.data;
       } else {
         const wb = XLSX.read(evt.target.result, { type:'binary' });
         const sheet = wb.SheetNames[0];
         parsed = XLSX.utils.sheet_to_json(wb.Sheets[sheet], { defval:'' });
       }
+
+      // normalize common header names
       trialData = parsed.map(r => {
         const Account = r.Account || r.account || r['Account Name'] || r['اسم الحساب'] || r['الحساب'] || r['Name'] || '';
         const Type = r.Type || r.type || r['Type'] || r['نوع'] || '';
@@ -578,6 +608,7 @@ $('fileInput').addEventListener('change', (e) => {
         const Credit = r.Credit || r.credit || r['Cr'] || r['دائن'] || r['Credit'] || 0;
         return { Account, Type, Code, Debit: toNum(Debit), Credit: toNum(Credit) };
       });
+
       saveLocal(); renderTable(); renderSummary(); show('fileImported','success');
     }catch(err){ console.error(err); show('fileError','danger'); }
   };
@@ -586,14 +617,20 @@ $('fileInput').addEventListener('change', (e) => {
 });
 
 /* =========================
-   Exports: PDF & Excel
+   Exports: PDF & Excel (PDF captures watermark element in DOM)
    ========================= */
 $('exportPdfBtnHeader').addEventListener('click', ()=> {
-  // Ensure watermark/logo visible in export (it is part of DOM)
+  // temporarily show watermark strongly for export (subtle effect)
+  const wm = $('wmLogo');
+  const oldOpacity = wm.style.opacity;
+  wm.style.opacity = '0.12';
   const el = document.querySelector('main');
   const opt = { margin:0.35, filename:'trialbalance_report.pdf', image:{type:'jpeg',quality:0.95}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'in', format:'a4', orientation:'landscape'} };
-  html2pdf().set(opt).from(el).save();
+  html2pdf().set(opt).from(el).toPdf().get('pdf').then(function(pdf){
+    // optionally add header logo on each page (jsPDF hooks could be used here; for now html2pdf captures watermark)
+  }).save().finally(()=> { wm.style.opacity = oldOpacity; });
 });
+
 $('exportExcelBtn').addEventListener('click', ()=> {
   if(!trialData.length){ show('noDataExport','warning'); return; }
   const ws = XLSX.utils.json_to_sheet(trialData);
@@ -602,11 +639,11 @@ $('exportExcelBtn').addEventListener('click', ()=> {
   XLSX.writeFile(wb, 'trialbalance.xlsx');
 });
 
-/* ctrl+click save -> export excel (power user) */
+/* ctrl+click save -> export excel for power user */
 $('saveBtn').addEventListener('click', (e)=> { if(e.ctrlKey) $('exportExcelBtn').click(); else { saveLocal(); show('saved','success'); } });
 
 /* =========================
-   Currency FX (attempt fetch)
+   Currency FX
    ========================= */
 async function fetchFx(){
   try{
@@ -635,7 +672,7 @@ function convertCurrency(value){
   loadPreferences();
   renderTable(); renderSummary(); fetchFx();
 
-  // if no rows, add one for quick start
+  // ensure at least one empty row for quick start
   if(!trialData.length){ trialData.push({Account:'',Type:'',Code:'',Debit:0,Credit:0}); saveLocal(); renderTable(); }
 
   // storage listener across tabs
