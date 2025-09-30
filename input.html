@@ -5,12 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>إدخال ميزان المراجعة — المحلل المالي</title>
 
-<!-- Bootstrap RTL & Icons -->
+<!-- External libs (CDN) -->
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet"/>
 
-<!-- Libs -->
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
@@ -20,49 +19,46 @@
 :root{
   --accent-1:#0d6efd;
   --accent-2:#6610f2;
-  --bg:#f6f8fb; --card:#ffffff; --text:#0b1220; --muted:#6c757d;
-  --glass: rgba(255,255,255,0.7);
+  --bg:#f6f8fb; --card:#fff; --text:#0b1220; --muted:#6c757d;
+  --glass: rgba(255,255,255,0.6);
   --glass-border: rgba(13,110,253,0.06);
-  --success:#16a34a; --danger:#dc3545;
 }
-body{font-family:"Cairo",system-ui,sans-serif;margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;transition: background .2s, color .2s;}
-body[data-theme="dark"]{ --bg:#071018; --card:#07131a; --text:#e6eef6; --muted:#9aa6b2; --glass:rgba(6,10,15,0.55); --glass-border: rgba(255,255,255,0.04); background:var(--bg); color:var(--text); }
+body{font-family:"Cairo",system-ui,sans-serif;margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;transition: background .22s, color .22s;}
+body[data-theme="dark"]{ --bg:#071018; --card:#07131a; --text:#e6eef6; --muted:#9aa6b2; --glass:rgba(6,10,15,0.5); --glass-border: rgba(255,255,255,0.04); background:var(--bg); color:var(--text); }
 
-/* header */
+.container-main{max-width:1200px;margin:20px auto;padding:16px}
+
+/* Header */
 .site-header{position:sticky;top:0;z-index:1200;padding:10px 18px;backdrop-filter: blur(8px);background:var(--glass);border-bottom:1px solid var(--glass-border);display:flex;align-items:center;justify-content:space-between;gap:12px}
 .brand{display:flex;align-items:center;gap:.8rem}
 .brand img{height:44px;border-radius:8px;box-shadow:0 8px 28px rgba(13,110,253,0.06)}
 .brand .title{font-weight:800}
 .controls{display:flex;gap:.5rem;align-items:center}
 
-/* main container */
-.container-main{max-width:1200px;margin:20px auto;padding:16px}
-
 /* hero ribbon */
-.ribbon{position:relative;padding:18px;border-radius:12px;background:linear-gradient(180deg,rgba(13,110,253,0.06),rgba(102,16,242,0.02));box-shadow:0 10px 30px rgba(2,6,23,0.04);border:1px solid rgba(13,110,253,0.04);margin-bottom:16px}
+.ribbon{position:relative;padding:16px;border-radius:12px;background:linear-gradient(180deg,rgba(13,110,253,0.06),rgba(102,16,242,0.02));box-shadow:0 10px 30px rgba(2,6,23,0.04);border:1px solid rgba(13,110,253,0.04);margin-bottom:16px}
 .hero-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .hero-left{flex:1}
-.hero-right{width:340px;min-width:240px}
+.hero-right{width:340px;min-width:260px}
 
 /* card surface */
 .card-surface{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 12px 30px rgba(2,6,23,0.04);border:1px solid rgba(13,110,253,0.03);margin-bottom:16px}
 body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03)}
 
-/* KPI */
+/* KPIs */
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:12px 0}
-.kpi{background:linear-gradient(180deg,var(--card),#f8fbff);padding:14px;border-radius:12px;text-align:center;box-shadow:0 8px 20px rgba(2,6,23,0.04)}
-.kpi .num{font-weight:800;font-size:1.15rem;margin-top:6px}
+.kpi{background:linear-gradient(180deg,var(--card),#f8fbff);padding:12px;border-radius:10px;text-align:center;box-shadow:0 8px 20px rgba(2,6,23,0.04)}
+.kpi .num{font-weight:800;font-size:1.1rem;margin-top:6px}
 .kpi .label{font-size:.85rem;color:var(--muted)}
 
 /* table */
 .table thead th{border-bottom:1px solid rgba(0,0,0,0.06)}
 .table tbody tr:hover{background:rgba(13,110,253,0.03)}
 .input-sm{height:36px;padding:.4rem .6rem}
-.select-sm{height:36px;padding:.25rem .6rem}
 
 /* watermark */
 .watermark{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;opacity:0.06}
-.watermark img{max-width:560px;filter:grayscale(100%);opacity:0.12}
+.watermark img{max-width:520px;filter:grayscale(100%);opacity:0.12}
 
 /* toast */
 .toast-area{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:2000;pointer-events:none}
@@ -72,9 +68,13 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
 .autocomplete-suggestion{padding:8px 10px;cursor:pointer}
 .autocomplete-suggestion:hover{background:linear-gradient(90deg,rgba(13,110,253,0.12),rgba(102,16,242,0.08));color:var(--text)}
 
-/* glow button */
+/* buttons */
 .btn-glow{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));border:none;color:#fff;box-shadow:0 10px 40px rgba(102,16,242,0.12);transition:transform .12s, box-shadow .12s}
 .btn-glow:hover{transform:translateY(-3px);box-shadow:0 18px 55px rgba(102,16,242,0.18)}
+
+/* small helpers */
+.small-muted{color:var(--muted);font-size:.95rem}
+.select-type{min-width:160px}
 
 /* responsive */
 @media (max-width:900px){ .hero-right{width:100%} .controls{gap:.4rem} }
@@ -82,42 +82,43 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
 </head>
 <body data-theme="light">
 
-<!-- watermark (on-page & will be included in PDF) -->
-<div class="watermark" aria-hidden="true"><img src="assets/logo.png" alt="logo"></div>
+<!-- watermark for PDF -->
+<div class="watermark"><img src="assets/logo.png" alt="logo" id="wmLogo"></div>
 
-<!-- toast area -->
+<!-- toasts -->
 <div class="toast-area" id="toastArea"></div>
 
 <!-- header -->
 <header class="site-header" role="banner">
-  <div class="brand" role="img" aria-label="logo">
-    <img src="assets/logo.png" alt="logo">
+  <div class="brand">
+    <img src="assets/logo.png" alt="logo" id="brandLogo">
     <div>
       <div class="title" id="brandText">المحلل المالي</div>
       <div class="small-muted" id="brandDesc">أداة ذكية لتحليل القوائم المالية</div>
     </div>
   </div>
 
-  <div class="controls" role="region" aria-label="controls">
+  <div class="controls">
+    <a class="btn btn-sm btn-outline-secondary" href="index.html" id="backHome" title="الرجوع للرئيسية"><i class="bi bi-house"></i></a>
+
     <select id="currencySelect" class="form-select form-select-sm" title="اختر العملة" style="min-width:92px"></select>
     <select id="languageSelect" class="form-select form-select-sm" title="اللغة" style="min-width:110px"></select>
-    <div class="form-check form-switch mb-0" title="الوضع الليلي" style="transform:translateY(3px)">
-      <input class="form-check-input" id="darkModeToggle" type="checkbox" aria-label="dark mode toggle">
+    <div class="form-check form-switch mb-0" title="الوضع الليلي">
+      <input class="form-check-input" id="darkModeToggle" type="checkbox">
     </div>
     <button id="exportPdfBtnHeader" class="btn btn-outline-primary btn-sm ms-2" title="تصدير PDF"><i class="bi bi-file-earmark-pdf"></i></button>
     <button id="exportExcelBtn" class="btn btn-outline-success btn-sm ms-1" title="تصدير Excel"><i class="bi bi-file-earmark-excel"></i></button>
   </div>
 </header>
 
-<!-- main -->
-<main class="container-main" id="mainContent" role="main">
-
-  <!-- hero ribbon -->
+<!-- main content -->
+<main class="container-main" role="main" id="mainArea">
+  <!-- hero -->
   <section class="ribbon" aria-labelledby="ribbonTitle">
     <div class="hero-row">
       <div class="hero-left">
         <h3 id="ribbonTitle" style="margin:0">مرحبًا بك في <span style="background:linear-gradient(90deg,var(--accent-1),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:900">المحلل المالي</span></h3>
-        <p class="small-muted" id="ribbonDesc" style="margin-top:6px">ارفع ملف ميزان المراجعة أو أدخله يدويًا — ستحصل فورًا على مؤشرات ورسوم بيانية وتصدير احترافي بعلامتنا المائية.</p>
+        <p class="small-muted" id="ribbonDesc" style="margin-top:6px">ارفع ملف ميزان المراجعة أو أدخلها يدويًا — ستحصل فورًا على مؤشرات ورسوم بيانية وتصدير احترافي.</p>
 
         <div class="mt-3 d-flex gap-2 flex-wrap">
           <button id="addRowBtn" class="btn btn-glow btn-sm"><i class="bi bi-plus-lg"></i> <span id="btnAddText">إضافة صف</span></button>
@@ -131,15 +132,15 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
 
       <div class="hero-right">
         <label class="form-label fw-bold mb-1" id="uploadLabel">تحميل ملف ميزان المراجعة (CSV / XLSX)</label>
-        <input type="file" id="fileInput" class="form-control input-sm" accept=".csv,.xlsx" aria-label="upload trial balance"/>
-        <div class="small-muted mt-2" id="uploadHint">يدعم CSV و Excel — سيحاول اكتشاف الحقول الشائعة تلقائياً.</div>
+        <input type="file" id="fileInput" class="form-control input-sm" accept=".csv,.xlsx" />
+        <div class="small-muted mt-2" id="uploadHint">يدعم CSV و Excel — سيحاول اكتشاف اسم الحساب/النوع/المدين/الدائن.</div>
       </div>
     </div>
   </section>
 
   <!-- KPIs -->
   <section id="kpiSection" class="mb-3">
-    <div class="kpi-row" id="kpiRow" aria-live="polite"></div>
+    <div class="kpi-row" id="kpiRow"></div>
   </section>
 
   <!-- table -->
@@ -167,13 +168,14 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
     </div>
   </section>
 
-  <!-- charts & preview -->
+  <!-- charts -->
   <section class="card-surface mt-3">
     <div class="row g-3">
       <div class="col-lg-6">
         <h6 id="catTitle">توزيع الفئات</h6>
-        <canvas id="categoryChart" height="220" aria-label="category chart"></canvas>
+        <canvas id="categoryChart" height="220"></canvas>
       </div>
+
       <div class="col-lg-6">
         <h6 id="previewTitle">معاينة القيم (ميزان المراجعة)</h6>
         <div id="tablePreview" class="table-fixed mt-2"></div>
@@ -184,121 +186,158 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
   <footer class="text-center py-3 small">&copy; 2025 المحلل المالي — جميع الحقوق محفوظة</footer>
 </main>
 
-<!-- Script -->
+<!-- script -->
 <script>
-/* =========================================
-   Helpers / Defaults / Data structures
-   ========================================= */
+/* =========================
+   Helpers & Init
+   ========================= */
 const $ = id => document.getElementById(id);
 function showToast(msg, type='info'){
   const area = $('toastArea');
   const el = document.createElement('div');
   el.className = `toast align-items-center text-bg-${type} border-0 show`;
-  el.style.minWidth = '220px'; el.style.marginTop = '6px'; el.style.pointerEvents = 'auto';
+  el.style.minWidth = '220px';
+  el.style.marginTop = '6px';
+  el.style.pointerEvents = 'auto';
   el.innerHTML = `<div class="d-flex"><div class="toast-body">${msg}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.closest('.toast').remove()"></button></div>`;
   area.appendChild(el); setTimeout(()=> el.remove(), 3500);
 }
 const toNum = v => { const n = Number(String(v).replace(/[, ]+/g,'')); return isNaN(n) ? 0 : n; };
 const esc = s => String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));
 
-/* local storage keys */
-const LS_TRIAL = 'trialData';
-const LS_FX = 'fa_fx';
-const LS_LANG = 'fa_lang';
-const LS_CURRENCY = 'fa_currency';
-const LS_THEME = 'fa_theme';
-
-/* data */
-let trialData = JSON.parse(localStorage.getItem(LS_TRIAL) || '[]');
+/* =========================
+   Data & defaults
+   ========================= */
+let trialData = JSON.parse(localStorage.getItem('trialData')||'[]');
 const FX_DEFAULT = { USD:31.0, EUR:34.0 };
-let fxRates = JSON.parse(localStorage.getItem(LS_FX) || 'null') || FX_DEFAULT;
+let fxRates = JSON.parse(localStorage.getItem('fa_fx')||'null') || FX_DEFAULT;
 
-/* account suggestion list (expanded) */
-const ACCOUNT_LIST = [
-  {Account:'النقد', Type:'cash', Code:'101'},
-  {Account:'البنك', Type:'cash', Code:'102'},
-  {Account:'الحسابات المدينة (العملاء)', Type:'receivable', Code:'103'},
-  {Account:'المخزون', Type:'inventory', Code:'110'},
-  {Account:'المصاريف العمومية والإدارية', Type:'expense', Code:'501'},
-  {Account:'الموردون', Type:'current_liability', Code:'201'},
-  {Account:'الموظفون — مستحقات', Type:'current_liability', Code:'202'},
-  {Account:'رأس المال', Type:'equity', Code:'301'},
-  {Account:'الأرباح المحتجزة', Type:'equity', Code:'302'},
-  {Account:'الإيرادات — المبيعات', Type:'revenue', Code:'401'},
-  {Account:'تكلفة البضاعة المباعة', Type:'cogs', Code:'402'},
-  {Account:'فوائد مصروفة', Type:'interest', Code:'503'},
-  {Account:'ضرائب على الأرباح', Type:'tax', Code:'504'},
-  {Account:'استهلاك / اهلاك', Type:'depreciation', Code:'505'},
-  {Account:'إيرادات أخرى', Type:'other_income', Code:'410'},
-  {Account:'مصاريف أخرى', Type:'other_expense', Code:'510'},
-  {Account:'استثمارات طويلة الأجل', Type:'noncurrent_asset', Code:'150'}
-];
-
-/* account type definitions (canonical values + translations + category used for aggregation) */
+/* comprehensive account types for select (covers most reporting needs) */
 const ACCOUNT_TYPES = [
-  { value:'cash', label_ar:'نقد/بنك', label_en:'Cash/Bank', cat:'asset' },
-  { value:'current_asset', label_ar:'أصل متداول', label_en:'Current Asset', cat:'asset' },
-  { value:'noncurrent_asset', label_ar:'أصل غير متداول', label_en:'Non-current Asset', cat:'asset' },
-  { value:'receivable', label_ar:'ذمم/حسابات مدينة', label_en:'Receivables', cat:'asset' },
-  { value:'inventory', label_ar:'مخزون', label_en:'Inventory', cat:'asset' },
-  { value:'current_liability', label_ar:'خصوم متداولة', label_en:'Current Liability', cat:'liability' },
-  { value:'noncurrent_liability', label_ar:'خصوم غير متداولة', label_en:'Non-current Liability', cat:'liability' },
-  { value:'equity', label_ar:'حقوق الملكية', label_en:'Equity', cat:'equity' },
-  { value:'revenue', label_ar:'إيراد', label_en:'Revenue', cat:'revenue' },
-  { value:'cogs', label_ar:'تكلفة البضاعة المباعة', label_en:'Cost of Goods Sold', cat:'expense' },
-  { value:'expense', label_ar:'مصروف', label_en:'Expense', cat:'expense' },
-  { value:'other_income', label_ar:'إيراد آخر', label_en:'Other Income', cat:'revenue' },
-  { value:'other_expense', label_ar:'مصاريف أخرى', label_en:'Other Expense', cat:'expense' },
-  { value:'tax', label_ar:'ضرائب', label_en:'Tax', cat:'expense' },
-  { value:'interest', label_ar:'فوائد', label_en:'Interest', cat:'expense' },
-  { value:'depreciation', label_ar:'استهلاك/اهلاك', label_en:'Depreciation', cat:'expense' },
-  { value:'other', label_ar:'أخرى', label_en:'Other', cat:'other' }
+  "أصل متداول / Current Asset",
+  "أصل غير متداول / Non-current Asset",
+  "نقد / Cash",
+  "بنك / Bank",
+  "ذمم مدينة / Accounts Receivable",
+  "مخزون / Inventory",
+  "مقدمات / Prepayments",
+  "أصول ثابتة / Fixed Assets",
+  "خصوم متداولة / Current Liabilities",
+  "خصوم غير متداولة / Non-current Liabilities",
+  "ذمم دائنة / Accounts Payable",
+  "قروض قصيرة الأجل / Short-term Loans",
+  "قروض طويلة الأجل / Long-term Loans",
+  "حقوق الملكية / Equity",
+  "الأرباح المحتجزة / Retained Earnings",
+  "إيرادات / Revenue",
+  "مبيعات / Sales",
+  "تكلفة المبيعات / COGS",
+  "مصروفات تشغيلية / Operating Expense",
+  "مصروفات إدارية / Admin Expense",
+  "اهتلاك / Depreciation",
+  "مصروفات فوائد / Interest Expense",
+  "مصاريف ضريبية / Tax Expense",
+  "إيرادات أخرى / Other Income",
+  "مصروفات أخرى / Other Expense"
 ];
 
-/* translations for UI/messages */
+/* small account hints for autocomplete */
+const ACCOUNT_LIST = [
+  {Account:'النقد', Type:'نقد / Cash', Code:'101'},
+  {Account:'البنك', Type:'بنك / Bank', Code:'102'},
+  {Account:'الزبائن', Type:'ذمم مدينة / Accounts Receivable', Code:'103'},
+  {Account:'الموردون', Type:'ذمم دائنة / Accounts Payable', Code:'201'},
+  {Account:'رأس المال', Type:'حقوق الملكية / Equity', Code:'301'},
+  {Account:'المبيعات', Type:'إيرادات / Revenue', Code:'401'},
+  {Account:'المصروفات', Type:'مصروفات تشغيلية / Operating Expense', Code:'501'}
+];
+
+/* Translations (labels & messages) */
 const translations = {
-  ar: {
-    brandText:"المحلل المالي", brandDesc:"أداة ذكية لتحليل القوائم المالية",
-    uploadLabel:"تحميل ملف ميزان المراجعة (CSV / XLSX)", uploadHint:"يدعم CSV و Excel — سيحاول اكتشاف الحقول الشائعة تلقائياً.",
-    add:"إضافة صف", validate:"تحقق", save:"حفظ", load:"استرجاع", clear:"مسح الكل", dashboard:"لوحة التحكم",
-    addedRow:"تم إضافة صف جديد", fileImported:"تم استيراد الملف بنجاح", fileError:"خطأ في قراءة الملف — تأكد من التنسيق",
-    saved:"تم الحفظ محليًا", restored:"تم استرجاع البيانات", deletedRow:"تم حذف الصف", cleared:"تم مسح البيانات",
-    validated:"تم التحقق", noDataExport:"لا توجد بيانات للتصدير", noData:"لم تُدخل بيانات بعد."
+  ar:{
+    brandText:"المحلل المالي",
+    brandDesc:"أداة ذكية لتحليل القوائم المالية",
+    uploadLabel:"تحميل ملف ميزان المراجعة (CSV / XLSX)",
+    uploadHint:"يدعم CSV و Excel — سيحاول اكتشاف اسم الحساب/النوع/المدين/الدائن.",
+    goDashboard:"لوحة التحكم",
+    addedRow:"تم إضافة صف جديد",
+    fileImported:"تم استيراد الملف بنجاح",
+    fileError:"خطأ في قراءة الملف — تأكد من التنسيق",
+    saved:"تم الحفظ محليًا",
+    restored:"تم استرجاع البيانات",
+    deletedRow:"تم حذف الصف",
+    cleared:"تم مسح البيانات",
+    validated:"تم التحقق",
+    noDataExport:"لا توجد بيانات للتصدير",
+    add:"إضافة صف",
+    validate:"تحقق",
+    save:"حفظ",
+    load:"استرجاع",
+    clear:"مسح الكل",
+    dashboard:"لوحة التحكم",
+    accounts:"عدد الحسابات",
+    assets:"الأصول (تقريبي)",
+    liabilities:"الخصوم (تقريبي)",
+    revenue:"الإيرادات",
+    expense:"المصروفات",
+    other:"أخرى",
+    noData:"لم تُدخل بيانات بعد."
   },
-  en: {
-    brandText:"Financial Analyzer", brandDesc:"Smart tool for financial statements analysis",
-    uploadLabel:"Upload Trial Balance (CSV / XLSX)", uploadHint:"Supports CSV and Excel — will attempt to detect common headers.",
-    add:"Add Row", validate:"Validate", save:"Save", load:"Load", clear:"Clear All", dashboard:"Dashboard",
-    addedRow:"New row added", fileImported:"File imported successfully", fileError:"File read error — check format",
-    saved:"Saved locally", restored:"Data restored", deletedRow:"Row removed", cleared:"All data cleared",
-    validated:"Validation complete", noDataExport:"No data to export", noData:"No data entered yet."
+  en:{
+    brandText:"Financial Analyzer",
+    brandDesc:"Smart tool for financial statements analysis",
+    uploadLabel:"Upload Trial Balance (CSV / XLSX)",
+    uploadHint:"Supports CSV and Excel — will attempt to detect account/type/debit/credit.",
+    goDashboard:"Go to Dashboard",
+    addedRow:"New row added",
+    fileImported:"File imported successfully",
+    fileError:"File read error — check format",
+    saved:"Saved locally",
+    restored:"Data restored",
+    deletedRow:"Row removed",
+    cleared:"All data cleared",
+    validated:"Validation complete",
+    noDataExport:"No data to export",
+    add:"Add Row",
+    validate:"Validate",
+    save:"Save",
+    load:"Load",
+    clear:"Clear All",
+    dashboard:"Dashboard",
+    accounts:"Accounts",
+    assets:"Assets (approx)",
+    liabilities:"Liabilities (approx)",
+    revenue:"Revenue",
+    expense:"Expense",
+    other:"Other",
+    noData:"No data entered yet."
   }
 };
 function t(key){
-  const lang = $('languageSelect')?.value || localStorage.getItem(LS_LANG) || 'ar';
+  const lang = $('languageSelect')?.value || localStorage.getItem('fa_lang') || 'ar';
   return (translations[lang] && translations[lang][key]) ? translations[lang][key] : key;
 }
 
-/* =========================================
-   UI Initialization: populate selects and load prefs
-   ========================================= */
+/* =========================
+   Controls population + preferences
+   ========================= */
 const LANGS = [{v:'ar',label:'العربية'},{v:'en',label:'English'}];
 const CURRENCIES = ['EGP','USD','EUR'];
 
 function populateControls(){
-  const ls = $('languageSelect'); ls.innerHTML='';
-  LANGS.forEach(l => { const o = document.createElement('option'); o.value = l.v; o.textContent = l.label; ls.appendChild(o); });
-  const cs = $('currencySelect'); cs.innerHTML='';
-  CURRENCIES.forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; cs.appendChild(o); });
+  const ls = $('languageSelect');
+  ls.innerHTML = '';
+  LANGS.forEach(l => { const o=document.createElement('option'); o.value=l.v; o.textContent=l.label; ls.appendChild(o); });
+  const cs = $('currencySelect'); cs.innerHTML = '';
+  CURRENCIES.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; cs.appendChild(o); });
 }
-populateControls();
 
 function loadPreferences(){
-  const theme = localStorage.getItem(LS_THEME) || 'light';
-  const lang = localStorage.getItem(LS_LANG) || 'ar';
-  const currency = localStorage.getItem(LS_CURRENCY) || 'EGP';
+  const theme = localStorage.getItem('fa_theme') || localStorage.getItem('theme') || 'light';
+  const lang = localStorage.getItem('fa_lang') || localStorage.getItem('lang') || 'ar';
+  const currency = localStorage.getItem('fa_currency') || localStorage.getItem('currency') || 'EGP';
   document.body.dataset.theme = theme;
-  $('darkModeToggle').checked = theme === 'dark';
+  $('darkModeToggle').checked = (theme === 'dark');
   $('languageSelect').value = lang;
   $('currencySelect').value = currency;
   applyLanguage();
@@ -315,101 +354,59 @@ function applyLanguage(){
   $('btnLoadText').textContent = translations[lang].load;
   $('btnClearText').textContent = translations[lang].clear;
   $('btnDashText').textContent = translations[lang].dashboard;
-  // update all Type selects labels on page
-  document.querySelectorAll('select[data-field="Type"]').forEach(sel => {
-    const current = sel.value;
-    sel.innerHTML = ACCOUNT_TYPES.map(opt => `<option value="${opt.value}">${lang==='ar'?opt.label_ar:opt.label_en}</option>`).join('');
-    sel.value = current || 'other';
-  });
+  // redraw labels if necessary
 }
+populateControls();
 loadPreferences();
 
 /* controls events */
-$('darkModeToggle').addEventListener('change', e => { document.body.dataset.theme = e.target.checked ? 'dark' : 'light'; localStorage.setItem(LS_THEME, document.body.dataset.theme); });
-$('languageSelect').addEventListener('change', ()=> { localStorage.setItem(LS_LANG, $('languageSelect').value); applyLanguage(); renderTable(); renderSummary(); renderValidation(); });
-$('currencySelect').addEventListener('change', ()=> { localStorage.setItem(LS_CURRENCY, $('currencySelect').value); renderSummary(); });
+$('darkModeToggle').addEventListener('change', e => { document.body.dataset.theme = e.target.checked ? 'dark' : 'light'; localStorage.setItem('fa_theme', document.body.dataset.theme); });
+$('languageSelect').addEventListener('change', ()=> { localStorage.setItem('fa_lang', $('languageSelect').value); applyLanguage(); renderTable(); renderSummary(); renderValidation(); });
+$('currencySelect').addEventListener('change', ()=> { localStorage.setItem('fa_currency', $('currencySelect').value); renderSummary(); });
 
-/* =========================================
-   Save / Toast Helper
-   ========================================= */
-function saveLocal(){ localStorage.setItem(LS_TRIAL, JSON.stringify(trialData)); }
-function show(keyOrText, type='info'){ const lang = $('languageSelect')?.value || 'ar'; const text = (translations[lang] && translations[lang][keyOrText]) ? translations[lang][keyOrText] : keyOrText; showToast(text, type); }
+/* =========================
+   Local storage helpers
+   ========================= */
+function saveLocal(){ localStorage.setItem('trialData', JSON.stringify(trialData)); }
+function show(keyOrText, type='info'){ const lang = $('languageSelect')?.value || 'ar'; const text = translations[lang][keyOrText] || keyOrText; showToast(text, type); }
 
-/* =========================================
-   Utility: map free-text Type to canonical value
-   ========================================= */
-function mapTypeFromText(text){
-  if(!text) return 'other';
-  const s = String(text).toLowerCase();
-  const map = [
-    {k:['cash','نقد','بنك'],'v':'cash'},
-    {k:['asset','أصل','current asset','أصل متداول'],'v':'current_asset'},
-    {k:['non current','غير متداول','fixed asset','أصل غير متداول'],'v':'noncurrent_asset'},
-    {k:['receiv','ذمم','accounts receivable'],'v':'receivable'},
-    {k:['inventory','مخزون','stock'],'v':'inventory'},
-    {k:['payable','دائن','مورد','الموردون'],'v':'current_liability'},
-    {k:['liability','خصوم'],'v':'noncurrent_liability'},
-    {k:['equity','حقوق الملكية','رأس المال','capital'],'v':'equity'},
-    {k:['revenue','مبيعات','ايـراد','إيراد','sales','income'],'v':'revenue'},
-    {k:['cogs','cost of goods','تكلفة'],'v':'cogs'},
-    {k:['expense','مصروف','مصاريف','expense'],'v':'expense'},
-    {k:['tax','ضريبة','ضرائب'],'v':'tax'},
-    {k:['interest','فوائد','利息'],'v':'interest'},
-    {k:['depreci','اهلا','استهلاك','depreciation'],'v':'depreciation'}
-  ];
-  for(const m of map){
-    for(const kw of m.k){ if(s.includes(kw)) return m.v; }
-  }
-  return 'other';
-}
-
-/* =========================================
-   Render Table (with select for Type)
-   ========================================= */
+/* =========================
+   Table render & edit (Type is a SELECT now)
+   ========================= */
 function renderTable(){
   const tbody = $('tbBody'); tbody.innerHTML = '';
   trialData.forEach((row, idx) => {
     const tr = document.createElement('tr');
-
-    // build Type select HTML with current language labels
-    const lang = $('languageSelect').value || 'ar';
-    const typeOptions = ACCOUNT_TYPES.map(opt => `<option value="${opt.value}" ${opt.value===row.Type? 'selected':''}>${lang==='ar'?opt.label_ar:opt.label_en}</option>`).join('');
-
+    // build type select
+    let typeOptions = ACCOUNT_TYPES.map(opt => `<option value="${esc(opt)}"${(row.Type===opt?' selected':'')}>${esc(opt)}</option>`).join('');
     tr.innerHTML = `
       <td style="position:relative">
-        <input class="form-control form-control-sm input-sm" value="${esc(row.Account||'')}" data-field="Account" data-idx="${idx}" aria-label="account-name-${idx}">
+        <input class="form-control form-control-sm input-sm" value="${esc(row.Account||'')}" data-field="Account" data-idx="${idx}" placeholder="${$('languageSelect').value==='ar'?'اكتب اسم الحساب':'Type account name'}">
       </td>
       <td>
-        <select class="form-select form-select-sm select-sm" data-field="Type" data-idx="${idx}" aria-label="account-type-${idx}">
+        <select class="form-select form-select-sm input-sm select-type" data-field="Type" data-idx="${idx}">
+          <option value="">--</option>
           ${typeOptions}
         </select>
       </td>
-      <td><input class="form-control form-control-sm input-sm" value="${esc(row.Code||'')}" data-field="Code" data-idx="${idx}" aria-label="account-code-${idx}"></td>
-      <td><input type="number" class="form-control form-control-sm input-sm text-end" value="${toNum(row.Debit)}" data-field="Debit" data-idx="${idx}" aria-label="debit-${idx}"></td>
-      <td><input type="number" class="form-control form-control-sm input-sm text-end" value="${toNum(row.Credit)}" data-field="Credit" data-idx="${idx}" aria-label="credit-${idx}"></td>
-      <td><button class="btn btn-sm btn-danger btn-delete" data-idx="${idx}" title="حذف"><i class="bi bi-trash"></i></button></td>
+      <td><input class="form-control form-control-sm input-sm" value="${esc(row.Code||'')}" data-field="Code" data-idx="${idx}"></td>
+      <td><input type="number" class="form-control form-control-sm input-sm text-end" value="${toNum(row.Debit)}" data-field="Debit" data-idx="${idx}"></td>
+      <td><input type="number" class="form-control form-control-sm input-sm text-end" value="${toNum(row.Credit)}" data-field="Credit" data-idx="${idx}"></td>
+      <td><button class="btn btn-sm btn-danger btn-delete" data-idx="${idx}" title="${t('deletedRow')}"><i class="bi bi-trash"></i></button></td>
     `;
     tbody.appendChild(tr);
   });
 
-  // attach handlers
+  // attach input handlers
   tbody.querySelectorAll('input, select').forEach(inp => {
-    const idx = Number(inp.dataset.idx);
-    const field = inp.dataset.field;
     inp.addEventListener('input', e => {
+      const i = Number(e.target.dataset.idx);
       const f = e.target.dataset.field;
-      let val = e.target.value;
-      if(f==='Debit' || f==='Credit') val = toNum(val);
-      // ensure Type stays canonical: if user typed into select it's canonical; for future uploads mapping will handle
-      trialData[idx][f] = val;
+      if(!isFinite(i)) return;
+      trialData[i][f] = (f==='Debit' || f==='Credit') ? toNum(e.target.value) : e.target.value;
       saveLocal();
-      // lightweight debounce for summary redraw
       clearTimeout(inp._deb); inp._deb = setTimeout(()=>{ renderSummary(); renderValidation(); }, 120);
     });
-    // for select change (Type), also re-render summary immediately
-    if(inp.tagName.toLowerCase() === 'select'){
-      inp.addEventListener('change', e => { trialData[idx][field] = e.target.value; saveLocal(); renderSummary(); });
-    }
   });
 
   // delete handlers
@@ -420,14 +417,14 @@ function renderTable(){
     });
   });
 
-  // autocomplete for Account inputs
+  // autocomplete for account (input field)
   tbody.querySelectorAll('input[data-field="Account"]').forEach(inp => {
     inp.addEventListener('input', e => {
       const val = e.target.value.trim().toLowerCase();
       const tr = e.target.closest('tr');
       let list = tr.querySelector('.autocomplete-suggestions');
       const matches = ACCOUNT_LIST.filter(a => a.Account.toLowerCase().includes(val) && val.length>0).slice(0,8);
-      if(!list && matches.length) { list = document.createElement('div'); list.className='autocomplete-suggestions'; tr.children[0].appendChild(list); }
+      if(!list && matches.length){ list = document.createElement('div'); list.className='autocomplete-suggestions'; tr.children[0].appendChild(list); }
       if(list){
         list.innerHTML = '';
         if(matches.length === 0){ list.remove(); return; }
@@ -435,16 +432,10 @@ function renderTable(){
           const div = document.createElement('div'); div.className='autocomplete-suggestion'; div.textContent = m.Account;
           div.addEventListener('click', ()=> {
             inp.value = m.Account;
-            tr.querySelector('select[data-field="Type"]').value = m.Type || 'other';
+            tr.querySelector('select[data-field="Type"]').value = m.Type || '';
             tr.querySelector('input[data-field="Code"]').value = m.Code || '';
-            if(!trialData[Number(inp.dataset.idx)]) trialData[Number(inp.dataset.idx)] = {};
-            trialData[Number(inp.dataset.idx)].Account = m.Account;
-            trialData[Number(inp.dataset.idx)].Type = m.Type || 'other';
-            trialData[Number(inp.dataset.idx)].Code = m.Code || '';
-            saveLocal();
             list.remove();
             inp.dispatchEvent(new Event('input'));
-            renderSummary();
           });
           list.appendChild(div);
         });
@@ -458,7 +449,7 @@ function renderTable(){
 
 /* add row */
 $('addRowBtn').addEventListener('click', ()=> {
-  trialData.push({Account:'',Type:'other',Code:'',Debit:0,Credit:0});
+  trialData.push({Account:'',Type:'',Code:'',Debit:0,Credit:0});
   saveLocal(); renderTable(); renderSummary(); show('addedRow','success');
 });
 
@@ -470,9 +461,7 @@ $('clearBtn').addEventListener('click', ()=> {
 
 /* save/load */
 $('saveBtn').addEventListener('click', ()=> { saveLocal(); show('saved','success'); });
-$('loadBtn').addEventListener('click', ()=> { trialData = JSON.parse(localStorage.getItem(LS_TRIAL) || '[]'); renderTable(); renderSummary(); show('restored','info'); });
-
-/* go dashboard (existing flow) */
+$('loadBtn').addEventListener('click', ()=> { trialData = JSON.parse(localStorage.getItem('trialData')||'[]'); renderTable(); renderSummary(); show('restored','info'); });
 $('goDashboardBtn').addEventListener('click', ()=> { window.location.href = 'dashboard.html'; });
 
 /* validation */
@@ -489,54 +478,51 @@ function renderValidation(){
 }
 function formatNumber(v){ return Number(v).toLocaleString(undefined,{maximumFractionDigits:2,minimumFractionDigits:0}); }
 
-/* =========================================
-   Summary & Chart (uses canonical Type where available)
-   ========================================= */
+/* summary + chart */
 let categoryChart = null;
 function renderSummary(){
   const agg = { assets:0, liabilities:0, equity:0, revenue:0, expense:0, other:0 };
-  // aggregate using Type canonical category first, fallback to heuristics on name
   trialData.forEach(r => {
     const net = toNum(r.Debit) - toNum(r.Credit);
-    let cat = null;
-    // if Type exists and matches known ACCOUNT_TYPES, use cat
-    if(r.Type){
-      const tdef = ACCOUNT_TYPES.find(a => a.value === r.Type);
-      if(tdef) cat = tdef.cat;
+    const s = (r.Type || r.Account || '').toString().toLowerCase();
+    // classify by Type first (more reliable), else by keywords in Account
+    if(s.includes('asset')||s.includes('أصل')||s.includes('cash')||s.includes('bank')||s.includes('current asset')||s.includes('نقد')){
+      agg.assets += net;
+    } else if(s.includes('liab')||s.includes('خصم')||s.includes('payable')||s.includes('loan')||s.includes('خصوم')){
+      agg.liabilities += (-net);
+    } else if(s.includes('equity')||s.includes('حقوق')){
+      agg.equity += (-net);
+    } else if(s.includes('revenue')||s.includes('sales')||s.includes('إيراد')||s.includes('مبيعات')){
+      agg.revenue += (-net);
+    } else if(s.includes('expense')||s.includes('مصروف')||s.includes('cogs')||s.includes('تكلفة')){
+      agg.expense += net;
+    } else {
+      // fallback keyword search on account name
+      const acc = (r.Account||'').toLowerCase();
+      if(acc.includes('النقد')||acc.includes('bank')||acc.includes('cash')||acc.includes('نقد')) agg.assets += net;
+      else if(acc.includes('المورد')||acc.includes('payable')||acc.includes('دائن')) agg.liabilities += (-net);
+      else if(acc.includes('رأس')||acc.includes('equity')) agg.equity += (-net);
+      else if(acc.includes('إيراد')||acc.includes('sales')) agg.revenue += (-net);
+      else if(acc.includes('مصروف')||acc.includes('expense')||acc.includes('تكلفة')) agg.expense += net;
+      else agg.other += net;
     }
-    // fallback heuristics on account name
-    if(!cat){
-      const s = (r.Account||'').toLowerCase();
-      if(s.includes('نقد') || s.includes('bank') || s.includes('cash')) cat = 'asset';
-      else if(s.includes('مورد') || s.includes('payable') || s.includes('دائن')) cat = 'liability';
-      else if(s.includes('رأس') || s.includes('حقوق')) cat = 'equity';
-      else if(s.includes('مبيعات') || s.includes('إيراد') || s.includes('revenue')) cat = 'revenue';
-      else if(s.includes('مصروف') || s.includes('expense') || s.includes('cost')) cat = 'expense';
-      else cat = 'other';
-    }
-
-    if(cat === 'asset') agg.assets += net;
-    else if(cat === 'liability') agg.liabilities += (-net); // liabilities stored as credits typically
-    else if(cat === 'equity') agg.equity += (-net);
-    else if(cat === 'revenue') agg.revenue += (-net);
-    else if(cat === 'expense') agg.expense += net;
-    else agg.other += net;
   });
 
-  // KPIs rendering
+  // KPIs
   const kpiRow = $('kpiRow'); kpiRow.innerHTML = '';
   const lang = $('languageSelect').value || 'ar';
   const items = [
-    { label: lang==='ar' ? 'عدد الحسابات' : 'Accounts', value: trialData.length },
-    { label: lang==='ar' ? 'الأصول (تقريبي)' : 'Assets', value: agg.assets },
-    { label: lang==='ar' ? 'الخصوم (تقريبي)' : 'Liabilities', value: agg.liabilities },
-    { label: lang==='ar' ? 'الإيرادات' : 'Revenue', value: agg.revenue },
-    { label: lang==='ar' ? 'المصروفات' : 'Expense', value: agg.expense },
-    { label: lang==='ar' ? 'أخرى' : 'Other', value: agg.other }
+    {label: t('accounts'), value: trialData.length},
+    {label: t('assets'), value: agg.assets},
+    {label: t('liabilities'), value: agg.liabilities},
+    {label: t('revenue'), value: agg.revenue},
+    {label: t('expense'), value: agg.expense},
+    {label: t('other'), value: agg.other},
   ];
   items.forEach(it => {
-    const div = document.createElement('div'); div.className = 'kpi';
-    div.innerHTML = `<div class="label">${esc(it.label)}</div><div class="num">${formatNumber(convertCurrency(it.value))}</div>`;
+    const div = document.createElement('div'); div.className='kpi';
+    const val = (typeof it.value === 'number') ? formatNumber(convertCurrency(it.value)) : esc(it.value);
+    div.innerHTML = `<div class="label">${esc(it.label)}</div><div class="num">${val}</div>`;
     kpiRow.appendChild(div);
   });
 
@@ -552,10 +538,10 @@ function renderSummary(){
     preview.innerHTML = html;
   }
 
-  // doughnut chart
+  // draw chart
   const ctx = $('categoryChart').getContext('2d');
   const dataVals = [agg.assets, agg.liabilities, agg.revenue, agg.expense, agg.other].map(v => Math.abs(v));
-  const labels = [ lang==='ar' ? 'الأصول' : 'Assets', lang==='ar' ? 'الخصوم' : 'Liabilities', lang==='ar' ? 'الإيرادات' : 'Revenue', lang==='ar' ? 'المصروفات' : 'Expenses', lang==='ar' ? 'أخرى' : 'Other' ];
+  const labels = [ $('languageSelect').value === 'ar' ? 'الأصول' : 'Assets', $('languageSelect').value === 'ar' ? 'الخصوم' : 'Liabilities', $('languageSelect').value === 'ar' ? 'الإيرادات' : 'Revenue', $('languageSelect').value === 'ar' ? 'المصروفات' : 'Expenses', $('languageSelect').value === 'ar' ? 'أخرى' : 'Other' ];
   if(categoryChart) try{ categoryChart.destroy(); }catch(e){}
   categoryChart = new Chart(ctx, {
     type: 'doughnut',
@@ -566,9 +552,9 @@ function renderSummary(){
   renderValidation();
 }
 
-/* =========================================
-   File input (CSV/XLSX) -> map fields and types
-   ========================================= */
+/* =========================
+   File parsing (CSV/XLSX)
+   ========================= */
 $('fileInput').addEventListener('change', (e) => {
   const file = e.target.files[0]; if(!file) return;
   const name = file.name.toLowerCase();
@@ -586,11 +572,10 @@ $('fileInput').addEventListener('change', (e) => {
       }
       trialData = parsed.map(r => {
         const Account = r.Account || r.account || r['Account Name'] || r['اسم الحساب'] || r['الحساب'] || r['Name'] || '';
-        const TypeText = r.Type || r.type || r['Type'] || r['نوع'] || '';
+        const Type = r.Type || r.type || r['Type'] || r['نوع'] || '';
         const Code = r.Code || r.code || r['Code'] || r['كود'] || '';
         const Debit = r.Debit || r.debit || r['Dr'] || r['مدين'] || r['Debit'] || 0;
         const Credit = r.Credit || r.credit || r['Cr'] || r['دائن'] || r['Credit'] || 0;
-        const Type = mapTypeFromText(TypeText || Account);
         return { Account, Type, Code, Debit: toNum(Debit), Credit: toNum(Credit) };
       });
       saveLocal(); renderTable(); renderSummary(); show('fileImported','success');
@@ -600,57 +585,29 @@ $('fileInput').addEventListener('change', (e) => {
   else reader.readAsBinaryString(file);
 });
 
-/* =========================================
-   Export: PDF (with watermark/logo) and Excel
-   ========================================= */
-function exportPDF(){
-  // Clone the main content and inject a simple header with logo and title so PDF has brand
-  const clone = $('mainContent').cloneNode(true);
-  // header for PDF
-  const header = document.createElement('div');
-  header.style.display = 'flex'; header.style.alignItems = 'center'; header.style.gap = '12px'; header.style.marginBottom = '12px';
-  const img = document.createElement('img'); img.src = 'assets/logo.png'; img.style.height = '48px'; img.style.opacity='0.95';
-  const title = document.createElement('div'); title.innerHTML = `<div style="font-weight:800;font-size:16px">${esc($('brandText').textContent)}</div><div style="font-size:12px;color:#666">${esc($('brandDesc').textContent)}</div>`;
-  header.appendChild(img); header.appendChild(title);
-  clone.insertBefore(header, clone.firstChild);
-
-  // ensure watermark visible inside clone
-  const wm = document.createElement('div'); wm.style.position='absolute'; wm.style.inset='0'; wm.style.display='flex'; wm.style.alignItems='center'; wm.style.justifyContent='center'; wm.style.opacity='0.08'; wm.style.pointerEvents='none';
-  const wmImg = document.createElement('img'); wmImg.src='assets/logo.png'; wmImg.style.maxWidth='520px'; wmImg.style.filter='grayscale(100%)'; wm.appendChild(wmImg);
-  clone.appendChild(wm);
-
-  // attach clone to body temporarily (hidden)
-  clone.style.background = getComputedStyle(document.body).background;
-  clone.style.padding = '18px';
-  clone.id = 'pdf-clone';
-  clone.style.direction = document.documentElement.dir || 'rtl';
-  clone.style.fontFamily = getComputedStyle(document.body).fontFamily;
-  clone.style.position = 'relative';
-  clone.style.width = '1200px'; // fixed width for consistent PDF rendering
-  clone.style.margin = '0 auto';
-  document.body.appendChild(clone);
-
-  const opt = { margin:0.4, filename:'trialbalance_report.pdf', image:{type:'jpeg',quality:0.95}, html2canvas:{scale:2, useCORS:true, logging:false}, jsPDF:{unit:'in', format:'a4', orientation:'landscape'} };
-  html2pdf().set(opt).from(clone).save().then(()=> { document.body.removeChild(clone); }).catch(()=> { document.body.removeChild(clone); show('fileError','danger'); });
-}
-
-$('exportPdfBtnHeader').addEventListener('click', exportPDF);
-
-function exportExcel(){
+/* =========================
+   Exports: PDF & Excel
+   ========================= */
+$('exportPdfBtnHeader').addEventListener('click', ()=> {
+  // Ensure watermark/logo visible in export (it is part of DOM)
+  const el = document.querySelector('main');
+  const opt = { margin:0.35, filename:'trialbalance_report.pdf', image:{type:'jpeg',quality:0.95}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'in', format:'a4', orientation:'landscape'} };
+  html2pdf().set(opt).from(el).save();
+});
+$('exportExcelBtn').addEventListener('click', ()=> {
   if(!trialData.length){ show('noDataExport','warning'); return; }
   const ws = XLSX.utils.json_to_sheet(trialData);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'TrialBalance');
   XLSX.writeFile(wb, 'trialbalance.xlsx');
-}
-$('exportExcelBtn').addEventListener('click', exportExcel);
+});
 
 /* ctrl+click save -> export excel (power user) */
-$('saveBtn').addEventListener('click', (e)=> { if(e.ctrlKey) exportExcel(); else { saveLocal(); show('saved','success'); } });
+$('saveBtn').addEventListener('click', (e)=> { if(e.ctrlKey) $('exportExcelBtn').click(); else { saveLocal(); show('saved','success'); } });
 
-/* =========================================
-   FX rates (best-effort fetch, not required)
-   ========================================= */
+/* =========================
+   Currency FX (attempt fetch)
+   ========================= */
 async function fetchFx(){
   try{
     const resp = await fetch('https://api.exchangerate.host/latest?base=EGP&symbols=USD,EUR');
@@ -659,7 +616,7 @@ async function fetchFx(){
     if(data && data.rates){
       if(data.rates.USD) fxRates.USD = 1 / data.rates.USD;
       if(data.rates.EUR) fxRates.EUR = 1 / data.rates.EUR;
-      localStorage.setItem(LS_FX, JSON.stringify(fxRates));
+      localStorage.setItem('fa_fx', JSON.stringify(fxRates));
     }
   }catch(e){ console.warn('FX fetch failed; using defaults'); }
 }
@@ -670,18 +627,20 @@ function convertCurrency(value){
   return toNum(value) / rate;
 }
 
-/* =========================================
+/* =========================
    Init
-   ========================================= */
+   ========================= */
 (function init(){
-  // initial data: if empty put one blank row for usability
-  if(!Array.isArray(trialData) || !trialData.length){ trialData = [{Account:'',Type:'other',Code:'',Debit:0,Credit:0}]; saveLocal(); }
+  populateControls();
+  loadPreferences();
   renderTable(); renderSummary(); fetchFx();
 
-  // sync across tabs
-  window.addEventListener('storage', (e)=> { if(e.key === LS_TRIAL){ trialData = JSON.parse(e.newValue || '[]'); renderTable(); renderSummary(); show('restored','info'); } });
+  // if no rows, add one for quick start
+  if(!trialData.length){ trialData.push({Account:'',Type:'',Code:'',Debit:0,Credit:0}); saveLocal(); renderTable(); }
+
+  // storage listener across tabs
+  window.addEventListener('storage', (e)=> { if(e.key === 'trialData'){ trialData = JSON.parse(e.newValue || '[]'); renderTable(); renderSummary(); show('restored','info'); } });
 })();
 </script>
-
 </body>
 </html>
