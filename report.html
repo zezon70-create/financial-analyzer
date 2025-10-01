@@ -16,20 +16,16 @@
 
 <style>
 :root{
-  --accent-1:#0d6efd;
-  --accent-2:#6610f2;
-  --bg:#f6f8fb;
-  --card:#fff;
-  --text:#0b1220;
-  --muted:#6c757d;
+  --accent-1:#0d6efd; --accent-2:#6610f2;
+  --bg:#f6f8fb; --card:#fff; --text:#0b1220; --muted:#6c757d;
   --glass: rgba(255,255,255,0.75);
   --radius:12px;
 }
 html,body{height:100%}
 body{
   font-family:"Cairo",system-ui,sans-serif;
-  margin:0;background:var(--bg);color:var(--text);
-  -webkit-font-smoothing:antialiased;transition: background .22s, color .22s;
+  margin:0; background:var(--bg); color:var(--text);
+  -webkit-font-smoothing:antialiased; transition: background .22s, color .22s;
 }
 body[data-theme="dark"]{
   --bg:#071018; --card:#07131a; --text:#e6eef6; --muted:#9aa6b2; --glass: rgba(6,10,15,0.5);
@@ -45,57 +41,41 @@ body[data-theme="dark"]{
 .brand .title{font-weight:800}
 .controls{display:flex;gap:.5rem;align-items:center}
 
-/* Page hero */
-.hero{
-  padding:18px;border-radius:var(--radius);
-  background:linear-gradient(180deg, rgba(13,110,253,0.06), rgba(102,16,242,0.02));
-  box-shadow:0 12px 30px rgba(2,6,23,0.04); border:1px solid rgba(13,110,253,0.04); margin-bottom:16px;
-}
+/* Hero */
+.hero{padding:18px;border-radius:var(--radius);background:linear-gradient(180deg, rgba(13,110,253,0.06), rgba(102,16,242,0.02));box-shadow:0 12px 30px rgba(2,6,23,0.04); border:1px solid rgba(13,110,253,0.04); margin-bottom:16px}
+.highlight{color:var(--accent-1);font-weight:800}
 
-/* Card surface */
+/* Cards */
 .card-surface{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 12px 30px rgba(2,6,23,0.04);border:1px solid rgba(13,110,253,0.03);margin-bottom:16px}
 body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03)}
 
 /* KPIs */
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:12px 0}
-.kpi{background:linear-gradient(180deg,var(--card),#f8fbff);padding:14px;border-radius:10px;text-align:center;box-shadow:0 8px 20px rgba(2,6,23,0.04);transition:transform .12s}
-.kpi:hover{transform:translateY(-6px)}
+.kpi{background:linear-gradient(180deg,var(--card),#f8fbff);padding:14px;border-radius:10px;text-align:center;box-shadow:0 8px 20px rgba(2,6,23,0.04)}
 .kpi .num{font-weight:800;font-size:1.12rem;margin-top:6px}
 .kpi .label{font-size:.85rem;color:var(--muted)}
 
 /* Table */
 .table thead th{border-bottom:1px solid rgba(0,0,0,0.06)}
-.table tbody tr:hover{background:rgba(13,110,253,0.03)}
 .input-sm{height:40px;padding:.45rem .6rem}
 .select-type{min-width:160px}
 
 /* Buttons */
-.btn-glow{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));border:none;color:#fff;box-shadow:0 10px 40px rgba(102,16,242,0.12)}
-.btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06)}
+.btn-glow{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));border:none;color:#fff;box-shadow:0 10px 40px rgba(102,16,242,0.12);transition:transform .12s}
+.btn-glow:hover{transform:translateY(-3px)}
 
-/* Watermark & logo */
+/* Watermark & logo (used in PDF capture) */
 .watermark{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;opacity:0.06}
 .watermark img{max-width:520px;filter:grayscale(100%);opacity:0.12}
 .logo-report{height:40px}
 
-/* small helpers */
-.small-muted{color:var(--muted);font-size:.95rem}
-.highlight{color:var(--accent-1);font-weight:700}
-.empty-hint{padding:18px;text-align:center;color:var(--muted)}
-.badge-note{background:linear-gradient(90deg,#ffc107,#ffb020);padding:6px 10px;border-radius:999px;color:#111;font-weight:800}
-
-/* ensure readable text in dark mode */
-body[data-theme="dark"] { color: #e6eef6; }
-body[data-theme="dark"] a, body[data-theme="dark"] .title { color: #fff; }
-body[data-theme="dark"] .small-muted{ color: #9aa6b2; }
-
-/* responsive */
+/* Responsive */
 @media (max-width:900px){ .controls{gap:.4rem} .kpi-row{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))} }
 </style>
 </head>
 <body data-theme="light">
 
-<!-- Watermark (captured in PDF/Word) -->
+<!-- Watermark (captured by html2pdf) -->
 <div class="watermark" aria-hidden="true"><img src="assets/logo.png" alt="logo" id="wmLogo"></div>
 
 <!-- Header -->
@@ -109,13 +89,13 @@ body[data-theme="dark"] .small-muted{ color: #9aa6b2; }
   </div>
 
   <div class="controls" role="navigation" aria-label="controls">
-    <a class="btn btn-sm btn-outline-secondary" href="index.html" title="الرئيسية" id="btnHome"><i class="bi bi-house"></i></a>
-    <a class="btn btn-sm btn-outline-secondary" href="input.html" title="إدخال البيانات" id="btnInput">إدخال</a>
-    <a class="btn btn-sm btn-outline-secondary" href="dashboard.html" title="لوحة التحكم" id="btnDashboard">داشبورد</a>
-    <a class="btn btn-sm btn-outline-secondary" href="analysis.html" title="التحليلات المتقدمة" id="btnAnalysis">تحليلات</a>
+    <a class="btn btn-sm btn-outline-secondary" href="index.html" title="الرئيسية" id="navHome"><i class="bi bi-house"></i></a>
+    <a class="btn btn-sm btn-outline-secondary" href="input.html" title="إدخال البيانات" id="navInput">إدخال</a>
+    <a class="btn btn-sm btn-outline-secondary" href="dashboard.html" title="لوحة التحكم" id="navDash">داشبورد</a>
+    <a class="btn btn-sm btn-outline-secondary" href="advanced.html" title="التحليلات المتقدمة" id="navAnalysis">تحليلات</a>
 
     <select id="currencySelect" class="form-select form-select-sm" title="اختر العملة" aria-label="اختر العملة" style="min-width:92px"></select>
-    <input id="fxRateInput" class="form-control form-control-sm" style="width:110px" title="سعر الصرف (قيمة 1 عملة مقابل EGP)" aria-label="سعر الصرف" placeholder="FX" />
+    <input id="fxRateInput" class="form-control form-control-sm" style="width:110px" title="سعر الصرف (1 عملة = ؟ EGP)" aria-label="سعر الصرف" placeholder="FX" />
 
     <select id="languageSelect" class="form-select form-select-sm" title="اللغة" style="min-width:110px"></select>
     <div class="form-check form-switch mb-0" title="الوضع الليلي">
@@ -124,7 +104,6 @@ body[data-theme="dark"] .small-muted{ color: #9aa6b2; }
 
     <button id="exportPdfBtn" class="btn btn-outline-primary btn-sm ms-2" title="تصدير PDF"><i class="bi bi-file-earmark-pdf"></i></button>
     <button id="exportWordBtn" class="btn btn-outline-secondary btn-sm ms-1" title="تصدير Word"><i class="bi bi-file-earmark-word"></i></button>
-    <button id="exportExcelBtn" class="btn btn-outline-success btn-sm ms-1" title="تصدير Excel"><i class="bi bi-file-earmark-excel"></i></button>
   </div>
 </header>
 
@@ -136,15 +115,15 @@ body[data-theme="dark"] .small-muted{ color: #9aa6b2; }
     <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
       <div>
         <h3 id="heroTitle" style="margin:0">تقرير مالي تفصيلي — <span id="reportLabel" class="highlight">عرض كامل</span></h3>
-        <p class="small-muted" id="heroDesc">قوائم مفصّلة، مقارنة فترات، انحراف ونسب، وتصدير احترافي مع شعار وعلامة مائية.</p>
+        <p class="small-muted" id="heroDesc">قوائم مفصلة، مقارنات فترات، انحراف ونسب، وتصدير احترافي مع شعار وعلامة مائية.</p>
       </div>
 
       <div class="d-flex gap-2 align-items-center flex-wrap">
-        <button id="saveSnapshotBtn" class="btn btn-glow btn-sm" title="حفظ لقطة (نسخة)"><i class="bi bi-save"></i> حفظ لقطة</button>
+        <button id="saveSnapshotBtn" class="btn btn-glow btn-sm" title="حفظ لقطة (نسخة)"><i class="bi bi-save"></i> <span id="saveSnapshotText">حفظ لقطة</span></button>
 
         <select id="snapshotA" class="form-select form-select-sm" style="min-width:160px;" title="اختر الفترة A"></select>
         <select id="snapshotB" class="form-select form-select-sm" style="min-width:160px;" title="اختر الفترة B"></select>
-        <button id="compareBtn" class="btn btn-outline-primary btn-sm"><i class="bi bi-bar-chart"></i> قارن</button>
+        <button id="compareBtn" class="btn btn-outline-primary btn-sm"><i class="bi bi-bar-chart"></i> <span id="compareText">قارن</span></button>
         <button id="clearCompareBtn" class="btn btn-outline-secondary btn-sm">مسح المقارنة</button>
       </div>
     </div>
@@ -152,26 +131,26 @@ body[data-theme="dark"] .small-muted{ color: #9aa6b2; }
 
   <!-- KPIs -->
   <section class="card-surface" aria-labelledby="kpisTitle">
-    <h6 id="kpisTitle">مؤشرات سريعة</h6>
+    <h6 id="kpisTitleText">مؤشرات سريعة</h6>
     <div class="kpi-row" id="kpiRow"></div>
   </section>
 
   <!-- Financial Statements -->
   <section class="card-surface" id="statementsSection">
-    <h6>القوائم المالية التفصيلية</h6>
-    <p class="small-muted">اضغط على أي قائمة لعرض شرحها وتفاصيل البنود.</p>
+    <h6 id="statementsTitle">القوائم المالية التفصيلية</h6>
+    <p class="small-muted" id="statementsDesc">اضغط على أي قائمة لعرض شرحها وتفاصيل البنود.</p>
 
     <div class="accordion" id="statementsAccordion">
       <!-- Balance Sheet -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingBS">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBS" aria-expanded="false" aria-controls="collapseBS">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseBS" aria-expanded="false" aria-controls="collapseBS" id="bsTitle">
             قائمة المركز المالي (الميزانية) — Balance Sheet
           </button>
         </h2>
         <div id="collapseBS" class="accordion-collapse collapse" aria-labelledby="headingBS" data-bs-parent="#statementsAccordion">
           <div class="accordion-body">
-            <p class="small-muted">تُظهر الأصول والخصوم وحقوق الملكية في تاريخ مُحدد.</p>
+            <p class="small-muted" id="bsDesc">تُظهر الأصول والخصوم وحقوق الملكية في تاريخ مُحدد.</p>
             <div id="balanceSheetArea"></div>
           </div>
         </div>
@@ -180,13 +159,13 @@ body[data-theme="dark"] .small-muted{ color: #9aa6b2; }
       <!-- Income Statement -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingIS">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIS" aria-expanded="false" aria-controls="collapseIS">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseIS" aria-expanded="false" aria-controls="collapseIS" id="isTitle">
             قائمة الدخل — Income Statement
           </button>
         </h2>
         <div id="collapseIS" class="accordion-collapse collapse" aria-labelledby="headingIS" data-bs-parent="#statementsAccordion">
           <div class="accordion-body">
-            <p class="small-muted">تُظهر الإيرادات، تكلفة المبيعات، وصافي الربح لفترة محددة.</p>
+            <p class="small-muted" id="isDesc">تُظهر الإيرادات، تكلفة المبيعات، وصافي الربح لفترة محددة.</p>
             <div id="incomeStatementArea"></div>
           </div>
         </div>
@@ -195,13 +174,13 @@ body[data-theme="dark"] .small-muted{ color: #9aa6b2; }
       <!-- Cash Flow -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingCF">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCF" aria-expanded="false" aria-controls="collapseCF">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCF" aria-expanded="false" aria-controls="collapseCF" id="cfTitle">
             قائمة التدفقات النقدية — Cash Flow Statement
           </button>
         </h2>
         <div id="collapseCF" class="accordion-collapse collapse" aria-labelledby="headingCF" data-bs-parent="#statementsAccordion">
           <div class="accordion-body">
-            <p class="small-muted">عرض مبسط للتدفقات التشغيلية والاستثمارية والتمويلية.</p>
+            <p class="small-muted" id="cfDesc">عرض مبسط للتدفقات التشغيلية والاستثمارية والتمويلية.</p>
             <div id="cashFlowArea"></div>
           </div>
         </div>
@@ -210,7 +189,7 @@ body[data-theme="dark"] .small-muted{ color: #9aa6b2; }
       <!-- Equity Statement -->
       <div class="accordion-item">
         <h2 class="accordion-header" id="headingEQ">
-          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEQ" aria-expanded="false" aria-controls="collapseEQ">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseEQ" aria-expanded="false" aria-controls="collapseEQ" id="eqTitle">
             قائمة حقوق الملكية — Statement of Changes in Equity
           </button>
         </h2>
@@ -225,7 +204,7 @@ body[data-theme="dark"] .small-muted{ color: #9aa6b2; }
 
   <!-- Comparison & Chart -->
   <section class="card-surface">
-    <h6>مقارنة الفترات وبيان الانحراف</h6>
+    <h6 id="compareTitle">مقارنة الفترات وبيان الانحراف</h6>
     <div class="row">
       <div class="col-lg-6">
         <div id="compareSummary"></div>
@@ -238,80 +217,97 @@ body[data-theme="dark"] .small-muted{ color: #9aa6b2; }
 
   <!-- Explanations & Download -->
   <section class="card-surface">
-    <h6>شرح القوائم والقياسات</h6>
+    <h6 id="explainTitle">شرح القوائم والقياسات</h6>
     <div id="explanations">
-      <h6>قائمة المركز المالي</h6>
-      <p class="small-muted">الأصول: موارد تملكها الشركة. الخصوم: التزامات. حقوق الملكية: الفرق بين الأصول والخصوم.</p>
+      <h6 id="expBS">قائمة المركز المالي</h6>
+      <p class="small-muted" id="expBSdesc">الأصول: موارد تملكها الشركة. الخصوم: التزامات. حقوق الملكية: الفرق بين الأصول والخصوم.</p>
 
-      <h6>قائمة الدخل</h6>
-      <p class="small-muted">تُظهر أداء الشركة خلال الفترة — الإيرادات مطروحًا منها المصروفات لتحديد صافي الربح.</p>
+      <h6 id="expIS">قائمة الدخل</h6>
+      <p class="small-muted" id="expISdesc">تُظهر أداء الشركة خلال الفترة — الإيرادات مطروحًا منها المصروفات لتحديد صافي الربح.</p>
 
-      <h6>قائمة التدفقات النقدية</h6>
-      <p class="small-muted">تفصل التدفقات التشغيلية والاستثمارية والتمويلية لتبيان سيولة الأعمال.</p>
+      <h6 id="expCF">قائمة التدفقات النقدية</h6>
+      <p class="small-muted" id="expCFdesc">تفصل التدفقات التشغيلية والاستثمارية والتمويلية لتبيان سيولة الأعمال.</p>
 
-      <h6>المقاييس والنسب</h6>
-      <p class="small-muted">تتوفر نسب مالية قياسية (سيولة، ربحية، نشاط، مديونية) في صفحة التحليلات المتقدمة.</p>
+      <h6 id="expMetrics">المقاييس والنسب</h6>
+      <p class="small-muted" id="expMetricsdesc">تتوفر نسب مالية قياسية (سيولة، ربحية، نشاط، مديونية) في صفحة التحليلات المتقدمة.</p>
     </div>
   </section>
 
-  <footer class="text-center py-3 small">&copy; 2025 المحلل المالي — جميع الحقوق محفوظة</footer>
+  <footer class="text-center py-3 small">&copy; <span id="copyrightYear">2025</span> المحلل المالي — جميع الحقوق محفوظة</footer>
 </main>
 
 <!-- Scripts -->
 <script>
 /* =========================
-   Helpers
+   Helpers & State
    ========================= */
 const $ = id => document.getElementById(id);
 function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function toNum(v){ const n = Number(String(v||'').toString().replace(/[, ]+/g,'')); return isNaN(n)?0:n; }
+function toNum(v){ const n = Number(String(v).toString().replace(/[, ]+/g,'')); return isNaN(n)?0:n; }
 function formatNumber(v){ return Number(v).toLocaleString(undefined,{maximumFractionDigits:2,minimumFractionDigits:0}); }
-function showToast(text, type='info'){ const div=document.createElement('div'); div.className=`toast align-items-center text-bg-${type} border-0 show`; div.style.minWidth='220px'; div.style.marginTop='6px'; div.innerHTML=`<div class="d-flex"><div class="toast-body">${esc(text)}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.closest('.toast').remove()"></button></div>`; document.body.appendChild(div); setTimeout(()=>div.remove(),3500); }
+function showToast(text, type='info'){ const el=document.createElement('div'); el.className=`toast align-items-center text-bg-${type} border-0 show`; el.style.minWidth='220px'; el.style.marginTop='6px'; el.innerHTML=`<div class="d-flex"><div class="toast-body">${esc(text)}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.closest('.toast').remove()"></button></div>`; document.body.appendChild(el); setTimeout(()=>el.remove(),3000); }
 
-/* =========================
-   State & Defaults
-   ========================= */
-let trialData = JSON.parse(localStorage.getItem('trialData')||'[]'); // expects [{Account,Type,Code,Debit,Credit},...]
-const SNAPSHOT_KEY = 'trialData_snapshots';
-let snapshots = JSON.parse(localStorage.getItem(SNAPSHOT_KEY)||'{}'); // { label: [...data...] }
+/* Data */
+let trialData = JSON.parse(localStorage.getItem('trialData')||'[]'); // main source from input page
+let snapshots = JSON.parse(localStorage.getItem('trialData_snapshots')||'{}'); // saved snapshots
 const FX_DEFAULTS = { USD:31, EUR:34 };
 let fxRates = JSON.parse(localStorage.getItem('fa_fx')||'null') || FX_DEFAULTS;
 
-/* UI data */
-const LANGS = [{v:'ar',label:'العربية'},{v:'en',label:'English'}];
-const CURRENCIES = ['EGP','USD','EUR'];
-const texts = {
+/* Translations - all strings used in page text must be translated here */
+const TR = {
   ar: {
+    heroDesc: 'قوائم مفصلة، مقارنات فترات، انحراف ونسب، وتصدير احترافي مع شعار وعلامة مائية.',
+    saveSnapshot: 'حفظ لقطة',
+    compare: 'قارن',
     saveSnapshotPrompt: 'ادخل اسم/سنة للحفظ (مثال: 2024)',
     emptySnapshots: 'لا توجد لقطات محفوظة.',
     snapshotSaved: 'تم حفظ اللقطة محليًا',
     chooseSnapshots: 'اختر لقطتين للمقارنة',
     noData: 'لا توجد بيانات لعرضها.',
     exportNoData: 'لا توجد بيانات للتصدير',
-    fxPlaceholder: 'سعر الصرف (1 = ؟ ج.م)'
+    kpisTitle: 'مؤشرات سريعة',
+    statementsTitle: 'القوائم المالية التفصيلية',
+    explainTitle: 'شرح القوائم والقياسات',
+    compareTitle: 'مقارنة الفترات وبيان الانحراف',
+    bsTitle: 'قائمة المركز المالي (الميزانية) — Balance Sheet',
+    isTitle: 'قائمة الدخل — Income Statement',
+    cfTitle: 'قائمة التدفقات النقدية — Cash Flow Statement',
+    eqTitle: 'قائمة حقوق الملكية — Statement of Changes in Equity'
   },
   en: {
+    heroDesc: 'Detailed statements, period comparisons, deviations & ratios, and professional export with logo & watermark.',
+    saveSnapshot: 'Save Snapshot',
+    compare: 'Compare',
     saveSnapshotPrompt: 'Enter label/year to save snapshot (e.g. 2024)',
     emptySnapshots: 'No saved snapshots.',
     snapshotSaved: 'Snapshot saved locally',
     chooseSnapshots: 'Choose two snapshots to compare',
     noData: 'No data to display.',
     exportNoData: 'No data to export',
-    fxPlaceholder: 'FX rate (1 = ? EGP)'
+    kpisTitle: 'Quick Indicators',
+    statementsTitle: 'Detailed Financial Statements',
+    explainTitle: 'Statements & Metrics Explanation',
+    compareTitle: 'Periods Comparison & Deviation',
+    bsTitle: 'Balance Sheet — قائمة المركز المالي',
+    isTitle: 'Income Statement — قائمة الدخل',
+    cfTitle: 'Cash Flow Statement — قائمة التدفقات النقدية',
+    eqTitle: 'Statement of Changes in Equity — قائمة حقوق الملكية'
   }
 };
 
-/* =========================
-   Controls populate & preferences
-   ========================= */
+/* UI helpers */
+const LANGS = [{v:'ar',label:'العربية'},{v:'en',label:'English'}];
+const CURRENCIES = ['EGP','USD','EUR'];
+
+/* Populate controls + load preferences */
 function populateControls(){
+  // language
   const langSel = $('languageSelect'); langSel.innerHTML='';
   LANGS.forEach(l=>{ const o=document.createElement('option'); o.value=l.v; o.textContent=l.label; langSel.appendChild(o); });
-
+  // currency
   const curSel = $('currencySelect'); curSel.innerHTML='';
   CURRENCIES.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; curSel.appendChild(o); });
-
-  // load saved
+  // saved prefs
   const savedLang = localStorage.getItem('fa_lang') || localStorage.getItem('lang') || 'ar';
   const savedTheme = localStorage.getItem('fa_theme') || localStorage.getItem('theme') || 'light';
   const savedCur = localStorage.getItem('fa_currency') || localStorage.getItem('currency') || 'EGP';
@@ -320,55 +316,50 @@ function populateControls(){
   $('darkModeToggle').checked = (savedTheme === 'dark');
   $('currencySelect').value = savedCur;
   $('fxRateInput').value = localStorage.getItem('fa_fx_custom') || '';
-  $('fxRateInput').placeholder = texts[savedLang].fxPlaceholder;
-
-  // direction
-  setDirection(savedLang);
-}
-populateControls();
-
-// direction helper on language
-function setDirection(lang){
-  if(lang === 'ar'){ document.documentElement.lang='ar'; document.documentElement.dir='rtl'; }
-  else { document.documentElement.lang='en'; document.documentElement.dir='ltr'; }
+  // set placeholders/labels according to lang
+  renderStaticText();
 }
 
-/* theme toggle */
+function renderStaticText(){
+  const lang = $('languageSelect').value;
+  $('heroDesc').textContent = TR[lang].heroDesc;
+  $('saveSnapshotText').textContent = TR[lang].saveSnapshot;
+  $('compareText').textContent = TR[lang].compare;
+  $('kpisTitleText').textContent = TR[lang].kpisTitle;
+  $('statementsTitle').textContent = TR[lang].statementsTitle;
+  $('statementsDesc').textContent = TR[lang].heroDesc;
+  $('explainTitle').textContent = TR[lang].explainTitle;
+  $('compareTitle').textContent = TR[lang].compareTitle;
+  $('bsTitle').textContent = TR[lang].bsTitle;
+  $('isTitle').textContent = TR[lang].isTitle;
+  $('cfTitle').textContent = TR[lang].cfTitle;
+  $('eqTitle').textContent = TR[lang].eqTitle;
+  $('fxRateInput').placeholder = (lang==='ar' ? 'سعر الصرف (1 عملة = ؟ EGP)' : 'FX rate (1 currency = ? EGP)');
+}
+
+/* Theme toggle */
 $('darkModeToggle').addEventListener('change', e=>{
   const val = e.target.checked ? 'dark' : 'light';
   document.body.dataset.theme = val;
   localStorage.setItem('fa_theme', val);
 });
 
-/* language change */
+/* Language change */
 $('languageSelect').addEventListener('change', ()=>{
   const lang = $('languageSelect').value;
   localStorage.setItem('fa_lang', lang);
-  $('fxRateInput').placeholder = texts[lang].fxPlaceholder;
-  setDirection(lang);
+  renderStaticText();
   renderAll();
 });
 
-/* currency change */
-$('currencySelect').addEventListener('change', ()=>{
-  localStorage.setItem('fa_currency', $('currencySelect').value);
-  renderAll();
-});
-
-/* fx input (manual) */
+/* Currency change + FX input handling */
+$('currencySelect').addEventListener('change', ()=>{ localStorage.setItem('fa_currency', $('currencySelect').value); renderAll(); });
 $('fxRateInput').addEventListener('change', ()=>{
   const v = toNum($('fxRateInput').value);
-  if(v>0){
-    localStorage.setItem('fa_fx_custom', v);
-    // store in fxRates as CUSTOM for convenience
-    fxRates['CUSTOM'] = v;
-    localStorage.setItem('fa_fx', JSON.stringify(fxRates));
-    showToast(texts[$('languageSelect').value].snapshotSaved,'success');
-    renderAll();
-  }
+  if(v>0){ localStorage.setItem('fa_fx_custom', v); fxRates['CUSTOM'] = v; localStorage.setItem('fa_fx', JSON.stringify(fxRates)); showToast('تم حفظ سعر الصرف','success'); renderAll(); }
 });
 
-/* fetch FX (non-blocking) */
+/* Try simple FX fetch (non-blocking) */
 async function fetchFx(){
   try{
     const resp = await fetch('https://api.exchangerate.host/latest?base=EGP&symbols=USD,EUR');
@@ -383,75 +374,35 @@ async function fetchFx(){
 }
 fetchFx();
 
-/* =========================
-   Snapshots handling
-   ========================= */
-function loadSnapshots(){
-  snapshots = JSON.parse(localStorage.getItem(SNAPSHOT_KEY)||'{}');
-  renderSnapshotOptions();
-}
-function saveSnapshot(label){
-  if(!label || !label.trim()) return;
-  snapshots = JSON.parse(localStorage.getItem(SNAPSHOT_KEY)||'{}');
-  snapshots[label] = JSON.parse(JSON.stringify(trialData));
-  localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(snapshots));
-  loadSnapshots();
-  showToast(texts[$('languageSelect').value].snapshotSaved,'success');
-}
-$('saveSnapshotBtn').addEventListener('click', ()=>{
-  const lang = $('languageSelect').value;
-  const label = prompt(texts[lang].saveSnapshotPrompt, new Date().getFullYear());
-  if(label) saveSnapshot(label.trim());
-});
-loadSnapshots();
-
-function renderSnapshotOptions(){
-  const sa = $('snapshotA'), sb = $('snapshotB');
-  sa.innerHTML = '<option value="">--</option>'; sb.innerHTML = '<option value="">--</option>';
-  const keys = Object.keys(snapshots||{}).sort().reverse();
-  if(keys.length===0){
-    sa.innerHTML = `<option value="">${texts[$('languageSelect').value].emptySnapshots}</option>`;
-    sb.innerHTML = `<option value="">${texts[$('languageSelect').value].emptySnapshots}</option>`;
-    return;
-  }
-  keys.forEach(k=>{
-    const o1 = document.createElement('option'); o1.value = k; o1.textContent = k; sa.appendChild(o1);
-    const o2 = document.createElement('option'); o2.value = k; o2.textContent = k; sb.appendChild(o2);
-  });
-}
-
-/* =========================
-   Aggregation & rendering
-   ========================= */
+/* Utility: currency symbol & conversion based on selected currency and user FX */
 function getCurrencySymbol(){
   const cur = $('currencySelect').value || 'EGP';
-  if(cur === 'EGP') return 'ج.م';
-  if(cur === 'USD') return '$';
-  if(cur === 'EUR') return '€';
+  if(cur==='EGP') return 'ج.م';
+  if(cur==='USD') return '$';
+  if(cur==='EUR') return '€';
   return cur;
 }
 function convertCurrencyLocal(value){
   const cur = $('currencySelect').value || 'EGP';
   const custom = Number(localStorage.getItem('fa_fx_custom')||'');
   if(cur === 'EGP') return toNum(value);
-  if(custom>0 && cur !== 'EGP'){
-    return toNum(value) / custom;
-  }
+  if(custom>0){ return toNum(value) / custom; } // assuming custom = 1 unit of selected currency equals custom EGP
   const rate = fxRates[cur] || FX_DEFAULTS[cur] || 1;
   return toNum(value) / rate;
 }
 
+/* Aggregate classification (robust) */
 function aggregateData(data){
   const agg = { assets:0, liabilities:0, equity:0, revenue:0, expense:0, other:0 };
   (data||[]).forEach(r=>{
     const debit = toNum(r.Debit), credit = toNum(r.Credit);
     const net = debit - credit;
-    const type = String(r.Type||r.Account||'').toLowerCase();
-    if(/asset|أصل|cash|bank|current asset|نقد|fixed asset|أصول/.test(type)) agg.assets += net;
-    else if(/liab|خصوم|payable|loan|دائن|قرض/.test(type)) agg.liabilities += -net;
-    else if(/equity|حقوق|رأس|capital/.test(type)) agg.equity += -net;
-    else if(/revenue|sales|إيراد|مبيعات/.test(type)) agg.revenue += -net;
-    else if(/expense|مصروف|cogs|تكلفة|مصاريف|expense/.test(type)) agg.expense += net;
+    const t = String(r.Type||r.Account||'').toLowerCase();
+    if(/asset|أصل|cash|bank|current asset|fixed asset|أصول|نقد/.test(t)) agg.assets += net;
+    else if(/liab|خصوم|payable|loan|دائن|قرض/.test(t)) agg.liabilities += -net;
+    else if(/equity|حقوق|رأس|capital/.test(t)) agg.equity += -net;
+    else if(/revenue|sales|إيراد|مبيعات/.test(t)) agg.revenue += -net;
+    else if(/expense|مصروف|cogs|تكلفة|مصاريف/.test(t)) agg.expense += net;
     else {
       const acc = String(r.Account||'').toLowerCase();
       if(/النقد|bank|cash|نقد/.test(acc)) agg.assets += net;
@@ -465,16 +416,18 @@ function aggregateData(data){
   return agg;
 }
 
+/* Render KPIs */
 function renderKPIs(data){
   const kpiRow = $('kpiRow'); kpiRow.innerHTML = '';
   const agg = aggregateData(data||[]);
+  const lang = $('languageSelect').value;
   const items = [
-    {label: $('languageSelect').value === 'ar' ? 'عدد الحسابات' : 'Accounts', value: (data||[]).length},
-    {label: $('languageSelect').value === 'ar' ? 'الأصول (تقريبي)' : 'Assets', value: agg.assets},
-    {label: $('languageSelect').value === 'ar' ? 'الخصوم (تقريبي)' : 'Liabilities', value: agg.liabilities},
-    {label: $('languageSelect').value === 'ar' ? 'الإيرادات' : 'Revenue', value: agg.revenue},
-    {label: $('languageSelect').value === 'ar' ? 'المصروفات' : 'Expense', value: agg.expense},
-    {label: $('languageSelect').value === 'ar' ? 'أخرى' : 'Other', value: agg.other}
+    {label: lang==='ar' ? 'عدد الحسابات' : 'Accounts', value: data.length},
+    {label: lang==='ar' ? 'الأصول (تقريبي)' : 'Assets', value: agg.assets},
+    {label: lang==='ar' ? 'الخصوم (تقريبي)' : 'Liabilities', value: agg.liabilities},
+    {label: lang==='ar' ? 'الإيرادات' : 'Revenue', value: agg.revenue},
+    {label: lang==='ar' ? 'المصروفات' : 'Expense', value: agg.expense},
+    {label: lang==='ar' ? 'أخرى' : 'Other', value: agg.other}
   ];
   items.forEach(it=>{
     const div = document.createElement('div'); div.className='kpi';
@@ -484,12 +437,15 @@ function renderKPIs(data){
   });
 }
 
+/* Render financial statements (detailed but derived from trialData) */
 function renderStatements(data){
   const agg = aggregateData(data||[]);
-  const bsArea = $('balanceSheetArea'); bsArea.innerHTML = `
+  // Balance Sheet
+  const bsArea = $('balanceSheetArea');
+  bsArea.innerHTML = `
     <div class="row">
       <div class="col-md-6">
-        <h6>الأصول</h6>
+        <h6>${$('languageSelect').value==='ar'?'الأصول':'Assets'}</h6>
         <table class="table table-sm">
           <tbody>
             <tr><td>الإجمالي</td><td class="text-end">${formatNumber(convertCurrencyLocal(agg.assets))} ${getCurrencySymbol()}</td></tr>
@@ -497,7 +453,7 @@ function renderStatements(data){
         </table>
       </div>
       <div class="col-md-6">
-        <h6>الخصوم وحقوق الملكية</h6>
+        <h6>${$('languageSelect').value==='ar'?'الخصوم وحقوق الملكية':'Liabilities & Equity'}</h6>
         <table class="table table-sm">
           <tbody>
             <tr><td>الخصوم</td><td class="text-end">${formatNumber(convertCurrencyLocal(agg.liabilities))} ${getCurrencySymbol()}</td></tr>
@@ -509,6 +465,7 @@ function renderStatements(data){
     </div>
   `;
 
+  // Income Statement
   const incArea = $('incomeStatementArea'); const netProfit = agg.revenue - agg.expense;
   incArea.innerHTML = `
     <table class="table table-sm">
@@ -520,8 +477,10 @@ function renderStatements(data){
     </table>
   `;
 
-  const cfArea = $('cashFlowArea'); cfArea.innerHTML = `
-    <div class="small-muted">عرض مبسّط: للحصول على تفاصيل التدفقات النقدية استخدم وظائف التحليل المتقدمة.</div>
+  // Cash Flow (simplified)
+  const cfArea = $('cashFlowArea');
+  cfArea.innerHTML = `
+    <div class="small-muted">${$('languageSelect').value==='ar' ? 'هذا عرض مبسط: استخرج التدفقات التفصيلية من الدفاتر.' : 'This is a simplified view: extract detailed cash flows from ledgers.'}</div>
     <table class="table table-sm mt-2">
       <tbody>
         <tr><td>التدفق الصافي (تقريبي)</td><td class="text-end">${formatNumber(convertCurrencyLocal(agg.assets - (agg.liabilities + agg.equity)))} ${getCurrencySymbol()}</td></tr>
@@ -529,7 +488,9 @@ function renderStatements(data){
     </table>
   `;
 
-  const eqArea = $('equityArea'); eqArea.innerHTML = `
+  // Equity changes (simplified)
+  const eqArea = $('equityArea');
+  eqArea.innerHTML = `
     <table class="table table-sm">
       <tbody>
         <tr><td>بداية الفترة</td><td class="text-end">—</td></tr>
@@ -540,15 +501,41 @@ function renderStatements(data){
   `;
 }
 
-/* =========================
-   Comparison between snapshots
-   ========================= */
+/* Snapshots: save/load for comparisons */
+function loadSnapshots(){
+  snapshots = JSON.parse(localStorage.getItem('trialData_snapshots')||'{}');
+  renderSnapshotSelects();
+}
+function saveSnapshot(label){
+  if(!label || !label.trim()) return;
+  snapshots = JSON.parse(localStorage.getItem('trialData_snapshots')||'{}');
+  snapshots[label] = JSON.parse(JSON.stringify(trialData || []));
+  localStorage.setItem('trialData_snapshots', JSON.stringify(snapshots));
+  loadSnapshots();
+  showToast(TR[$('languageSelect').value].snapshotSaved,'success');
+}
+$('saveSnapshotBtn').addEventListener('click', ()=>{
+  const lang = $('languageSelect').value;
+  const label = prompt(TR[lang].saveSnapshotPrompt, new Date().getFullYear());
+  if(label) saveSnapshot(label.trim());
+});
+function renderSnapshotSelects(){
+  const sa = $('snapshotA'), sb = $('snapshotB'); sa.innerHTML = '<option value="">--</option>'; sb.innerHTML = '<option value="">--</option>';
+  const keys = Object.keys(snapshots||{}).sort().reverse();
+  if(keys.length===0){
+    sa.innerHTML = `<option value="">${TR[$('languageSelect').value].emptySnapshots}</option>`;
+    sb.innerHTML = `<option value="">${TR[$('languageSelect').value].emptySnapshots}</option>`;
+    return;
+  }
+  keys.forEach(k=>{ const o1=document.createElement('option'); o1.value=k; o1.textContent=k; sa.appendChild(o1); const o2=document.createElement('option'); o2.value=k; o2.textContent=k; sb.appendChild(o2); });
+}
+
+/* Comparison logic */
 let compareChart = null;
 $('compareBtn').addEventListener('click', ()=>{
-  const a = $('snapshotA').value, b = $('snapshotB').value;
-  if(!a || !b){ showToast(texts[$('languageSelect').value].chooseSnapshots,'warning'); return; }
-  const dataA = snapshots[a] || [];
-  const dataB = snapshots[b] || [];
+  const a=$('snapshotA').value, b=$('snapshotB').value;
+  if(!a || !b){ showToast(TR[$('languageSelect').value].chooseSnapshots,'warning'); return; }
+  const dataA = snapshots[a] || [], dataB = snapshots[b] || [];
   compareSnapshots(a,b,dataA,dataB);
 });
 $('clearCompareBtn').addEventListener('click', ()=>{ renderAll(); if(compareChart) try{ compareChart.destroy(); }catch{} showToast('تم مسح المقارنة','info'); });
@@ -558,11 +545,9 @@ function compareSnapshots(labelA,labelB,dataA,dataB){
   const labels = [ $('languageSelect').value === 'ar' ? 'الأصول' : 'Assets', $('languageSelect').value === 'ar' ? 'الخصوم' : 'Liabilities', $('languageSelect').value === 'ar' ? 'الإيرادات' : 'Revenue', $('languageSelect').value === 'ar' ? 'المصروفات' : 'Expenses', $('languageSelect').value === 'ar' ? 'أخرى' : 'Other' ];
   const valsA = [Math.abs(aggA.assets), Math.abs(aggA.liabilities), Math.abs(aggA.revenue), Math.abs(aggA.expense), Math.abs(aggA.other)].map(convertCurrencyLocal);
   const valsB = [Math.abs(aggB.assets), Math.abs(aggB.liabilities), Math.abs(aggB.revenue), Math.abs(aggB.expense), Math.abs(aggB.other)].map(convertCurrencyLocal);
-
   const diffs = valsB.map((v,i)=> v - (valsA[i]||0));
-  const pct = valsA.map((v,i)=> v ? (diffs[i]/v)*100 : 0);
+  const pct  = valsA.map((v,i)=> v ? (diffs[i]/v)*100 : 0);
 
-  const sumArea = $('compareSummary');
   let html = `<h6>مقارنة: ${esc(labelA)} ⟷ ${esc(labelB)}</h6>`;
   html += '<table class="table table-sm"><thead><tr><th>بند</th><th class="text-end">القيمة A</th><th class="text-end">القيمة B</th><th class="text-end">الفرق</th><th class="text-end">النسبة</th></tr></thead><tbody>';
   labels.forEach((lab,i)=>{
@@ -575,108 +560,73 @@ function compareSnapshots(labelA,labelB,dataA,dataB){
     </tr>`;
   });
   html += '</tbody></table>';
-  sumArea.innerHTML = html;
+  $('compareSummary').innerHTML = html;
 
   const ctx = $('compareChart').getContext('2d');
   if(compareChart) try{ compareChart.destroy(); }catch(e){}
   compareChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [
-        { label: labelA, data: valsA, backgroundColor: 'rgba(13,110,253,0.8)' },
-        { label: labelB, data: valsB, backgroundColor: 'rgba(102,16,242,0.8)' }
-      ]
-    },
-    options: { responsive:true, scales:{ y:{ beginAtZero:true } } }
+    type:'bar',
+    data:{ labels, datasets:[
+      { label: labelA, data: valsA, backgroundColor: 'rgba(13,110,253,0.85)' },
+      { label: labelB, data: valsB, backgroundColor: 'rgba(102,16,242,0.85)' }
+    ]},
+    options:{ responsive:true, scales:{ y:{ beginAtZero:true } } }
   });
 }
 
-/* =========================
-   Export functions
-   ========================= */
+/* Export PDF & Word */
 $('exportPdfBtn').addEventListener('click', ()=>{
-  if(!(trialData && trialData.length) && Object.keys(snapshots||{}).length===0){ showToast(texts[$('languageSelect').value].exportNoData,'warning'); return; }
+  // ensure content exists
+  if(!(trialData && trialData.length) && Object.keys(snapshots||{}).length===0){ showToast(TR[$('languageSelect').value].exportNoData,'warning'); return; }
   const el = document.querySelector('main');
-  const opt = { margin:0.35, filename:'financial_report.pdf', image:{type:'jpeg',quality:0.95}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'in', format:'a4', orientation:'landscape'} };
   const wm = $('wmLogo'); const oldOp = wm.style.opacity; wm.style.opacity = '0.12';
+  const opt = { margin:0.35, filename:'financial_report.pdf', image:{type:'jpeg',quality:0.95}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'in', format:'a4', orientation:'landscape'} };
   html2pdf().set(opt).from(el).save().finally(()=>{ wm.style.opacity = oldOp || ''; });
 });
 
-/* export Word (simple HTML-to-doc) */
+/* Export Word (basic HTML->.doc) - ensures logo at top */
 $('exportWordBtn').addEventListener('click', ()=>{
-  if(!(trialData && trialData.length)){ showToast(texts[$('languageSelect').value].exportNoData,'warning'); return; }
-  // Build HTML snapshot (include watermark/logo)
-  const clone = document.querySelector('main').cloneNode(true);
-  // inline simple style for Word compatibility
-  const html = `
-    <html lang="${document.documentElement.lang}">
-      <head><meta charset="utf-8"><title>Report</title></head>
-      <body>
-        <div style="text-align:center"><img src="assets/logo.png" alt="logo" style="height:60px"/></div>
-        ${clone.innerHTML}
-      </body>
-    </html>`;
-  const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+  if(!(trialData && trialData.length) && Object.keys(snapshots||{}).length===0){ showToast(TR[$('languageSelect').value].exportNoData,'warning'); return; }
+  const headerHtml = `<div style="text-align:center;"><img src="assets/logo.png" style="height:60px"/><h2>${esc($('brandText').textContent)}</h2></div><hr/>`;
+  const content = headerHtml + document.querySelector('main').innerHTML;
+  const blob = new Blob(['\ufeff', content], { type: 'application/msword' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'financial_report.doc';
-  document.body.appendChild(a); a.click(); a.remove();
+  const a = document.createElement('a'); a.href=url; a.download='financial_report.doc'; a.click();
   URL.revokeObjectURL(url);
 });
 
-/* export Excel */
-$('exportExcelBtn').addEventListener('click', ()=>{
-  if(!(trialData && trialData.length)){ showToast(texts[$('languageSelect').value].exportNoData,'warning'); return; }
-  const ws = XLSX.utils.json_to_sheet(trialData);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'TrialBalance');
-  XLSX.writeFile(wb, 'trialbalance.xlsx');
-});
-
-/* =========================
-   Render main UI
-   ========================= */
+/* Render all (main entry) */
 function renderAll(){
+  renderStaticText();
   renderKPIs(trialData || []);
   renderStatements(trialData || []);
-  renderSnapshotOptions();
-  // direction + labels:
-  document.getElementById('btnInput').textContent = (document.documentElement.lang==='ar') ? 'إدخال' : 'Input';
-  document.getElementById('btnDashboard').textContent = (document.documentElement.lang==='ar') ? 'داشبورد' : 'Dashboard';
-  document.getElementById('btnAnalysis').textContent = (document.documentElement.lang==='ar') ? 'تحليلات' : 'Analysis';
-  // placeholders / fx
-  const lang = $('languageSelect').value;
-  $('fxRateInput').placeholder = texts[lang].fxPlaceholder;
-}
-renderAll();
-
-/* Update when storage changes (other tabs) */
-window.addEventListener('storage', (e)=>{
-  if(e.key === 'trialData'){
-    trialData = JSON.parse(e.newValue || '[]'); renderAll(); showToast('تم تحديث البيانات من التخزين','info');
-  }
-  if(e.key === SNAPSHOT_KEY){
-    loadSnapshots(); renderAll();
-  }
-});
-
-/* initial UX: if no trialData, leave hint */
-if(!trialData || !trialData.length){
-  // leave empty-hint text inside sections
-  $('balanceSheetArea').innerHTML = `<div class="empty-hint">${texts[$('languageSelect').value].noData}</div>`;
-  $('incomeStatementArea').innerHTML = `<div class="empty-hint">${texts[$('languageSelect').value].noData}</div>`;
-  $('cashFlowArea').innerHTML = `<div class="empty-hint">${texts[$('languageSelect').value].noData}</div>`;
-  $('equityArea').innerHTML = `<div class="empty-hint">${texts[$('languageSelect').value].noData}</div>`;
+  loadSnapshots();
+  renderSnapshotSelects();
 }
 
-/* UX: navigation buttons already are links to other pages (index.html, input.html, dashboard.html, analysis.html) */
-/* If you want those to open in a new tab, adjust target attributes. */
+/* Initial load */
+(function init(){
+  populateControls();
+  loadSnapshots();
+  renderAll();
 
+  // react to storage updates from other pages (e.g., input.html)
+  window.addEventListener('storage', (e)=>{
+    if(e.key === 'trialData'){ trialData = JSON.parse(e.newValue || '[]'); renderAll(); showToast('تم تحديث البيانات من الإدخال','info'); }
+    if(e.key === 'trialData_snapshots'){ loadSnapshots(); }
+  });
+
+  // ensure at least friendly defaults
+  if(!trialData.length){
+    // keep empty — user expected to import from input page; but show message in areas
+    $('balanceSheetArea').innerHTML = `<div class="small-muted">${TR[$('languageSelect').value].noData}</div>`;
+    $('incomeStatementArea').innerHTML = `<div class="small-muted">${TR[$('languageSelect').value].noData}</div>`;
+    $('cashFlowArea').innerHTML = `<div class="small-muted">${TR[$('languageSelect').value].noData}</div>`;
+  }
+})();
 </script>
 
-<!-- Bootstrap JS (for accordion) -->
+<!-- Bootstrap JS (accordion) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
