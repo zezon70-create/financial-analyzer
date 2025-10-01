@@ -22,7 +22,7 @@
   --card:#fff;
   --text:#0b1220;
   --muted:#6c757d;
-  --glass: rgba(255,255,255,0.7);
+  --glass: rgba(255,255,255,0.75);
   --radius:12px;
 }
 html,body{height:100%}
@@ -58,7 +58,8 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
 
 /* KPIs */
 .kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:12px 0}
-.kpi{background:linear-gradient(180deg,var(--card),#f8fbff);padding:14px;border-radius:10px;text-align:center;box-shadow:0 8px 20px rgba(2,6,23,0.04)}
+.kpi{background:linear-gradient(180deg,var(--card),#f8fbff);padding:14px;border-radius:10px;text-align:center;box-shadow:0 8px 20px rgba(2,6,23,0.04);transition:transform .12s}
+.kpi:hover{transform:translateY(-6px)}
 .kpi .num{font-weight:800;font-size:1.12rem;margin-top:6px}
 .kpi .label{font-size:.85rem;color:var(--muted)}
 
@@ -66,6 +67,7 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
 .table thead th{border-bottom:1px solid rgba(0,0,0,0.06)}
 .table tbody tr:hover{background:rgba(13,110,253,0.03)}
 .input-sm{height:40px;padding:.45rem .6rem}
+.select-type{min-width:160px}
 
 /* Buttons */
 .btn-glow{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));border:none;color:#fff;box-shadow:0 10px 40px rgba(102,16,242,0.12)}
@@ -79,6 +81,13 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
 /* small helpers */
 .small-muted{color:var(--muted);font-size:.95rem}
 .highlight{color:var(--accent-1);font-weight:700}
+.empty-hint{padding:18px;text-align:center;color:var(--muted)}
+.badge-note{background:linear-gradient(90deg,#ffc107,#ffb020);padding:6px 10px;border-radius:999px;color:#111;font-weight:800}
+
+/* ensure readable text in dark mode */
+body[data-theme="dark"] { color: #e6eef6; }
+body[data-theme="dark"] a, body[data-theme="dark"] .title { color: #fff; }
+body[data-theme="dark"] .small-muted{ color: #9aa6b2; }
 
 /* responsive */
 @media (max-width:900px){ .controls{gap:.4rem} .kpi-row{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))} }
@@ -86,7 +95,7 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
 </head>
 <body data-theme="light">
 
-<!-- Watermark (captured in PDF) -->
+<!-- Watermark (captured in PDF/Word) -->
 <div class="watermark" aria-hidden="true"><img src="assets/logo.png" alt="logo" id="wmLogo"></div>
 
 <!-- Header -->
@@ -100,10 +109,10 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
   </div>
 
   <div class="controls" role="navigation" aria-label="controls">
-    <a class="btn btn-sm btn-outline-secondary" href="index.html" title="الرئيسية"><i class="bi bi-house"></i></a>
-    <a class="btn btn-sm btn-outline-secondary" href="input.html" title="إدخال البيانات">إدخال</a>
-    <a class="btn btn-sm btn-outline-secondary" href="dashboard.html" title="لوحة التحكم">داشبورد</a>
-    <a class="btn btn-sm btn-outline-secondary" href="analysis.html" title="التحليلات المتقدمة">تحليلات</a>
+    <a class="btn btn-sm btn-outline-secondary" href="index.html" title="الرئيسية" id="btnHome"><i class="bi bi-house"></i></a>
+    <a class="btn btn-sm btn-outline-secondary" href="input.html" title="إدخال البيانات" id="btnInput">إدخال</a>
+    <a class="btn btn-sm btn-outline-secondary" href="dashboard.html" title="لوحة التحكم" id="btnDashboard">داشبورد</a>
+    <a class="btn btn-sm btn-outline-secondary" href="analysis.html" title="التحليلات المتقدمة" id="btnAnalysis">تحليلات</a>
 
     <select id="currencySelect" class="form-select form-select-sm" title="اختر العملة" aria-label="اختر العملة" style="min-width:92px"></select>
     <input id="fxRateInput" class="form-control form-control-sm" style="width:110px" title="سعر الصرف (قيمة 1 عملة مقابل EGP)" aria-label="سعر الصرف" placeholder="FX" />
@@ -114,6 +123,7 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
     </div>
 
     <button id="exportPdfBtn" class="btn btn-outline-primary btn-sm ms-2" title="تصدير PDF"><i class="bi bi-file-earmark-pdf"></i></button>
+    <button id="exportWordBtn" class="btn btn-outline-secondary btn-sm ms-1" title="تصدير Word"><i class="bi bi-file-earmark-word"></i></button>
     <button id="exportExcelBtn" class="btn btn-outline-success btn-sm ms-1" title="تصدير Excel"><i class="bi bi-file-earmark-excel"></i></button>
   </div>
 </header>
@@ -126,7 +136,7 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
     <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
       <div>
         <h3 id="heroTitle" style="margin:0">تقرير مالي تفصيلي — <span id="reportLabel" class="highlight">عرض كامل</span></h3>
-        <p class="small-muted" id="heroDesc">قوائم مالية مفصلة، مقارنات فترات، انحراف ونسب، وتصدير احترافي مع شعار وعلامة مائية.</p>
+        <p class="small-muted" id="heroDesc">قوائم مفصّلة، مقارنة فترات، انحراف ونسب، وتصدير احترافي مع شعار وعلامة مائية.</p>
       </div>
 
       <div class="d-flex gap-2 align-items-center flex-wrap">
@@ -244,28 +254,33 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
     </div>
   </section>
 
+  <footer class="text-center py-3 small">&copy; 2025 المحلل المالي — جميع الحقوق محفوظة</footer>
 </main>
 
 <!-- Scripts -->
 <script>
-// ---------------------- Helpers ----------------------
+/* =========================
+   Helpers
+   ========================= */
 const $ = id => document.getElementById(id);
 function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function toNum(v){ const n = Number(String(v).toString().replace(/[, ]+/g,'')); return isNaN(n)?0:n; }
+function toNum(v){ const n = Number(String(v||'').toString().replace(/[, ]+/g,'')); return isNaN(n)?0:n; }
 function formatNumber(v){ return Number(v).toLocaleString(undefined,{maximumFractionDigits:2,minimumFractionDigits:0}); }
-function showToast(text, type='info'){ const div=document.createElement('div'); div.className=`toast align-items-center text-bg-${type} border-0 show`; div.style.minWidth='220px'; div.style.marginTop='6px'; div.innerHTML=`<div class="d-flex"><div class="toast-body">${esc(text)}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.closest('.toast').remove()"></button></div>`; document.getElementById('mainArea').appendChild(div); setTimeout(()=>div.remove(),2500); }
+function showToast(text, type='info'){ const div=document.createElement('div'); div.className=`toast align-items-center text-bg-${type} border-0 show`; div.style.minWidth='220px'; div.style.marginTop='6px'; div.innerHTML=`<div class="d-flex"><div class="toast-body">${esc(text)}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.closest('.toast').remove()"></button></div>`; document.body.appendChild(div); setTimeout(()=>div.remove(),3500); }
 
-// ---------------------- State & Defaults ----------------------
+/* =========================
+   State & Defaults
+   ========================= */
 let trialData = JSON.parse(localStorage.getItem('trialData')||'[]'); // expects [{Account,Type,Code,Debit,Credit},...]
-const SNAP_PREFIX = 'trialData_snapshot_';
-let snapshots = JSON.parse(localStorage.getItem('trialData_snapshots')||'{}'); // { label: [...data...] }
+const SNAPSHOT_KEY = 'trialData_snapshots';
+let snapshots = JSON.parse(localStorage.getItem(SNAPSHOT_KEY)||'{}'); // { label: [...data...] }
 const FX_DEFAULTS = { USD:31, EUR:34 };
 let fxRates = JSON.parse(localStorage.getItem('fa_fx')||'null') || FX_DEFAULTS;
 
-// UI initial data
+/* UI data */
 const LANGS = [{v:'ar',label:'العربية'},{v:'en',label:'English'}];
 const CURRENCIES = ['EGP','USD','EUR'];
-const translations = {
+const texts = {
   ar: {
     saveSnapshotPrompt: 'ادخل اسم/سنة للحفظ (مثال: 2024)',
     emptySnapshots: 'لا توجد لقطات محفوظة.',
@@ -273,7 +288,7 @@ const translations = {
     chooseSnapshots: 'اختر لقطتين للمقارنة',
     noData: 'لا توجد بيانات لعرضها.',
     exportNoData: 'لا توجد بيانات للتصدير',
-    fxPlaceholder: 'سعر الصرف (1 عملة = ؟ EGP)'
+    fxPlaceholder: 'سعر الصرف (1 = ؟ ج.م)'
   },
   en: {
     saveSnapshotPrompt: 'Enter label/year to save snapshot (e.g. 2024)',
@@ -282,18 +297,20 @@ const translations = {
     chooseSnapshots: 'Choose two snapshots to compare',
     noData: 'No data to display.',
     exportNoData: 'No data to export',
-    fxPlaceholder: 'FX rate (1 currency = ? EGP)'
+    fxPlaceholder: 'FX rate (1 = ? EGP)'
   }
 };
 
-// ---------------------- Controls populate & preferences ----------------------
+/* =========================
+   Controls populate & preferences
+   ========================= */
 function populateControls(){
-  // language
   const langSel = $('languageSelect'); langSel.innerHTML='';
   LANGS.forEach(l=>{ const o=document.createElement('option'); o.value=l.v; o.textContent=l.label; langSel.appendChild(o); });
-  // currency
+
   const curSel = $('currencySelect'); curSel.innerHTML='';
   CURRENCIES.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; curSel.appendChild(o); });
+
   // load saved
   const savedLang = localStorage.getItem('fa_lang') || localStorage.getItem('lang') || 'ar';
   const savedTheme = localStorage.getItem('fa_theme') || localStorage.getItem('theme') || 'light';
@@ -302,49 +319,56 @@ function populateControls(){
   document.body.dataset.theme = savedTheme;
   $('darkModeToggle').checked = (savedTheme === 'dark');
   $('currencySelect').value = savedCur;
-  // fx input
   $('fxRateInput').value = localStorage.getItem('fa_fx_custom') || '';
-  $('fxRateInput').placeholder = translations[savedLang].fxPlaceholder;
-}
+  $('fxRateInput').placeholder = texts[savedLang].fxPlaceholder;
 
+  // direction
+  setDirection(savedLang);
+}
 populateControls();
 
-// theme toggle
+// direction helper on language
+function setDirection(lang){
+  if(lang === 'ar'){ document.documentElement.lang='ar'; document.documentElement.dir='rtl'; }
+  else { document.documentElement.lang='en'; document.documentElement.dir='ltr'; }
+}
+
+/* theme toggle */
 $('darkModeToggle').addEventListener('change', e=>{
   const val = e.target.checked ? 'dark' : 'light';
   document.body.dataset.theme = val;
   localStorage.setItem('fa_theme', val);
 });
 
-// language switch (re-render labels)
+/* language change */
 $('languageSelect').addEventListener('change', ()=>{
   const lang = $('languageSelect').value;
   localStorage.setItem('fa_lang', lang);
-  $('fxRateInput').placeholder = translations[lang].fxPlaceholder;
+  $('fxRateInput').placeholder = texts[lang].fxPlaceholder;
+  setDirection(lang);
   renderAll();
 });
 
-// currency change
+/* currency change */
 $('currencySelect').addEventListener('change', ()=>{
   localStorage.setItem('fa_currency', $('currencySelect').value);
   renderAll();
 });
 
-// fx manual input (user-provided rate)
+/* fx input (manual) */
 $('fxRateInput').addEventListener('change', ()=>{
   const v = toNum($('fxRateInput').value);
   if(v>0){
     localStorage.setItem('fa_fx_custom', v);
-    // set fxRates for USD/EUR depending on selected currency (if user selects USD as currency, use value)
-    // We store generic value: user must enter rate relative to EGP (1 USD = X EGP)
+    // store in fxRates as CUSTOM for convenience
     fxRates['CUSTOM'] = v;
     localStorage.setItem('fa_fx', JSON.stringify(fxRates));
-    showToast('تم حفظ سعر الصرف محليًا','success');
+    showToast(texts[$('languageSelect').value].snapshotSaved,'success');
     renderAll();
   }
 });
 
-// attempt automatic FX fetch (non-blocking)
+/* fetch FX (non-blocking) */
 async function fetchFx(){
   try{
     const resp = await fetch('https://api.exchangerate.host/latest?base=EGP&symbols=USD,EUR');
@@ -355,39 +379,39 @@ async function fetchFx(){
       if(data.rates.EUR) fxRates.EUR = 1 / data.rates.EUR;
       localStorage.setItem('fa_fx', JSON.stringify(fxRates));
     }
-  }catch(e){
-    // silent fallback to defaults
-    console.warn('FX fetch failed, using saved/default rates.');
-  }
+  }catch(e){ console.warn('FX fetch failed'); }
 }
 fetchFx();
 
-// ---------------------- Snapshots (save/load for comparisons) ----------------------
+/* =========================
+   Snapshots handling
+   ========================= */
 function loadSnapshots(){
-  snapshots = JSON.parse(localStorage.getItem('trialData_snapshots')||'{}');
-  renderSnapshotSelects();
+  snapshots = JSON.parse(localStorage.getItem(SNAPSHOT_KEY)||'{}');
+  renderSnapshotOptions();
 }
 function saveSnapshot(label){
   if(!label || !label.trim()) return;
-  snapshots = JSON.parse(localStorage.getItem('trialData_snapshots')||'{}');
+  snapshots = JSON.parse(localStorage.getItem(SNAPSHOT_KEY)||'{}');
   snapshots[label] = JSON.parse(JSON.stringify(trialData));
-  localStorage.setItem('trialData_snapshots', JSON.stringify(snapshots));
+  localStorage.setItem(SNAPSHOT_KEY, JSON.stringify(snapshots));
   loadSnapshots();
-  showToast(translations[$('languageSelect').value].snapshotSaved,'success');
+  showToast(texts[$('languageSelect').value].snapshotSaved,'success');
 }
 $('saveSnapshotBtn').addEventListener('click', ()=>{
   const lang = $('languageSelect').value;
-  const label = prompt(translations[lang].saveSnapshotPrompt, new Date().getFullYear());
+  const label = prompt(texts[lang].saveSnapshotPrompt, new Date().getFullYear());
   if(label) saveSnapshot(label.trim());
 });
+loadSnapshots();
 
-function renderSnapshotSelects(){
-  const sa = $('snapshotA'); const sb = $('snapshotB');
+function renderSnapshotOptions(){
+  const sa = $('snapshotA'), sb = $('snapshotB');
   sa.innerHTML = '<option value="">--</option>'; sb.innerHTML = '<option value="">--</option>';
   const keys = Object.keys(snapshots||{}).sort().reverse();
   if(keys.length===0){
-    sa.innerHTML = `<option value="">${translations[$('languageSelect').value].emptySnapshots}</option>`;
-    sb.innerHTML = `<option value="">${translations[$('languageSelect').value].emptySnapshots}</option>`;
+    sa.innerHTML = `<option value="">${texts[$('languageSelect').value].emptySnapshots}</option>`;
+    sb.innerHTML = `<option value="">${texts[$('languageSelect').value].emptySnapshots}</option>`;
     return;
   }
   keys.forEach(k=>{
@@ -395,9 +419,10 @@ function renderSnapshotSelects(){
     const o2 = document.createElement('option'); o2.value = k; o2.textContent = k; sb.appendChild(o2);
   });
 }
-loadSnapshots();
 
-// ---------------------- Render helpers (summaries, statements) ----------------------
+/* =========================
+   Aggregation & rendering
+   ========================= */
 function getCurrencySymbol(){
   const cur = $('currencySelect').value || 'EGP';
   if(cur === 'EGP') return 'ج.م';
@@ -410,17 +435,15 @@ function convertCurrencyLocal(value){
   const custom = Number(localStorage.getItem('fa_fx_custom')||'');
   if(cur === 'EGP') return toNum(value);
   if(custom>0 && cur !== 'EGP'){
-    // assume user input is rate for selected currency to EGP: 1 USD = custom EGP => value (EGP) -> value/custom
     return toNum(value) / custom;
   }
   const rate = fxRates[cur] || FX_DEFAULTS[cur] || 1;
   return toNum(value) / rate;
 }
 
-// build aggregated categories (simple classification)
 function aggregateData(data){
   const agg = { assets:0, liabilities:0, equity:0, revenue:0, expense:0, other:0 };
-  data.forEach(r=>{
+  (data||[]).forEach(r=>{
     const debit = toNum(r.Debit), credit = toNum(r.Credit);
     const net = debit - credit;
     const type = String(r.Type||r.Account||'').toLowerCase();
@@ -430,7 +453,6 @@ function aggregateData(data){
     else if(/revenue|sales|إيراد|مبيعات/.test(type)) agg.revenue += -net;
     else if(/expense|مصروف|cogs|تكلفة|مصاريف|expense/.test(type)) agg.expense += net;
     else {
-      // fallback account name check
       const acc = String(r.Account||'').toLowerCase();
       if(/النقد|bank|cash|نقد/.test(acc)) agg.assets += net;
       else if(/المورد|payable|دائن/.test(acc)) agg.liabilities += -net;
@@ -443,12 +465,11 @@ function aggregateData(data){
   return agg;
 }
 
-// render KPIs
 function renderKPIs(data){
   const kpiRow = $('kpiRow'); kpiRow.innerHTML = '';
-  const agg = aggregateData(data);
+  const agg = aggregateData(data||[]);
   const items = [
-    {label: $('languageSelect').value === 'ar' ? 'عدد الحسابات' : 'Accounts', value: data.length},
+    {label: $('languageSelect').value === 'ar' ? 'عدد الحسابات' : 'Accounts', value: (data||[]).length},
     {label: $('languageSelect').value === 'ar' ? 'الأصول (تقريبي)' : 'Assets', value: agg.assets},
     {label: $('languageSelect').value === 'ar' ? 'الخصوم (تقريبي)' : 'Liabilities', value: agg.liabilities},
     {label: $('languageSelect').value === 'ar' ? 'الإيرادات' : 'Revenue', value: agg.revenue},
@@ -463,10 +484,8 @@ function renderKPIs(data){
   });
 }
 
-// render balance sheet, income statement, cash flow (simplified from trial data)
 function renderStatements(data){
-  // Balance Sheet: assets vs liabilities+equity
-  const agg = aggregateData(data);
+  const agg = aggregateData(data||[]);
   const bsArea = $('balanceSheetArea'); bsArea.innerHTML = `
     <div class="row">
       <div class="col-md-6">
@@ -490,7 +509,6 @@ function renderStatements(data){
     </div>
   `;
 
-  // Income Statement: revenue - expense = net
   const incArea = $('incomeStatementArea'); const netProfit = agg.revenue - agg.expense;
   incArea.innerHTML = `
     <table class="table table-sm">
@@ -502,9 +520,8 @@ function renderStatements(data){
     </table>
   `;
 
-  // Cash Flow (very simplified — treat net cash = assets delta; here we show placeholders)
   const cfArea = $('cashFlowArea'); cfArea.innerHTML = `
-    <div class="small-muted">هذا عرض مبسط: استخرج التدفقات النقدية التفصيلية من الدفاتر. (سيتم دعم تفصيل أعمق في التحليلات المتقدمة)</div>
+    <div class="small-muted">عرض مبسّط: للحصول على تفاصيل التدفقات النقدية استخدم وظائف التحليل المتقدمة.</div>
     <table class="table table-sm mt-2">
       <tbody>
         <tr><td>التدفق الصافي (تقريبي)</td><td class="text-end">${formatNumber(convertCurrencyLocal(agg.assets - (agg.liabilities + agg.equity)))} ${getCurrencySymbol()}</td></tr>
@@ -512,7 +529,6 @@ function renderStatements(data){
     </table>
   `;
 
-  // Equity movements (simple)
   const eqArea = $('equityArea'); eqArea.innerHTML = `
     <table class="table table-sm">
       <tbody>
@@ -524,11 +540,13 @@ function renderStatements(data){
   `;
 }
 
-// ---------------------- Comparison logic ----------------------
+/* =========================
+   Comparison between snapshots
+   ========================= */
 let compareChart = null;
 $('compareBtn').addEventListener('click', ()=>{
   const a = $('snapshotA').value, b = $('snapshotB').value;
-  if(!a || !b){ showToast(translations[$('languageSelect').value].chooseSnapshots,'warning'); return; }
+  if(!a || !b){ showToast(texts[$('languageSelect').value].chooseSnapshots,'warning'); return; }
   const dataA = snapshots[a] || [];
   const dataB = snapshots[b] || [];
   compareSnapshots(a,b,dataA,dataB);
@@ -536,18 +554,14 @@ $('compareBtn').addEventListener('click', ()=>{
 $('clearCompareBtn').addEventListener('click', ()=>{ renderAll(); if(compareChart) try{ compareChart.destroy(); }catch{} showToast('تم مسح المقارنة','info'); });
 
 function compareSnapshots(labelA,labelB,dataA,dataB){
-  // aggregate both
-  const aggA = aggregateData(dataA);
-  const aggB = aggregateData(dataB);
+  const aggA = aggregateData(dataA), aggB = aggregateData(dataB);
   const labels = [ $('languageSelect').value === 'ar' ? 'الأصول' : 'Assets', $('languageSelect').value === 'ar' ? 'الخصوم' : 'Liabilities', $('languageSelect').value === 'ar' ? 'الإيرادات' : 'Revenue', $('languageSelect').value === 'ar' ? 'المصروفات' : 'Expenses', $('languageSelect').value === 'ar' ? 'أخرى' : 'Other' ];
   const valsA = [Math.abs(aggA.assets), Math.abs(aggA.liabilities), Math.abs(aggA.revenue), Math.abs(aggA.expense), Math.abs(aggA.other)].map(convertCurrencyLocal);
   const valsB = [Math.abs(aggB.assets), Math.abs(aggB.liabilities), Math.abs(aggB.revenue), Math.abs(aggB.expense), Math.abs(aggB.other)].map(convertCurrencyLocal);
 
-  // compute diffs and percent change
   const diffs = valsB.map((v,i)=> v - (valsA[i]||0));
   const pct = valsA.map((v,i)=> v ? (diffs[i]/v)*100 : 0);
 
-  // summary HTML
   const sumArea = $('compareSummary');
   let html = `<h6>مقارنة: ${esc(labelA)} ⟷ ${esc(labelB)}</h6>`;
   html += '<table class="table table-sm"><thead><tr><th>بند</th><th class="text-end">القيمة A</th><th class="text-end">القيمة B</th><th class="text-end">الفرق</th><th class="text-end">النسبة</th></tr></thead><tbody>';
@@ -563,7 +577,6 @@ function compareSnapshots(labelA,labelB,dataA,dataB){
   html += '</tbody></table>';
   sumArea.innerHTML = html;
 
-  // draw compare chart (stacked bars)
   const ctx = $('compareChart').getContext('2d');
   if(compareChart) try{ compareChart.destroy(); }catch(e){}
   compareChart = new Chart(ctx, {
@@ -579,52 +592,87 @@ function compareSnapshots(labelA,labelB,dataA,dataB){
   });
 }
 
-// ---------------------- Export functions ----------------------
+/* =========================
+   Export functions
+   ========================= */
 $('exportPdfBtn').addEventListener('click', ()=>{
-  // ensure watermark visible (it is)
-  if(!(trialData && trialData.length) && Object.keys(snapshots||{}).length===0){ showToast(translations[$('languageSelect').value].exportNoData,'warning'); return; }
+  if(!(trialData && trialData.length) && Object.keys(snapshots||{}).length===0){ showToast(texts[$('languageSelect').value].exportNoData,'warning'); return; }
   const el = document.querySelector('main');
   const opt = { margin:0.35, filename:'financial_report.pdf', image:{type:'jpeg',quality:0.95}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'in', format:'a4', orientation:'landscape'} };
-  // temporarily ensure watermark opacity
-  const wm = document.getElementById('wmLogo'); const oldOp = wm.style.opacity; wm.style.opacity = '0.12';
+  const wm = $('wmLogo'); const oldOp = wm.style.opacity; wm.style.opacity = '0.12';
   html2pdf().set(opt).from(el).save().finally(()=>{ wm.style.opacity = oldOp || ''; });
 });
 
+/* export Word (simple HTML-to-doc) */
+$('exportWordBtn').addEventListener('click', ()=>{
+  if(!(trialData && trialData.length)){ showToast(texts[$('languageSelect').value].exportNoData,'warning'); return; }
+  // Build HTML snapshot (include watermark/logo)
+  const clone = document.querySelector('main').cloneNode(true);
+  // inline simple style for Word compatibility
+  const html = `
+    <html lang="${document.documentElement.lang}">
+      <head><meta charset="utf-8"><title>Report</title></head>
+      <body>
+        <div style="text-align:center"><img src="assets/logo.png" alt="logo" style="height:60px"/></div>
+        ${clone.innerHTML}
+      </body>
+    </html>`;
+  const blob = new Blob(['\ufeff', html], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'financial_report.doc';
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+});
+
+/* export Excel */
 $('exportExcelBtn').addEventListener('click', ()=>{
-  if(!(trialData && trialData.length)){ showToast(translations[$('languageSelect').value].exportNoData,'warning'); return; }
+  if(!(trialData && trialData.length)){ showToast(texts[$('languageSelect').value].exportNoData,'warning'); return; }
   const ws = XLSX.utils.json_to_sheet(trialData);
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, 'TrialBalance');
   XLSX.writeFile(wb, 'trialbalance.xlsx');
 });
 
-// ---------------------- Render all ----------------------
+/* =========================
+   Render main UI
+   ========================= */
 function renderAll(){
-  // data source: current trialData (loaded) — but if snapshots selected for main view maybe use them — for now main shows current trialData
   renderKPIs(trialData || []);
   renderStatements(trialData || []);
-  renderSnapshotSelects();
+  renderSnapshotOptions();
+  // direction + labels:
+  document.getElementById('btnInput').textContent = (document.documentElement.lang==='ar') ? 'إدخال' : 'Input';
+  document.getElementById('btnDashboard').textContent = (document.documentElement.lang==='ar') ? 'داشبورد' : 'Dashboard';
+  document.getElementById('btnAnalysis').textContent = (document.documentElement.lang==='ar') ? 'تحليلات' : 'Analysis';
+  // placeholders / fx
+  const lang = $('languageSelect').value;
+  $('fxRateInput').placeholder = texts[lang].fxPlaceholder;
 }
+renderAll();
 
-function renderSnapshotSelects(){
-  // reuse function earlier to show snapshot options
-  loadSnapshots();
-}
-
-loadSnapshots(); renderAll();
-
-// ---------------------- Storage sync & init ----------------------
+/* Update when storage changes (other tabs) */
 window.addEventListener('storage', (e)=>{
   if(e.key === 'trialData'){
     trialData = JSON.parse(e.newValue || '[]'); renderAll(); showToast('تم تحديث البيانات من التخزين','info');
   }
-  if(e.key === 'trialData_snapshots'){
-    loadSnapshots();
+  if(e.key === SNAPSHOT_KEY){
+    loadSnapshots(); renderAll();
   }
 });
 
-// make sure fx input placeholder is set
-$('fxRateInput').placeholder = translations[$('languageSelect').value].fxPlaceholder;
+/* initial UX: if no trialData, leave hint */
+if(!trialData || !trialData.length){
+  // leave empty-hint text inside sections
+  $('balanceSheetArea').innerHTML = `<div class="empty-hint">${texts[$('languageSelect').value].noData}</div>`;
+  $('incomeStatementArea').innerHTML = `<div class="empty-hint">${texts[$('languageSelect').value].noData}</div>`;
+  $('cashFlowArea').innerHTML = `<div class="empty-hint">${texts[$('languageSelect').value].noData}</div>`;
+  $('equityArea').innerHTML = `<div class="empty-hint">${texts[$('languageSelect').value].noData}</div>`;
+}
+
+/* UX: navigation buttons already are links to other pages (index.html, input.html, dashboard.html, analysis.html) */
+/* If you want those to open in a new tab, adjust target attributes. */
 
 </script>
 
