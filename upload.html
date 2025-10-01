@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📊 رفع القوائم المالية | Financial Analyzer</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body {
+      font-family: "Tajawal", sans-serif;
+      background: linear-gradient(135deg, #141E30, #243B55);
+      color: #fff;
+      min-height: 100vh;
+    }
+    .navbar {
+      background: rgba(0,0,0,0.8);
+    }
+    .card {
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+      background: #1f2a38;
+      color: #fff;
+      transition: transform .3s ease;
+    }
+    .card:hover { transform: translateY(-5px); }
+    .btn-custom {
+      border-radius: 25px;
+      font-weight: bold;
+      padding: 10px 20px;
+    }
+    .dark-text { color: #eee; }
+    .form-control, .form-select {
+      border-radius: 15px;
+    }
+    .watermark {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      opacity: 0.1;
+      font-size: 80px;
+      font-weight: bold;
+      z-index: -1;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- نافيجشن -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold text-warning" href="index.html">Financial Analyzer</a>
+      <div>
+        <a href="input.html" class="btn btn-outline-light btn-sm mx-1">إدخال يدوي</a>
+        <a href="report.html" class="btn btn-outline-light btn-sm mx-1">التقارير</a>
+        <a href="advanced.html" class="btn btn-outline-light btn-sm mx-1">التحليلات المتقدمة</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-5">
+    <h2 class="text-center mb-4 text-warning">📂 رفع أو إدخال القوائم المالية</h2>
+    <div class="row g-4">
+
+      <!-- رفع الملفات -->
+      <div class="col-md-6">
+        <div class="card p-4 h-100">
+          <h4 class="mb-3">رفع ملف Excel/CSV</h4>
+          <input type="file" id="fileInput" class="form-control mb-3" accept=".xlsx,.xls,.csv" />
+          <button class="btn btn-success btn-custom w-100" onclick="parseFile()">📥 رفع وقراءة البيانات</button>
+        </
