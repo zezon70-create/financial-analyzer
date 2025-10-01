@@ -1,575 +1,644 @@
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>التحليلات المتقدمة — المحلل المالي</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>التحليلات المتقدمة — المحلل المالي</title>
 
-  <!-- CSS fonts & icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet"/>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+<!-- CSS libraries (Bootstrap RTL) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet"/>
 
-  <!-- Libraries -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<!-- JS libs -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
 
-  <style>
-    :root{
-      --bg:#f4f7fb; --card:#fff; --text:#111; --muted:#6c757d;
-      --accent1:#0d6efd; --accent2:#6610f2; --radius:12px;
-    }
-    html,body{height:100%;margin:0;font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;transition:background .18s,color .18s}
-    body.dark{ --bg:#071018; --card:#0b1116; --text:#e6eef6; --muted:#9aa6b2 }
-    header{position:sticky;top:0;background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#fff;padding:12px 18px;z-index:1200}
-    header .brand{display:flex;align-items:center;gap:12px}
-    header .brand img{height:44px;border-radius:8px;box-shadow:0 8px 26px rgba(0,0,0,0.15)}
-    header h1{margin:0;font-size:1.15rem}
-    .controls-bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px}
-    .controls-bar select,.controls-bar input{padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.08)}
-    .btn-main{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;border:none;padding:8px 12px;border-radius:8px;cursor:pointer}
-    .container{max-width:1200px;margin:18px auto;padding:0 14px}
-    .row-surface{background:var(--card);border-radius:var(--radius);padding:16px;box-shadow:0 10px 30px rgba(2,6,23,0.04);margin-bottom:16px;border:1px solid rgba(13,110,253,0.04)}
-    body.dark .row-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);border-color:rgba(255,255,255,0.03)}
-    h2.section-title{margin:0 0 10px 0;font-size:1.05rem}
-    .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
-    .kpi{background:linear-gradient(180deg,var(--card),#f8fbff);padding:12px;border-radius:10px;text-align:center;box-shadow:0 8px 20px rgba(2,6,23,0.04)}
-    .kpi .value{font-weight:800;font-size:1.05rem;margin-top:6px}
-    .flex-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-    .col-split{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    @media(max-width:900px){ .col-split{grid-template-columns:1fr} .controls-bar{justify-content:center} }
-    .table-fixed{max-height:300px;overflow:auto}
-    /* watermark for PDF/print */
-    .watermark{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;opacity:0.06}
-    .watermark img{max-width:520px;filter:grayscale(100%);opacity:0.12}
-    .explain{font-size:0.95rem;color:var(--muted)}
-    .small-muted{color:var(--muted);font-size:0.93rem}
-    .controls-compact{display:flex;gap:8px;align-items:center}
-    .compare-table th, .compare-table td{padding:8px;border-bottom:1px solid rgba(0,0,0,0.06)}
-    .chip{display:inline-block;padding:6px 10px;border-radius:999px;background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;font-weight:700}
-    .export-actions{display:flex;gap:8px;flex-wrap:wrap}
-    .export-actions button{padding:8px 10px;border-radius:8px;border:none;background:#0b5ed7;color:#fff;cursor:pointer}
-    /* ensure readable text in dark mode */
-    body.dark h2, body.dark .explain, body.dark .small-muted, body.dark table, body.dark p { color: var(--text); }
-    table{width:100%;border-collapse:collapse}
-  </style>
+<style>
+:root{
+  --accent-1:#0d6efd; --accent-2:#6610f2;
+  --bg:#f6f8fb; --card:#fff; --text:#0b1220; --muted:#6c757d;
+  --glass: rgba(255,255,255,0.7); --radius:12px;
+}
+html,body{height:100%}
+body{font-family:"Cairo",system-ui,sans-serif;margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;transition: background .22s,color .22s}
+body[data-theme="dark"]{
+  --bg:#071018; --card:#07131a; --text:#e6eef6; --muted:#9aa6b2; --glass: rgba(6,10,15,0.5);
+  background:var(--bg); color:var(--text);
+}
+
+/* layout */
+.container-main{max-width:1200px;margin:20px auto;padding:16px}
+.site-header{position:sticky;top:0;z-index:1400;padding:10px 18px;backdrop-filter: blur(8px);background:var(--glass);border-bottom:1px solid rgba(13,110,253,0.06);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:.8rem}
+.brand img{height:44px;border-radius:8px}
+.brand .title{font-weight:800}
+.controls{display:flex;gap:.5rem;align-items:center}
+
+/* hero */
+.hero{padding:18px;border-radius:var(--radius);background:linear-gradient(180deg, rgba(13,110,253,0.06), rgba(102,16,242,0.02));box-shadow:0 12px 30px rgba(2,6,23,0.04);border:1px solid rgba(13,110,253,0.04);margin-bottom:16px}
+
+/* cards */
+.card-surface{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 12px 30px rgba(2,6,23,0.04);border:1px solid rgba(13,110,253,0.03);margin-bottom:16px}
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:12px 0}
+.kpi{background:linear-gradient(180deg,var(--card),#f8fbff);padding:14px;border-radius:10px;text-align:center;box-shadow:0 8px 20px rgba(2,6,23,0.04)}
+.kpi .num{font-weight:800;font-size:1.12rem;margin-top:6px}
+.kpi .label{font-size:.85rem;color:var(--muted)}
+
+/* form */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+
+/* responsive */
+@media (max-width:900px){ .controls{gap:.4rem} .kpi-row{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))} }
+
+/* watermark for exports */
+.watermark{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;opacity:0.06}
+.watermark img{max-width:520px;filter:grayscale(100%);opacity:0.12}
+
+/* make sure text visible in dark */
+body[data-theme="dark"] .kpi .label, body[data-theme="dark"] .kpi .num { color: var(--text); }
+</style>
 </head>
-<body>
-  <!-- Watermark (captured when exporting) -->
-  <div class="watermark" aria-hidden="true"><img src="assets/logo.png" alt="logo"/></div>
+<body data-theme="light">
 
-  <header>
-    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
-      <div class="brand">
-        <img src="assets/logo.png" alt="logo">
-        <div>
-          <h1 id="pageTitle">التحليلات المالية المتقدمة</h1>
-          <div class="small-muted" id="pageDesc">مرجع عالمي للنسب والمؤشرات المالية، المخاطر، والقيمة المضافة</div>
-        </div>
-      </div>
-      <div style="display:flex;gap:8px;align-items:center">
-        <button class="btn-main" id="goReport">📑 تقرير</button>
-        <button class="btn-main" id="goInput">📝 إدخال</button>
-        <button class="btn-main" id="goHome">🏠 الرئيسية</button>
-      </div>
+<!-- Watermark/logo (captured in html2pdf) -->
+<div class="watermark" aria-hidden="true"><img src="assets/logo.png" alt="logo" id="wmLogo"></div>
+
+<header class="site-header" role="banner">
+  <div class="brand">
+    <img src="assets/logo.png" alt="logo" id="brandLogo">
+    <div>
+      <div class="title" id="brandText">المحلل المالي</div>
+      <div class="small-muted" id="brandDesc">المرجع للتحليلات المالية المتقدمة</div>
     </div>
-  </header>
-
-  <div class="container">
-    <!-- Controls -->
-    <div class="controls-bar row-surface" role="region" aria-label="controls">
-      <div class="controls-compact">
-        <label for="languageSelect" class="small-muted" style="margin-inline-end:6px">اللغة</label>
-        <select id="languageSelect" aria-label="اختر اللغة">
-          <option value="ar">العربية</option>
-          <option value="en">English</option>
-        </select>
-
-        <label for="currencySelect" class="small-muted" style="margin-inline-start:12px;margin-inline-end:6px">العملة</label>
-        <select id="currencySelect" aria-label="اختر العملة">
-          <option value="EGP">EGP</option>
-          <option value="USD">USD</option>
-          <option value="EUR">EUR</option>
-        </select>
-
-        <label for="fxInput" class="small-muted" style="margin-inline-start:12px;margin-inline-end:6px">سعر الصرف</label>
-        <input id="fxInput" type="number" step="0.0001" style="width:110px" placeholder="1" aria-label="سعر الصرف">
-
-        <button id="toggleTheme" class="btn-main" style="margin-inline-start:12px">🌙/☀</button>
-      </div>
-
-      <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
-        <div class="export-actions" role="group" aria-label="تصدير">
-          <button id="exportPdf">تصدير PDF</button>
-          <button id="exportExcel">تصدير Excel</button>
-          <button id="exportWord">تصدير Word</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- KPIs -->
-    <section class="row-surface" id="kpisSection" aria-labelledby="kpisTitle">
-      <h2 class="section-title" id="kpisTitle">مؤشرات سريعة</h2>
-      <div class="kpi-grid" id="kpiGrid"></div>
-    </section>
-
-    <!-- Ratios & Explanations -->
-    <section class="row-surface" id="ratiosSection" aria-labelledby="ratiosTitle">
-      <h2 class="section-title" id="ratiosTitle">النسب والمؤشرات الرئيسية</h2>
-      <div class="col-split">
-        <div>
-          <canvas id="ratiosChart" height="220"></canvas>
-        </div>
-        <div>
-          <h3 style="margin:0.2rem 0">قائمة النسب</h3>
-          <div id="ratiosTable" class="table-fixed"></div>
-        </div>
-      </div>
-      <p class="explain" id="ratiosExplain"></p>
-    </section>
-
-    <!-- Value Added & Risk -->
-    <section class="row-surface" id="valueRiskSection">
-      <div class="col-split">
-        <div>
-          <h2 class="section-title">القيمة المضافة</h2>
-          <canvas id="valueChart" height="220"></canvas>
-          <div id="valueTable"></div>
-          <p class="explain" id="valueExplain"></p>
-        </div>
-        <div>
-          <h2 class="section-title">تحليل المخاطر</h2>
-          <canvas id="riskChart" height="220"></canvas>
-          <div id="riskTable"></div>
-          <p class="explain" id="riskExplain"></p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Forecast -->
-    <section class="row-surface" id="forecastSection">
-      <h2 class="section-title">التنبؤات (تقديرية)</h2>
-      <div class="flex-row" style="align-items:flex-start">
-        <div style="flex:1">
-          <canvas id="forecastChart" height="220"></canvas>
-        </div>
-        <div style="width:360px">
-          <h4>طريقة التنبؤ (سريعة)</h4>
-          <p class="small-muted" id="forecastExplain">نستخدم متوسط نمو سنوي بسيط للتنبؤ بالقيم للسنة التالية. هذا تبسيط قابل للتطوير لنماذج أكثر تقدمًا.</p>
-          <div id="forecastTable"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Comparison -->
-    <section class="row-surface" id="compareSection">
-      <h2 class="section-title">مقارنة بين فترتين (Snapshots)</h2>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <select id="snapA"><option value="">--</option></select>
-        <select id="snapB"><option value="">--</option></select>
-        <button id="compareBtn" class="btn-main">قارن</button>
-        <button id="clearCompare" class="btn-main" style="background:#6c757d">مسح</button>
-      </div>
-      <div id="compareResult" style="margin-top:12px"></div>
-      <canvas id="compareChart" height="240" style="margin-top:12px"></canvas>
-    </section>
-
-    <footer class="row-surface small-muted" style="text-align:center">© 2025 المحلل المالي — جميع الحقوق محفوظة</footer>
   </div>
 
-  <script>
-  /**************************************************************************
-   * Advanced Analytics Page - Single-file
-   * - Reads trialData from localStorage (same key used in Input/Report pages)
-   * - Computes many ratios, shows charts, explanations (AR/EN switching)
-   * - Currency conversion via FX input
-   * - Snapshot comparison, simple forecasting (avg growth)
-   * - Export PDF/Excel/Word with logo + watermark (uses html2pdf + XLSX + FileSaver)
-   **************************************************************************/
+  <div class="controls" role="navigation">
+    <a class="btn btn-sm btn-outline-secondary" href="index.html" title="الرئيسية"><i class="bi bi-house"></i></a>
+    <a class="btn btn-sm btn-outline-secondary" href="input.html" title="إدخال البيانات">إدخال</a>
+    <a class="btn btn-sm btn-outline-secondary" href="report.html" title="التقارير">تقارير</a>
 
-  // ---------- helpers ----------
-  const $ = id=>document.getElementById(id);
-  const langTexts = {
-    ar: {
-      title: "التحليلات المالية المتقدمة",
-      desc: "مرجع عالمي للنسب والمؤشرات المالية، المخاطر، والقيمة المضافة",
-      kpi_accounts: "عدد الحسابات",
-      kpi_assets: "الأصول (تقريبي)",
-      kpi_liab: "الخصوم (تقريبي)",
-      kpi_revenue: "الإيرادات",
-      kpi_expense: "المصروفات",
-      ratio_explain: "الشرح: هنا توضيح ماذا تعني النسب، وكيف تُستخدم لقياس أداء الشركة. تغير اللغة يغيّر النصوص بالكامل.",
-      value_explain: "القيمة المضافة تُحسب بصورة تقليدية (إجمالي الناتج - المدخلات من مستلزمات). هذا تبسيط لعرض الفكرة.",
-      risk_explain: "تحليل المخاطر يعرض مؤشرات أولوية (سيولة، مديونية، تغطية فوائد) وتحذيرات مبكرة.",
-      forecast_explain: "طريقة التنبؤ: متوسط نمو بسيط مبني على الفترات المتاحة. هذا تقدير سريع وقابل للتطوير.",
-      choose_snapshots: "اختر لقطتين للمقارنة",
-      none_data: "لا توجد بيانات لعرضها."
-    },
-    en: {
-      title: "Advanced Financial Analytics",
-      desc: "Global reference for ratios, indicators, risk and value added",
-      kpi_accounts: "Accounts",
-      kpi_assets: "Assets (approx)",
-      kpi_liab: "Liabilities (approx)",
-      kpi_revenue: "Revenue",
-      kpi_expense: "Expense",
-      ratio_explain: "Explanation: Ratios measure liquidity, solvency, profitability and efficiency. Change language to switch texts.",
-      value_explain: "Value Added: (Total output - purchased inputs). Simplified view for demonstration.",
-      risk_explain: "Risk analysis shows priority indicators (liquidity, leverage, interest coverage) and early warnings.",
-      forecast_explain: "Forecasting: simple avg growth forecasting. Useful quick estimate; can be upgraded to ML models.",
-      choose_snapshots: "Choose two snapshots to compare",
-      none_data: "No data to display."
-    }
-  };
-  function t(key){ const l = $('languageSelect').value || 'ar'; return (langTexts[l] && langTexts[l][key]) ? langTexts[l][key] : key; }
+    <select id="currencySelect" class="form-select form-select-sm" style="min-width:92px" title="اختر العملة"></select>
+    <input id="fxRateInput" class="form-control form-control-sm" style="width:110px" placeholder="FX" title="سعر الصرف (1 عملة = ؟ EGP)"/>
 
-  function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
-  function toNum(v){ const n = Number(String(v||'').toString().replace(/[, ]+/g,'')); return isNaN(n)?0:n; }
-  function fmt(v){ return Number(v).toLocaleString(undefined,{maximumFractionDigits:2,minimumFractionDigits:0}); }
+    <select id="languageSelect" class="form-select form-select-sm" style="min-width:110px" title="اللغة"></select>
+    <div class="form-check form-switch mb-0" title="الوضع الليلي">
+      <input class="form-check-input" id="darkModeToggle" type="checkbox">
+    </div>
 
-  // ---------- data sources ----------
-  let trialData = JSON.parse(localStorage.getItem('trialData')||'[]'); // expected: [{Account,Type,Code,Debit,Credit},...]
-  let snapshots = JSON.parse(localStorage.getItem('trialData_snapshots')||'{}'); // { label: [...] }
-  let fxRates = JSON.parse(localStorage.getItem('fa_fx')||'null') || { USD:31, EUR:34 };
-  // user custom FX
-  function getCustomFX(){ const v = Number($('fxInput').value); return v>0 ? v : null; }
+    <button id="exportPdfBtn" class="btn btn-outline-primary btn-sm ms-2" title="تصدير PDF"><i class="bi bi-file-earmark-pdf"></i></button>
+    <button id="exportDocxBtn" class="btn btn-outline-secondary btn-sm ms-1" title="تصدير Word"><i class="bi bi-file-earmark-word"></i></button>
+  </div>
+</header>
 
-  // ---------- UI init ----------
-  function initUI(){
-    // navigation
-    $('goReport').addEventListener('click', ()=> location.href='report.html');
-    $('goInput').addEventListener('click', ()=> location.href='input.html');
-    $('goHome').addEventListener('click', ()=> location.href='index.html');
+<main class="container-main" id="mainArea" role="main">
+  <section class="hero" aria-labelledby="heroTitle">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <div>
+        <h3 id="heroTitle" style="margin:0">التحليلات المتقدمة <small class="text-muted">Advanced Financial Analytics</small></h3>
+        <p class="small-muted" id="heroDesc">قائمة شاملة للنسب، EVA، DuPont، توقعات، ونصائح فنية — تستند إلى بياناتك في صفحة التقارير.</p>
+      </div>
 
-    // load selects
-    const langSelect = $('languageSelect'); langSelect.value = localStorage.getItem('fa_lang') || localStorage.getItem('lang') || 'ar';
-    const cur = localStorage.getItem('fa_currency') || localStorage.getItem('currency') || 'EGP';
-    $('currencySelect').value = cur;
-    $('fxInput').value = localStorage.getItem('fa_fx_custom') || '';
+      <div class="d-flex gap-2 align-items-center">
+        <button id="loadFromReportBtn" class="btn btn-glow btn-sm"><i class="bi bi-arrow-clockwise"></i> جلب بيانات التقرير</button>
+        <button id="refreshBtn" class="btn btn-outline-secondary btn-sm"><i class="bi bi-arrow-repeat"></i> تحديث</button>
+      </div>
+    </div>
+  </section>
 
-    // events
-    $('languageSelect').addEventListener('change', ()=>{ localStorage.setItem('fa_lang',$('languageSelect').value); renderAll(); });
-    $('currencySelect').addEventListener('change', ()=>{ localStorage.setItem('fa_currency',$('currencySelect').value); renderAll(); });
-    $('fxInput').addEventListener('change', ()=>{ localStorage.setItem('fa_fx_custom',$('fxInput').value); renderAll(); });
-    $('toggleTheme').addEventListener('click', ()=>{ document.body.classList.toggle('dark'); localStorage.setItem('fa_theme', document.body.classList.contains('dark')?'dark':'light'); });
+  <!-- KPI row -->
+  <section class="card-surface" aria-labelledby="kpisTitle">
+    <h6 id="kpisTitle">مؤشرات سريعة</h6>
+    <div class="kpi-row" id="kpiRow"></div>
+  </section>
 
-    // export handlers
-    $('exportPdf').addEventListener('click', exportPDF);
-    $('exportExcel').addEventListener('click', exportXLSX);
-    $('exportWord').addEventListener('click', exportWord);
+  <!-- WACC / EVA inputs -->
+  <section class="card-surface" aria-labelledby="evaTitle">
+    <h6 id="evaTitle">حساب EVA و WACC</h6>
+    <div class="form-grid">
+      <div>
+        <label class="form-label">نسبة الضريبة (Tax rate %)</label>
+        <input id="taxRate" class="form-control form-control-sm" type="number" step="0.01" value="22">
+      </div>
+      <div>
+        <label class="form-label">تكلفة الدين قبل الضريبة % (Kd)</label>
+        <input id="costOfDebt" class="form-control form-control-sm" type="number" step="0.01" value="8">
+      </div>
+      <div>
+        <label class="form-label">تكلفة حقوق الملكية % (Ke)</label>
+        <input id="costOfEquity" class="form-control form-control-sm" type="number" step="0.01" value="14">
+      </div>
+      <div>
+        <label class="form-label">نسبة الدين إلى رأس المال % (Debt %)</label>
+        <input id="debtRatio" class="form-control form-control-sm" type="number" step="0.01" value="40">
+      </div>
+      <div>
+        <label class="form-label">رأس المال المستثمر (Capital) — بالجنيه/العملة المختارة</label>
+        <input id="capitalInput" class="form-control form-control-sm" type="number" step="0.01" value="1000000">
+      </div>
+      <div class="d-flex align-items-end gap-2">
+        <button id="calcEVA" class="btn btn-primary btn-sm">احسب WACC & EVA</button>
+        <div id="waccResult" class="small-muted"></div>
+      </div>
+    </div>
+    <div id="evaOutput" class="mt-3"></div>
+  </section>
 
-    // snapshots
-    $('compareBtn').addEventListener('click', doCompare);
-    $('clearCompare').addEventListener('click', ()=>{ $('compareResult').innerHTML=''; if(window.compareChart) try{ window.compareChart.destroy(); }catch{} });
+  <!-- Ratios and Analysis -->
+  <section class="card-surface" aria-labelledby="ratiosTitle">
+    <h6 id="ratiosTitle">النسب والمؤشرات (شاملة)</h6>
+    <div class="small-muted mb-2">كل نسبة تحسب من بيانات ميزان المراجعة — الترجمة شاملة لكل نص.</div>
 
-    // storage listener
-    window.addEventListener('storage',(e)=>{ if(e.key==='trialData'){ trialData = JSON.parse(e.newValue||'[]'); renderAll(); } if(e.key==='trialData_snapshots'){ snapshots = JSON.parse(e.newValue||'{}'); renderSnapshotOptions(); } });
+    <div id="ratiosArea"></div>
+  </section>
 
-    renderSnapshotOptions();
+  <!-- Forecasting -->
+  <section class="card-surface" aria-labelledby="forecastTitle">
+    <h6 id="forecastTitle">التنبؤات (Linear / Exp Smoothing) — وتهيئة Prophet/ARIMA)</h6>
+
+    <div class="form-grid mb-2">
+      <div>
+        <label class="form-label">اختر بند للتنبؤ (مثل: الإيرادات)</label>
+        <select id="forecastField" class="form-select form-select-sm">
+          <option value="revenue">Revenue / الإيرادات</option>
+          <option value="expense">Expense / المصروفات</option>
+          <option value="assets">Assets / الأصول</option>
+        </select>
+      </div>
+      <div>
+        <label class="form-label">فترة التنبؤ (فترات مستقبلية)</label>
+        <input id="forecastHorizon" class="form-control form-control-sm" type="number" value="4" min="1">
+      </div>
+      <div class="d-flex align-items-end gap-2">
+        <button id="runForecast" class="btn btn-primary btn-sm">شغل تنبؤ سريع</button>
+        <button id="callServerForecast" class="btn btn-outline-secondary btn-sm" title="يحتاج API خارجي">طلب Prophet/ARIMA (API)</button>
+      </div>
+    </div>
+
+    <div id="forecastOutput"></div>
+    <canvas id="forecastChart" height="220"></canvas>
+  </section>
+
+  <!-- Explanations & Opinion -->
+  <section class="card-surface" aria-labelledby="opinionsTitle">
+    <h6 id="opinionsTitle">رأي فني تلقائي على النتائج</h6>
+    <div id="opinionArea" class="small-muted"></div>
+  </section>
+
+  <!-- Export / Print -->
+  <section class="card-surface d-flex justify-content-between align-items-center">
+    <div>
+      <button id="exportAllPdf" class="btn btn-glow btn-sm"><i class="bi bi-file-earmark-pdf"></i> تصدير التقرير كامل PDF</button>
+      <button id="exportAllDocx" class="btn btn-outline-secondary btn-sm"><i class="bi bi-file-earmark-word"></i> تصدير Word</button>
+      <button id="exportAllExcel" class="btn btn-outline-success btn-sm"><i class="bi bi-file-earmark-excel"></i> تصدير Excel</button>
+    </div>
+    <div class="small-muted">كل ملف يُولد يحوي شعار الموقع وعلامة مائية.</div>
+  </section>
+
+  <footer class="text-center py-3 small">&copy; 2025 المحلل المالي — جميع الحقوق محفوظة</footer>
+</main>
+
+<script>
+// ------------------ Helpers ------------------
+const $ = id => document.getElementById(id);
+function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function toNum(v){ const n = Number(String(v||'').toString().replace(/[, ]+/g,'')); return isNaN(n)?0:n; }
+function fmt(v){ return Number(v).toLocaleString(undefined,{maximumFractionDigits:2,minimumFractionDigits:0}); }
+function showToast(text, type='info'){ const area = $('mainArea'); const div = document.createElement('div'); div.className=`toast align-items-center text-bg-${type} border-0 show`; div.style.minWidth='220px'; div.style.marginTop='6px'; div.innerHTML=`<div class="d-flex"><div class="toast-body">${esc(text)}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.closest('.toast').remove()"></button></div>`; area.appendChild(div); setTimeout(()=>div.remove(),3000); }
+
+// ------------------ State ------------------
+let trialData = JSON.parse(localStorage.getItem('trialData')||'[]'); // array of rows {Account,Type,Code,Debit,Credit}
+let snapshots = JSON.parse(localStorage.getItem('trialData_snapshots')||'{}');
+let fxRates = JSON.parse(localStorage.getItem('fa_fx')||'null') || { USD:31, EUR:34 };
+const LANGS = [{v:'ar',label:'العربية'},{v:'en',label:'English'}];
+const CURRENCIES = ['EGP','USD','EUR'];
+
+// Translations (all visible texts used in this page)
+const translations = {
+  ar: {
+    loadFromReport: 'جلب بيانات التقرير',
+    noData: 'لا توجد بيانات لعرضها.',
+    opinion_good: 'الوضع يبدو جيداً نسبياً — راقب الأداء الشهري.',
+    opinion_warning: 'هناك إشارات تحذيرية: تحقق من السيولة والهامش.',
+    opinion_bad: 'نتائج ضعيفة — يلزم تحليل أعمق وإجراءات تصحيحية.',
+    exportNoData: 'لا توجد بيانات للتصدير'
+  },
+  en: {
+    loadFromReport: 'Load data from Report',
+    noData: 'No data to display.',
+    opinion_good: 'Overall healthy — monitor monthly performance.',
+    opinion_warning: 'Warning signs — check liquidity and margins.',
+    opinion_bad: 'Weak performance — deeper analysis recommended.',
+    exportNoData: 'No data to export'
   }
+};
 
-  // ---------- utilities ----------
-  function getCurrencySymbol(){
-    const cur = $('currencySelect').value || 'EGP';
-    if(cur==='EGP') return 'ج.م';
-    if(cur==='USD') return '$';
-    if(cur==='EUR') return '€';
-    return cur;
-  }
-  function convert(value){
-    const cur = $('currencySelect').value || 'EGP';
-    if(cur==='EGP') return toNum(value);
-    const custom = getCustomFX();
-    if(custom) return toNum(value)/custom;
-    const rate = fxRates[cur] || 1;
-    return toNum(value)/rate;
-  }
+// ------------------ UI populate ------------------
+function populateControls(){
+  const langSel = $('languageSelect'); langSel.innerHTML=''; LANGS.forEach(l=>{ const o=document.createElement('option'); o.value=l.v; o.textContent=l.label; langSel.appendChild(o); });
+  const curSel = $('currencySelect'); curSel.innerHTML=''; CURRENCIES.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; curSel.appendChild(o); });
+  // load saved prefs
+  const savedLang = localStorage.getItem('fa_lang') || localStorage.getItem('lang') || 'ar';
+  const savedTheme = localStorage.getItem('fa_theme') || localStorage.getItem('theme') || 'light';
+  const savedCur = localStorage.getItem('fa_currency') || localStorage.getItem('currency') || 'EGP';
+  $('languageSelect').value = savedLang;
+  $('currencySelect').value = savedCur;
+  document.body.dataset.theme = savedTheme;
+  $('darkModeToggle').checked = (savedTheme === 'dark');
+  $('fxRateInput').value = localStorage.getItem('fa_fx_custom') || '';
+}
+populateControls();
 
-  // ---------- aggregation & ratios ----------
-  function aggregate(data){
-    const agg = { assets:0, liabilities:0, equity:0, revenue:0, expense:0, other:0 };
-    data.forEach(r=>{
-      const net = toNum(r.Debit) - toNum(r.Credit);
-      const s = String((r.Type||r.Account||'')).toLowerCase();
-      if(/asset|أصل|cash|bank|نقد|fixed asset|أصول|inventory/.test(s)) agg.assets += net;
-      else if(/liab|خصوم|payable|دائن|loan|قرض|قروض/.test(s)) agg.liabilities += -net;
-      else if(/equity|حقوق|رأس|capital/.test(s)) agg.equity += -net;
-      else if(/revenue|sales|إيراد|مبيعات/.test(s)) agg.revenue += -net;
-      else if(/expense|مصروف|cogs|تكلفة|مصاريف/.test(s)) agg.expense += net;
-      else agg.other += net;
-    });
-    return agg;
-  }
+// events
+$('darkModeToggle').addEventListener('change', e=>{
+  const val = e.target.checked ? 'dark' : 'light';
+  document.body.dataset.theme = val;
+  localStorage.setItem('fa_theme', val);
+});
+$('languageSelect').addEventListener('change', ()=>{ localStorage.setItem('fa_lang', $('languageSelect').value); renderAll(); });
+$('currencySelect').addEventListener('change', ()=>{ localStorage.setItem('fa_currency', $('currencySelect').value); renderAll(); });
+$('fxRateInput').addEventListener('change', ()=>{ const v=toNum($('fxRateInput').value); if(v>0){ localStorage.setItem('fa_fx_custom', v); fxRates['CUSTOM']=v; localStorage.setItem('fa_fx', JSON.stringify(fxRates)); showToast('تم حفظ سعر الصرف','success'); renderAll(); } });
 
-  // compute many ratios
-  function computeRatios(data){
-    const agg = aggregate(data);
-    const totalAssets = agg.assets;
-    const totalLiabilities = agg.liabilities;
-    const totalEquity = agg.equity;
-    const revenue = agg.revenue;
-    const expense = agg.expense;
-    const grossProfit = revenue - expense; // simplistic
-    // Basic ratios (defensive with zero checks)
-    const currentRatio = safeDiv(totalAssets, totalLiabilities); // approximated
-    const debtToEquity = safeDiv(totalLiabilities, totalEquity);
-    const debtRatio = safeDiv(totalLiabilities, totalAssets);
-    const roe = safeDiv(grossProfit, totalEquity) * 100;
-    const roa = safeDiv(grossProfit, totalAssets) * 100;
-    const profitMargin = safeDiv(grossProfit, revenue) * 100;
-    const expenseRatio = safeDiv(expense, revenue) * 100;
-    // coverage proxy (EBITDA unknown => use grossProfit)
-    const interestCoverage = safeDiv(grossProfit, Math.max(1, Math.abs(expense*0.05))) ; // proxy guess for demonstration
+// load snapshots
+function loadSnapshots(){
+  snapshots = JSON.parse(localStorage.getItem('trialData_snapshots')||'{}');
+}
+loadSnapshots();
 
-    // efficiency proxies
-    const assetTurnover = safeDiv(revenue, totalAssets);
-
-    // EVA rough (NOPAT - WACC*Capital) - we can't compute NOPAT/WACC exactly; provide simple proxy
-    const eva = (revenue - expense) - (0.08 * Math.abs(totalEquity + totalLiabilities)); // assuming WACC ~8%
-
-    return {
-      totalAssets, totalLiabilities, totalEquity, revenue, expense, grossProfit,
-      currentRatio, debtToEquity, debtRatio, roe, roa, profitMargin, expenseRatio,
-      interestCoverage, assetTurnover, eva
-    };
-  }
-
-  function safeDiv(a,b){ if(!isFinite(a)) a=0; if(!isFinite(b) || b===0) return 0; return a/b; }
-
-  // ---------- renderers ----------
-  let ratiosChart=null, valueChart=null, riskChart=null, forecastChart=null, compareChart=null;
-
-  function renderKPIs(data){
-    const kpiGrid = $('kpiGrid'); kpiGrid.innerHTML='';
-    const agg = aggregate(data);
-    const items = [
-      {label: t('kpi_accounts') || langTexts[$('languageSelect').value].kpi_accounts, value: data.length},
-      {label: t('kpi_assets') || langTexts[$('languageSelect').value].kpi_assets, value: agg.assets},
-      {label: t('kpi_liab') || langTexts[$('languageSelect').value].kpi_liab, value: agg.liabilities},
-      {label: t('kpi_revenue') || langTexts[$('languageSelect').value].kpi_revenue, value: agg.revenue},
-      {label: t('kpi_expense') || langTexts[$('languageSelect').value].kpi_expense, value: agg.expense},
-      {label: ( $('languageSelect').value==='ar' ? 'أخرى' : 'Other'), value: agg.other}
-    ];
-    items.forEach(it=>{
-      const div = document.createElement('div'); div.className='kpi';
-      const val = (typeof it.value === 'number') ? fmt(convert(it.value)) + ' ' + getCurrencySymbol() : esc(it.value);
-      div.innerHTML = `<div class="small-muted">${esc(it.label)}</div><div class="value">${val}</div>`;
-      kpiGrid.appendChild(div);
-    });
-  }
-
-  function renderRatios(data){
-    const res = computeRatios(data);
-    // Table
-    const table = document.createElement('table'); table.className='table';
-    const tbody = document.createElement('tbody');
-    const addRow = (label, val, desc) => {
-      const tr = document.createElement('tr');
-      const th = document.createElement('td'); th.style.width='55%'; th.innerText = label;
-      const td = document.createElement('td'); td.style.textAlign='right'; td.innerText = val;
-      tbody.appendChild(tr); tr.appendChild(th); tr.appendChild(td);
-      if(desc){
-        const tr2 = document.createElement('tr'); const td2=document.createElement('td'); td2.colSpan=2; td2.className='small-muted'; td2.innerText=desc;
-        tbody.appendChild(tr2); tr2.appendChild(td2);
-      }
-    };
-    addRow( $('languageSelect').value==='ar' ? 'النسبة الحالية (تقريبية)' : 'Current Ratio (approx)', fmt(res.currentRatio) );
-    addRow( $('languageSelect').value==='ar' ? 'نسبة الدين إلى حقوق الملكية' : 'Debt to Equity', fmt(res.debtToEquity) );
-    addRow( $('languageSelect').value==='ar' ? 'نسبة الدين إلى الأصول' : 'Debt Ratio', fmt(res.debtRatio) );
-    addRow( $('languageSelect').value==='ar' ? 'العائد على حقوق الملكية (٪)' : 'ROE (%)', fmt(res.roe) + '%' );
-    addRow( $('languageSelect').value==='ar' ? 'العائد على الأصول (٪)' : 'ROA (%)', fmt(res.roa) + '%' );
-    addRow( $('languageSelect').value==='ar' ? 'هامش الربح' : 'Profit Margin', fmt(res.profitMargin) + '%' );
-    addRow( $('languageSelect').value==='ar' ? 'تغطية الفوائد (مؤشر تقريبي)' : 'Interest Coverage (proxy)', fmt(res.interestCoverage) );
-    addRow( $('languageSelect').value==='ar' ? 'دوران الأصول' : 'Asset Turnover', fmt(res.assetTurnover) );
-    addRow( $('languageSelect').value==='ar' ? 'EVA (تقديري)' : 'EVA (est.)', fmt(res.eva) + ' ' + getCurrencySymbol() );
-    table.appendChild(tbody);
-    $('ratiosTable').innerHTML=''; $('ratiosTable').appendChild(table);
-
-    // Chart: show selected ratios
-    const labels = [ $('languageSelect').value==='ar' ? 'ROE%' : 'ROE%', $('languageSelect').value==='ar' ? 'ROA%' : 'ROA%', 'Profit Margin%','Debt Ratio' ];
-    const dataVals = [res.roe, res.roa, res.profitMargin, res.debtRatio*100];
-    if(ratiosChart) try{ ratiosChart.destroy(); }catch(e){}
-    const ctx = $('ratiosChart').getContext('2d');
-    ratiosChart = new Chart(ctx, {
-      type: 'bar',
-      data: { labels, datasets:[{label: $('languageSelect').value==='ar'?'معدلات':'Ratios', data: dataVals, backgroundColor:['#0d6efd','#6610f2','#198754','#ffc107']}]},
-      options: { responsive:true, plugins:{legend:{display:false}} }
-    });
-
-    $('ratiosExplain').innerText = t('ratio_explain') || langTexts[$('languageSelect').value].ratio_explain;
-  }
-
-  function renderValueAndRisk(data){
-    // value added simplistic: revenue - intermediate consumption (we don't have inputs, use expense as proxy)
-    const agg = aggregate(data);
-    const valueAdded = agg.revenue - agg.expense;
-    $('valueTable').innerHTML = `<table class="table"><tbody>
-      <tr><td>القيمة المضافة (تقريبي)</td><td class="text-end">${fmt(convert(valueAdded))} ${getCurrencySymbol()}</td></tr>
-      <tr><td>الإجمالي (إيرادات)</td><td class="text-end">${fmt(convert(agg.revenue))} ${getCurrencySymbol()}</td></tr>
-      <tr><td>تكلفة / مصروفات</td><td class="text-end">${fmt(convert(agg.expense))} ${getCurrencySymbol()}</td></tr>
-    </tbody></table>`;
-    $('valueExplain').innerText = t('value_explain') || langTexts[$('languageSelect').value].value_explain;
-
-    // risk: simple scoring based on ratios
-    const r = computeRatios(data);
-    const riskScore = Math.max(0, Math.min(100, ( (r.debtRatio*100)/2 + (100 - Math.min(100,r.currentRatio*50)) + (r.profitMargin<0?30:0) )));
-    $('riskTable').innerHTML = `<table class="table"><tbody>
-      <tr><td>نقطة المخاطرة (0-100)</td><td class="text-end">${fmt(riskScore)}</td></tr>
-      <tr><td>نسبة تغطية الفوائد (تقريب)</td><td class="text-end">${fmt(r.interestCoverage)}</td></tr>
-    </tbody></table>`;
-    $('riskExplain').innerText = t('risk_explain') || langTexts[$('languageSelect').value].risk_explain;
-
-    // risk chart (gauge-like bar)
-    if(riskChart) try{ riskChart.destroy(); }catch(e){}
-    const ctx = $('riskChart').getContext('2d');
-    riskChart = new Chart(ctx, {
-      type:'doughnut',
-      data:{ labels:['Risk','Safe'], datasets:[{data:[riskScore,100-riskScore], backgroundColor:['#dc3545','#198754']}] },
-      options:{ plugins:{legend:{display:false}} }
-    });
-  }
-
-  function renderForecast(data){
-    // simple forecasting using average growth of revenue across snapshots if available, else linear from current data
-    const labels = []; const values = [];
-    // try snapshots: if there are labeled snapshots with numeric label like years, use them
-    const snaps = Object.keys(snapshots || {});
-    if(snaps.length>=2){
-      // sort keys if numeric-like
-      const years = snaps.slice().sort();
-      years.forEach(k=>{
-        const d = snapshots[k];
-        const agg = aggregate(d);
-        labels.push(k);
-        values.push(convert(agg.revenue));
-      });
-    } else {
-      // fallback: use current single point and generate small trend from past (none) => no forecast data
-      labels.push('Now'); values.push(convert(aggregate(data).revenue));
-    }
-    // compute simple growth rate and forecast next
-    const growths = [];
-    for(let i=1;i<values.length;i++){
-      const prev = values[i-1]||1;
-      const g = prev ? (values[i]-prev)/prev : 0;
-      growths.push(g);
-    }
-    const avgGrowth = growths.length? (growths.reduce((s,x)=>s+x,0)/growths.length) : 0.05; // default 5%
-    const lastVal = values[values.length-1]||0;
-    const forecastVal = lastVal*(1+avgGrowth);
-    // prepare chart
-    const chartLabels = labels.concat(['Forecast']);
-    const chartVals = values.concat([forecastVal]);
-    if(forecastChart) try{ forecastChart.destroy(); }catch(e){}
-    const ctx = $('forecastChart').getContext('2d');
-    forecastChart = new Chart(ctx,{ type:'line', data:{ labels:chartLabels, datasets:[{label: $('languageSelect').value==='ar'?'الإيرادات':'Revenue', data:chartVals, borderColor:'#0d6efd', tension:0.3, fill:true}]}, options:{ responsive:true }});
-    $('forecastTable').innerHTML = `<table class="table"><tbody>
-      <tr><td>القيمة الحالية</td><td class="text-end">${fmt(lastVal)} ${getCurrencySymbol()}</td></tr>
-      <tr><td>متوسط النمو المستخدم</td><td class="text-end">${(avgGrowth*100).toFixed(2)}%</td></tr>
-      <tr><td>القيمة المتوقعة (السنة التالية)</td><td class="text-end">${fmt(forecastVal)} ${getCurrencySymbol()}</td></tr>
-    </tbody></table>`;
-    $('forecastExplain').innerText = t('forecast_explain') || langTexts[$('languageSelect').value].forecast_explain;
-  }
-
-  // ---------- snapshot management ----------
-  function renderSnapshotOptions(){
-    const sa = $('snapA'); const sb = $('snapB');
-    sa.innerHTML = '<option value="">--</option>'; sb.innerHTML = '<option value="">--</option>';
-    const keys = Object.keys(snapshots || {}).sort().reverse();
-    if(!keys.length){
-      sa.innerHTML = `<option value="">${t('none_data')}</option>`; sb.innerHTML = `<option value="">${t('none_data')}</option>`;
-      return;
-    }
-    keys.forEach(k=>{ const o1 = document.createElement('option'); o1.value=k; o1.textContent=k; sa.appendChild(o1); const o2 = document.createElement('option'); o2.value=k; o2.textContent=k; sb.appendChild(o2); });
-  }
-
-  function doCompare(){
-    const a = $('snapA').value; const b = $('snapB').value;
-    if(!a || !b){ alert(t('choose_snapshots')); return; }
-    const dataA = snapshots[a] || []; const dataB = snapshots[b] || [];
-    const aggA = aggregate(dataA); const aggB = aggregate(dataB);
-    const labels = [ $('languageSelect').value==='ar' ? 'الأصول' : 'Assets', $('languageSelect').value==='ar' ? 'الخصوم' : 'Liabilities', $('languageSelect').value==='ar' ? 'الإيرادات' : 'Revenue', $('languageSelect').value==='ar' ? 'المصروفات' : 'Expenses' ];
-    const valsA = [convert(aggA.assets), convert(aggA.liabilities), convert(aggA.revenue), convert(aggA.expense)];
-    const valsB = [convert(aggB.assets), convert(aggB.liabilities), convert(aggB.revenue), convert(aggB.expense)];
-    // table
-    let html = '<table class="table compare-table"><thead><tr><th>البند</th><th class="text-end">A</th><th class="text-end">B</th><th class="text-end">الفرق</th><th class="text-end">٪ التغير</th></tr></thead><tbody>';
-    for(let i=0;i<labels.length;i++){
-      const diff = valsB[i] - valsA[i];
-      const pct = valsA[i] ? (diff/valsA[i])*100 : 0;
-      html += `<tr><td>${esc(labels[i])}</td><td class="text-end">${fmt(valsA[i])} ${getCurrencySymbol()}</td><td class="text-end">${fmt(valsB[i])} ${getCurrencySymbol()}</td><td class="text-end">${fmt(diff)} ${getCurrencySymbol()}</td><td class="text-end">${fmt(pct)}%</td></tr>`;
-    }
-    html += '</tbody></table>';
-    $('compareResult').innerHTML = `<h4>مقارنة ${esc(a)} ↔ ${esc(b)}</h4>` + html;
-    // chart
-    if(compareChart) try{ compareChart.destroy(); }catch(e){}
-    const ctx = $('compareChart').getContext('2d');
-    compareChart = new Chart(ctx, {
-      type:'bar',
-      data:{ labels, datasets:[ {label: a, data: valsA, backgroundColor:'rgba(13,110,253,0.8)'}, {label: b, data: valsB, backgroundColor:'rgba(102,16,242,0.8)'} ] },
-      options:{ responsive:true, scales:{ y:{ beginAtZero:true } } }
-    });
-  }
-
-  // ---------- exports ----------
-  async function exportPDF(){
-    // ensure watermark/logo visible
-    const wm = document.querySelector('.watermark img'); const prevOp = wm.style.opacity; wm.style.opacity = '0.12';
-    const element = document.querySelector('main') || document.body;
-    const opt = { margin:0.4, filename:'advanced_financial_report.pdf', image:{type:'jpeg',quality:0.95}, html2canvas:{scale:2,useCORS:true,allowTaint:true}, jsPDF:{unit:'in',format:'a4',orientation:'portrait'} };
-    try{
-      await html2pdf().set(opt).from(document.querySelector('.container')).save();
-    }catch(e){ console.error(e); alert('PDF export failed'); }
-    wm.style.opacity = prevOp || '';
-  }
-
-  function exportXLSX(){
-    if(!trialData || !trialData.length){ alert(t('none_data')); return; }
-    const ws = XLSX.utils.json_to_sheet(trialData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'TrialBalance');
-    XLSX.writeFile(wb, 'trialbalance.xlsx');
-  }
-
-  function exportWord(){
-    // simple text-based .doc export
-    let html = `<h1>${esc($('pageTitle').innerText)}</h1><p>${esc($('pageDesc').innerText)}</p>`;
-    html += document.querySelector('#kpisSection').innerHTML;
-    const blob = new Blob([html], { type:'application/msword' });
-    saveAs(blob, 'advanced_report.doc');
-  }
-
-  // ---------- main render ----------
-  function renderAll(){
-    // refresh local data
-    trialData = JSON.parse(localStorage.getItem('trialData')||'[]');
-    snapshots = JSON.parse(localStorage.getItem('trialData_snapshots')||'{}');
-    fxRates = JSON.parse(localStorage.getItem('fa_fx')||'null') || fxRates;
-    // apply language titles
-    const L = $('languageSelect').value || 'ar';
-    $('pageTitle').innerText = L==='ar' ? 'التحليلات المالية المتقدمة' : 'Advanced Financial Analytics';
-    $('pageDesc').innerText = L==='ar' ? 'مرجع عالمي للنسب والمؤشرات المالية، المخاطر، والقيمة المضافة' : 'Global reference for ratios, indicators, risk and value added';
-    // KPIs
-    renderKPIs(trialData || []);
-    // ratios
-    renderRatios(trialData || []);
-    // value & risk
-    renderValueAndRisk(trialData || []);
-    // forecast
-    renderForecast(trialData || []);
-    // snapshot selects
-    renderSnapshotOptions();
-  }
-
-  // ---------- Init ----------
-  initUI();
+// ------------------ Data loading from report ------------------
+$('loadFromReportBtn').addEventListener('click', ()=>{
+  const stored = localStorage.getItem('trialData');
+  if(!stored){ showToast(translations[$('languageSelect').value].noData,'warning'); return; }
+  trialData = JSON.parse(stored || '[]');
+  showToast(translations[$('languageSelect').value].loadFromReport,'success');
   renderAll();
+});
 
-  // initial UX: if no trialData, show hint
-  if(!trialData || !trialData.length){
-    const note = document.createElement('div'); note.className='row-surface small-muted'; note.style.marginTop='8px'; note.innerText = t('none_data');
-    document.querySelector('.container').prepend(note);
+// ------------------ Aggregation utilities ------------------
+function aggregateData(data){
+  const agg = { assets:0, liabilities:0, equity:0, revenue:0, expense:0, other:0 };
+  (data||[]).forEach(r=>{
+    const debit = toNum(r.Debit), credit = toNum(r.Credit);
+    const net = debit - credit;
+    const type = String(r.Type||r.Account||'').toLowerCase();
+    if(/asset|أصل|cash|bank|نقد|fixed|أصول/.test(type)) agg.assets += net;
+    else if(/liab|خصوم|payable|loan|دائن|قرض/.test(type)) agg.liabilities += -net;
+    else if(/equity|حقوق|رأس/.test(type)) agg.equity += -net;
+    else if(/revenue|sales|إيراد|مبيعات/.test(type)) agg.revenue += -net;
+    else if(/expense|مصروف|cogs|تكلفة|مصاريف/.test(type)) agg.expense += net;
+    else {
+      const acc = String(r.Account||'').toLowerCase();
+      if(/النقد|bank|cash|نقد/.test(acc)) agg.assets += net;
+      else if(/المورد|payable|دائن/.test(acc)) agg.liabilities += -net;
+      else if(/رأس|equity/.test(acc)) agg.equity += -net;
+      else if(/إيراد|sales/.test(acc)) agg.revenue += -net;
+      else if(/مصروف|expense|تكلفة/.test(acc)) agg.expense += net;
+      else agg.other += net;
+    }
+  });
+  return agg;
+}
+
+// Currency helpers
+function getCurrency(){
+  return $('currencySelect').value || 'EGP';
+}
+function getCurrencySymbol(){
+  const cur = getCurrency();
+  return cur==='EGP'?'ج.م':(cur==='USD'?'$':(cur==='EUR'?'€':cur));
+}
+function convertCurrencyLocal(value){
+  const cur = getCurrency();
+  const custom = Number(localStorage.getItem('fa_fx_custom')||'0');
+  if(cur==='EGP') return toNum(value);
+  if(custom>0) return toNum(value)/custom;
+  const rate = fxRates[cur] || (cur==='USD'?fxRates.USD:fxRates.EUR) || 1;
+  return toNum(value)/rate;
+}
+
+// ------------------ Render KPI and ratios ------------------
+function renderKPIs(data){
+  const kpiRow = $('kpiRow'); kpiRow.innerHTML='';
+  const agg = aggregateData(data);
+  const items = [
+    {label: $('languageSelect').value==='ar'?'عدد الحسابات':'Accounts', value: data.length},
+    {label: $('languageSelect').value==='ar'?'الأصول (تقريبي)':'Assets', value: agg.assets},
+    {label: $('languageSelect').value==='ar'?'الخصوم (تقريبي)':'Liabilities', value: agg.liabilities},
+    {label: $('languageSelect').value==='ar'?'الإيرادات':'Revenue', value: agg.revenue},
+    {label: $('languageSelect').value==='ar'?'المصروفات':'Expense', value: agg.expense},
+    {label: $('languageSelect').value==='ar'?'أخرى':'Other', value: agg.other}
+  ];
+  items.forEach(it=>{
+    const div=document.createElement('div'); div.className='kpi';
+    const val = (typeof it.value==='number')? fmt(convertCurrencyLocal(it.value)) : esc(it.value);
+    div.innerHTML = `<div class="label">${esc(it.label)}</div><div class="num">${val} <small class="text-muted">${getCurrencySymbol()}</small></div>`;
+    kpiRow.appendChild(div);
+  });
+}
+
+function calculateRatios(data){
+  const agg = aggregateData(data);
+  // basic derived numbers
+  const totalAssets = Math.abs(agg.assets);
+  const totalLiabilities = Math.abs(agg.liabilities);
+  const equity = Math.abs(agg.equity) || (totalAssets - totalLiabilities);
+  const revenue = Math.abs(agg.revenue);
+  const expense = Math.abs(agg.expense);
+  const netIncome = revenue - expense;
+
+  // ratios (safe guards)
+  const currentRatio = (totalAssets && totalLiabilities)? (totalAssets/ (totalLiabilities || 1)) : 0;
+  const debtToEquity = equity? (totalLiabilities / equity) : 0;
+  const roe = equity? (netIncome / equity) : 0;
+  const roa = totalAssets? (netIncome/ totalAssets) : 0;
+  const netMargin = revenue? (netIncome / revenue) : 0;
+  // DuPont: ROE = Net Margin * Asset Turnover * Equity Multiplier
+  const assetTurnover = totalAssets? (revenue / totalAssets) : 0;
+  const equityMultiplier = equity? (totalAssets / equity) : 0;
+  const dupontROE = netMargin * assetTurnover * equityMultiplier;
+
+  // simple liquidity: quick ratio approximate: (assets - inventory)/liabilities -> we don't have inventory breakdown; use assets*0.6 as proxy
+  const quickRatio = totalAssets? ((totalAssets * 0.6) / (totalLiabilities || 1)) : 0;
+
+  return {
+    totalAssets, totalLiabilities, equity, revenue, expense, netIncome,
+    currentRatio, quickRatio, debtToEquity, roe, roa, netMargin, assetTurnover, equityMultiplier, dupontROE
+  };
+}
+
+function renderRatios(data){
+  const r = calculateRatios(data);
+  const area = $('ratiosArea'); area.innerHTML = '';
+  if(!(data && data.length)){ area.innerHTML=`<div class="small-muted">${translations[$('languageSelect').value].noData}</div>`; return; }
+
+  const html = `
+    <div class="row g-3">
+      <div class="col-md-6">
+        <h6>الملخص</h6>
+        <table class="table table-sm">
+          <tbody>
+            <tr><td>إجمالي الأصول</td><td class="text-end">${fmt(convertCurrencyLocal(r.totalAssets))} ${getCurrencySymbol()}</td></tr>
+            <tr><td>إجمالي الخصوم</td><td class="text-end">${fmt(convertCurrencyLocal(r.totalLiabilities))} ${getCurrencySymbol()}</td></tr>
+            <tr><td>حقوق الملكية (تقريبي)</td><td class="text-end">${fmt(convertCurrencyLocal(r.equity))} ${getCurrencySymbol()}</td></tr>
+            <tr><td>الإيرادات</td><td class="text-end">${fmt(convertCurrencyLocal(r.revenue))} ${getCurrencySymbol()}</td></tr>
+            <tr><td>صافي الربح</td><td class="text-end">${fmt(convertCurrencyLocal(r.netIncome))} ${getCurrencySymbol()}</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-md-6">
+        <h6>النسب الرئيسية</h6>
+        <table class="table table-sm">
+          <tbody>
+            <tr><td>النسبة الحالية (Current Ratio)</td><td class="text-end">${fmt(r.currentRatio)}</td></tr>
+            <tr><td>النسبة السريعة (Quick Ratio - proxy)</td><td class="text-end">${fmt(r.quickRatio)}</td></tr>
+            <tr><td>نسبة الدين إلى حقوق الملكية (Debt/Equity)</td><td class="text-end">${fmt(r.debtToEquity)}</td></tr>
+            <tr><td>العائد على حقوق الملكية ROE</td><td class="text-end">${fmt(r.roe)}</td></tr>
+            <tr><td>العائد على الأصول ROA</td><td class="text-end">${fmt(r.roa)}</td></tr>
+            <tr><td>هامش صافي الربح (Net Margin)</td><td class="text-end">${fmt(r.netMargin)}</td></tr>
+            <tr><td>دوبونت (DuPont) تفاصيل ROE</td><td class="text-end">${fmt(r.dupontROE)}</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="col-12">
+        <h6>تفصيل DuPont</h6>
+        <div class="small-muted">Net Margin × Asset Turnover × Equity Multiplier = ROE</div>
+        <table class="table table-sm mt-2">
+          <tbody>
+            <tr><td>Net Margin</td><td class="text-end">${fmt(r.netMargin)}</td></tr>
+            <tr><td>Asset Turnover</td><td class="text-end">${fmt(r.assetTurnover)}</td></tr>
+            <tr><td>Equity Multiplier</td><td class="text-end">${fmt(r.equityMultiplier)}</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+  area.innerHTML = html;
+
+  // generate opinion
+  generateOpinion(r);
+}
+
+// ------------------ EVA & WACC ------------------
+$('calcEVA').addEventListener('click', ()=>{
+  const tax = toNum($('taxRate').value)/100;
+  const kd = toNum($('costOfDebt').value)/100;
+  const ke = toNum($('costOfEquity').value)/100;
+  const debtPct = toNum($('debtRatio').value)/100;
+  const equityPct = 1 - debtPct;
+  // after-tax cost of debt
+  const afterTaxKd = kd * (1 - tax);
+  const wacc = (debtPct * afterTaxKd) + (equityPct * ke);
+  const capital = toNum($('capitalInput').value);
+  // NOPAT ~ Net Income * (1 - tax)?? better use net income adjusted: we'll compute net operating profit approximated by revenue - expense
+  const agg = aggregateData(trialData);
+  const nopat = (agg.revenue - agg.expense) * (1 - tax); // rough approximation
+  const eva = nopat - (wacc * capital);
+  $('waccResult').innerText = `WACC ≈ ${(wacc*100).toFixed(2)}%`;
+  $('evaOutput').innerHTML = `<div>NOPAT تقريبي: ${fmt(convertCurrencyLocal(nopat))} ${getCurrencySymbol()} — EVA: <strong>${fmt(convertCurrencyLocal(eva))} ${getCurrencySymbol()}</strong></div>`;
+});
+
+// ------------------ Opinion engine (simple rules) ------------------
+function generateOpinion(r){
+  // simple thresholds
+  let score = 0;
+  if(r.currentRatio >= 1.5) score += 2; else if(r.currentRatio >=1) score +=1;
+  if(r.netMargin >= 0.1) score += 2; else if(r.netMargin > 0) score +=1;
+  if(r.debtToEquity <= 1) score +=2; else if(r.debtToEquity <=2) score +=1;
+  // ROE
+  if(r.roe >= 0.15) score +=2; else if(r.roe >= 0.05) score +=1;
+
+  const lang = $('languageSelect').value;
+  let opinionText = '';
+  if(score >=6) opinionText = translations[lang].opinion_good;
+  else if(score >=3) opinionText = translations[lang].opinion_warning;
+  else opinionText = translations[lang].opinion_bad;
+
+  $('opinionArea').innerHTML = `<div><strong>تقييم مبدئي:</strong> ${opinionText}</div>`;
+}
+
+// ------------------ Forecasting (simple local methods) ------------------
+function timeseriesFromSnapshots(field){
+  // build series: each snapshot label => aggregate value for field (revenue/expense/assets)
+  const keys = Object.keys(snapshots).sort();
+  const series = [];
+  keys.forEach(k=>{
+    const s = snapshots[k] || [];
+    const agg = aggregateData(s);
+    let val = 0;
+    if(field==='revenue') val = agg.revenue;
+    else if(field==='expense') val = agg.expense;
+    else if(field==='assets') val = agg.assets;
+    series.push({label:k, value: val});
+  });
+  return series;
+}
+
+function linearForecast(series, horizon){
+  // simple linear regression on index->value
+  if(series.length < 2) return null;
+  const n = series.length;
+  const xs = series.map((_,i)=>i+1);
+  const ys = series.map(s=>toNum(s.value));
+  const xMean = xs.reduce((a,b)=>a+b,0)/n;
+  const yMean = ys.reduce((a,b)=>a+b,0)/n;
+  let num=0, den=0;
+  for(let i=0;i<n;i++){ num += (xs[i]-xMean)*(ys[i]-yMean); den += (xs[i]-xMean)*(xs[i]-xMean); }
+  const slope = den===0?0:num/den;
+  const intercept = yMean - slope*xMean;
+  const preds = [];
+  for(let h=1; h<=horizon; h++){
+    const x = n + h;
+    const y = intercept + slope * x;
+    preds.push(y);
   }
-  </script>
+  return { preds, slope, intercept };
+}
+
+function expSmoothing(series, alpha=0.3, horizon=4){
+  if(series.length===0) return null;
+  let s = series[0].value;
+  series.forEach(pt=> s = alpha * pt.value + (1-alpha) * s);
+  // forecast constant s
+  const preds = Array.from({length:horizon}).map(()=> s);
+  return { preds, level: s };
+}
+
+let forecastChart = null;
+$('runForecast').addEventListener('click', ()=>{
+  const field = $('forecastField').value;
+  const horizon = Math.max(1, parseInt($('forecastHorizon').value || '4'));
+  const series = timeseriesFromSnapshots(field);
+  if(series.length < 2){ showToast('لا توجد لقطات كافية لتشغيل التنبؤ','warning'); return; }
+  // linear
+  const lin = linearForecast(series, horizon);
+  const exp = expSmoothing(series, 0.4, horizon);
+
+  // prepare labels and data
+  const labels = series.map(s=>s.label);
+  const existing = series.map(s=>convertCurrencyLocal(s.value));
+  const futureLabels = [];
+  for(let i=1;i<=horizon;i++) futureLabels.push(`t+${i}`);
+  const predsLin = (lin && lin.preds)? lin.preds.map(v=>convertCurrencyLocal(v)) : [];
+  const predsExp = (exp && exp.preds)? exp.preds.map(v=>convertCurrencyLocal(v)) : [];
+
+  // show outputs
+  const out = $('forecastOutput');
+  out.innerHTML = `<div class="mb-2"><strong>Linear forecast slope:</strong> ${(lin.slope||0).toFixed(4)} — <strong>Exp smoothing level:</strong> ${(exp.level||0).toFixed(2)}</div>`;
+  // draw chart
+  const ctx = $('forecastChart').getContext('2d');
+  if(forecastChart) try{ forecastChart.destroy(); }catch(e){}
+  forecastChart = new Chart(ctx, {
+    type:'line',
+    data:{
+      labels: labels.concat(futureLabels),
+      datasets:[
+        { label: $('languageSelect').value==='ar'?'المعطيات':'Actual', data: existing.concat(Array(horizon).fill(null)), borderColor:'#0d6efd', tension:0.2 },
+        { label: 'Linear Forecast', data: Array(series.length).fill(null).concat(predsLin), borderColor:'#6610f2', tension:0.2 },
+        { label: 'Exp Smoothing', data: Array(series.length).fill(null).concat(predsExp), borderColor:'#198754', tension:0.2 }
+      ]
+    },
+    options:{responsive:true}
+  });
+
+});
+
+// Placeholder for server forecast (Prophet/ARIMA) call
+$('callServerForecast').addEventListener('click', ()=>{
+  // This button is prepared to send series to your server that runs Prophet/ARIMA and returns predictions.
+  // Since we cannot run Prophet in-browser reliably, you can implement an API endpoint that accepts JSON series and returns predictions.
+  // Here we'll just show instruction message.
+  const lang = $('languageSelect').value;
+  alert(lang==='ar' ? 'هذه الميزة تطلب وجود API خارجي. أستطيع تزويدك بكود بايثون (Flask) لتشغيل Prophet إذا رغبت.' : 'This feature requires an external API. I can provide Python (Flask) + Prophet sample code if you want.');
+});
+
+// ------------------ Comparison between snapshots (detailed) ------------------
+function compareSnapshots(labelA,labelB){
+  const dataA = snapshots[labelA] || [];
+  const dataB = snapshots[labelB] || [];
+  const aggA = aggregateData(dataA);
+  const aggB = aggregateData(dataB);
+  const labels = [ $('languageSelect').value==='ar'?'الأصول':'Assets', $('languageSelect').value==='ar'?'الخصوم':'Liabilities', $('languageSelect').value==='ar'?'الإيرادات':'Revenue', $('languageSelect').value==='ar'?'المصروفات':'Expenses','Other' ];
+  const valsA = [Math.abs(aggA.assets), Math.abs(aggA.liabilities), Math.abs(aggA.revenue), Math.abs(aggA.expense), Math.abs(aggA.other)].map(convertCurrencyLocal);
+  const valsB = [Math.abs(aggB.assets), Math.abs(aggB.liabilities), Math.abs(aggB.revenue), Math.abs(aggB.expense), Math.abs(aggB.other)].map(convertCurrencyLocal);
+
+  // produce compare chart
+  const ctx = document.createElement('canvas');
+  ctx.height = 220;
+  const modalDiv = document.createElement('div');
+  modalDiv.className = 'card-surface';
+  modalDiv.innerHTML = `<h6>مقارنة ${esc(labelA)} ⟷ ${esc(labelB)}</h6>`;
+  modalDiv.appendChild(ctx);
+  // simple modal-like display
+  document.body.appendChild(modalDiv);
+  new Chart(ctx.getContext('2d'), {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        { label: labelA, data: valsA, backgroundColor:'rgba(13,110,253,0.8)'},
+        { label: labelB, data: valsB, backgroundColor:'rgba(102,16,242,0.8)'}
+      ]
+    },
+    options:{responsive:true}
+  });
+
+  setTimeout(()=>{ modalDiv.scrollIntoView({behavior:'smooth'}); },100);
+}
+
+// ------------------ Export functions ------------------
+$('exportPdfBtn').addEventListener('click', ()=>{
+  if(!(trialData && trialData.length)){ showToast(translations[$('languageSelect').value].exportNoData,'warning'); return; }
+  const el = document.querySelector('main');
+  const wm = $('wmLogo'); const oldOp = wm.style.opacity; wm.style.opacity = '0.12';
+  const opt = { margin:0.35, filename:'advanced_analytics_report.pdf', image:{type:'jpeg',quality:0.95}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'in', format:'a4', orientation:'portrait'} };
+  html2pdf().set(opt).from(el).save().finally(()=>{ wm.style.opacity = oldOp || ''; });
+});
+
+// Export Word (simple HTML -> .doc) with logo header
+$('exportDocxBtn').addEventListener('click', ()=>{
+  if(!(trialData && trialData.length)){ showToast(translations[$('languageSelect').value].exportNoData,'warning'); return; }
+  const header = `<div style="text-align:center;"><img src="assets/logo.png" style="height:60px"/><h2>${$('brandText').innerText}</h2></div><hr/>`;
+  const body = document.querySelector('main').innerHTML;
+  const html = '<html><head><meta charset="utf-8"></head><body>' + header + body + '</body></html>';
+  const blob = new Blob([html], {type: 'application/msword'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='advanced_report.doc'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+});
+
+// export excel (trialData)
+$('exportAllExcel').addEventListener('click', ()=>{
+  if(!(trialData && trialData.length)){ showToast(translations[$('languageSelect').value].exportNoData,'warning'); return; }
+  const ws = XLSX.utils.json_to_sheet(trialData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'TrialBalance');
+  XLSX.writeFile(wb, 'trialbalance.xlsx');
+});
+
+// export all pdf (full page)
+$('exportAllPdf').addEventListener('click', ()=> $('exportPdfBtn').click());
+
+// ------------------ Render all ------------------
+function renderAll(){
+  // reload data from storage (in case user updated in report)
+  trialData = JSON.parse(localStorage.getItem('trialData')||'[]');
+  loadSnapshots();
+  renderKPIs(trialData);
+  renderRatios(trialData);
+  // set fx placeholder
+  const cur = $('currencySelect').value || 'EGP';
+  $('fxRateInput').placeholder = cur==='EGP' ? 'EGP' : ('1 '+cur+' = ? EGP');
+}
+renderAll();
+
+// storage sync
+window.addEventListener('storage', (e)=>{
+  if(e.key==='trialData'){ trialData = JSON.parse(e.newValue||'[]'); renderAll(); showToast('تم تحديث البيانات من التخزين','info'); }
+  if(e.key==='trialData_snapshots'){ loadSnapshots(); showToast('تم تحديث اللقطات','info'); }
+});
+</script>
+
 </body>
 </html>
