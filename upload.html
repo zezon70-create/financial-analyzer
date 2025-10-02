@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📊 رفع القوائم المالية | Financial Analyzer</title>
+  <title>📊 رفع / إدخال القوائم المالية | Financial Analyzer</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
   <style>
@@ -13,9 +13,7 @@
       color: #fff;
       min-height: 100vh;
     }
-    .navbar {
-      background: rgba(0,0,0,0.8);
-    }
+    .navbar { background: rgba(0,0,0,0.85); }
     .card {
       border-radius: 20px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.5);
@@ -29,15 +27,14 @@
       font-weight: bold;
       padding: 10px 20px;
     }
-    .dark-text { color: #eee; }
-    .form-control, .form-select {
-      border-radius: 15px;
-    }
+    table { background: #243b55; color: #fff; }
+    th, td { text-align: center; padding: 8px; }
+    input.table-input { width: 100%; border: none; text-align: center; }
     .watermark {
       position: fixed;
       bottom: 20px;
       right: 20px;
-      opacity: 0.1;
+      opacity: 0.08;
       font-size: 80px;
       font-weight: bold;
       z-index: -1;
@@ -52,21 +49,133 @@
     <div class="container-fluid">
       <a class="navbar-brand fw-bold text-warning" href="index.html">Financial Analyzer</a>
       <div>
-        <a href="input.html" class="btn btn-outline-light btn-sm mx-1">إدخال يدوي</a>
-        <a href="report.html" class="btn btn-outline-light btn-sm mx-1">التقارير</a>
-        <a href="advanced.html" class="btn btn-outline-light btn-sm mx-1">التحليلات المتقدمة</a>
+        <a href="upload.html" class="btn btn-outline-light btn-sm mx-1">رفع/إدخال البيانات</a>
+        <a href="report.html" class="btn btn-outline-light btn-sm mx-1">📑 التقارير</a>
+        <a href="advanced.html" class="btn btn-outline-light btn-sm mx-1">📈 التحليلات المتقدمة</a>
       </div>
     </div>
   </nav>
 
   <div class="container py-5">
-    <h2 class="text-center mb-4 text-warning">📂 رفع أو إدخال القوائم المالية</h2>
+    <h2 class="text-center mb-4 text-warning">📂 رفع أو إدخال القوائم المالية الأربعة</h2>
+
+    <!-- اختيار رفع ملف -->
+    <div class="card p-4 mb-4">
+      <h4 class="mb-3">رفع ملف Excel/CSV</h4>
+      <input type="file" id="fileInput" class="form-control mb-3" accept=".xlsx,.xls,.csv" />
+      <button class="btn btn-success btn-custom w-100" onclick="parseFile()">📥 رفع وقراءة البيانات</button>
+    </div>
+
+    <!-- اختيار إدخال يدوي -->
     <div class="row g-4">
 
-      <!-- رفع الملفات -->
+      <!-- قائمة الدخل -->
       <div class="col-md-6">
-        <div class="card p-4 h-100">
-          <h4 class="mb-3">رفع ملف Excel/CSV</h4>
-          <input type="file" id="fileInput" class="form-control mb-3" accept=".xlsx,.xls,.csv" />
-          <button class="btn btn-success btn-custom w-100" onclick="parseFile()">📥 رفع وقراءة البيانات</button>
-        </
+        <div class="card p-3 h-100">
+          <h5 class="text-center text-warning">📊 قائمة الدخل</h5>
+          <table class="table table-bordered">
+            <thead><tr><th>البند</th><th>القيمة</th></tr></thead>
+            <tbody id="incomeTable">
+              <tr><td>الإيرادات</td><td><input class="table-input" type="number"></td></tr>
+              <tr><td>المصروفات</td><td><input class="table-input" type="number"></td></tr>
+              <tr><td>صافي الربح</td><td><input class="table-input" type="number"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- قائمة المركز المالي -->
+      <div class="col-md-6">
+        <div class="card p-3 h-100">
+          <h5 class="text-center text-warning">🏦 قائمة المركز المالي</h5>
+          <table class="table table-bordered">
+            <thead><tr><th>البند</th><th>القيمة</th></tr></thead>
+            <tbody id="balanceTable">
+              <tr><td>الأصول</td><td><input class="table-input" type="number"></td></tr>
+              <tr><td>الخصوم</td><td><input class="table-input" type="number"></td></tr>
+              <tr><td>حقوق الملكية</td><td><input class="table-input" type="number"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- قائمة التدفقات النقدية -->
+      <div class="col-md-6">
+        <div class="card p-3 h-100">
+          <h5 class="text-center text-warning">💵 التدفقات النقدية</h5>
+          <table class="table table-bordered">
+            <thead><tr><th>البند</th><th>القيمة</th></tr></thead>
+            <tbody id="cashflowTable">
+              <tr><td>التدفقات من التشغيل</td><td><input class="table-input" type="number"></td></tr>
+              <tr><td>التدفقات من الاستثمار</td><td><input class="table-input" type="number"></td></tr>
+              <tr><td>التدفقات من التمويل</td><td><input class="table-input" type="number"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- قائمة حقوق الملكية -->
+      <div class="col-md-6">
+        <div class="card p-3 h-100">
+          <h5 class="text-center text-warning">📑 قائمة حقوق الملكية</h5>
+          <table class="table table-bordered">
+            <thead><tr><th>البند</th><th>القيمة</th></tr></thead>
+            <tbody id="equityTable">
+              <tr><td>رأس المال</td><td><input class="table-input" type="number"></td></tr>
+              <tr><td>الأرباح المحتجزة</td><td><input class="table-input" type="number"></td></tr>
+              <tr><td>إجمالي حقوق الملكية</td><td><input class="table-input" type="number"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="text-center mt-4">
+      <button class="btn btn-warning btn-custom mx-2" onclick="saveData()">💾 حفظ البيانات</button>
+      <a href="report.html" class="btn btn-primary btn-custom mx-2">➡️ الذهاب للتقارير</a>
+    </div>
+  </div>
+
+  <div class="watermark">Financial Analyzer</div>
+
+<script>
+function parseFile() {
+  const file = document.getElementById('fileInput').files[0];
+  if (!file) { alert("الرجاء اختيار ملف"); return; }
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, { type: 'array' });
+    console.log("📥 ملف محمل:", workbook.SheetNames);
+    alert("تم رفع الملف بنجاح!");
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+function saveData() {
+  let data = {
+    income: getTableData("incomeTable"),
+    balance: getTableData("balanceTable"),
+    cashflow: getTableData("cashflowTable"),
+    equity: getTableData("equityTable")
+  };
+  localStorage.setItem("financialData", JSON.stringify(data));
+  alert("✅ تم حفظ البيانات بنجاح!");
+}
+
+function getTableData(tableId) {
+  let table = document.getElementById(tableId);
+  let rows = table.getElementsByTagName("tr");
+  let obj = {};
+  for (let row of rows) {
+    let key = row.cells[0].innerText;
+    let val = row.cells[1].children[0].value || 0;
+    obj[key] = parseFloat(val);
+  }
+  return obj;
+}
+</script>
+
+</body>
+</html>
