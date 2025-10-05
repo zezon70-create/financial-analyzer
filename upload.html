@@ -1,0 +1,791 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Upload & إدخال القوائم — المحلل المالي</title>
+
+<!-- External libs -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet"/>
+
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+<style>
+:root{
+  --accent-1:#0d6efd;
+  --accent-2:#6610f2;
+  --bg:#f6f8fb; --card:#fff; --text:#0b1220; --muted:#6c757d;
+  --glass: rgba(255,255,255,0.7);
+  --radius:12px;
+  --shadow: 0 12px 30px rgba(2,6,23,0.04);
+}
+html,body{height:100%}
+body{
+  font-family:"Cairo",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  margin:0;background:var(--bg);color:var(--text);
+  -webkit-font-smoothing:antialiased;transition: background .22s, color .22s;
+}
+body[data-theme="dark"]{
+  --bg:#071018; --card:#07131a; --text:#e6eef6; --muted:#9aa6b2; --glass: rgba(6,10,15,0.5);
+  background:var(--bg); color:var(--text);
+}
+
+/* Layout */
+.container-main{max-width:1200px;margin:22px auto;padding:16px}
+.site-header{position:sticky;top:0;z-index:1400;padding:10px 18px;backdrop-filter: blur(8px);
+  background:var(--glass);border-bottom:1px solid rgba(13,110,253,0.06);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:.8rem}
+.brand img{height:44px;border-radius:8px;box-shadow:0 8px 28px rgba(13,110,253,0.06)}
+.brand .title{font-weight:800}
+.controls{display:flex;gap:.5rem;align-items:center}
+
+/* hero ribbon */
+.ribbon{position:relative;padding:18px;border-radius:var(--radius);
+  background:linear-gradient(180deg,rgba(13,110,253,0.06),rgba(102,16,242,0.02));
+  box-shadow:var(--shadow);border:1px solid rgba(13,110,253,0.04);margin-bottom:16px}
+.hero-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.hero-left{flex:1}
+.hero-right{width:360px;min-width:260px}
+
+/* card surface */
+.card-surface{background:var(--card);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);border:1px solid rgba(13,110,253,0.03);margin-bottom:16px}
+body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03)}
+
+/* KPIs */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:12px 0}
+.kpi{background:linear-gradient(180deg,var(--card),#f8fbff);padding:14px;border-radius:10px;text-align:center;box-shadow:0 8px 20px rgba(2,6,23,0.04);transition:transform .12s}
+.kpi:hover{transform:translateY(-6px)}
+.kpi .num{font-weight:800;font-size:1.12rem;margin-top:6px}
+.kpi .label{font-size:.85rem;color:var(--muted)}
+
+/* table */
+.table thead th{border-bottom:1px solid rgba(0,0,0,0.06)}
+.table tbody tr:hover{background:rgba(13,110,253,0.03)}
+.input-sm{height:40px;padding:.45rem .6rem}
+.select-type{min-width:160px}
+
+/* watermark */
+.watermark{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;opacity:0.06}
+.watermark img{max-width:520px;filter:grayscale(100%);opacity:0.12}
+
+/* autocomplete */
+.autocomplete-suggestions{position:absolute;background:var(--card);border:1px solid rgba(0,0,0,0.06);border-radius:8px;max-height:180px;overflow:auto;z-index:2500;box-shadow:0 10px 30px rgba(2,6,23,0.06)}
+.autocomplete-suggestion{padding:8px 10px;cursor:pointer}
+.autocomplete-suggestion:hover{background:linear-gradient(90deg,rgba(13,110,253,0.12),rgba(102,16,242,0.08));color:var(--text)}
+
+/* buttons */
+.btn-glow{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));border:none;color:#fff;box-shadow:0 10px 40px rgba(102,16,242,0.12);transition:transform .12s, box-shadow .12s}
+.btn-glow:hover{transform:translateY(-3px);box-shadow:0 18px 55px rgba(102,16,242,0.18)}
+.btn-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06)}
+
+/* helpers */
+.small-muted{color:var(--muted);font-size:.95rem}
+.badge-note{background:linear-gradient(90deg,#ffc107,#ffb020);padding:6px 10px;border-radius:999px;color:#111;font-weight:800}
+.empty-hint{padding:18px;text-align:center;color:var(--muted)}
+
+/* responsive */
+@media (max-width:900px){ .hero-right{width:100%} .controls{gap:.4rem} .kpi-row{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))} }
+</style>
+</head>
+<body data-theme="light">
+
+<!-- watermark for PDF capture -->
+<div class="watermark" aria-hidden="true"><img src="assets/logo.png" alt="logo" id="wmLogo"></div>
+
+<!-- toasts -->
+<div class="toast-area" id="toastArea" role="status" aria-live="polite" style="position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:2000;pointer-events:none"></div>
+
+<!-- header -->
+<header class="site-header" role="banner">
+  <div class="brand" title="المحلل المالي">
+    <img src="assets/logo.png" alt="logo" id="brandLogo">
+    <div>
+      <div class="title" id="brandText">المحلل المالي</div>
+      <div class="small-muted" id="brandDesc">أدخل قوائمك أو ارفع ملف ميزان المراجعة</div>
+    </div>
+  </div>
+
+  <div class="controls" role="navigation" aria-label="controls">
+    <a class="btn btn-sm btn-outline-secondary" href="index.html" title="الرئيسية"><i class="bi bi-house"></i></a>
+    <a class="btn btn-sm btn-outline-secondary active" href="upload.html" title="إدخال / رفع">رفع / إدخال</a>
+    <a class="btn btn-sm btn-outline-secondary" href="report.html" title="التقارير">التقارير</a>
+    <a class="btn btn-sm btn-outline-secondary" href="dashboard.html" title="لوحة التحكم">داشبورد</a>
+    <a class="btn btn-sm btn-outline-secondary" href="advanced.html" title="التحليلات">تحليلات</a>
+
+    <select id="currencySelect" class="form-select form-select-sm" title="اختر العملة" aria-label="اختر العملة" style="min-width:92px"></select>
+    <input id="fxRateInput" class="form-control form-control-sm" style="width:120px" title="سعر الصرف (1 عملة = ؟ EGP)" aria-label="سعر الصرف" placeholder="FX" />
+
+    <select id="languageSelect" class="form-select form-select-sm" title="اللغة" style="min-width:110px"></select>
+
+    <div class="form-check form-switch mb-0" title="الوضع الليلي">
+      <input class="form-check-input" id="darkModeToggle" type="checkbox" role="switch" aria-checked="false">
+    </div>
+
+  </div>
+</header>
+
+<!-- main content -->
+<main class="container-main" role="main" id="mainArea">
+
+  <!-- hero -->
+  <section class="ribbon" aria-labelledby="ribbonTitle">
+    <div class="hero-row">
+      <div class="hero-left">
+        <h3 id="ribbonTitle" style="margin:0">مرحبًا — <span style="background:linear-gradient(90deg,var(--accent-1),var(--accent-2));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:900">أدخل قوائمك أو ارفع ملف</span></h3>
+        <p class="small-muted" id="ribbonDesc" style="margin-top:6px">يمكنك تعبئة الجداول المالية الأربعة يدويًا أو رفع ملف CSV/Excel — سيُستخدم للـ Report و Advanced Analysis.</p>
+
+        <div class="mt-3 d-flex gap-2 flex-wrap">
+          <button id="btnFillManual" class="btn btn-glow btn-sm"><i class="bi bi-pencil-square"></i> املأ يدويًا</button>
+          <button id="btnUploadFile" class="btn btn-outline-primary btn-sm"><i class="bi bi-cloud-arrow-up"></i> رفع ملف</button>
+          <button id="btnClearAll" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> مسح الكل</button>
+          <button id="btnToReport" class="btn btn-success btn-sm ms-2"><i class="bi bi-receipt"></i> اذهب للتقارير</button>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <label class="form-label fw-bold mb-1" id="uploadLabel">ملف ميزان المراجعة / قوائم (CSV / XLSX)</label>
+        <input type="file" id="fileInput" class="form-control input-sm" accept=".csv,.xlsx" aria-label="رفع ملف قوائم" />
+        <div class="small-muted mt-2" id="uploadHint">يدعم CSV و Excel — يدعم رؤوس باللغة العربية والإنجليزية.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KPI preview -->
+  <section class="card-surface mb-3">
+    <h6>نظرة سريعة</h6>
+    <div class="kpi-row" id="kpiRow"></div>
+  </section>
+
+  <!-- Four detailed tables (Balance, Income, Cash Flow, Equity) -->
+  <section class="card-surface" aria-labelledby="tablesTitle">
+    <h6 id="tablesTitle">القوائم المالية التفصيلية (املأها أو ارفع ملف)</h6>
+    <p class="small-muted">كل جدول مفصل: أدخل البنود، النوع، الكود، المدين/الدائن أو القيمة.</p>
+
+    <div class="mb-3">
+      <!-- tabs for the four statements -->
+      <ul class="nav nav-tabs" id="statTabs" role="tablist">
+        <li class="nav-item" role="presentation"><button class="nav-link active" id="tabBS" data-bs-toggle="tab" data-bs-target="#paneBS" type="button" role="tab">الميزانية / Balance Sheet</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" id="tabIS" data-bs-toggle="tab" data-bs-target="#paneIS" type="button" role="tab">قائمة الدخل / Income</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" id="tabCF" data-bs-toggle="tab" data-bs-target="#paneCF" type="button" role="tab">التدفقات النقدية / Cash Flow</button></li>
+        <li class="nav-item" role="presentation"><button class="nav-link" id="tabEQ" data-bs-toggle="tab" data-bs-target="#paneEQ" type="button" role="tab">حقوق الملكية / Equity</button></li>
+      </ul>
+
+      <div class="tab-content mt-2">
+        <!-- Balance Sheet -->
+        <div class="tab-pane fade show active" id="paneBS" role="tabpanel">
+          <div class="table-responsive">
+            <table id="bsTable" class="table table-sm table-borderless align-middle">
+              <thead>
+                <tr><th>الحساب</th><th>النوع</th><th>كود</th><th class="text-end">مدين</th><th class="text-end">دائن</th><th>إجراء</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-glow" id="bsAdd">إضافة بند</button>
+            <button class="btn btn-sm btn-outline-secondary" id="bsImport">استيراد لبند محدد</button>
+          </div>
+        </div>
+
+        <!-- Income Statement -->
+        <div class="tab-pane fade" id="paneIS" role="tabpanel">
+          <div class="table-responsive">
+            <table id="isTable" class="table table-sm table-borderless align-middle">
+              <thead>
+                <tr><th>البند</th><th>النوع</th><th>كود</th><th class="text-end">قيمة</th><th>إجراء</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-glow" id="isAdd">إضافة بند</button>
+          </div>
+        </div>
+
+        <!-- Cash Flow -->
+        <div class="tab-pane fade" id="paneCF" role="tabpanel">
+          <div class="table-responsive">
+            <table id="cfTable" class="table table-sm table-borderless align-middle">
+              <thead>
+                <tr><th>البند</th><th>نوع التدفق</th><th>كود</th><th class="text-end">قيمة</th><th>إجراء</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-glow" id="cfAdd">إضافة بند</button>
+          </div>
+        </div>
+
+        <!-- Equity -->
+        <div class="tab-pane fade" id="paneEQ" role="tabpanel">
+          <div class="table-responsive">
+            <table id="eqTable" class="table table-sm table-borderless align-middle">
+              <thead>
+                <tr><th>البند</th><th>نوع</th><th>كود</th><th class="text-end">قيمة</th><th>إجراء</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <div class="d-flex gap-2">
+            <button class="btn btn-sm btn-glow" id="eqAdd">إضافة بند</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="small-muted">ملاحظة: يمكنك إما تعبئة هذه الجداول يدوياً أو رفع ملف يحتوي على الحقول المناسبة وسيتم محاولة توفيقها تلقائياً.</div>
+  </section>
+
+  <!-- Actions: Validate & Export -->
+  <section class="card-surface d-flex gap-2 align-items-center justify-content-between">
+    <div>
+      <button id="validateAllBtn" class="btn btn-outline-primary"><i class="bi bi-check-lg"></i> تحقق من البيانات</button>
+      <button id="saveLocalBtn" class="btn btn-outline-info"><i class="bi bi-save"></i> حفظ محلي</button>
+      <button id="loadLocalBtn" class="btn btn-outline-warning"><i class="bi bi-folder2-open"></i> استرجاع محلي</button>
+    </div>
+
+    <div>
+      <button id="exportPdfBtn" class="btn btn-outline-primary"><i class="bi bi-file-earmark-pdf"></i> تصدير PDF</button>
+      <button id="exportDocxBtn" class="btn btn-outline-secondary"><i class="bi bi-file-earmark-word"></i> تصدير Word (.docx)</button>
+      <button id="exportExcelBtn" class="btn btn-outline-success"><i class="bi bi-file-earmark-excel"></i> تصدير Excel</button>
+    </div>
+  </section>
+
+  <footer class="text-center py-3 small">&copy; 2025 المحلل المالي — جميع الحقوق محفوظة</footer>
+</main>
+
+<!-- scripts -->
+<script>
+/* =========================
+   Helpers
+   ========================= */
+const $ = id => document.getElementById(id);
+function el(selector, ctx=document){ return ctx.querySelector(selector); }
+function showToast(msg, type='info'){ const area = document.getElementById('toastArea'); const d=document.createElement('div'); d.className=`toast align-items-center text-bg-${type} border-0 show`; d.style.minWidth='220px'; d.style.marginTop='6px'; d.style.pointerEvents='auto'; d.innerHTML=`<div class="d-flex"><div class="toast-body">${msg}</div><button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="this.closest('.toast').remove()"></button></div>`; area.appendChild(d); setTimeout(()=>d.remove(),3500); }
+function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
+function toNum(v){ const n = Number(String(v).replace(/[, ]+/g,'')); return isNaN(n)?0:n; }
+function formatNumber(v){ return Number(v).toLocaleString(undefined,{maximumFractionDigits:2,minimumFractionDigits:0}); }
+
+/* =========================
+   State & defaults
+   ========================= */
+let BS = JSON.parse(localStorage.getItem('FA_BS')||'[]');      // balance sheet rows
+let IS = JSON.parse(localStorage.getItem('FA_IS')||'[]');      // income statement
+let CF = JSON.parse(localStorage.getItem('FA_CF')||'[]');      // cash flow
+let EQ = JSON.parse(localStorage.getItem('FA_EQ')||'[]');      // equity statement
+let fxRates = JSON.parse(localStorage.getItem('fa_fx')||'null') || { USD:31.0, EUR:34.0 };
+const LANGS = [{v:'ar',label:'العربية'},{v:'en',label:'English'}];
+const CURRENCIES = ['EGP','USD','EUR'];
+
+// account types (rich)
+const ACCOUNT_TYPES = [
+  "أصل متداول / Current Asset","أصل غير متداول / Non-current Asset","نقد / Cash","بنك / Bank",
+  "ذمم مدينة / Accounts Receivable","مخزون / Inventory","أصول ثابتة / Fixed Assets",
+  "خصوم متداولة / Current Liabilities","خصوم غير متداولة / Non-current Liabilities",
+  "ذمم دائنة / Accounts Payable","قروض قصيرة الأجل / Short-term Loans","حقوق الملكية / Equity",
+  "إيرادات / Revenue","مبيعات / Sales","تكلفة المبيعات / COGS","مصروفات تشغيلية / Operating Expense",
+  "مصروفات إدارية / Admin Expense","اهتلاك / Depreciation","مصروفات فوائد / Interest Expense","مصاريف ضريبية / Tax Expense",
+  "إيرادات أخرى / Other Income","مصروفات أخرى / Other Expense"
+];
+
+// translations (UI)
+const translations = {
+  ar: {
+    brandText:"المحلل المالي",
+    brandDesc:"ادخل قوائمك أو ارفع ملفًا (CSV / XLSX)",
+    uploadLabel:"رفع ملف القوائم (CSV / XLSX)",
+    uploadHint:"يدعم رؤوس بالعربية والإنجليزية — سيتم محاولة مطابقة الحقول.",
+    placeholderAccount:"اكتب اسم الحساب",
+    savedLocal:"تم الحفظ محلياً",
+    loadedLocal:"تم استرجاع البيانات المحلية",
+    cleared:"تم مسح جميع الجداول",
+    noDataExport:"لا توجد بيانات للتصدير",
+    enterFX:"أدخل سعر الصرف الصحيح قبل التحويل (1 عملة = ؟ EGP)",
+    validationOK:"تم التحقق — توجد بيانات صالحة",
+    validationNoData:"لا توجد بيانات للتحقق",
+    exportWordNotSupported:"تصدير Word يتطلب Server-side لنتيجة أفضل — سيتم إنشاء مستند مبسط.",
+  },
+  en: {
+    brandText:"Financial Analyzer",
+    brandDesc:"Fill your statements or upload a file (CSV / XLSX)",
+    uploadLabel:"Upload statements (CSV / XLSX)",
+    uploadHint:"Supports Arabic & English headers — will attempt to map fields.",
+    placeholderAccount:"Type account name",
+    savedLocal:"Saved locally",
+    loadedLocal:"Local data restored",
+    cleared:"All tables cleared",
+    noDataExport:"No data to export",
+    enterFX:"Enter FX rate before converting (1 currency = ? EGP)",
+    validationOK:"Validation complete — data present",
+    validationNoData:"No data to validate",
+    exportWordNotSupported:"Word export is basic in-browser; server generation recommended."
+  }
+};
+
+function t(key){ const lang = $('languageSelect')?.value || localStorage.getItem('fa_lang') || 'ar'; return (translations[lang] && translations[lang][key]) ? translations[lang][key] : key; }
+
+/* =========================
+   Populate controls & preferences
+   ========================= */
+function populateControls(){
+  // languages
+  const ls = $('languageSelect'); ls.innerHTML='';
+  LANGS.forEach(l=>{ const o=document.createElement('option'); o.value=l.v; o.textContent=l.label; ls.appendChild(o); });
+  // currencies
+  const cs = $('currencySelect'); cs.innerHTML='';
+  CURRENCIES.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; cs.appendChild(o); });
+  // load saved prefs
+  const savedLang = localStorage.getItem('fa_lang') || localStorage.getItem('lang') || 'ar';
+  const savedTheme = localStorage.getItem('fa_theme') || localStorage.getItem('theme') || 'light';
+  const savedCur = localStorage.getItem('fa_currency') || localStorage.getItem('currency') || 'EGP';
+  $('languageSelect').value = savedLang;
+  document.body.dataset.theme = savedTheme;
+  $('darkModeToggle').checked = (savedTheme === 'dark');
+  $('currencySelect').value = savedCur;
+  // fx input
+  $('fxRateInput').value = localStorage.getItem('fa_fx_custom') || '';
+  setPlaceholders();
+}
+populateControls();
+
+function setPlaceholders(){
+  $('uploadLabel').textContent = t('uploadLabel');
+  $('uploadHint').textContent = t('uploadHint');
+  // placeholder for account inputs applied during render
+}
+
+/* theme toggle */
+$('darkModeToggle').addEventListener('change', e=>{
+  const v = e.target.checked ? 'dark' : 'light';
+  document.body.dataset.theme = v;
+  localStorage.setItem('fa_theme', v);
+});
+
+/* language change */
+$('languageSelect').addEventListener('change', ()=>{
+  localStorage.setItem('fa_lang', $('languageSelect').value);
+  $('brandText').textContent = t('brandText');
+  $('brandDesc').textContent = t('brandDesc');
+  setPlaceholders();
+  renderAll();
+});
+
+/* currency change */
+$('currencySelect').addEventListener('change', ()=>{
+  localStorage.setItem('fa_currency', $('currencySelect').value);
+  renderAll();
+});
+
+/* fx input */
+$('fxRateInput').addEventListener('change', ()=>{
+  const v = toNum($('fxRateInput').value);
+  if(v>0){ localStorage.setItem('fa_fx_custom', v); fxRates.CUSTOM = v; localStorage.setItem('fa_fx', JSON.stringify(fxRates)); showToast('Saved FX','success'); renderAll(); }
+});
+
+/* =========================
+   Table rendering helpers
+   ========================= */
+function ensureRowFields(row){
+  return {
+    Account: row.Account || '',
+    Type: row.Type || '',
+    Code: row.Code || '',
+    Debit: row.Debit || 0,
+    Credit: row.Credit || 0,
+    Value: row.Value || 0,
+    FlowType: row.FlowType || ''
+  };
+}
+
+function renderTableGeneric(tableElemId, data, columns){
+  const tbody = document.querySelector(`#${tableElemId} tbody`);
+  tbody.innerHTML = '';
+  data.forEach((row, idx)=>{
+    row = ensureRowFields(row);
+    const tr = document.createElement('tr');
+    // build cells based on columns definitions
+    let cells = '';
+    columns.forEach(col=>{
+      if(col.type==='text'){
+        cells += `<td><input class="form-control form-control-sm input-sm" value="${esc(row[col.key]||'')}" data-field="${col.key}" data-idx="${idx}"></td>`;
+      } else if(col.type==='select'){
+        const options = ACCOUNT_TYPES.map(opt=>`<option value="${esc(opt)}"${(row[col.key]===opt?' selected':'')}>${esc(opt)}</option>`).join('');
+        cells += `<td><div class="d-flex gap-1 align-items-center"><select class="form-select form-select-sm input-sm select-type" data-field="${col.key}" data-idx="${idx}"><option value="">--</option>${options}</select><button class="btn btn-sm btn-outline-secondary" data-add-type data-idx="${idx}" title="Add type"><i class="bi bi-pencil-square"></i></button></div></td>`;
+      } else if(col.type==='number'){
+        cells += `<td><input type="number" class="form-control form-control-sm input-sm text-end" value="${toNum(row[col.key])}" data-field="${col.key}" data-idx="${idx}"></td>`;
+      } else {
+        cells += `<td><input class="form-control form-control-sm input-sm" value="${esc(row[col.key]||'')}" data-field="${col.key}" data-idx="${idx}"></td>`;
+      }
+    });
+    cells += `<td><button class="btn btn-sm btn-danger btn-delete" data-idx="${idx}" title="حذف"><i class="bi bi-trash"></i></button></td>`;
+    tr.innerHTML = cells;
+    tbody.appendChild(tr);
+  });
+
+  // listeners
+  tbody.querySelectorAll('input, select').forEach(inp=>{
+    inp.addEventListener('input', e=>{
+      const i = Number(e.target.dataset.idx), f=e.target.dataset.field;
+      if(isNaN(i)) return;
+      const val = e.target.type === 'number' ? toNum(e.target.value) : e.target.value;
+      data[i][f] = val;
+      saveAllLocal();
+      // debounce minimal re-render
+      clearTimeout(inp._deb); inp._deb = setTimeout(()=>{ renderKPIs(); },120);
+    });
+  });
+
+  // delete
+  tbody.querySelectorAll('.btn-delete').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      const i = Number(e.currentTarget.dataset.idx);
+      if(isNaN(i)) return;
+      data.splice(i,1);
+      saveAllLocal();
+      renderAll();
+      showToast(t('cleared'), 'danger');
+    });
+  });
+
+  // add-type button
+  tbody.querySelectorAll('button[data-add-type]').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      const idx = Number(e.currentTarget.dataset.idx);
+      const promptMsg = $('languageSelect').value === 'ar' ? 'أدخل نوع الحساب الجديد' : 'Enter new account type';
+      const newType = prompt(promptMsg);
+      if(newType && newType.trim()){
+        ACCOUNT_TYPES.unshift(newType.trim());
+        data[idx].Type = newType.trim();
+        saveAllLocal(); renderAll();
+        showToast('Type added','success');
+      }
+    });
+  });
+
+  // autocomplete for Account cells
+  tbody.querySelectorAll('input[data-field="Account"]').forEach(inp=>{
+    inp.addEventListener('input', e=>{
+      const val = e.target.value.trim().toLowerCase();
+      const tr = e.target.closest('tr');
+      let list = tr.querySelector('.autocomplete-suggestions');
+      const matches = [
+        {Account:'النقد',Type:'نقد / Cash',Code:'101'},
+        {Account:'البنك',Type:'بنك / Bank',Code:'102'},
+        {Account:'الزبائن',Type:'ذمم مدينة / Accounts Receivable',Code:'103'},
+        {Account:'الموردون',Type:'ذمم دائنة / Accounts Payable',Code:'201'},
+        {Account:'المبيعات',Type:'إيرادات / Revenue',Code:'401'},
+        {Account:'المصروفات',Type:'مصروفات تشغيلية / Operating Expense',Code:'501'}
+      ].filter(a=>a.Account.toLowerCase().includes(val) && val.length>0).slice(0,6);
+      if(!list && matches.length){ list=document.createElement('div'); list.className='autocomplete-suggestions'; tr.children[0].appendChild(list); }
+      if(list){
+        list.innerHTML = '';
+        if(matches.length===0){ list.remove(); return; }
+        matches.forEach(m=>{
+          const div=document.createElement('div'); div.className='autocomplete-suggestion'; div.textContent=m.Account;
+          div.addEventListener('click', ()=>{
+            inp.value = m.Account; tr.querySelector('select[data-field="Type"]').value = m.Type || ''; const codeInp = tr.querySelector('input[data-field="Code"]'); if(codeInp) codeInp.value = m.Code || '';
+            list.remove(); inp.dispatchEvent(new Event('input'));
+          });
+          list.appendChild(div);
+        });
+      }
+    });
+    inp.addEventListener('blur', ()=>{ setTimeout(()=>{ const l = inp.parentElement.querySelector('.autocomplete-suggestions'); if(l) l.remove(); },120); });
+  });
+}
+
+/* =========================
+   Render each statement
+   ========================= */
+function renderBS(){ renderTableGeneric('bsTable', BS, [
+  {key:'Account', type:'text'}, {key:'Type', type:'select'}, {key:'Code', type:'text'}, {key:'Debit', type:'number'}, {key:'Credit', type:'number'}
+]); }
+function renderIS(){ renderTableGeneric('isTable', IS, [
+  {key:'Account', type:'text'}, {key:'Type', type:'select'}, {key:'Code', type:'text'}, {key:'Value', type:'number'}
+]); }
+function renderCF(){ renderTableGeneric('cfTable', CF, [
+  {key:'Account', type:'text'}, {key:'FlowType', type:'select'}, {key:'Code', type:'text'}, {key:'Value', type:'number'}
+]); }
+function renderEQ(){ renderTableGeneric('eqTable', EQ, [
+  {key:'Account', type:'text'}, {key:'Type', type:'select'}, {key:'Code', type:'text'}, {key:'Value', type:'number'}
+]); }
+
+/* =========================
+   Initial rows helpers
+   ========================= */
+function ensureAtLeastOne(){
+  if(!BS.length) BS.push({Account:'',Type:'',Code:'',Debit:0,Credit:0});
+  if(!IS.length) IS.push({Account:'',Type:'',Code:'',Value:0});
+  if(!CF.length) CF.push({Account:'',FlowType:'',Code:'',Value:0});
+  if(!EQ.length) EQ.push({Account:'',Type:'',Code:'',Value:0});
+}
+
+/* =========================
+   Actions for add buttons
+   ========================= */
+document.getElementById('bsAdd').addEventListener('click', ()=>{ BS.push({Account:'',Type:'',Code:'',Debit:0,Credit:0}); saveAllLocal(); renderAll(); });
+document.getElementById('isAdd').addEventListener('click', ()=>{ IS.push({Account:'',Type:'',Code:'',Value:0}); saveAllLocal(); renderAll(); });
+document.getElementById('cfAdd').addEventListener('click', ()=>{ CF.push({Account:'',FlowType:'',Code:'',Value:0}); saveAllLocal(); renderAll(); });
+document.getElementById('eqAdd').addEventListener('click', ()=>{ EQ.push({Account:'',Type:'',Code:'',Value:0}); saveAllLocal(); renderAll(); });
+
+/* clear all */
+document.getElementById('btnClearAll').addEventListener('click', ()=>{
+  if(confirm($('languageSelect').value==='ar' ? 'هل ترغب بمسح جميع الجداول؟' : 'Clear all tables?')){
+    BS=[]; IS=[]; CF=[]; EQ=[]; saveAllLocal();
+    renderAll(); showToast(t('cleared'),'danger');
+  }
+});
+
+/* save/load local */
+function saveAllLocal(){
+  localStorage.setItem('FA_BS', JSON.stringify(BS));
+  localStorage.setItem('FA_IS', JSON.stringify(IS));
+  localStorage.setItem('FA_CF', JSON.stringify(CF));
+  localStorage.setItem('FA_EQ', JSON.stringify(EQ));
+}
+document.getElementById('saveLocalBtn').addEventListener('click', ()=>{ saveAllLocal(); showToast(t('savedLocal'),'success'); });
+document.getElementById('loadLocalBtn').addEventListener('click', ()=>{ BS = JSON.parse(localStorage.getItem('FA_BS')||'[]'); IS = JSON.parse(localStorage.getItem('FA_IS')||'[]'); CF = JSON.parse(localStorage.getItem('FA_CF')||'[]'); EQ = JSON.parse(localStorage.getItem('FA_EQ')||'[]'); renderAll(); showToast(t('loadedLocal'),'info'); });
+
+/* validate */
+document.getElementById('validateAllBtn').addEventListener('click', ()=> {
+  const any = BS.length+IS.length+CF.length+EQ.length;
+  if(any) showToast(t('validationOK'),'success'); else showToast(t('validationNoData'),'warning');
+});
+
+/* =========================
+   File import (CSV/XLSX) — intelligent mapping
+   ========================= */
+document.getElementById('fileInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0]; if(!file) return;
+  const name = file.name.toLowerCase();
+  const reader = new FileReader();
+  reader.onload = (evt)=>{
+    try{
+      let parsed=[];
+      if(name.endsWith('.csv')){
+        const p = Papa.parse(evt.target.result, { header:true, skipEmptyLines:true });
+        parsed = p.data;
+      } else {
+        const wb = XLSX.read(evt.target.result, { type:'binary' });
+        const sheet = wb.SheetNames[0];
+        parsed = XLSX.utils.sheet_to_json(wb.Sheets[sheet], { defval:'' });
+      }
+      // Attempt to detect which statement each row belongs to by key heuristics:
+      // If row has columns Dr/Cr or Debit/Credit -> likely trial balance / balance sheet entries
+      // We will map common headers (Arabic/English)
+      const mapKeys = (row)=>{
+        // Normalize keys without diacritics/spaces
+        const out = {};
+        const keys = Object.keys(row);
+        keys.forEach(k=>{
+          const kn = k.toString().trim().toLowerCase();
+          const v = row[k];
+          if(/account|اسم|الحساب|name/i.test(kn)) out.Account = v;
+          else if(/type|نوع/i.test(kn)) out.Type = v;
+          else if(/code|كود|رمز/i.test(kn)) out.Code = v;
+          else if(/debit|dr|مدين|مدينًا/i.test(kn)) out.Debit = v;
+          else if(/credit|cr|دائن/i.test(kn)) out.Credit = v;
+          else if(/value|amount|قيمة|مبلغ/i.test(kn)) out.Value = v;
+          else if(/flow|cash|تدفق|cashflow/i.test(kn)) out.FlowType = v;
+          else {
+            // fallback: add to Account if empty
+            if(!out.Account) out.Account = v;
+          }
+        });
+        return out;
+      };
+
+      // Simple heuristic: if majority rows have Debit/Credit fields -> treat as Trial Balance => split to BS/IS depending on Type/Account
+      const sample = parsed.slice(0,6).map(mapKeys);
+      const hasDrCr = sample.some(r=>r.Debit!==undefined || r.Credit!==undefined);
+      if(hasDrCr){
+        // convert to trial entries and allocate: here we'll add to BS for compatibility (user can move later)
+        parsed.forEach(r=>{
+          const m = mapKeys(r);
+          BS.push({ Account: m.Account||'', Type:m.Type||'', Code:m.Code||'', Debit: toNum(m.Debit||0), Credit: toNum(m.Credit||0) });
+        });
+        showToast(t('fileImported') || 'Imported', 'success');
+      } else {
+        // else try to map by presence of Value => push to IS or EQ or CF based on FlowType/Type
+        parsed.forEach(r=>{
+          const m = mapKeys(r);
+          const typeLower = String(m.Type||m.FlowType||'').toLowerCase();
+          if(/revenue|sales|إيراد|مبيعات/.test(typeLower)) IS.push({ Account: m.Account||'', Type:m.Type||'', Code:m.Code||'', Value: toNum(m.Value||0) });
+          else if(/expense|مصروف|تكلفة|cogs/.test(typeLower)) IS.push({ Account: m.Account||'', Type:m.Type||'', Code:m.Code||'', Value: toNum(m.Value||0) });
+          else if(/cash|تدفق|operat|operating/.test(typeLower)) CF.push({ Account: m.Account||'', FlowType:m.FlowType||'', Code:m.Code||'', Value: toNum(m.Value||0) });
+          else EQ.push({ Account: m.Account||'', Type:m.Type||'', Code:m.Code||'', Value: toNum(m.Value||0) });
+        });
+        showToast(t('fileImported') || 'Imported', 'success');
+      }
+      saveAllLocal(); renderAll();
+    }catch(err){
+      console.error(err);
+      showToast(t('fileError') || 'File read error', 'danger');
+    }
+  };
+  if(name.endsWith('.csv')) reader.readAsText(file); else reader.readAsBinaryString(file);
+});
+
+/* =========================
+   Exports: PDF & Excel & Word (basic)
+   ========================= */
+function getCurrencySymbol(){
+  const cur = $('currencySelect').value || 'EGP';
+  if(cur==='EGP') return 'ج.م'; if(cur==='USD') return '$'; if(cur==='EUR') return '€'; return cur;
+}
+function convertCurrency(value){
+  const cur = $('currencySelect').value || 'EGP';
+  const custom = Number(localStorage.getItem('fa_fx_custom')||'');
+  if(cur==='EGP') return toNum(value);
+  if(custom>0){ return toNum(value)/custom; }
+  const rate = fxRates[cur] || 1;
+  return toNum(value)/rate;
+}
+
+document.getElementById('exportPdfBtn').addEventListener('click', ()=>{
+  // Ensure at least data exists
+  if(!BS.length && !IS.length && !CF.length && !EQ.length){ showToast(t('noDataExport'),'warning'); return; }
+  // temporarily set watermark opacity higher
+  const logo = $('wmLogo'); const oldOp = logo.style.opacity; logo.style.opacity = '0.12';
+  const el = document.querySelector('main');
+  const opt = { margin:0.35, filename:'financial_statements.pdf', image:{type:'jpeg',quality:0.95}, html2canvas:{scale:2,useCORS:true,logging:false}, jsPDF:{unit:'in',format:'a4',orientation:'portrait'} };
+  html2pdf().set(opt).from(el).save().finally(()=>{ logo.style.opacity = oldOp || ''; });
+});
+
+document.getElementById('exportExcelBtn').addEventListener('click', ()=>{
+  const all = { BalanceSheet: BS, IncomeStatement: IS, CashFlow: CF, Equity: EQ };
+  // check any
+  if(!BS.length && !IS.length && !CF.length && !EQ.length){ showToast(t('noDataExport'),'warning'); return; }
+  const wb = XLSX.utils.book_new();
+  Object.keys(all).forEach(k=>{
+    const ws = XLSX.utils.json_to_sheet(all[k]);
+    XLSX.utils.book_append_sheet(wb, ws, k);
+  });
+  XLSX.writeFile(wb, 'financial_statements.xlsx');
+});
+
+/* Basic in-browser docx creation (very simple): build an HTML and convert to blob with .doc extension */
+document.getElementById('exportDocxBtn').addEventListener('click', ()=>{
+  if(!BS.length && !IS.length && !CF.length && !EQ.length){ showToast(t('noDataExport'),'warning'); return; }
+  // create a minimal HTML document for Word
+  let html = `<html><head><meta charset="utf-8"><title>Financial Report</title></head><body>`;
+  html += `<h1>${esc($('brandText').textContent)}</h1>`;
+  html += `<h2>Balance Sheet</h2>` + simpleTableHtml(BS);
+  html += `<h2>Income Statement</h2>` + simpleTableHtml(IS);
+  html += `<h2>Cash Flow</h2>` + simpleTableHtml(CF);
+  html += `<h2>Equity</h2>` + simpleTableHtml(EQ);
+  html += `</body></html>`;
+  const blob = new Blob([html], {type: "application/msword"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'financial_report.doc'; document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  showToast(t('exportWordNotSupported'),'info');
+});
+
+function simpleTableHtml(arr){
+  if(!arr || !arr.length) return '<div class="small-muted">—</div>';
+  let keys = Object.keys(arr[0]);
+  let out = '<table border="1" style="border-collapse:collapse;width:100%"><thead><tr>';
+  keys.forEach(k=> out += `<th style="padding:6px">${esc(k)}</th>`);
+  out += '</tr></thead><tbody>';
+  arr.forEach(r=>{ out += '<tr>'; keys.forEach(k=> out += `<td style="padding:6px">${esc(r[k])}</td>`); out += '</tr>'; });
+  out += '</tbody></table>';
+  return out;
+}
+
+/* =========================
+   KPIs & render all
+   ========================= */
+function aggregateAll(){
+  // build aggregate numbers from BS/IS/CF/EQ for KPI preview
+  const agg = { assets:0, liabilities:0, equity:0, revenue:0, expense:0, other:0 };
+  // From BS: use Debit/Credit heuristic
+  BS.forEach(r=>{
+    const net = toNum(r.Debit) - toNum(r.Credit);
+    const t = String(r.Type||r.Account||'').toLowerCase();
+    if(/asset|أصل|cash|bank|نقد/.test(t)) agg.assets += net;
+    else if(/liab|خصوم|payable|دائن|قرض/.test(t)) agg.liabilities += -net;
+    else if(/equity|حقوق|رأس/.test(t)) agg.equity += -net;
+    else agg.other += net;
+  });
+  // From IS: revenue/expense via Value or Type
+  IS.forEach(r=>{
+    const v = toNum(r.Value || 0);
+    const t = String(r.Type||r.Account||'').toLowerCase();
+    if(/revenue|sales|إيراد|مبيعات/.test(t)) agg.revenue += v;
+    else if(/expense|مصروف|تكلفة/.test(t)) agg.expense += v;
+    else { // heuristic: if positive treat as revenue
+      (v>=0)? agg.revenue += v : agg.expense += Math.abs(v);
+    }
+  });
+  // CF & EQ not used for KPIs here
+  return agg;
+}
+
+function renderKPIs(){
+  const kpiRow = document.getElementById('kpiRow'); kpiRow.innerHTML='';
+  const agg = aggregateAll();
+  const lang = $('languageSelect').value || 'ar';
+  const items = [
+    {label: lang==='ar'?'عدد البنود':'Items', value: BS.length + IS.length + CF.length + EQ.length},
+    {label: lang==='ar'?'الأصول (تقريبي)':'Assets', value: agg.assets},
+    {label: lang==='ar'?'الخصوم (تقريبي)':'Liabilities', value: agg.liabilities},
+    {label: lang==='ar'?'الإيرادات':'Revenue', value: agg.revenue},
+    {label: lang==='ar'?'المصروفات':'Expense', value: agg.expense},
+    {label: lang==='ar'?'أخرى':'Other', value: agg.other}
+  ];
+  items.forEach(it=>{
+    const div = document.createElement('div'); div.className='kpi';
+    const val = (typeof it.value === 'number') ? formatNumber(convertCurrency(it.value)) : esc(it.value);
+    div.innerHTML = `<div class="label">${esc(it.label)}</div><div class="num">${val} <small class="text-muted">${getCurrencySymbol()}</small></div>`;
+    kpiRow.appendChild(div);
+  });
+}
+
+function renderAll(){
+  ensureAtLeastOne();
+  renderBS(); renderIS(); renderCF(); renderEQ();
+  renderKPIs();
+  // update brand texts
+  $('brandText').textContent = t('brandText');
+  $('brandDesc').textContent = t('brandDesc');
+  // FX placeholder update
+  $('fxRateInput').placeholder = $('languageSelect').value === 'ar' ? 'سعر الصرف (1 = ؟ ج.م)' : 'FX rate (1 = ? EGP)';
+}
+
+/* =========================
+   init
+   ========================= */
+(function init(){
+  // load saved data
+  BS = JSON.parse(localStorage.getItem('FA_BS')||'[]');
+  IS = JSON.parse(localStorage.getItem('FA_IS')||'[]');
+  CF = JSON.parse(localStorage.getItem('FA_CF')||'[]');
+  EQ = JSON.parse(localStorage.getItem('FA_EQ')||'[]');
+  populateControls();
+  renderAll();
+})();
+
+/* storage sync */
+window.addEventListener('storage', (e)=>{
+  if(e.key === 'FA_BS' || e.key === 'FA_IS' || e.key === 'FA_CF' || e.key === 'FA_EQ'){
+    BS = JSON.parse(localStorage.getItem('FA_BS')||'[]');
+    IS = JSON.parse(localStorage.getItem('FA_IS')||'[]');
+    CF = JSON.parse(localStorage.getItem('FA_CF')||'[]');
+    EQ = JSON.parse(localStorage.getItem('FA_EQ')||'[]');
+    renderAll();
+    showToast('تم تحديث البيانات من التخزين', 'info');
+  }
+});
+</script>
+
+<!-- bootstrap js for tabs -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
