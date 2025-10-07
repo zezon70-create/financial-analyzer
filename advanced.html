@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>التحليلات المتقدمة — المحلل المالي</title>
+
+<!-- External libs -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet"/>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+<style>
+:root{
+  --accent-1:#0d6efd; --accent-2:#6610f2;
+  --bg:#f6f8fb; --card:#fff; --text:#0b1220; --muted:#6c757d;
+  --glass: rgba(255,255,255,0.7); --radius:12px;
+}
+body{font-family:"Cairo",system-ui,sans-serif;margin:0;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
+body[data-theme="dark"]{ --bg:#071018; --card:#07131a; --text:#e6eef6; --muted:#9aa6b2; --glass: rgba(6,10,15,0.5); background:var(--bg); color:var(--text); }
+
+.header{position:sticky;top:0;z-index:1400;padding:10px 18px;backdrop-filter:blur(8px);background:var(--glass);border-bottom:1px solid rgba(13,110,253,0.06);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{display:flex;align-items:center;gap:.8rem}
+.brand img{height:44px;border-radius:8px}
+.controls{display:flex;gap:.6rem;align-items:center}
+
+/* main */
+.container-main{max-width:1200px;margin:20px auto;padding:16px}
+
+/* hero */
+.hero{padding:16px;border-radius:12px;background:linear-gradient(180deg, rgba(13,110,253,0.06), rgba(102,16,242,0.02));box-shadow:0 10px 30px rgba(2,6,23,0.04);border:1px solid rgba(13,110,253,0.04);margin-bottom:16px}
+.hero h1{margin:0;font-size:1.3rem}
+.hero p{margin:6px 0;color:var(--muted)}
+
+/* controls row */
+.controls-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+
+/* card */
+.card-surface{background:var(--card);border-radius:12px;padding:18px;box-shadow:0 12px 30px rgba(2,6,23,0.04);border:1px solid rgba(13,110,253,0.03);margin-bottom:16px}
+body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.03)}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.kpi{padding:12px;border-radius:8px;background:linear-gradient(180deg,var(--card),#f8fbff);text-align:center}
+.kpi .num{font-weight:800;font-size:1.05rem;margin-top:6px}
+.kpi .label{color:var(--muted);font-size:.9rem}
+
+/* tables */
+.table thead th{border-bottom:1px solid rgba(0,0,0,0.06)}
+.small-muted{color:var(--muted)}
+
+/* watermark */
+.watermark{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:0;opacity:0.06}
+.watermark img{max-width:520px;filter:grayscale(100%);opacity:0.12}
+
+/* export buttons */
+.btn-glow{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));border:none;color:#fff}
+.input-sm{height:36px;padding:.4rem .6rem}
+
+/* ensure good contrast in dark */
+body[data-theme="dark"] .kpi, body[data-theme="dark"] .card-surface, body[data-theme="dark"] .hero { color:var(--text) }
+</style>
+</head>
+<body data-theme="light">
+
+<!-- watermark -->
+<div class="watermark" aria-hidden="true"><img src="assets/logo.png" alt="logo" id="wmLogo"></div>
+
+<header class="header" role="banner">
+  <div class="brand" title="المحلل المالي">
+    <img src="assets/logo.png" alt="Logo" id="brandLogo">
+    <div>
+      <div style="font-weight:800" id="brandText">المحلل المالي</div>
+      <div class="small-muted" id="brandDesc">التحليلات المتقدمة والمؤشرات المالية</div>
+    </div>
+  </div>
+
+  <div class="controls" role="navigation" aria-label="controls">
+    <a class="btn btn-sm btn-outline-secondary" href="index.html" title="الرئيسية"><i class="bi bi-house"></i></a>
+    <a class="btn btn-sm btn-outline-secondary" href="input.html" title="إدخال البيانات">إدخال</a>
+    <a class="btn btn-sm btn-outline-secondary" href="report.html" title="التقارير">التقارير</a>
+
+    <select id="currencySelect" class="form-select form-select-sm" style="min-width:92px"></select>
+    <input id="fxInput" class="form-control form-control-sm" placeholder="سعر الصرف (اختياري)" style="width:110px"/>
+
+    <select id="languageSelect" class="form-select form-select-sm" style="min-width:110px"></select>
+    <div class="form-check form-switch mb-0" title="الوضع الليلي">
+      <input class="form-check-input" id="darkToggle" type="checkbox">
+    </div>
+
+    <button id="exportPdf" class="btn btn-outline-primary btn-sm ms-2" title="تصدير PDF"><i class="bi bi-file-earmark-pdf"></i></button>
+    <button id="exportDoc" class="btn btn-outline-secondary btn-sm ms-1" title="تصدير Word"><i class="bi bi-file-earmark-word"></i></button>
+    <button id="exportExcel" class="btn btn-outline-success btn-sm ms-1" title="تصدير Excel"><i class="bi bi-file-earmark-excel"></i></button>
+  </div>
+</header>
+
+<main class="container-main" id="mainArea">
+  <section class="hero" aria-labelledby="heroTitle">
+    <h1 id="heroTitle">التحليلات المتقدمة</h1>
+    <p>مرجع شامل لنسب المالية، قياسات EVA، تقييم المخاطر، والتنبؤات. كل النصوص قابلة للتغيير باللغتين العربية والإنجليزية.</p>
+    <div class="controls-row mt-2">
+      <label class="small-muted">WACC (%)</label>
+      <input id="waccInput" class="form-control form-control-sm" style="width:90px" value="10"/>
+      <label class="small-muted ms-2">معدل الضريبة (%)</label>
+      <input id="taxInput" class="form-control form-control-sm" style="width:90px" value="22"/>
+      <label class="small-muted ms-2">فترة التنبؤ (فترات)</label>
+      <input id="horizonInput" class="form-control form-control-sm" style="width:90px" value="4"/>
+    </div>
+  </section>
+
+  <section class="card-surface" aria-labelledby="kpiTitle">
+    <h5 id="kpiTitle">مؤشرات رئيسية</h5>
+    <div class="kpi-row" id="kpiRow"></div>
+  </section>
+
+  <section class="card-surface">
+    <h5>قائمة النسب والمؤشرات</h5>
+    <div id="ratiosArea"></div>
+  </section>
+
+  <section class="card-surface">
+    <h5>التنبؤات (نماذج محلية)</h5>
+    <div class="row g-3">
+      <div class="col-lg-6">
+        <h6>اختيارات النموذج</h6>
+        <div class="mb-2">
+          <select id="forecastMethod" class="form-select form-select-sm" style="max-width:360px">
+            <option value="linear">Linear Trend (انحدار خطي)</option>
+            <option value="ses">Simple Exponential Smoothing (SES)</option>
+            <option value="holt">Holt's Linear (Trend + Level)</option>
+          </select>
+        </div>
+        <div class="small-muted">النماذج المتقدمة مثل ARIMA/Prophet يمكن تشغيلها عبر خادم (hook مرفق).</div>
+        <div class="mt-2">
+          <button id="runForecast" class="btn btn-glow btn-sm">شغّل التنبؤ</button>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <h6>نتائج التنبؤ</h6>
+        <canvas id="forecastChart" height="220"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <section class="card-surface">
+    <h5>مقارنة فترات (لقطات)</h5>
+    <div class="d-flex gap-2 align-items-center mb-2">
+      <select id="snapA" class="form-select form-select-sm" style="max-width:180px"></select>
+      <select id="snapB" class="form-select form-select-sm" style="max-width:180px"></select>
+      <button id="doCompare" class="btn btn-outline-primary btn-sm">قارن</button>
+      <button id="saveSnap" class="btn btn-outline-success btn-sm">احفظ لقطة</button>
+    </div>
+    <div id="compareArea"></div>
+    <canvas id="compareChart" height="200"></canvas>
+  </section>
+
+  <section class="card-surface">
+    <h5>تقرير فني تلقائي (آلي)</h5>
+    <div id="autoCommentary" class="small-muted"></div>
+  </section>
+</main>
+
+<script>
+// --------------------------- Helpers ---------------------------
+const $ = id => document.getElementById(id);
+function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function toNum(v){ const n = Number(String(v||'').toString().replace(/[, ]+/g,'')); return isNaN(n)?0:n; }
+function formatNumber(v){ return Number(v).toLocaleString(undefined,{maximumFractionDigits:2,minimumFractionDigits:0}); }
+function showToast(text, type='info'){ const tmp = document.createElement('div'); tmp.className=`toast align-items-center text-bg-${type} border-0 show`; tmp.style.minWidth='220px'; tmp.style.margin='6px'; tmp.innerHTML = `<div class="d-flex"><div class="toast-body">${esc(text)}</div><button class="btn-close btn-close-white me-2 m-auto" onclick="this.closest('.toast').remove()"></button></div>`; document.body.appendChild(tmp); setTimeout(()=>tmp.remove(),3000); }
+
+// --------------------------- State ---------------------------
+let trialData = JSON.parse(localStorage.getItem('trialData')||'[]'); // array of {Account,Type,Code,Debit,Credit}
+let snapshots = JSON.parse(localStorage.getItem('trialData_snapshots')||'{}');
+const LANGS = [{v:'ar',label:'العربية'},{v:'en',label:'English'}];
+const CURRENCIES = ['EGP','USD','EUR'];
+let fxRates = JSON.parse(localStorage.getItem('fa_fx')||'null') || {USD:31,EUR:34};
+const translations = {
+  ar: { noData:'لا توجد بيانات', snapshotSaved:'تم الحفظ', chooseSnapshots:'اختر لقطتين' },
+  en: { noData:'No data', snapshotSaved:'Snapshot saved', chooseSnapshots:'Choose two snapshots' }
+};
+
+// --------------------------- Populate controls ---------------------------
+function populateControls(){
+  // language
+  $('languageSelect').innerHTML = '';
+  LANGS.forEach(l=>{ const o=document.createElement('option'); o.value=l.v; o.textContent=l.label; $('languageSelect').appendChild(o); });
+  const langSaved = localStorage.getItem('fa_lang') || localStorage.getItem('lang') || 'ar';
+  $('languageSelect').value = langSaved;
+
+  // currency
+  $('currencySelect').innerHTML = '';
+  CURRENCIES.forEach(c=>{ const o=document.createElement('option'); o.value=c; o.textContent=c; $('currencySelect').appendChild(o); });
+  $('currencySelect').value = localStorage.getItem('fa_currency') || localStorage.getItem('currency') || 'EGP';
+
+  // theme
+  const theme = localStorage.getItem('fa_theme') || localStorage.getItem('theme') || 'light';
+  document.body.dataset.theme = theme;
+  $('darkToggle').checked = (theme === 'dark');
+
+  // fx input
+  $('fxInput').value = localStorage.getItem('fa_fx_custom') || '';
+}
+populateControls();
+
+// theme toggle
+$('darkToggle').addEventListener('change', e => {
+  const val = e.target.checked ? 'dark' : 'light';
+  document.body.dataset.theme = val; localStorage.setItem('fa_theme', val);
+});
+
+// language change -> re-render labels/text
+$('languageSelect').addEventListener('change', ()=> {
+  localStorage.setItem('fa_lang',$('languageSelect').value);
+  renderAll();
+});
+
+// currency change
+$('currencySelect').addEventListener('change', ()=> { localStorage.setItem('fa_currency',$('currencySelect').value); renderAll(); });
+
+// fx manual input
+$('fxInput').addEventListener('change', ()=> {
+  const v = toNum($('fxInput').value);
+  if(v>0){ localStorage.setItem('fa_fx_custom', v); fxRates['CUSTOM']=v; localStorage.setItem('fa_fx', JSON.stringify(fxRates)); showToast('تم حفظ سعر الصرف','success'); renderAll(); }
+});
+
+// --------------------------- Data utilities ---------------------------
+function getCurrencySymbol(){
+  const cur = $('currencySelect').value || 'EGP';
+  if(cur==='EGP') return 'ج.م';
+  if(cur==='USD') return '$';
+  if(cur==='EUR') return '€';
+  return cur;
+}
+function convertCurrencyLocal(value){
+  const cur = $('currencySelect').value || 'EGP';
+  const custom = Number(localStorage.getItem('fa_fx_custom')||'0');
+  if(cur === 'EGP') return toNum(value);
+  if(custom>0) return toNum(value) / custom;
+  const rate = fxRates[cur] || (cur==='USD'?fxRates.USD:fxRates.EUR) || 1;
+  return toNum(value) / rate;
+}
+
+function aggregateData(data){
+  const agg = { assets:0, liabilities:0, equity:0, revenue:0, expense:0, other:0, totalDebit:0, totalCredit:0 };
+  data.forEach(r=>{
+    const debit = toNum(r.Debit), credit = toNum(r.Credit);
+    agg.totalDebit += debit; agg.totalCredit += credit;
+    const net = debit - credit;
+    const s = String((r.Type||r.Account||'')).toLowerCase();
+    if(/asset|أصل|cash|bank|current asset|نقد|fixed asset|أصول/.test(s)) agg.assets += net;
+    else if(/liab|خصوم|payable|loan|دائن|قرض/.test(s)) agg.liabilities += -net;
+    else if(/equity|حقوق|رأس|capital/.test(s)) agg.equity += -net;
+    else if(/revenue|sales|إيراد|مبيعات/.test(s)) agg.revenue += -net;
+    else if(/expense|مصروف|cogs|تكلفة|مصاريف/.test(s)) agg.expense += net;
+    else agg.other += net;
+  });
+  return agg;
+}
+
+// --------------------------- Render KPIs ---------------------------
+function renderKPIs(data){
+  const kpiRow = $('kpiRow'); kpiRow.innerHTML = '';
+  const agg = aggregateData(data);
+  const labels = [
+    {label: $('languageSelect').value==='ar'?'عدد الحسابات':'Accounts', value: data.length},
+    {label: $('languageSelect').value==='ar'?'الأصول (تقريبي)':'Assets', value: agg.assets},
+    {label: $('languageSelect').value==='ar'?'الخصوم (تقريبي)':'Liabilities', value: agg.liabilities},
+    {label: $('languageSelect').value==='ar'?'الإيرادات':'Revenue', value: agg.revenue},
+    {label: $('languageSelect').value==='ar'?'المصروفات':'Expense', value: agg.expense},
+    {label: $('languageSelect').value==='ar'?'الإجمالي':'Total', value: agg.assets + agg.liabilities + agg.equity + agg.revenue + agg.expense + agg.other}
+  ];
+  labels.forEach(it=>{
+    const div = document.createElement('div'); div.className='kpi';
+    div.innerHTML = `<div class="label">${esc(it.label)}</div><div class="num">${formatNumber(convertCurrencyLocal(it.value))} <small class="small-muted">${getCurrencySymbol()}</small></div>`;
+    kpiRow.appendChild(div);
+  });
+}
+
+// --------------------------- Ratios & EVA & Commentary ---------------------------
+function computeRatios(data){
+  const agg = aggregateData(data);
+  const totalAssets = Math.abs(agg.assets);
+  const totalLiabilities = Math.abs(agg.liabilities);
+  const equity = Math.abs(agg.equity) || 1;
+  const revenue = Math.abs(agg.revenue) || 0;
+  const expense = Math.abs(agg.expense) || 0;
+  const netProfit = agg.revenue - agg.expense; // note signs
+  const currentRatio = safeDivide(totalAssets, totalLiabilities);
+  const debtToEquity = safeDivide(totalLiabilities, equity);
+  const netProfitMargin = safeDivide(netProfit, revenue) * 100;
+  const roa = safeDivide(netProfit, totalAssets) * 100;
+  const roe = safeDivide(netProfit, equity) * 100;
+  // EVA = NOPAT - (WACC * CapitalEmployed)
+  // estimate NOPAT = netProfit * (1 - taxRate)
+  const taxRate = toNum($('taxInput').value || 22) / 100;
+  const wacc = toNum($('waccInput').value || 10) / 100;
+  const NOPAT = netProfit * (1 - taxRate);
+  const capitalEmployed = Math.abs(totalAssets - totalLiabilities) || equity; // approximation
+  const EVA = NOPAT - (wacc * capitalEmployed);
+
+  return { currentRatio, debtToEquity, netProfitMargin, roa, roe, NOPAT, EVA, netProfit, revenue, expense, totalAssets, totalLiabilities, equity };
+}
+function safeDivide(a,b){ if(!isFinite(a)) a=0; if(!isFinite(b)||b===0) return 0; return a/b; }
+
+function generateCommentary(r){
+  // simple rule-based commentary; you can expand rules later
+  const lang = $('languageSelect').value;
+  function c(ar,en){ return lang==='ar'?ar:en; }
+  const lines=[];
+  if(r.currentRatio < 1) lines.push(c('السيولة الحالية منخفضة (<1) — قد تواجه الشركة صعوبات في تغطية الالتزامات قصيرة الأجل.','Current ratio is low (<1): potential short-term liquidity issues.'));
+  else if(r.currentRatio < 1.5) lines.push(c('السيولة مقبولة لكن تحتاج تحسين.','Liquidity acceptable but could be improved.'));
+  else lines.push(c('السيولة جيدة نسبيًا.','Liquidity looks healthy.'));
+
+  if(r.debtToEquity > 2) lines.push(c('نسبة المديونية إلى حقوق الملكية مرتفعة — مخاطر مالية أعلى.','High debt-to-equity ratio — higher financial risk.'));
+  else lines.push(c('هيكل رأس المال متوازن.','Capital structure looks balanced.'));
+
+  if(r.netProfitMargin < 0) lines.push(c('هام: هامش الربح الصافي سلبي — الشركة تحقق خسائر تشغيلية.','Alert: Net profit margin negative — company is operating at a loss.'));
+  else lines.push(c('هامش الربح الصافي مقبول/إيجابي.','Net profit margin is positive.'));
+
+  if(r.EVA > 0) lines.push(c('EVA إيجابي — الشركة تولد قيمة للمساهمين بعد تكلفة رأس المال.','Positive EVA — company creates value over capital costs.'));
+  else lines.push(c('EVA سلبي — الشركة قد لا تحقق عائدًا كافيًا لتغطية تكلفة رأس المال.','Negative EVA — returns may not cover cost of capital.'));
+
+  // brief suggestions
+  lines.push(c('التوصية: راجع التدفقات النقدية القصيرة الأجل، حسّن الهامش أو راجع هيكل الدين.','Recommendation: review short-term cash flows, improve margins or adjust debt structure.'));
+  return lines.join(lang==='ar' ? '<br/>' : '<br/>');
+}
+
+// --------------------------- Render ratios area ---------------------------
+function renderRatios(data){
+  const area = $('ratiosArea'); area.innerHTML = '';
+  if(!data || data.length===0){ area.innerHTML = `<div class="small-muted">${translations[$('languageSelect').value].noData}</div>`; return; }
+  const r = computeRatios(data);
+  const table = document.createElement('table'); table.className='table table-sm';
+  table.innerHTML = `<tbody>
+    <tr><td>Current Ratio (السيولة الحالية)</td><td class="text-end">${formatNumber(r.currentRatio)}</td></tr>
+    <tr><td>Debt-to-Equity (نسبة الدين/حقوق الملكية)</td><td class="text-end">${formatNumber(r.debtToEquity)}</td></tr>
+    <tr><td>Net Profit Margin (%)</td><td class="text-end">${formatNumber(r.netProfitMargin)}%</td></tr>
+    <tr><td>Return on Assets (ROA) (%)</td><td class="text-end">${formatNumber(r.roa)}%</td></tr>
+    <tr><td>Return on Equity (ROE) (%)</td><td class="text-end">${formatNumber(r.roe)}%</td></tr>
+    <tr><td>NOPAT (تقريبي)</td><td class="text-end">${formatNumber(convertCurrencyLocal(r.NOPAT))} ${getCurrencySymbol()}</td></tr>
+    <tr><td>EVA (تقريبي)</td><td class="text-end">${formatNumber(convertCurrencyLocal(r.EVA))} ${getCurrencySymbol()}</td></tr>
+    <tr><td>صافي الربح (Net Profit)</td><td class="text-end">${formatNumber(convertCurrencyLocal(r.netProfit))} ${getCurrencySymbol()}</td></tr>
+  </tbody>`;
+  area.appendChild(table);
+
+  // commentary
+  $('autoCommentary').innerHTML = generateCommentary(r);
+}
+
+// --------------------------- Forecast models (local) ---------------------------
+function linearForecast(series, horizon){
+  // series: array of numbers indexed by time [t0..tn-1]
+  // do simple linear regression y = a + b*t
+  const n = series.length;
+  if(n===0) return Array(horizon).fill(0);
+  const xs = []; const ys = [];
+  for(let i=0;i<n;i++){ xs.push(i); ys.push(series[i]); }
+  const xMean = xs.reduce((s,v)=>s+v,0)/n;
+  const yMean = ys.reduce((s,v)=>s+v,0)/n;
+  let num=0, den=0;
+  for(let i=0;i<n;i++){ num += (xs[i]-xMean)*(ys[i]-yMean); den += (xs[i]-xMean)*(xs[i]-xMean); }
+  const b = den===0?0:num/den;
+  const a = yMean - b*xMean;
+  const res = [];
+  for(let h=1;h<=horizon;h++){ const t = n-1 + h; res.push(a + b * t); }
+  return res;
+}
+
+function sesForecast(series, alpha, horizon){
+  // simple exponential smoothing (level only)
+  if(series.length===0) return Array(horizon).fill(0);
+  let s = series[0];
+  for(let i=1;i<series.length;i++){ s = alpha * series[i] + (1-alpha)*s; }
+  return Array(horizon).fill(s);
+}
+
+function holtForecast(series, alpha, beta, horizon){
+  // Holt's linear: level and trend
+  if(series.length===0) return Array(horizon).fill(0);
+  let l = series[0], b = series[1]-series[0] || 0;
+  for(let i=1;i<series.length;i++){
+    const y = series[i];
+    const lNew = alpha * y + (1-alpha)*(l + b);
+    const bNew = beta * (lNew - l) + (1-beta)*b;
+    l = lNew; b = bNew;
+  }
+  const res=[];
+  for(let h=1;h<=horizon;h++) res.push(l + b*h);
+  return res;
+}
+
+// --------------------------- Forecast runner & chart ---------------------------
+let forecastChart = null;
+$('runForecast').addEventListener('click', ()=> {
+  if(!(trialData && trialData.length)){ showToast(translations[$('languageSelect').value].noData,'warning'); return; }
+  // choose series: use monthly/period totals of Net (Debit-Credit) by order in trialData (approx)
+  // For a thorough implementation you'd supply time-series data; here we build a synthetic series from snapshots if present, else use rolling sums.
+  let series = buildSeriesFromSnapshotsOrTrial();
+  const method = $('forecastMethod').value;
+  const horizon = Math.max(1, parseInt($('horizonInput').value || 4));
+  let preds = [];
+  if(method === 'linear') preds = linearForecast(series, horizon);
+  else if(method === 'ses') preds = sesForecast(series, 0.3, horizon);
+  else if(method === 'holt') preds = holtForecast(series, 0.4, 0.2, horizon);
+
+  // render chart
+  const ctx = $('forecastChart').getContext('2d');
+  if(forecastChart) try{ forecastChart.destroy(); }catch(e){}
+  const labels = series.map((_,i)=>`T${i+1}`);
+  for(let i=1;i<=horizon;i++) labels.push(`F${i}`);
+  const data = series.concat(preds).map(convertCurrencyLocal);
+  forecastChart = new Chart(ctx, {
+    type:'line',
+    data:{ labels, datasets:[
+      { label: $('languageSelect').value==='ar'?'السلسلة':'Series', data: series.map(convertCurrencyLocal), borderColor:'#0d6efd', tension:0.2 },
+      { label: $('languageSelect').value==='ar'?'التنبؤ':'Forecast', data: Array(series.length).fill(null).concat(preds.map(convertCurrencyLocal)), borderColor:'#6610f2', tension:0.2 }
+    ]},
+    options:{ responsive:true, plugins:{legend:{position:'bottom'}} }
+  });
+});
+
+// helper to build series: if snapshots exist use snapshot nets; else use rolling group from trialData
+function buildSeriesFromSnapshotsOrTrial(){
+  const keys = Object.keys(snapshots||{});
+  if(keys.length>=2){
+    // pick last up to 8 snapshots and compute net for each
+    const ksorted = keys.sort();
+    return ksorted.slice(-8).map(k=>{
+      const d = snapshots[k];
+      const agg = aggregateData(d);
+      return agg.revenue - agg.expense; // net
+    });
+  }
+  // fallback: create series by grouping trialData into 6 buckets (synthetic)
+  const arr = trialData.map(r => toNum(r.Debit) - toNum(r.Credit));
+  if(arr.length===0) return [0,0,0];
+  const buckets = Math.min(8, Math.max(3, Math.floor(arr.length/2)));
+  const size = Math.ceil(arr.length/buckets);
+  const series = [];
+  for(let i=0;i<buckets;i++){
+    const slice = arr.slice(i*size, (i+1)*size);
+    series.push(slice.reduce((s,v)=>s+v,0));
+  }
+  return series;
+}
+
+// --------------------------- Compare snapshots ---------------------------
+let compareChart = null;
+function renderSnapshotOptions(){
+  const sa = $('snapA'), sb = $('snapB');
+  sa.innerHTML = '<option value="">--</option>'; sb.innerHTML = '<option value="">--</option>';
+  const keys = Object.keys(snapshots||{}).sort().reverse();
+  if(keys.length===0){
+    sa.innerHTML = `<option value="">${translations[$('languageSelect').value].noData}</option>`;
+    sb.innerHTML = `<option value="">${translations[$('languageSelect').value].noData}</option>`;
+    return;
+  }
+  keys.forEach(k=>{
+    const o1=document.createElement('option'); o1.value=k; o1.textContent=k; sa.appendChild(o1);
+    const o2=document.createElement('option'); o2.value=k; o2.textContent=k; sb.appendChild(o2);
+  });
+}
+renderSnapshotOptions();
+
+$('saveSnap').addEventListener('click', ()=> {
+  const label = prompt($('languageSelect').value==='ar' ? 'أدخل اسم/تسمية للّقطة (مثال: 2024-Q1)' : 'Enter snapshot label (e.g. 2024-Q1)', new Date().getFullYear());
+  if(!label) return;
+  snapshots = JSON.parse(localStorage.getItem('trialData_snapshots')||'{}');
+  snapshots[label] = JSON.parse(JSON.stringify(trialData));
+  localStorage.setItem('trialData_snapshots', JSON.stringify(snapshots));
+  renderSnapshotOptions(); showToast(translations[$('languageSelect').value].snapshotSaved,'success');
+});
+
+$('doCompare').addEventListener('click', ()=> {
+  const a = $('snapA').value, b = $('snapB').value;
+  if(!a || !b){ showToast(translations[$('languageSelect').value].chooseSnapshots,'warning'); return; }
+  const dataA = snapshots[a]||[], dataB = snapshots[b]||[];
+  const aggA = aggregateData(dataA), aggB = aggregateData(dataB);
+  const labels = [ $('languageSelect').value==='ar'?'الأصول':'Assets', $('languageSelect').value==='ar'?'الخصوم':'Liabilities', $('languageSelect').value==='ar'?'الإيرادات':'Revenue', $('languageSelect').value==='ar'?'المصروفات':'Expenses' ];
+  const valsA = [Math.abs(aggA.assets), Math.abs(aggA.liabilities), Math.abs(aggA.revenue), Math.abs(aggA.expense)].map(convertCurrencyLocal);
+  const valsB = [Math.abs(aggB.assets), Math.abs(aggB.liabilities), Math.abs(aggB.revenue), Math.abs(aggB.expense)].map(convertCurrencyLocal);
+  const diffs = valsB.map((v,i)=> v - (valsA[i]||0));
+  const pct = valsA.map((v,i)=> v? (diffs[i]/v)*100 : 0);
+
+  // render summary table
+  const cmp = $('compareArea'); let html = `<h6>مقارنة: ${esc(a)} ⇄ ${esc(b)}</h6>`;
+  html += '<table class="table table-sm"><thead><tr><th>بند</th><th class="text-end">A</th><th class="text-end">B</th><th class="text-end">فرق</th><th class="text-end">نسبة</th></tr></thead><tbody>';
+  labels.forEach((lab,i)=> html += `<tr><td>${esc(lab)}</td><td class="text-end">${formatNumber(valsA[i])} ${getCurrencySymbol()}</td><td class="text-end">${formatNumber(valsB[i])} ${getCurrencySymbol()}</td><td class="text-end">${formatNumber(diffs[i])} ${getCurrencySymbol()}</td><td class="text-end">${formatNumber(pct[i])}%</td></tr>`);
+  html += '</tbody></table>';
+  cmp.innerHTML = html;
+
+  // chart
+  const ctx = $('compareChart').getContext('2d');
+  if(compareChart) try{ compareChart.destroy(); }catch(e){}
+  compareChart = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels,
+      datasets:[
+        { label:a, data:valsA, backgroundColor:'rgba(13,110,253,0.8)' },
+        { label:b, data:valsB, backgroundColor:'rgba(102,16,242,0.8)' }
+      ]
+    },
+    options:{ responsive:true, scales:{ y:{ beginAtZero:true } } }
+  });
+});
+
+// --------------------------- Export functions ---------------------------
+$('exportPdf').addEventListener('click', ()=> {
+  if(!(trialData && trialData.length)) showToast(translations[$('languageSelect').value].noData,'warning');
+  const el = document.querySelector('main');
+  const wm = $('wmLogo'); const oldOp = wm.style.opacity; wm.style.opacity='0.12';
+  const opt = { margin:0.35, filename:'advanced_analysis_report.pdf', image:{type:'jpeg',quality:0.95}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'in', format:'a4', orientation:'portrait'} };
+  html2pdf().set(opt).from(el).save().finally(()=> wm.style.opacity = oldOp || '');
+});
+
+$('exportExcel').addEventListener('click', ()=> {
+  if(!(trialData && trialData.length)) { showToast(translations[$('languageSelect').value].noData,'warning'); return; }
+  const ws = XLSX.utils.json_to_sheet(trialData);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'TrialBalance');
+  XLSX.writeFile(wb, 'trialbalance.xlsx');
+});
+
+$('exportDoc').addEventListener('click', ()=> {
+  // simple HTML->.doc export (widely supported)
+  let header = `<h2>${$('brandText').textContent} — ${$('heroTitle').textContent}</h2><p>${$('heroDesc')?.textContent || ''}</p>`;
+  let kpis = document.querySelector('#kpiRow').outerHTML;
+  let ratios = document.querySelector('#ratiosArea').outerHTML;
+  const html = `<!doctype html><html><head><meta charset="utf-8"></head><body>${header}${kpis}${ratios}  <script src="js/main-fixes.js"></script>
+</body></html>`;
+  const blob = new Blob([html], {type: 'application/msword'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'financial_analysis.doc'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+});
+
+// --------------------------- Render all ---------------------------
+function renderAll(){
+  // reload data & snapshots
+  trialData = JSON.parse(localStorage.getItem('trialData')||'[]');
+  snapshots = JSON.parse(localStorage.getItem('trialData_snapshots')||'{}');
+  fxRates = JSON.parse(localStorage.getItem('fa_fx')||'null') || fxRates;
+  renderKPIs(trialData);
+  renderRatios(trialData);
+  renderSnapshotOptions();
+}
+renderAll();
+
+// watch storage
+window.addEventListener('storage', e=>{
+  if(e.key === 'trialData'){ trialData = JSON.parse(e.newValue||'[]'); renderAll(); showToast('تم تحديث البيانات','info'); }
+  if(e.key === 'trialData_snapshots'){ snapshots = JSON.parse(e.newValue||'{}'); renderSnapshotOptions(); showToast('تم تحديث اللقطات','info'); }
+});
+
+// initial small UI polish
+$('waccInput').addEventListener('change', renderAll);
+$('taxInput').addEventListener('change', renderAll);
+$('horizonInput').addEventListener('change', ()=>{/* no-op */});
+renderAll();
+
+</script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

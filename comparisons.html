@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>المقارنات المالية</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/papaparse/5.3.2/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header>
+    <h1>📊 المقارنات المالية</h1>
+    <nav>
+      <a href="index.html">الرئيسية</a>
+      <a href="input.html">الإدخال</a>
+      <a href="reports.html">التقارير</a>
+      <a href="dashboard.html">لوحة التحكم</a>
+      <a href="advanced.html">التحليلات المتقدمة</a>
+      <a href="comparisons.html" class="active">المقارنات</a>
+      <a href="settings.html">الإعدادات</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="upload-section">
+      <h2>رفع ملفات ميزان المراجعة للمقارنة</h2>
+      <div class="file-inputs">
+        <label>الملف الأول:
+          <input type="file" id="fileInput1" accept=".csv" />
+        </label>
+        <label>الملف الثاني:
+          <input type="file" id="fileInput2" accept=".csv" />
+        </label>
+      </div>
+      <button id="compareBtn">إجراء المقارنة</button>
+    </section>
+
+    <section id="comparisonResults" class="results-section">
+      <h2>نتائج المقارنة</h2>
+      <div id="comparisonTables">
+        <!-- الجداول هتتولد هنا -->
+      </div>
+      <canvas id="comparisonChart" width="600" height="300"></canvas>
+    </section>
+
+    <section class="export-section">
+      <button id="exportComparisonPdf">📄 تصدير PDF</button>
+      <button id="exportComparisonExcel">📊 تصدير Excel</button>
+    </section>
+  </main>
+
+  <footer>
+    <p>جميع الحقوق محفوظة © 2025</p>
+  </footer>
+
+  <script>
+    let trial1 = [];
+    let trial2 = [];
+    let comparisonData = {};
+
+    document.getElementById("compareBtn").addEventListener("click", () => {
+      const file1 = document.getElementById("fileInput1").files[0];
+      const file2 = document.getElementById("fileInput2").files[0];
+      if (!file1 || !file2) {
+        alert("من فضلك اختر الملفين للمقارنة");
+        return;
+      }
+
+      Papa.parse(file1, {
+        header: true,
+        complete: function (results1) {
+          trial1 = results1.data;
+          Papa.parse(file2, {
+            header: true,
+            complete: function (results2) {
+              trial2 = results2.data;
+              generateComparison();
+            },
+          });
+        },
+      });
+    });
+
+    function generateComparison() {
+      // نحسب نفس القوائم لكلا الملفين باستخدام نفس الدوال من main.js
+      const income1 = generateIncomeStatement(trial1);
+      const income2 = generateIncomeStatement(trial2);
+      const balance1 = generateBalanceSheet(trial1);
+      const balance2 = generateBalanceSheet(trial2);
+
+      comparisonData = { income1, income2, balance1, balance2 };
+      renderComparison(comparisonData);
+    }
+
+    function sumAccounts(data, keywords) {
+      return data
+        .filter((row) => keywords.some((kw) => row["الحساب"]?.includes(kw)))
+        .reduce((sum, row) => sum + parseFloat(row["القيمة"] || 0), 0);
+    }
+
+    function generateIncomeStatement(data) {
+      let sales = sumAccounts(data, ["إيرادات", "مبيعات"]);
+      let cogs = sumAccounts(data, ["تكلفة المبيعات"]);
+      let operatingExp = sumAccounts(data, ["مصاريف عمومية", "مصاريف تشغيلية"]);
+      let otherRev = sumAccounts(data, ["إيرادات أخرى"]);
+      let otherExp = sumAccounts(data, ["مصاريف أخرى"]);
+      let tax = sumAccounts(data, ["ضريبة"]);
+
+      let grossProfit = sales - cogs;
+      let operatingProfit = grossProfit - operatingExp;
+      let netBeforeTax = operatingProfit + otherRev - otherExp;
+      let netAfterTax = netBeforeTax - tax;
+
+      return {
+        sales,
+        cogs,
+        grossProfit,
+        operatingExp,
+        operatingProfit,
+        otherRev,
+        otherExp,
+        netBeforeTax,
+        tax,
+        netAfterTax,
+      };
+    }
+
+    function generateBalanceSheet(data) {
+      let currentAssets = sumAccounts(data, ["نقدية", "بنك", "مدينون", "مخزون"]);
+      let nonCurrentAssets = sumAccounts(data, ["أصول ثابتة", "استثمارات"]);
+      let currentLiabilities = sumAccounts(data, ["دائنون", "موردون", "التزامات قصيرة"]);
+      let nonCurrentLiabilities = sumAccounts(data, ["قروض طويلة"]);
+      let equity = sumAccounts(data, ["رأس المال", "أرباح محتجزة"]);
+
+      let totalAssets = currentAssets + nonCurrentAssets;
+      let totalLiabilities = currentLiabilities + nonCurrentLiabilities;
+      let totalEquity = equity;
+
+      return {
+        currentAssets,
+        nonCurrentAssets,
+        totalAssets,
+        currentLiabilities,
+        nonCurrentLiabilities,
+        totalLiabilities,
+        equity: totalEquity,
+      };
+    }
+
+    function renderComparison(data) {
+      const container = document.getElementById("comparisonTables");
+      container.innerHTML = `
+        <h3>قائمة الدخل</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>البند</th>
+              <th>الملف الأول</th>
+              <th>الملف الثاني</th>
+              <th>الفرق</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${Object.keys(data.income1).map(key => `
+              <tr>
+                <td>${key}</td>
+                <td>${data.income1[key]}</td>
+                <td>${data.income2[key]}</td>
+                <td>${data.income2[key] - data.income1[key]}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+
+        <h3>الميزانية العمومية</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>البند</th>
+              <th>الملف الأول</th>
+              <th>الملف الثاني</th>
+              <th>الفرق</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${Object.keys(data.balance1).map(key => `
+              <tr>
+                <td>${key}</td>
+                <td>${data.balance1[key]}</td>
+                <td>${data.balance2[key]}</td>
+                <td>${data.balance2[key] - data.balance1[key]}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+
+      const ctx = document.getElementById("comparisonChart").getContext("2d");
+      new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["المبيعات", "مجمل الربح", "صافي الربح بعد الضريبة"],
+          datasets: [
+            {
+              label: "الملف الأول",
+              data: [
+                data.income1.sales,
+                data.income1.grossProfit,
+                data.income1.netAfterTax
+              ],
+              backgroundColor: "rgba(54, 162, 235, 0.6)"
+            },
+            {
+              label: "الملف الثاني",
+              data: [
+                data.income2.sales,
+                data.income2.grossProfit,
+                data.income2.netAfterTax
+              ],
+              backgroundColor: "rgba(255, 99, 132, 0.6)"
+            }
+          ]
+        }
+      });
+    }
+
+    document.getElementById("exportComparisonPdf").addEventListener("click", () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.text("المقارنة المالية", 10, 10);
+      Object.entries(comparisonData.income1).forEach(([k, v], i) => {
+        doc.text(`${k}: ${v} vs ${comparisonData.income2[k]}`, 10, 20 + i * 10);
+      });
+      doc.save("comparison.pdf");
+    });
+
+    document.getElementById("exportComparisonExcel").addEventListener("click", () => {
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(
+        wb,
+        XLSX.utils.json_to_sheet([comparisonData.income1, comparisonData.income2]),
+        "Income Comparison"
+      );
+      XLSX.utils.book_append_sheet(
+        wb,
+        XLSX.utils.json_to_sheet([comparisonData.balance1, comparisonData.balance2]),
+        "Balance Comparison"
+      );
+      XLSX.writeFile(wb, "comparison.xlsx");
+    });
+  </script>
+  <script src="js/main-fixes.js"></script>
+</body>
+</html>
