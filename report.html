@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+
+  <meta name="description" content="Financial Analyzer - interactive browser-based financial analysis and reporting tool">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d6efd">
+  <!-- Tailwind CDN (for rapid UI polish) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <meta charset="UTF-8">
+  <title>التقرير المالي | Financial Analyzer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/docx/8.2.2/docx.min.js"></script>
+  <style>
+    body {
+      font-family: "Cairo", Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #f8f9fa;
+      color: #333;
+      transition: all 0.3s ease;
+    }
+    header {
+      background: #004080;
+      color: white;
+      padding: 15px;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    header img { height: 40px; }
+    nav button {
+      margin: 0 5px; padding: 8px 15px;
+      border: none; border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .container { padding: 20px; }
+    h2 { margin-top: 30px; color: #004080; }
+    table {
+      width: 100%; border-collapse: collapse; margin-bottom: 30px;
+      background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    table th, table td {
+      border: 1px solid #ccc; padding: 10px; text-align: center;
+    }
+    table th { background: #004080; color: white; }
+    .dark-mode {
+      background: #1c1c1c; color: #f1f1f1;
+    }
+    .dark-mode table { background: #333; }
+    .dark-mode table th { background: #222; }
+    footer {
+      background: #004080; color: white; text-align: center; padding: 10px;
+    }
+    .controls { margin: 20px 0; }
+    .controls select, .controls button {
+      padding: 8px 12px; margin: 5px; border-radius: 6px; border: 1px solid #ccc;
+    }
+    canvas { margin: 20px 0; max-width: 100%; }
+  </style>
+</head>
+<body>
+  <header role="banner" class="sr-only">Financial Analyzer header</header>
+  <header>
+    <div>
+      <img src="assets/logo.png" alt="Logo">
+      <span style="font-size:18px; font-weight:bold;">Financial Analyzer</span>
+    </div>
+    <nav>
+      <button onclick="location.href='index.html'">🏠 الرئيسية</button>
+      <button onclick="location.href='upload.html'">⬆️ رفع البيانات</button>
+      <button onclick="location.href='advanced.html'">📊 التحليلات المتقدمة</button>
+      <button onclick="toggleDarkMode()">🌙/☀️</button>
+      <select id="lang" onchange="changeLanguage()">
+        <option value="ar">🇪🇬 عربي</option>
+        <option value="en">🇺🇸 English</option>
+      </select>
+      <select id="currency" onchange="updateCurrency()">
+        <option value="EGP">EGP</option>
+        <option value="USD">USD</option>
+        <option value="EUR">EUR</option>
+      </select>
+      <button onclick="exportPDF()">📄 PDF</button>
+      <button onclick="exportWord()">📝 Word</button>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h1 id="pageTitle">📑 التقرير المالي</h1>
+
+    <div class="controls">
+      <label>📅 اختر السنة: </label>
+      <select id="yearSelect">
+        <option>2023</option>
+        <option>2022</option>
+        <option>2021</option>
+      </select>
+    </div>
+
+    <!-- الجداول -->
+    <h2 id="bsTitle">الميزانية العمومية</h2>
+    <table id="balanceSheet">
+      <thead><tr><th>البند</th><th>2023</th><th>2022</th><th>الانحراف</th></tr></thead>
+      <tbody>
+        <tr><td>الأصول المتداولة</td><td>500000</td><td>450000</td><td>+11%</td></tr>
+        <tr><td>الأصول الثابتة</td><td>800000</td><td>700000</td><td>+14%</td></tr>
+        <tr><td>الخصوم</td><td>400000</td><td>350000</td><td>+14%</td></tr>
+        <tr><td>حقوق الملكية</td><td>900000</td><td>800000</td><td>+12%</td></tr>
+      </tbody>
+    </table>
+    <canvas id="balanceChart"></canvas>
+
+    <h2 id="isTitle">قائمة الدخل</h2>
+    <table id="incomeStatement">
+      <thead><tr><th>البند</th><th>2023</th><th>2022</th><th>الانحراف</th></tr></thead>
+      <tbody>
+        <tr><td>الإيرادات</td><td>1200000</td><td>1000000</td><td>+20%</td></tr>
+        <tr><td>المصروفات</td><td>700000</td><td>600000</td><td>+17%</td></tr>
+        <tr><td>صافي الربح</td><td>500000</td><td>400000</td><td>+25%</td></tr>
+      </tbody>
+    </table>
+    <canvas id="incomeChart"></canvas>
+
+    <h2 id="cfTitle">التدفقات النقدية</h2>
+    <table id="cashFlow">
+      <thead><tr><th>البند</th><th>2023</th><th>2022</th><th>الانحراف</th></tr></thead>
+      <tbody>
+        <tr><td>التشغيل</td><td>300000</td><td>250000</td><td>+20%</td></tr>
+        <tr><td>الاستثمار</td><td>-100000</td><td>-80000</td><td>-25%</td></tr>
+        <tr><td>التمويل</td><td>50000</td><td>60000</td><td>-17%</td></tr>
+      </tbody>
+    </table>
+    <canvas id="cashChart"></canvas>
+
+    <h2 id="eqTitle">حقوق الملكية</h2>
+    <table id="equity">
+      <thead><tr><th>البند</th><th>2023</th><th>2022</th><th>الانحراف</th></tr></thead>
+      <tbody>
+        <tr><td>رأس المال</td><td>500000</td><td>500000</td><td>=</td></tr>
+        <tr><td>الأرباح المحتجزة</td><td>400000</td><td>300000</td><td>+33%</td></tr>
+      </tbody>
+    </table>
+    <canvas id="equityChart"></canvas>
+  </div>
+
+  <footer>
+    &copy; 2025 Financial Analyzer - جميع الحقوق محفوظة
+  </footer>
+
+  <script>
+    // Dark Mode
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+    }
+
+    // Charts
+    new Chart(document.getElementById('balanceChart'), {
+      type: 'bar',
+      data: {
+        labels: ['الأصول المتداولة','الأصول الثابتة','الخصوم','حقوق الملكية'],
+        datasets: [
+          {label:'2023', data:[500000,800000,400000,900000], backgroundColor:'#004080'},
+          {label:'2022', data:[450000,700000,350000,800000], backgroundColor:'#0080ff'}
+        ]
+      }
+    });
+    new Chart(document.getElementById('incomeChart'), {
+      type: 'line',
+      data: {
+        labels: ['الإيرادات','المصروفات','صافي الربح'],
+        datasets: [
+          {label:'2023', data:[1200000,700000,500000], borderColor:'#004080', fill:false},
+          {label:'2022', data:[1000000,600000,400000], borderColor:'#00bfff', fill:false}
+        ]
+      }
+    });
+    new Chart(document.getElementById('cashChart'), {
+      type: 'pie',
+      data: {
+        labels: ['التشغيل','الاستثمار','التمويل'],
+        datasets: [{ data:[300000,-100000,50000], backgroundColor:['#28a745','#ffc107','#dc3545']}]
+      }
+    });
+    new Chart(document.getElementById('equityChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['رأس المال','الأرباح المحتجزة'],
+        datasets: [{ data:[500000,400000], backgroundColor:['#004080','#00bfff']}]
+      }
+    });
+
+    // Language switching (demo only)
+    function changeLanguage() {
+      const lang = document.getElementById("lang").value;
+      if (lang === "en") {
+        document.getElementById("pageTitle").innerText = "📑 Financial Report";
+        document.getElementById("bsTitle").innerText = "Balance Sheet";
+        document.getElementById("isTitle").innerText = "Income Statement";
+        document.getElementById("cfTitle").innerText = "Cash Flow Statement";
+        document.getElementById("eqTitle").innerText = "Equity Statement";
+      } else {
+        document.getElementById("pageTitle").innerText = "📑 التقرير المالي";
+        document.getElementById("bsTitle").innerText = "الميزانية العمومية";
+        document.getElementById("isTitle").innerText = "قائمة الدخل";
+        document.getElementById("cfTitle").innerText = "التدفقات النقدية";
+        document.getElementById("eqTitle").innerText = "حقوق الملكية";
+      }
+    }
+
+    // Currency conversion (demo)
+    function updateCurrency() {
+      alert("سيتم ربط تحويل العملة الفعلي عبر API هنا لاحقاً.");
+    }
+
+    // PDF Export
+    function exportPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      doc.text("📑 Financial Analyzer Report", 20, 20);
+      doc.save("report.pdf");
+    }
+
+    // Word Export
+    async function exportWord() {
+      alert("📄 سيتم إضافة توليد DOCX متقدم لاحقاً.");
+    }
+  </script>
+</body>
+</html>

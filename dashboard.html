@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+
+  <meta name="description" content="Financial Analyzer - interactive browser-based financial analysis and reporting tool">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0d6efd">
+  <!-- Tailwind CDN (for rapid UI polish) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>لوحة التحليلات المالية — Financial Analyzer (نسخة محسّنة)</title>
+
+<!-- Styles & Fonts -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet"/>
+
+<!-- Libraries -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+
+<style>
+:root{
+  --accent:#0d6efd; --bg:#f6f8fb; --card:#fff; --text:#222; --muted:#6c757d;
+}
+body{
+  font-family:'Cairo',system-ui,sans-serif; background:var(--bg); color:var(--text); transition:.18s;
+}
+body[data-theme="dark"]{
+  --bg:#07101a; --card:#071421; --text:#e6eef6; --muted:#9aa6b2; background:var(--bg); color:var(--text);
+}
+
+header{ background:var(--accent); color:#fff; padding:12px 18px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.brand{ display:flex; align-items:center; gap:12px; text-decoration:none; color:inherit; }
+.brand img{ height:44px; border-radius:6px; }
+.controls{ display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.container-main{ max-width:1200px; margin:auto; padding:20px; position:relative; z-index:2; }
+
+.card{ border-radius:12px; background:var(--card); box-shadow:0 10px 24px rgba(2,6,23,0.06); margin-bottom:18px; }
+.small-desc{ color:var(--muted); font-size:.92rem; margin-bottom:12px; }
+.kpi .value{ font-weight:700; font-size:1.12rem; }
+.table-fixed{ max-height:300px; overflow:auto; display:block; }
+.watermark{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:0; opacity:0.04; }
+.watermark img{ max-width:380px; filter:grayscale(100%); }
+
+.tour-bubble{ position:fixed; right:20px; bottom:20px; max-width:340px; background:var(--card); border-radius:10px; box-shadow:0 8px 24px rgba(2,6,23,0.08); padding:12px; z-index:9999; display:none; }
+.footer-note{ text-align:center; color:var(--muted); font-size:.85rem; margin-top:8px; }
+@media (max-width:900px){ .controls{ flex-wrap:wrap; } }
+</style>
+</head>
+<body data-theme="light">
+  <header role="banner" class="sr-only">Financial Analyzer header</header>
+
+<header>
+  <a class="brand" href="index.html">
+    <img src="assets/logo.png" alt="logo">
+    <div>
+      <div style="font-size:1.05rem">المحلل المالي</div>
+      <div style="font-size:.86rem; opacity:.9">نسخة محسّنة بالكامل</div>
+    </div>
+  </a>
+
+  <div class="controls">
+    <div class="form-check form-switch">
+      <input id="darkToggle" class="form-check-input" type="checkbox">
+      <label for="darkToggle" class="form-check-label text-white ms-2">وضع ليلي</label>
+    </div>
+
+    <select id="langSelect" class="form-select form-select-sm" title="اللغة">
+      <option value="ar">العربية</option>
+      <option value="en">English</option>
+    </select>
+
+    <select id="currencySelect" class="form-select form-select-sm" title="العملة">
+      <option value="EGP">جنيه (EGP)</option>
+      <option value="USD">دولار (USD)</option>
+      <option value="EUR">يورو (EUR)</option>
+    </select>
+
+    <input id="mappingFile" type="file" accept=".json,.csv" class="form-control form-control-sm" style="width:180px" title="ارفع ملف خريطة الأكواد (اختياري)"/>
+    <button id="refreshBtn" class="btn btn-light btn-sm" title="تحديث"><i class="bi bi-arrow-clockwise"></i></button>
+    <button id="startTourBtn" class="btn btn-outline-light btn-sm" title="شرح سريع">شرح</button>
+  </div>
+</header>
+
+<div class="watermark"><img src="assets/logo.png" alt="watermark"/></div>
+
+<main class="container-main" role="main">
+
+  <div id="alerts"></div>
+
+  <!-- KPIs -->
+  <div id="kpiRow" class="row g-3 mb-3"></div>
+
+  <!-- Charts -->
+  <div class="row g-3">
+    <div class="col-lg-6">
+      <div class="card p-3">
+        <h5 id="liqTitle">نسب السيولة</h5>
+        <div class="small-desc" id="liqDesc">Current / Quick / Cash — قدرة الشركة على الوفاء بالالتزامات القصيرة الأجل.</div>
+        <canvas id="chartLiquidity" height="160"></canvas>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card p-3">
+        <h5 id="profTitle">نسب الربحية</h5>
+        <div class="small-desc" id="profDesc">هامش إجمالي، هامش تشغيل، وصافي هامش.</div>
+        <canvas id="chartProfit" height="160"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mt-1">
+    <div class="col-lg-6">
+      <div class="card p-3">
+        <h5 id="actTitle">نسب النشاط</h5>
+        <div class="small-desc" id="actDesc">دوران المخزون/الذمم/الأصول — كفاءة استخدام الأصول.</div>
+        <canvas id="chartActivity" height="140"></canvas>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card p-3">
+        <h5 id="finTitle">هيكل التمويل</h5>
+        <div class="small-desc" id="finDesc">توزيع التمويل بين الديون وحقوق الملكية.</div>
+        <canvas id="chartFinance" height="140"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mt-2">
+    <div class="col-12">
+      <div class="card p-3">
+        <h5 id="foreTitle">تنبؤات العائد</h5>
+        <div class="small-desc" id="foreDesc">توقعات لعوائد 5 فترات.</div>
+        <canvas id="chartForecast" height="120"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mt-3">
+    <div class="col-12">
+      <div class="card p-3">
+        <h5>القوائم المالية التفصيلية</h5>
+        <div class="small-desc">الميزانية، قائمة الدخل، والتدفقات النقدية (مشتقة من ميزان المراجعة).</div>
+        <div id="financialTables" class="mt-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex gap-2 justify-content-center mt-3">
+    <button id="exportPdfBtn" class="btn btn-danger"><i class="bi bi-file-earmark-pdf"></i> تصدير PDF</button>
+    <button id="exportExcelBtn" class="btn btn-success"><i class="bi bi-file-earmark-excel"></i> تصدير Excel</button>
+  </div>
+
+  <div class="footer-note mt-3">
+    <div>الصفحة تعمل محليًا (Local). لتحليلات أدق ارفع خريطة أكواد الحسابات (CSV/JSON) عبر حقل "خريطة الأكواد".</div>
+  </div>
+</main>
+
+<!-- tour bubble -->
+<div id="tourBubble" class="tour-bubble">
+  <div id="tourText"></div>
+  <div class="d-flex justify-content-end gap-2 mt-2">
+    <button id="tourPrev" class="btn btn-secondary btn-sm">رجوع</button>
+    <button id="tourNext" class="btn btn-primary btn-sm">التالي</button>
+    <button id="tourClose" class="btn btn-link btn-sm">إنهاء</button>
+  </div>
+</div>
+
+<script>
+// ===== Configuration =====
+const FX_API = 'https://api.exchangerate.host/latest?base=EGP&symbols=USD,EUR';
+let FX_RATES = { USD:31.0, EUR:34.0 };
+const TOUR_STEPS = [
+  {ar:'هنا تظهر أهم المؤشرات (KPIs) — الأصول، الخصوم، الإيرادات...','en':'KPIs: assets, liabilities, revenues.'},
+  {ar:'بطاقات الرسومات تُظهر مؤشرات مثل السيولة والربحية — مرر فوق النقاط لرؤية القيم.','en':'Charts show liquidity and profitability — hover for values.'},
+  {ar:'أسفل ستجد القوائم المالية المشتقة من ميزان المراجعة.','en':'Financial statements derived from trial balance are below.'},
+  {ar:'يمكنك رفع ملف خريطة الأكواد لتحسين التصنيف والحسابات بدقة أعلى.','en':'Upload mapping file to improve classification accuracy.'}
+];
+
+// ===== Utilities =====
+const el = id=>document.getElementById(id);
+function fmt(v,d=2){ if(v===null||v===undefined||isNaN(v)) return '—'; return Number(v).toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d}); }
+function esc(s){ return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
+
+// ===== Data load =====
+function loadTrialData(){
+  try{
+    const raw = localStorage.getItem('trialData') || '[]';
+    const arr = JSON.parse(raw);
+    if(!Array.isArray(arr)) return [];
+    return arr.map(r=>({
+      Account:r.Account||r.account||r.name||'غير معروف',
+      Type:(r.Type||r.type||'').toString(),
+      Code:r.Code||r.code||'',
+      Debit:Number(r.Debit||r.debit||0),
+      Credit:Number(r.Credit||r.credit||0)
+    }));
+  }catch(e){ console.warn(e); return []; }
+}
+
+// ===== Mapping & classification =====
+let userMapping = null;
+const defaultKeywords = {
+  assets:['أصل','الأصول','asset','assets','cash','نقد','inventory','مخزون','receivable','ذمم'],
+  liabilities:['خصم','الخصوم','liability','liabilities','payable','دائنون'],
+  equity:['حقوق','حقوق الملكية','equity','capital','رأس المال'],
+  revenue:['إيراد','مبيعات','revenue','sales','income'],
+  expense:['مصروف','تكلفة','expense','cost']
+};
+
+function classifyAccount(name){
+  const lc = name.toLowerCase();
+  for(const [type,keys] of Object.entries(userMapping||defaultKeywords)){
+    if(keys.some(k=>lc.includes(k.toLowerCase()))) return type;
+  }
+  return 'other';
+}
+
+// ===== KPIs calculation =====
+function calcKPIs(data){
+  const totals={assets:0,liabilities:0,equity:0,revenue:0,expense:0};
+  data.forEach(r=>{
+    const t=classifyAccount(r.Account);
+    const balance = r.Debit - r.Credit;
+    if(totals[t]!==undefined) totals[t]+=balance;
+  });
+  totals.netIncome = totals.revenue - totals.expense;
+  totals.currentRatio = totals.assets / (totals.liabilities||1);
+  totals.debtEquity = totals.liabilities / (totals.equity||1);
+  return totals;
+}
+
+// ===== Render KPIs =====
+function renderKPIs(kpi){
+  const container=el('kpiRow'); container.innerHTML='';
+  const items=[
+    {title:'إجمالي الأصول',val:kpi.assets},
+    {title:'إجمالي الخصوم',val:kpi.liabilities},
+    {title:'حقوق الملكية',val:kpi.equity},
+    {title:'إجمالي الإيرادات',val:kpi.revenue},
+    {title:'إجمالي المصروفات',val:kpi.expense},
+    {title:'صافي الربح',val:kpi.netIncome},
+    {title:'نسبة السيولة',val:kpi.currentRatio},
+    {title:'نسبة الدين/الملكية',val:kpi.debtEquity},
+  ];
+  items.forEach(it=>{
+    const div=document.createElement('div');
+    div.className='col-md-3 col-sm-6';
+    div.innerHTML=`<div class="card p-3 kpi"><div class="small-desc">${esc(it.title)}</div><div class="value">${fmt(it.val)}</div></div>`;
+    container.appendChild(div);
+  });
+}
+
+// ===== Render charts =====
+let chartObjs={};
+function renderCharts(kpi){
+  const liquidityData = [kpi.currentRatio,1.0,0.5];
+  const profitData = [kpi.netIncome,kpi.revenue,kpi.expense];
+  const activityData = [0.8,1.2,1.1]; // placeholder ratios
+  const financeData = [kpi.liabilities,kpi.equity];
+  const forecastData = [kpi.netIncome*0.9,kpi.netIncome*1.0,kpi.netIncome*1.1,kpi.netIncome*1.15,kpi.netIncome*1.2];
+
+  const ctxs = {
+    chartLiquidity:liquidityData,
+    chartProfit:profitData,
+    chartActivity:activityData,
+    chartFinance:financeData,
+    chartForecast:forecastData
+  };
+
+  Object.keys(ctxs).forEach(id=>{
+    if(chartObjs[id]) chartObjs[id].destroy();
+    const ctx=document.getElementById(id);
+    chartObjs[id]=new Chart(ctx,{type:'bar',data:{labels:ctxs[id].map((_,i)=>`Q${i+1}`),datasets:[{label:'',data:ctxs[id],backgroundColor:'#0d6efd'}]},options:{responsive:true,plugins:{legend:{display:false}}}});
+  });
+}
+
+// ===== Render financial tables =====
+function renderTables(data){
+  const container=el('financialTables'); container.innerHTML='';
+  if(!data.length){ container.innerHTML='<div class="text-muted">لا توجد بيانات</div>'; return; }
+  const tables=['assets','liabilities','equity','revenue','expense'];
+  tables.forEach(t=>{
+    const tbl=document.createElement('table');
+    tbl.className='table table-striped table-bordered table-fixed mb-2';
+    const rows=data.filter(r=>classifyAccount(r.Account)===t).map(r=>`<tr><td>${esc(r.Account)}</td><td>${fmt(r.Debit)}</td><td>${fmt(r.Credit)}</td><td>${fmt(r.Debit-r.Credit)}</td></tr>`).join('');
+    tbl.innerHTML=`<thead><tr><th>الحساب</th><th>مدين</th><th>دائن</th><th>الرصيد</th></tr></thead><tbody>${rows}</tbody>`;
+    const card=document.createElement('div'); card.className='mb-2';
+    card.innerHTML=`<h6>${t.toUpperCase()}</h6>`; card.appendChild(tbl);
+    container.appendChild(card);
+  });
+}
+
+// ===== Event listeners =====
+el('darkToggle').addEventListener('change',e=>document.body.dataset.theme=e.target.checked?'dark':'light');
+el('langSelect').addEventListener('change',e=>{ const l=e.target.value; TOUR_STEPS.forEach((s,i)=>s.currentLang=l); renderTourStep(0); });
+el('refreshBtn').addEventListener('click',()=>initDashboard());
+
+el('mappingFile').addEventListener('change',e=>{
+  const file = e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{ userMapping=JSON.parse(ev.target.result); alert('تم تحميل خريطة الأكواد بنجاح'); }catch(err){ alert('خطأ في قراءة الملف'); }
+  };
+  reader.readAsText(file);
+});
+
+// ===== Export =====
+el('exportPdfBtn').addEventListener('click',()=>{
+  html2canvas(document.body).then(canvas=>{
+    const imgData=canvas.toDataURL('image/png');
+    const pdf=new jspdf.jsPDF({orientation:'landscape'});
+    pdf.addImage(imgData,'PNG',0,0,297,210);
+    pdf.save('FinancialDashboard.pdf');
+  });
+});
+
+el('exportExcelBtn').addEventListener('click',()=>{
+  const wb=XLSX.utils.book_new();
+  const ws_data=[['الحساب','مدين','دائن','الرصيد']];
+  loadTrialData().forEach(r=>ws_data.push([r.Account,r.Debit,r.Credit,r.Debit-r.Credit]));
+  const ws=XLSX.utils.aoa_to_sheet(ws_data);
+  XLSX.utils.book_append_sheet(wb,ws,'FinancialData');
+  XLSX.writeFile(wb,'FinancialData.xlsx');
+});
+
+// ===== Tour =====
+let tourStep=0;
+function renderTourStep(s){
+  tourStep=s;
+  const bubble=el('tourBubble');
+  if(s>=TOUR_STEPS.length){ bubble.style.display='none'; return; }
+  bubble.style.display='block';
+  bubble.querySelector('#tourText').innerText = TOUR_STEPS[s][TOUR_STEPS[s].currentLang||'ar'];
+}
+el('startTourBtn').addEventListener('click',()=>renderTourStep(0));
+el('tourNext').addEventListener('click',()=>renderTourStep(tourStep+1));
+el('tourPrev').addEventListener('click',()=>renderTourStep(tourStep-1));
+el('tourClose').addEventListener('click',()=>el('tourBubble').style.display='none');
+
+// ===== Initialize =====
+function initDashboard(){
+  const data=loadTrialData();
+  const kpi=calcKPIs(data);
+  renderKPIs(kpi);
+  renderCharts(kpi);
+  renderTables(data);
+}
+initDashboard();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,13 @@
+{
+  "ci": {
+    "collect": {
+      "url": [
+        "http://localhost:8080/ultimate/index.html"
+      ],
+      "numberOfRuns": 1
+    },
+    "assert": {
+      "preset": "lighthouse:recommended"
+    }
+  }
+}

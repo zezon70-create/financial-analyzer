@@ -1,0 +1,7 @@
+{
+  "name": "Financial Analyzer Ultimate",
+  "short_name": "FA-Ult",
+  "start_url": "/ultimate/index.html",
+  "display": "standalone",
+  "theme_color": "#0d6efd"
+}
