@@ -78,6 +78,8 @@ body[data-theme="dark"] .card-surface{box-shadow:0 10px 30px rgba(0,0,0,0.6);bor
 /* buttons */
 .btn-glow{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));border:none;color:#fff;box-shadow:0 10px 40px rgba(102,16,242,0.12);transition:transform .12s, box-shadow .12s}
 .btn-glow:hover{transform:translateY(-3px);box-shadow:0 18px 55px rgba(102,16,242,0.18)}
+/* inline add button (appears next to last row) */
+.btn-inline-add{margin-inline-start:8px;padding:.35rem .5rem;font-size:.82rem;display:inline-flex;align-items:center}
 
 /* inputs & selects colors to adapt to dark mode */
 input, select, textarea, .form-control { color:var(--text); background:transparent; border-radius:8px; }
@@ -129,6 +131,9 @@ body[data-theme="dark"] input, body[data-theme="dark"] select, body[data-theme="
 
     <button id="exportPdfBtnHeader" class="btn btn-outline-primary btn-sm ms-2" title="تصدير PDF" aria-label="تصدير PDF"><i class="bi bi-file-earmark-pdf"></i></button>
     <button id="exportExcelBtn" class="btn btn-outline-success btn-sm ms-1" title="تصدير Excel" aria-label="تصدير Excel"><i class="bi bi-file-earmark-excel"></i></button>
+
+    <!-- NEW UPLOAD DATA BUTTON (last in nav) -->
+    <button id="uploadDataBtn" class="btn btn-outline-primary btn-sm ms-2" title="رفع البيانات" aria-label="رفع البيانات"><i class="bi bi-cloud-arrow-up"></i> <span id="uploadDataLabel">رفع البيانات</span></button>
   </div>
 </header>
 
@@ -263,8 +268,8 @@ const ACCOUNT_LIST = [
 
 /* Translations */
 const translations = {
-  ar:{ brandText:"المحلل المالي", brandDesc:"أداة ذكية لتحليل القوائم المالية", uploadLabel:"تحميل ملف ميزان المراجعة (CSV / XLSX)", uploadHint:"يدعم CSV و Excel — سيحاول اكتشاف اسم الحساب/النوع/المدين/الدائن.", goDashboard:"لوحة التحكم", addedRow:"تم إضافة صف جديد", fileImported:"تم استيراد الملف بنجاح", fileError:"خطأ في قراءة الملف — تأكد من التنسيق", saved:"تم الحفظ محليًا", restored:"تم استرجاع البيانات", deletedRow:"تم حذف الصف", cleared:"تم مسح البيانات", validated:"تم التحقق", noDataExport:"لا توجد بيانات للتصدير", add:"إضافة صف", validate:"تحقق", save:"حفظ", load:"استرجاع", clear:"مسح الكل", dashboard:"لوحة التحكم", accounts:"عدد الحسابات", assets:"الأصول (تقريبي)", liabilities:"الخصوم (تقريبي)", revenue:"الإيرادات", expense:"المصروفات", other:"أخرى", noData:"لم تُدخل بيانات بعد.", placeholderAccount:"اكتب اسم الحساب", fxLabel:"سعر الصرف (1 وحدة = ... ج.م)" },
-  en:{ brandText:"Financial Analyzer", brandDesc:"Smart tool for financial statements analysis", uploadLabel:"Upload Trial Balance (CSV / XLSX)", uploadHint:"Supports CSV and Excel — will attempt to detect account/type/debit/credit.", goDashboard:"Go to Dashboard", addedRow:"New row added", fileImported:"File imported successfully", fileError:"File read error — check format", saved:"Saved locally", restored:"Data restored", deletedRow:"Row removed", cleared:"All data cleared", validated:"Validation complete", noDataExport:"No data to export", add:"Add Row", validate:"Validate", save:"Save", load:"Load", clear:"Clear All", dashboard:"Dashboard", accounts:"Accounts", assets:"Assets (approx)", liabilities:"Liabilities (approx)", revenue:"Revenue", expense:"Expense", other:"Other", noData:"No data entered yet.", placeholderAccount:"Type account name", fxLabel:"Exchange rate (1 unit = ... EGP)" }
+  ar:{ brandText:"المحلل المالي", brandDesc:"أداة ذكية لتحليل القوائم المالية", uploadLabel:"تحميل ملف ميزان المراجعة (CSV / XLSX)", uploadHint:"يدعم CSV و Excel — سيحاول اكتشاف اسم الحساب/النوع/المدين/الدائن.", goDashboard:"لوحة التحكم", addedRow:"تم إضافة صف جديد", fileImported:"تم استيراد الملف بنجاح", fileError:"خطأ في قراءة الملف — تأكد من التنسيق", saved:"تم الحفظ محليًا", restored:"تم استرجاع البيانات", deletedRow:"تم حذف الصف", cleared:"تم مسح البيانات", validated:"تم التحقق", noDataExport:"لا توجد بيانات للتصدير", add:"إضافة صف", validate:"تحقق", save:"حفظ", load:"استرجاع", clear:"مسح الكل", dashboard:"لوحة التحكم", accounts:"عدد الحسابات", assets:"الأصول (تقريبي)", liabilities:"الخصوم (تقريبي)", revenue:"الإيرادات", expense:"المصروفات", other:"أخرى", noData:"لم تُدخل بيانات بعد.", placeholderAccount:"اكتب اسم الحساب", fxLabel:"سعر الصرف (1 وحدة = ... ج.م)", uploadDataBtnAr:"رفع البيانات", uploadDataBtnEn:"Upload Data" },
+  en:{ brandText:"Financial Analyzer", brandDesc:"Smart tool for financial statements analysis", uploadLabel:"Upload Trial Balance (CSV / XLSX)", uploadHint:"Supports CSV and Excel — will attempt to detect account/type/debit/credit.", goDashboard:"Go to Dashboard", addedRow:"New row added", fileImported:"File imported successfully", fileError:"File read error — check format", saved:"Saved locally", restored:"Data restored", deletedRow:"Row removed", cleared:"All data cleared", validated:"Validation complete", noDataExport:"No data to export", add:"Add Row", validate:"Validate", save:"Save", load:"Load", clear:"Clear All", dashboard:"Dashboard", accounts:"Accounts", assets:"Assets (approx)", liabilities:"Liabilities (approx)", revenue:"Revenue", expense:"Expense", other:"Other", noData:"No data entered yet.", placeholderAccount:"Type account name", fxLabel:"Exchange rate (1 unit = ... EGP)", uploadDataBtnAr:"رفع البيانات", uploadDataBtnEn:"Upload Data" }
 };
 function t(key){ const lang = $('languageSelect')?.value || localStorage.getItem('fa_lang') || 'ar'; return (translations[lang] && translations[lang][key])? translations[lang][key] : key; }
 
@@ -302,6 +307,10 @@ function applyLanguage(){
   $('btnDashText').textContent = translations[lang].dashboard;
   $('btnReportText').textContent = (lang==='ar' ? 'التقرير' : 'Report');
   $('fxLabel').textContent = translations[lang].fxLabel;
+  // upload data button label bilingual
+  const upLabel = (lang === 'ar') ? translations[lang].uploadDataBtnAr : translations[lang].uploadDataBtnEn;
+  $('uploadDataLabel').textContent = upLabel;
+  $('uploadDataBtn').title = upLabel;
 }
 
 /* attach events */
@@ -330,6 +339,69 @@ $('fxInput').addEventListener('change', ()=> {
    ========================= */
 function saveLocal(){ localStorage.setItem('trialData', JSON.stringify(trialData)); }
 function show(keyOrText, type='info'){ const lang = $('languageSelect')?.value || 'ar'; const text = translations[lang][keyOrText] || keyOrText; showToast(text, type); }
+
+/* =========================
+   Inline add-button (next to last row)
+   ========================= */
+let inlineAddBtn = null;
+function ensureInlineAddButton(){
+  if(inlineAddBtn) return inlineAddBtn;
+  inlineAddBtn = document.createElement('button');
+  inlineAddBtn.type = 'button';
+  inlineAddBtn.className = 'btn btn-glow btn-sm btn-inline-add';
+  inlineAddBtn.title = ( $('languageSelect')?.value === 'ar' ? 'أضف صف أسفل هذا' : 'Add row below');
+  inlineAddBtn.setAttribute('aria-label', inlineAddBtn.title);
+  inlineAddBtn.innerHTML = '<i class="bi bi-plus-lg"></i>';
+  inlineAddBtn.addEventListener('click', (e)=>{
+    // add a new row after the last row (push) and re-render
+    trialData.push({Account:'',Type:'',Code:'',Debit:0,Credit:0});
+    saveLocal();
+    renderTable();
+    renderSummary();
+    show('addedRow','success');
+    // focus the first input of new row after short delay
+    setTimeout(()=> {
+      const lastIdx = trialData.length - 1;
+      const inp = document.querySelector(`input[data-field="Account"][data-idx="${lastIdx}"]`);
+      if(inp) inp.focus();
+    }, 80);
+  });
+  return inlineAddBtn;
+}
+function positionInlineAddButton(){
+  // place inlineAddBtn inside last row's last cell (or below table if no rows)
+  const tbody = $('tbBody');
+  const rows = tbody.querySelectorAll('tr');
+  const btn = ensureInlineAddButton();
+  // update title on language change
+  btn.title = ( $('languageSelect')?.value === 'ar' ? 'أضف صف أسفل هذا' : 'Add row below');
+  btn.setAttribute('aria-label', btn.title);
+  // remove any previous instances
+  document.querySelectorAll('.btn-inline-add').forEach(n => {
+    if(n !== btn) n.remove();
+  });
+  if(rows.length === 0){
+    // attach to table container header area next to "الحساب" maybe; append below table
+    const table = $('trialTable');
+    table.parentElement.appendChild(btn);
+  } else {
+    const lastRow = rows[rows.length - 1];
+    // find last cell and append button there (styled small)
+    const lastCell = lastRow.querySelector('td:last-child');
+    if(lastCell){
+      // remove existing duplicate if any
+      const existing = lastCell.querySelector('.btn-inline-add');
+      if(existing && existing !== btn) existing.remove();
+      // ensure btn not already child of lastCell
+      if(btn.parentElement !== lastCell){
+        lastCell.appendChild(btn);
+      }
+    } else {
+      // fallback: append to tbody
+      tbody.appendChild(btn);
+    }
+  }
+}
 
 /* =========================
    Table render & edit (Type is SELECT, custom allowed)
@@ -383,7 +455,14 @@ function renderTable(){
 
   // delete
   tbody.querySelectorAll('.btn-delete').forEach(btn => {
-    btn.addEventListener('click', e => { const i = Number(e.target.closest('button').dataset.idx); trialData.splice(i,1); saveLocal(); renderTable(); renderSummary(); show('deletedRow','danger'); });
+    btn.addEventListener('click', e => {
+      const i = Number(e.target.closest('button').dataset.idx);
+      trialData.splice(i,1);
+      saveLocal();
+      renderTable();
+      renderSummary();
+      show('deletedRow','danger');
+    });
   });
 
   // autocomplete for account input
@@ -409,11 +488,23 @@ function renderTable(){
     inp.addEventListener('blur', ()=> { setTimeout(()=>{ const l = inp.parentElement.querySelector('.autocomplete-suggestions'); if(l) l.remove(); },120); });
   });
 
+  // after rendering rows, position the inline add button
+  positionInlineAddButton();
+
   renderValidation();
 }
 
-/* add row */
-$('addRowBtn').addEventListener('click', ()=> { trialData.push({Account:'',Type:'',Code:'',Debit:0,Credit:0}); saveLocal(); renderTable(); renderSummary(); show('addedRow','success'); });
+/* add row (main toolbar button) */
+$('addRowBtn').addEventListener('click', ()=> {
+  trialData.push({Account:'',Type:'',Code:'',Debit:0,Credit:0});
+  saveLocal(); renderTable(); renderSummary(); show('addedRow','success');
+  // focus new row account input
+  setTimeout(()=> {
+    const lastIdx = trialData.length - 1;
+    const inp = document.querySelector(`input[data-field="Account"][data-idx="${lastIdx}"]`);
+    if(inp) inp.focus();
+  }, 60);
+});
 
 /* clear all */
 $('clearBtn').addEventListener('click', ()=> { const confirmMsg = $('languageSelect').value === 'ar' ? 'هل أنت متأكد أنك تريد مسح جميع البيانات؟' : 'Are you sure you want to clear all data?'; if(confirm(confirmMsg)){ trialData = []; saveLocal(); renderTable(); renderSummary(); show('cleared','danger'); } });
@@ -434,6 +525,29 @@ $('goReportBtn').addEventListener('click', ()=> { // Ensure data saved and open 
   localStorage.setItem('fa_fx', JSON.stringify(fxRates));
   localStorage.setItem('fa_theme', document.body.dataset.theme || 'light');
   window.location.href = 'report.html';
+});
+
+/* NEW: Upload Data button in header
+   - saves current trialData into localStorage under "inputData"
+   - also persists UI prefs (language/currency/theme/fx) for upload.html to read
+   - then navigates to upload.html
+*/
+$('uploadDataBtn').addEventListener('click', ()=> {
+  try{
+    // Save current trial data under 'inputData' as requested
+    localStorage.setItem('inputData', JSON.stringify(trialData || []));
+    // Also preserve same preference keys used across app
+    localStorage.setItem('fa_lang', $('languageSelect').value || 'ar');
+    localStorage.setItem('fa_currency', $('currencySelect').value || 'EGP');
+    localStorage.setItem('fa_fx', JSON.stringify(fxRates || {}));
+    localStorage.setItem('fa_theme', document.body.dataset.theme || 'light');
+    show('fileImported','success'); // reuse fileImported as positive toast
+  }catch(err){
+    console.error(err);
+    show('fileError','danger');
+  }
+  // navigate to upload.html
+  setTimeout(()=> window.location.href = 'upload.html', 150);
 });
 
 /* validation */
@@ -477,7 +591,7 @@ function renderSummary(){
     else if(/liab|خصوم|payable|loan|دائن|قرض/i.test(s)) agg.liabilities += (-net);
     else if(/equity|حقوق|رأس/i.test(s)) agg.equity += (-net);
     else if(/revenue|sales|إيراد|مبيعات/i.test(s)) agg.revenue += (-net);
-    else if(/expense|مصروف|cogs|تكلفة|مصاريف/i.test(s)) agg.expense += net;
+    else if(/expense|مصروف|cogs|تكلفة|مصا/i.test(s)) agg.expense += net;
     else {
       const acc = (r.Account||'').toLowerCase();
       if(/النقد|bank|cash|نقد/.test(acc)) agg.assets += net;
@@ -589,6 +703,8 @@ async function fetchFx(){
   renderTable(); renderSummary(); fetchFx();
   if(!trialData.length){ trialData.push({Account:'',Type:'',Code:'',Debit:0,Credit:0}); saveLocal(); renderTable(); }
   window.addEventListener('storage', (e)=> { if(e.key === 'trialData'){ trialData = JSON.parse(e.newValue || '[]'); renderTable(); renderSummary(); show('restored','info'); } });
+  // ensure upload button label on load
+  applyLanguage();
 })();
 </script>
   <script src="js/main-fixes.js"></script>
