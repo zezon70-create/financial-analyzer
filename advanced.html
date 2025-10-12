@@ -1,690 +1,223 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Advanced — المحلل المالي (Ultra Pro Max)</title>
-
-<!-- Libraries -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-
-<!-- Styles: Glass + Gradient modern -->
-<style>
-:root{
-  --bg:#0f1724; --card:rgba(255,255,255,0.06); --glass:rgba(255,255,255,0.06);
-  --accent1:#3b82f6; --accent2:#7c3aed; --muted: #9aa6b2; --text:#e6eef6;
-}
-html,body{height:100%;margin:0;font-family:"Cairo",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
-body{background:linear-gradient(135deg,#071028 0%, #0f1724 100%);color:var(--text);-webkit-font-smoothing:antialiased;padding-bottom:40px}
-.container{max-width:1200px;margin:20px auto;padding:18px}
-.header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px;border-radius:12px;background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));box-shadow:0 6px 30px rgba(2,6,23,0.6);backdrop-filter: blur(6px);border:1px solid rgba(255,255,255,0.04)}
-.brand{display:flex;gap:10px;align-items:center}
-.brand img{height:44px;border-radius:10px}
-.brand .title{font-weight:800;font-size:1.05rem}
-.controls{display:flex;gap:8px;align-items:center}
-.btn{padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;cursor:pointer;font-weight:700;display:inline-flex;gap:8px;align-items:center}
-.btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text);font-weight:600}
-.select, .input, .toggle {padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:var(--text)}
-.row{display:flex;gap:12px;margin-top:14px}
-.col{flex:1}
-.card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.04);box-shadow:0 8px 30px rgba(2,6,23,0.6)}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-top:12px}
-.kpi{padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));border:1px solid rgba(255,255,255,0.03)}
-.kpi .label{color:var(--muted);font-size:0.9rem}
-.kpi .val{font-weight:800;font-size:1.12rem;margin-top:6px}
-.table{width:100%;border-collapse:collapse;margin-top:10px}
-.table th,.table td{padding:8px;border-bottom:1px dashed rgba(255,255,255,0.03);text-align:center}
-.small-muted{color:var(--muted);font-size:0.9rem}
-.comment{margin-top:8px;padding:10px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03)}
-.footer{margin-top:20px;text-align:center;color:var(--muted);font-size:0.9rem}
-
-/* responsive */
-@media (max-width:900px){ .row{flex-direction:column} .controls{flex-wrap:wrap} .brand .title{font-size:0.95rem} }
-</style>
+  <meta charset="UTF-8">
+  <title>التحليلات المتقدمة | Financial Analyzer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: "Cairo", sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #e9f0ff, #ffffff);
+      color: #222;
+      transition: all 0.4s ease;
+    }
+    header {
+      background: rgba(0,64,128,0.9);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 25px;
+    }
+    header h1 { font-size: 20px; }
+    nav button, nav select {
+      margin: 0 5px;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #fff;
+      color: #004080;
+      font-weight: bold;
+    }
+    nav button:hover { background: #f0f0f0; }
+    .container {
+      padding: 25px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    h2 {
+      color: #004080;
+      border-bottom: 2px solid #004080;
+      padding-bottom: 5px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: rgba(255,255,255,0.8);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background: #004080;
+      color: #fff;
+    }
+    canvas {
+      margin: 20px auto;
+      display: block;
+      max-width: 800px;
+    }
+    .comment {
+      background: #f0f8ff;
+      padding: 10px 15px;
+      border-left: 4px solid #004080;
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+    footer {
+      text-align: center;
+      background: #004080;
+      color: white;
+      padding: 10px;
+    }
+    .dark-mode {
+      background: #1c1c1c;
+      color: #f5f5f5;
+    }
+    .dark-mode th { background: #222; }
+    .dark-mode .comment { background: #2c2c2c; border-left-color: #00bfff; }
+  </style>
 </head>
 <body>
-
-<div class="container" id="mainContainer">
-
-  <!-- Header -->
-  <div class="header" role="banner">
-    <div class="brand">
-      <img src="assets/logo.png" alt="logo" id="logoImg" onerror="this.style.visibility='hidden'">
-      <div>
-        <div class="title" id="brandTitle">المحلل المالي — Ultra Pro Max</div>
-        <div class="small-muted" id="brandSub">Advanced Financial & Risk Analytics</div>
-      </div>
-    </div>
-
-    <div class="controls" role="navigation" aria-label="controls">
-      <button class="btn ghost" id="homeBtn" title="العودة للرئيسية">🏠 <span id="homeText">الرئيسية</span></button>
-      <button class="btn ghost" id="reportBtn" title="التقرير">📑 <span id="reportText">التقرير</span></button>
-      <button class="btn ghost" id="inputBtn" title="صفحة الإدخال">✍️ <span id="inputText">الإدخال</span></button>
-      <button class="btn ghost" id="uploadBtn" title="صفحة الرفع">⬆️ <span id="uploadText">رفع</span></button>
-
-      <select id="langSelect" class="select" title="اللغة" aria-label="اللغة">
-        <option value="ar">العربية</option>
-        <option value="en">English</option>
+  <header>
+    <h1 id="pageTitle">📊 التحليلات المتقدمة</h1>
+    <nav>
+      <button onclick="location.href='index.html'">🏠 الرئيسية</button>
+      <button onclick="toggleDarkMode()">🌙/☀️</button>
+      <select id="lang" onchange="changeLanguage()">
+        <option value="ar">🇪🇬 عربي</option>
+        <option value="en">🇺🇸 English</option>
       </select>
+    </nav>
+  </header>
 
-      <select id="currencySelect" class="select" title="العملة" aria-label="العملة">
-        <option value="EGP">EGP</option>
-        <option value="USD">USD</option>
-        <option value="EUR">EUR</option>
-      </select>
+  <div class="container">
+    <h2 id="ratiosTitle">تحليل النسب المالية</h2>
+    <table id="ratiosTable">
+      <thead>
+        <tr><th>النسبة</th><th>القيمة</th><th>التفسير</th></tr>
+      </thead>
+      <tbody id="ratiosBody"></tbody>
+    </table>
 
-      <label class="toggle" title="الوضع الداكن">
-        <input type="checkbox" id="darkToggle"> 🌙
-      </label>
+    <canvas id="ratiosChart"></canvas>
 
-      <button class="btn" id="exportPdfBtn" title="تصدير PDF">📄 <span id="exportPdfText">تصدير PDF</span></button>
-    </div>
+    <h2 id="evaTitle">القيمة الاقتصادية المضافة</h2>
+    <div class="comment" id="evaComment"></div>
+    <canvas id="evaChart"></canvas>
+
+    <h2 id="forecastTitle">🔮 التنبؤ بالأداء المستقبلي</h2>
+    <div class="comment" id="forecastComment"></div>
+    <canvas id="forecastChart"></canvas>
   </div>
 
-  <!-- Controls -->
-  <div class="row" style="margin-top:14px">
-    <div class="col card">
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <label class="small-muted" for="dataSourceSelect" id="dataSourceLabel">مصدر البيانات</label>
-        <select id="dataSourceSelect" class="select" title="اختر مصدر البيانات">
-          <option value="trialData">صفحة الإدخال (trialData)</option>
-          <option value="uploadData">صفحة الرفع (uploadData)</option>
-          <option value="inputData">inputData</option>
-          <option value="manual">أدخل يدويًا / Paste JSON</option>
-        </select>
+  <footer>
+    &copy; 2025 Financial Analyzer — جميع الحقوق محفوظة.
+  </footer>
 
-        <button class="btn ghost" id="loadDataBtn">🔁 <span id="loadDataText">تحميل البيانات</span></button>
+  <script>
+    // Dark Mode
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+    }
 
-        <input id="manualInput" class="input" placeholder='أو الصق JSON هنا ثم اضغط تحميل' style="flex:1"/>
-
-        <label class="small-muted" id="yearLabel">السنة</label>
-        <select id="yearSelect" class="select" style="min-width:100px">
-          <option>2025</option><option>2024</option><option>2023</option><option>2022</option>
-        </select>
-
-        <label class="small-muted" id="scenarioLabel">السيناريو</label>
-        <select id="scenarioSelect" class="select" style="min-width:150px">
-          <option value="base">محايد</option>
-          <option value="optimistic">متفائل</option>
-          <option value="pessimistic">متشائم</option>
-        </select>
-
-      </div>
-      <div class="small-muted" style="margin-top:8px" id="dataHint">سيتم تحميل البيانات من localStorage واستخدامها في جميع التحليلات.</div>
-    </div>
-
-    <div class="col card" style="min-width:260px">
-      <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
-        <div>
-          <div class="small-muted" id="liveLabel">مستوى التحديث</div>
-          <div style="font-weight:800" id="liveStatus">تلقائي</div>
-        </div>
-        <div style="text-align:left">
-          <div class="small-muted" id="lastUpdatedLabel">آخر تحديث</div>
-          <div id="lastUpdated">—</div>
-        </div>
-      </div>
-
-      <div class="kpis" style="margin-top:12px" id="topKpis">
-        <!-- KPIs injected here -->
-      </div>
-    </div>
-  </div>
-
-  <!-- Analysis Panels -->
-  <div class="row">
-    <div class="col card" id="finSummaryCard" aria-live="polite">
-      <h3 id="summaryTitle">ملخص مالي — Financial Summary</h3>
-      <div id="summaryTableWrap"></div>
-      <div class="comment" id="summaryComment"></div>
-    </div>
-
-    <div class="col card">
-      <h3 id="ratiosTitle">النسب المالية — Ratios</h3>
-      <div id="ratiosTableWrap"></div>
-      <div class="comment" id="ratiosComment"></div>
-    </div>
-  </div>
-
-  <div class="row" style="margin-top:12px">
-    <div class="col card">
-      <h3 id="riskTitle">المخاطر والعائد — Risk & Return</h3>
-      <div id="riskTableWrap"></div>
-      <div class="comment" id="riskComment"></div>
-    </div>
-
-    <div class="col card">
-      <h3 id="forecastTitle">التنبؤ والسيناريوهات — Forecasts & Scenarios</h3>
-      <canvas id="forecastChart" height="160"></canvas>
-      <div class="comment" id="forecastComment"></div>
-    </div>
-  </div>
-
-  <div class="row" style="margin-top:12px">
-    <div class="col card">
-      <h3 id="breakdownTitle">تفصيل حسب الحسابات — Account Breakdown</h3>
-      <div id="accountsTableWrap"></div>
-    </div>
-  </div>
-
-  <div class="footer">© 2025 المحلل المالي — Ultra Pro Max • كل الحقوق محفوظة</div>
-</div>
-
-<!-- Script: logic, translations, analytics -->
-<script>
-/* ===========================
-   Utilities & Translations
-   =========================== */
-const $ = id => document.getElementById(id);
-
-const translations = {
-  ar: {
-    brandTitle: "المحلل المالي — Ultra Pro Max",
-    brandSub: "تحليلات مالية ومخاطر متقدمة",
-    home: "الرئيسية", report: "التقرير", input: "الإدخال", upload: "رفع",
-    dataSource: "مصدر البيانات", loadData: "تحميل البيانات", manualPlaceholder: "أو الصق JSON هنا ثم اضغط تحميل",
-    year: "السنة", scenario: "السيناريو", live: "مستوى التحديث", lastUpdated: "آخر تحديث",
-    summaryTitle: "ملخص مالي", ratiosTitle: "النسب المالية", riskTitle: "المخاطر والعائد",
-    forecastTitle: "التنبؤ والسيناريوهات", breakdownTitle: "تفصيل حسب الحسابات",
-    exportPdf: "تصدير PDF",
-    dataHint: "سيتم تحميل البيانات من localStorage واستخدامها في جميع التحليلات.",
-    noData: "لا توجد بيانات. يرجى تحميل بيانات من صفحة الإدخال أو الرفع أو لصق JSON.",
-    kpi_accounts: "عدد الحسابات", kpi_assets: "الأصول (تقريبي)", kpi_liab: "الخصوم (تقريبي)",
-    kpi_revenue: "الإيرادات", kpi_expense: "المصروفات", kpi_other: "أخرى",
-    btnScenarioBase: "محايد", btnScenarioOptimistic: "متفائل", btnScenarioPessimistic: "متشائم",
-    note_no_data_for_calc: "بعض المؤشرات تم حسابها تقريبياً بسبب نقص بنود مفصّلة."
-  },
-  en: {
-    brandTitle: "Financial Analyzer — Ultra Pro Max",
-    brandSub: "Advanced Financial & Risk Analytics",
-    home: "Home", report: "Report", input: "Input", upload: "Upload",
-    dataSource: "Data Source", loadData: "Load Data", manualPlaceholder: "or paste JSON here then press Load",
-    year: "Year", scenario: "Scenario", live: "Live Update", lastUpdated: "Last updated",
-    summaryTitle: "Financial Summary", ratiosTitle: "Financial Ratios", riskTitle: "Risk & Return",
-    forecastTitle: "Forecasts & Scenarios", breakdownTitle: "Account Breakdown",
-    exportPdf: "Export PDF",
-    dataHint: "Data will be loaded from localStorage and used in all analyses.",
-    noData: "No data found. Please load data from the Input or Upload page or paste JSON.",
-    kpi_accounts: "Accounts", kpi_assets: "Assets (approx)", kpi_liab: "Liabilities (approx)",
-    kpi_revenue: "Revenue", kpi_expense: "Expenses", kpi_other: "Other",
-    btnScenarioBase: "Base", btnScenarioOptimistic: "Optimistic", btnScenarioPessimistic: "Pessimistic",
-    note_no_data_for_calc: "Some metrics approximated due to missing detailed items."
-  }
-};
-
-let lang = localStorage.getItem('fa_lang') || 'ar';
-let currency = localStorage.getItem('fa_currency') || 'EGP';
-let fxRates = JSON.parse(localStorage.getItem('fa_fx')||'null') || { USD:31.0, EUR:34.0 };
-let trialData = []; // will be array of {Account,Type,Code,Debit,Credit}
-let lastLoadedKey = null;
-
-function t(key){
-  return (translations[lang] && translations[lang][key]) ? translations[lang][key] : key;
-}
-
-function applyLanguageToUI(){
-  $('brandTitle').textContent = t('brandTitle');
-  $('brandSub').textContent = t('brandSub');
-  $('homeText').textContent = t('home');
-  $('reportText').textContent = t('report');
-  $('inputText').textContent = t('input');
-  $('uploadText').textContent = t('upload');
-  $('dataSourceLabel').textContent = t('dataSource');
-  $('loadDataText').textContent = t('loadData');
-  $('manualInput').placeholder = t('manualPlaceholder');
-  $('yearLabel').textContent = t('year');
-  $('scenarioLabel').textContent = t('scenario');
-  $('liveLabel').textContent = t('live');
-  $('lastUpdatedLabel').textContent = t('lastUpdated');
-  $('summaryTitle').textContent = t('summaryTitle');
-  $('ratiosTitle').textContent = t('ratiosTitle');
-  $('riskTitle').textContent = t('riskTitle');
-  $('forecastTitle').textContent = t('forecastTitle');
-  $('breakdownTitle').textContent = t('breakdownTitle');
-  $('exportPdfText').textContent = t('exportPdf');
-
-  // KPIs keys updated dynamically in render
-}
-
-/* =========================
-   Currency helpers
-   ========================= */
-function convertCurrency(value){
-  const cur = currency || 'EGP';
-  if(!value) return 0;
-  if(cur === 'EGP') return Number(value);
-  const rate = fxRates[cur] || 1;
-  return Number(value) / rate;
-}
-function formatCurrency(v){
-  const cur = currency || 'EGP';
-  const n = Number(v) || 0;
-  if(cur === 'EGP') return n.toLocaleString() + ' ج.م';
-  if(cur === 'USD') return '$' + n.toLocaleString();
-  if(cur === 'EUR') return '€' + n.toLocaleString();
-  return n.toLocaleString() + ' ' + cur;
-}
-
-/* =========================
-   Load Data
-   ========================= */
-function loadFromLocalKey(key){
-  try{
-    const raw = localStorage.getItem(key);
-    if(!raw) return null;
-    const parsed = JSON.parse(raw);
-    // Accept various shapes: array of rows or object with rows
-    if(Array.isArray(parsed)) return parsed;
-    if(parsed.rows && Array.isArray(parsed.rows)) return parsed.rows;
-    // If it's object where key 'trialData' exists
-    if(parsed.trialData && Array.isArray(parsed.trialData)) return parsed.trialData;
-    return parsed; // fallback
-  }catch(e){
-    console.warn('parse error', e);
-    return null;
-  }
-}
-
-function normalizeRows(rawRows){
-  if(!Array.isArray(rawRows)) return [];
-  return rawRows.map(r => {
-    // accept numbers or strings
-    const Debit = ('Debit' in r) ? r.Debit : (r.Debit===0?0:(r.debit||r.Dr||r['مدين']||0));
-    const Credit = ('Credit' in r) ? r.Credit : (r.Credit===0?0:(r.credit||r.Cr||r['دائن']||0));
-    return {
-      Account: r.Account || r.account || r['اسم الحساب'] || r['الحساب'] || r.name || '',
-      Type: r.Type || r.type || r['نوع'] || '',
-      Code: r.Code || r.code || r['كود'] || '',
-      Debit: Number(Debit) || 0,
-      Credit: Number(Credit) || 0
+    // Load data from Local Storage
+    let data = JSON.parse(localStorage.getItem("financialData")) || {
+      revenues: [1200000, 1000000],
+      expenses: [700000, 600000],
+      assets: [1300000, 1150000],
+      liabilities: [400000, 350000],
+      equity: [900000, 800000],
     };
-  });
-}
 
-function loadData(){
-  const src = $('dataSourceSelect').value;
-  lastLoadedKey = src;
-  if(src === 'manual'){
-    const txt = $('manualInput').value.trim();
-    if(!txt){ alert(t('noData')); return; }
-    try{
-      const parsed = JSON.parse(txt);
-      trialData = normalizeRows(parsed);
-      updateAfterLoad('manual input');
-      return;
-    }catch(e){
-      alert('JSON parse error: ' + e.message);
-      return;
+    // Ratios
+    const ratios = {
+      "هامش الربح الصافي": data.revenues[0] ? (data.revenues[0] - data.expenses[0]) / data.revenues[0] : 0,
+      "العائد على الأصول": data.assets[0] ? ((data.revenues[0] - data.expenses[0]) / data.assets[0]) : 0,
+      "العائد على حقوق الملكية": data.equity[0] ? ((data.revenues[0] - data.expenses[0]) / data.equity[0]) : 0,
+      "نسبة المديونية": data.assets[0] ? (data.liabilities[0] / data.assets[0]) : 0,
+    };
+
+    // Populate Table
+    const tbody = document.getElementById("ratiosBody");
+    for (const [name, value] of Object.entries(ratios)) {
+      const tr = document.createElement("tr");
+      const interpretation =
+        value > 0.25 ? "📈 أداء قوي يشير إلى كفاءة عالية في الإدارة المالية." :
+        value > 0 ? "⚖️ أداء متوسط يحتاج إلى تحسين في الكفاءة التشغيلية." :
+        "🔻 مؤشرات سلبية تستدعي مراجعة السياسات المالية.";
+      tr.innerHTML = `<td>${name}</td><td>${(value*100).toFixed(2)}%</td><td>${interpretation}</td>`;
+      tbody.appendChild(tr);
     }
-  }
 
-  const rows = loadFromLocalKey(src);
-  if(!rows || (Array.isArray(rows) && rows.length===0)){
-    // try common alternative keys
-    const alt = loadFromLocalKey('trialData') || loadFromLocalKey('inputData') || loadFromLocalKey('uploadData');
-    if(alt){
-      trialData = normalizeRows(alt);
-      updateAfterLoad('fallback');
-      return;
+    // Ratios Chart
+    new Chart(document.getElementById("ratiosChart"), {
+      type: "bar",
+      data: {
+        labels: Object.keys(ratios),
+        datasets: [{
+          label: "القيم (%)",
+          data: Object.values(ratios).map(v => v*100),
+          backgroundColor: ["#004080","#00bfff","#0077cc","#3399ff"]
+        }]
+      }
+    });
+
+    // EVA Chart
+    const eva = (data.revenues[0] - data.expenses[0]) - (0.1 * data.equity[0]);
+    document.getElementById("evaComment").innerText =
+      eva > 0 ? "✅ المشروع يولّد قيمة اقتصادية مضافة للمستثمرين." :
+      "⚠️ القيمة الاقتصادية المضافة سلبية، يجب تحسين العائد على رأس المال.";
+    new Chart(document.getElementById("evaChart"), {
+      type: "doughnut",
+      data: {
+        labels: ["القيمة الاقتصادية المضافة", "تكلفة رأس المال"],
+        datasets: [{
+          data: [eva > 0 ? eva : 0, eva > 0 ? 0 : -eva],
+          backgroundColor: ["#28a745", "#dc3545"]
+        }]
+      }
+    });
+
+    // Forecast (تنبؤ بسيط باستخدام معدل النمو)
+    const growth = ((data.revenues[0] - data.revenues[1]) / data.revenues[1]) || 0;
+    const forecastRevenue = data.revenues[0] * (1 + growth);
+    document.getElementById("forecastComment").innerText =
+      growth > 0 ? "📊 من المتوقع استمرار النمو خلال الفترات القادمة." :
+      "📉 الأداء يتراجع ويحتاج إلى تدخل إداري لتحسين الاتجاه.";
+    new Chart(document.getElementById("forecastChart"), {
+      type: "line",
+      data: {
+        labels: ["2022","2023","2024 (تنبؤ)"],
+        datasets: [{
+          label: "الإيرادات",
+          data: [data.revenues[1], data.revenues[0], forecastRevenue],
+          borderColor: "#004080",
+          fill: false
+        }]
+      }
+    });
+
+    // Translation
+    function changeLanguage() {
+      const lang = document.getElementById("lang").value;
+      const ar = lang === "ar";
+      document.documentElement.dir = ar ? "rtl" : "ltr";
+      document.getElementById("pageTitle").innerText = ar ? "📊 التحليلات المتقدمة" : "📊 Advanced Analytics";
+      document.getElementById("ratiosTitle").innerText = ar ? "تحليل النسب المالية" : "Financial Ratios Analysis";
+      document.getElementById("evaTitle").innerText = ar ? "القيمة الاقتصادية المضافة" : "Economic Value Added (EVA)";
+      document.getElementById("forecastTitle").innerText = ar ? "🔮 التنبؤ بالأداء المستقبلي" : "🔮 Performance Forecasting";
     }
-    trialData = [];
-    renderAll();
-    alert(t('noData'));
-    return;
-  }
-  trialData = normalizeRows(rows);
-  updateAfterLoad(src);
-}
-
-function updateAfterLoad(sourceLabel){
-  const now = new Date().toLocaleString();
-  $('lastUpdated').textContent = now;
-  localStorage.setItem('advanced_last_load', JSON.stringify({source: sourceLabel, time: now}));
-  renderAll();
-}
-
-/* =========================
-   Core Calculations
-   ========================= */
-
-function computeAggregates(){
-  const agg = { assets:0, liabilities:0, equity:0, revenue:0, expense:0, other:0, byAccount: {} };
-  trialData.forEach(r=>{
-    const net = Number(r.Debit) - Number(r.Credit);
-    const s = (r.Type || r.Account || '').toString().toLowerCase();
-    // classify heuristically
-    if(/asset|أصل|cash|bank|current asset|نقد|bank|inventory|مخزون/i.test(s)) agg.assets += net;
-    else if(/liab|خصوم|payable|loan|دائن|قرض|liabilities/i.test(s)) agg.liabilities += (-net);
-    else if(/equity|حقوق|رأس|capital/i.test(s)) agg.equity += (-net);
-    else if(/revenue|sales|إيراد|مبيعات|revenue/i.test(s)) agg.revenue += (-net);
-    else if(/expense|مصروف|cost|تكلفة|مصروفات|expense/i.test(s)) agg.expense += net;
-    else agg.other += net;
-
-    // account-level
-    const acc = r.Account || r.account || 'غير معروف';
-    if(!agg.byAccount[acc]) agg.byAccount[acc] = { Debit:0, Credit:0, net:0, Type: r.Type };
-    agg.byAccount[acc].Debit += Number(r.Debit||0);
-    agg.byAccount[acc].Credit += Number(r.Credit||0);
-    agg.byAccount[acc].net += net;
-  });
-  // ensure non-negative where logical
-  return agg;
-}
-
-function computeRatios(agg){
-  const res = {};
-  const totalAssets = Math.abs(agg.assets) || 0;
-  const totalLiab = Math.abs(agg.liabilities) || 0;
-  const revenue = Math.abs(agg.revenue) || 0;
-  const expense = Math.abs(agg.expense) || 0;
-  const netIncome = revenue - expense;
-
-  // Approximations:
-  // Current ratio & Quick ratio: try to estimate from account types containing 'current'
-  let currentAssets = 0, currentLiabilities = 0, inventory = 0, interestExpense = 0;
-  trialData.forEach(r=>{
-    const name = (r.Type||r.Account||'').toString().toLowerCase();
-    const net = Number(r.Debit) - Number(r.Credit);
-    if(/current/i.test(name) || /متداولة|النقد|bank|cash|receivable|ذمم مدينة/i.test(name)) currentAssets += net;
-    if(/inventory|مخزون/i.test(name)) inventory += Math.abs(net);
-    if(/current liabilities|خصوم متداولة|payable|دائن/i.test(name)) currentLiabilities += Math.abs(net);
-    if(/interest|فوائد|مصروفات فوائد/i.test(name)) interestExpense += Math.abs(net);
-  });
-
-  // Safety fallback
-  if(currentAssets === 0) currentAssets = totalAssets * 0.6;
-  if(currentLiabilities === 0) currentLiabilities = totalLiab * 0.4;
-
-  // ratios
-  res.currentRatio = (currentLiabilities===0) ? null : (currentAssets / currentLiabilities);
-  res.quickRatio = (currentLiabilities===0) ? null : ((currentAssets - inventory) / currentLiabilities);
-  res.debtRatio = (totalAssets===0) ? null : (totalLiab / totalAssets);
-  res.roe = (agg.equity===0) ? null : (netIncome / Math.abs(agg.equity));
-  res.roa = (totalAssets===0) ? null : (netIncome / totalAssets);
-  res.netProfitMargin = (revenue===0) ? null : (netIncome / revenue);
-  res.grossMargin = null; // needs COGS
-  res.timesInterestEarned = (interestExpense===0) ? null : ( (netIncome + interestExpense) / interestExpense );
-  res.inventoryTurnover = (inventory===0) ? null : ( (agg.expense || 0) / inventory );
-
-  // risk metrics (simple)
-  // compute basic volatility across accounts (coefficient of variation)
-  const values = Object.values(agg.byAccount).map(a => Math.abs(a.net));
-  const mean = (values.reduce((s,v)=>s+v,0) / (values.length || 1)) || 0;
-  const sd = Math.sqrt(values.reduce((s,v)=>s + Math.pow(v-mean,2),0) / (values.length || 1));
-  res.coeffVar = mean === 0 ? null : sd / mean;
-
-  // Sharpe (approx): (expected return - rf)/sd. We'll assume rf=3% and expected return = netIncome/totalAssets
-  const rf = 0.03;
-  const expReturn = totalAssets===0 ? 0 : (netIncome / totalAssets);
-  res.sharpe = (sd===0) ? null : ( (expReturn - rf) / sd );
-
-  return res;
-}
-
-/* =========================
-   Smart Comments (interpretation)
-   ========================= */
-
-function interpretSummary(agg){
-  const totalAssets = Math.abs(agg.assets);
-  const totalLiab = Math.abs(agg.liabilities);
-  const equity = Math.abs(agg.equity);
-  const revenue = Math.abs(agg.revenue);
-  const expense = Math.abs(agg.expense);
-  const net = revenue - expense;
-  let txt = '';
-  if(totalAssets === 0) txt = t('note_no_data_for_calc');
-  else {
-    txt += `إجمالي الأصول: ${formatCurrency(totalAssets)} — إجمالي الخصوم: ${formatCurrency(totalLiab)} — حقوق الملكية (تقريبي): ${formatCurrency(equity)}. `;
-    if(net >= 0) txt += `صافي الربح: ${formatCurrency(net)} — الأداء الربحي مضبوط إيجابياً. `;
-    else txt += `صافي الخسارة: ${formatCurrency(net)} — الشركة تسجل خسائر، يلزم فحص المصروفات أو زيادة الإيرادات. `;
-  }
-  return txt;
-}
-
-function interpretRatios(r){
-  let txt = '';
-  if(r.currentRatio == null) txt += 'لا توجد بيانات كافية لحساب نسبة التداول. ';
-  else {
-    txt += `نسبة التداول: ${r.currentRatio.toFixed(2)} — `;
-    txt += r.currentRatio >= 1.5 ? 'سيولة جيدة.' : (r.currentRatio >= 1 ? 'سيولة مقبولة، راقبها.' : 'تحذير: ضمان السيولة منخفض.');
-    txt += ' ';
-  }
-  if(r.roa != null) {
-    txt += `عائد الأصول (ROA): ${(r.roa*100).toFixed(2)}% — `;
-    txt += r.roa >= 0.05 ? 'أداء الأصول جيد.' : 'عائد منخفض مقارنة بالمخاطر.';
-    txt += ' ';
-  }
-  if(r.roe != null){
-    txt += `عائد حقوق الملكية (ROE): ${(r.roe*100).toFixed(2)}% — `;
-    txt += r.roe >= 0.12 ? 'عوائد قوية للمساهمين.' : 'عوائد متواضعة، قد تحتاج تحسين ربحية أو هيكلة رأس المال.';
-    txt += ' ';
-  }
-  if(r.debtRatio != null){
-    txt += `نسبة الدين إلى الأصول: ${(r.debtRatio*100).toFixed(1)}% — `;
-    txt += r.debtRatio <= 0.5 ? 'الرفع المالي محكم.' : 'تحذير: اعتماد عالي على الديون.';
-    txt += ' ';
-  }
-  if(r.timesInterestEarned != null){
-    txt += `مضاعف تغطية الفوائد: ${r.timesInterestEarned.toFixed(2)} — `;
-    txt += r.timesInterestEarned >= 3 ? 'تغطية جيدة للفوائد.' : 'قد تواجه صعوبة في تغطية الفوائد.';
-    txt += ' ';
-  }
-  if(r.netProfitMargin != null){
-    txt += `هامش صافي الربح: ${(r.netProfitMargin*100).toFixed(2)}% — `;
-    txt += r.netProfitMargin >= 10 ? 'هامش جيد.' : 'هامش ضيق؛ يحتاج مراقبة التكاليف.';
-    txt += ' ';
-  }
-  return txt;
-}
-
-function interpretRisk(r){
-  let txt = '';
-  if(r.coeffVar == null) txt += 'لا توجد بيانات كافية لقياس تقلب الحسابات. ';
-  else {
-    txt += `مؤشر التقلب (CV): ${r.coeffVar.toFixed(3)} — `;
-    txt += r.coeffVar < 0.5 ? 'تقلب منخفض.' : 'تقلب مرتفع؛ مخاطر أعلى.';
-    txt += ' ';
-  }
-  if(r.sharpe != null){
-    txt += `مؤشر شارب تقريبي: ${r.sharpe.toFixed(3)} — `;
-    txt += r.sharpe > 1 ? 'عائد ممتاز مقارنة بالمخاطرة.' : (r.sharpe > 0.5 ? 'عائد جيد بالنسبة للمخاطرة.' : 'عائد منخفض أو مخاطرة مرتفعة.');
-    txt += ' ';
-  }
-  return txt;
-}
-
-/* =========================
-   Rendering: KPIs, Tables, Charts
-   ========================= */
-
-function renderTopKPIs(agg){
-  const container = $('topKpis');
-  container.innerHTML = '';
-  const items = [
-    {label: t('kpi_accounts'), value: trialData.length, isCurrency:false},
-    {label: t('kpi_assets'), value: agg.assets, isCurrency:true},
-    {label: t('kpi_liab'), value: agg.liabilities, isCurrency:true},
-    {label: t('kpi_revenue'), value: agg.revenue, isCurrency:true},
-    {label: t('kpi_expense'), value: agg.expense, isCurrency:true},
-    {label: t('kpi_other'), value: agg.other, isCurrency:true}
-  ];
-  items.forEach(it=>{
-    const el = document.createElement('div'); el.className='kpi';
-    const valText = it.isCurrency ? formatCurrency(Math.abs(it.value)) : it.value;
-    el.innerHTML = `<div class="label">${it.label}</div><div class="val">${valText}</div>`;
-    container.appendChild(el);
-  });
-}
-
-function renderSummaryTable(agg){
-  const wrap = $('summaryTableWrap');
-  if(!trialData.length){ wrap.innerHTML = `<div class="small-muted">${t('noData')}</div>`; return; }
-  const html = `
-    <table class="table">
-      <thead><tr><th>البند</th><th>القيمة (${currency})</th></tr></thead>
-      <tbody>
-        <tr><td>الأصول (تقريبي)</td><td>${formatCurrency(Math.abs(agg.assets))}</td></tr>
-        <tr><td>الخصوم (تقريبي)</td><td>${formatCurrency(Math.abs(agg.liabilities))}</td></tr>
-        <tr><td>حقوق الملكية (تقريبي)</td><td>${formatCurrency(Math.abs(agg.equity))}</td></tr>
-        <tr><td>الإيرادات</td><td>${formatCurrency(Math.abs(agg.revenue))}</td></tr>
-        <tr><td>المصروفات</td><td>${formatCurrency(Math.abs(agg.expense))}</td></tr>
-        <tr><td>صافي (تقريبي)</td><td>${formatCurrency(Math.abs(agg.revenue - agg.expense))}</td></tr>
-      </tbody>
-    </table>`;
-  wrap.innerHTML = html;
-  $('summaryComment').textContent = interpretSummary(agg);
-}
-
-function renderRatios(agg, ratios){
-  const wrap = $('ratiosTableWrap');
-  if(!trialData.length){ wrap.innerHTML = `<div class="small-muted">${t('noData')}</div>`; return; }
-  let rows = '';
-  const addRow = (label,val) => rows += `<tr><td>${label}</td><td>${val}</td></tr>`;
-  addRow('Current Ratio', ratios.currentRatio ? ratios.currentRatio.toFixed(2) : '—');
-  addRow('Quick Ratio', ratios.quickRatio ? ratios.quickRatio.toFixed(2) : '—');
-  addRow('Debt Ratio', ratios.debtRatio ? (ratios.debtRatio*100).toFixed(1)+'%' : '—');
-  addRow('ROA', ratios.roa ? (ratios.roa*100).toFixed(2)+'%' : '—');
-  addRow('ROE', ratios.roe ? (ratios.roe*100).toFixed(2)+'%' : '—');
-  addRow('Net Profit Margin', ratios.netProfitMargin ? (ratios.netProfitMargin*100).toFixed(2)+'%' : '—');
-  addRow('Times Interest Earned', ratios.timesInterestEarned ? ratios.timesInterestEarned.toFixed(2) : '—');
-  addRow('Inventory Turnover', ratios.inventoryTurnover ? ratios.inventoryTurnover.toFixed(2) : '—');
-  wrap.innerHTML = `<table class="table"><thead><tr><th>المؤشر</th><th>القيمة</th></tr></thead><tbody>${rows}</tbody></table>`;
-  $('ratiosComment').textContent = interpretRatios(ratios);
-}
-
-let forecastChart = null;
-function renderForecasts(agg){
-  // very simple projection logic: growth scenarios based on scenario selector
-  const scenario = $('scenarioSelect').value;
-  const revenue = Math.abs(agg.revenue);
-  const baseGrowth = 0.03; // 3%
-  let mult;
-  if(scenario === 'optimistic') mult = 1.12;
-  else if(scenario === 'pessimistic') mult = 0.88;
-  else mult = 1.03;
-
-  const years = [0,1,2,3,4];
-  const labels = years.map(y => String(Number($('yearSelect').value) + y));
-  const series = years.map((y,i) => {
-    // compound with some variability
-    return revenue * Math.pow(mult, i);
-  });
-
-  // Chart
-  const ctx = $('forecastChart').getContext('2d');
-  if(forecastChart) try{ forecastChart.destroy(); }catch(e){}
-  forecastChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        { label: (lang==='ar'?'الإيرادات المتوقعة':'Projected Revenue'), data: series, borderColor:'#3b82f6', fill:true, tension:0.3 }
-      ]
-    },
-    options: { responsive:true, plugins:{legend:{display:false}, tooltip:{callbacks:{label:ctx=> formatCurrency(ctx.parsed.y)}}}, scales:{y:{ticks:{callback: v => formatCurrency(v)}}}
-  });
-
-  $('forecastComment').textContent = `السيناريو: ${ (scenario==='optimistic'? t('btnScenarioOptimistic') : (scenario==='pessimistic'? t('btnScenarioPessimistic') : t('btnScenarioBase') )) }. توقع إرشادي يعتمد على بيانات حالية — استخدم لتحليل الحساسية.`;
-}
-
-/* Accounts breakdown */
-function renderAccounts(agg){
-  const wrap = $('accountsTableWrap');
-  if(!trialData.length){ wrap.innerHTML = `<div class="small-muted">${t('noData')}</div>`; return; }
-  let rows = '';
-  Object.keys(agg.byAccount).forEach(acc=>{
-    const a = agg.byAccount[acc];
-    rows += `<tr><td>${acc}</td><td>${formatCurrency(a.Debit)}</td><td>${formatCurrency(a.Credit)}</td><td>${formatCurrency(a.net)}</td></tr>`;
-  });
-  wrap.innerHTML = `<table class="table"><thead><tr><th>الحساب</th><th>مدين</th><th>دائن</th><th>صافي</th></tr></thead><tbody>${rows}</tbody></table>`;
-}
-
-/* Risk table */
-function renderRisk(r){
-  const wrap = $('riskTableWrap');
-  if(!trialData.length){ wrap.innerHTML = `<div class="small-muted">${t('noData')}</div>`; return; }
-  let rows = '';
-  rows += `<tr><td>Coefficient of Variation (CV)</td><td>${r.coeffVar ? r.coeffVar.toFixed(3) : '—'}</td></tr>`;
-  rows += `<tr><td>Estimated Sharpe Ratio</td><td>${r.sharpe ? r.sharpe.toFixed(3) : '—'}</td></tr>`;
-  wrap.innerHTML = `<table class="table"><thead><tr><th>المؤشر</th><th>القيمة</th></tr></thead><tbody>${rows}</tbody></table>`;
-  $('riskComment').textContent = interpretRisk(r);
-}
-
-/* render all */
-function renderAll(){
-  applyLanguageToUI();
-  currency = $('currencySelect').value || currency;
-  lang = $('langSelect').value || lang;
-  localStorage.setItem('fa_lang', lang);
-  localStorage.setItem('fa_currency', currency);
-
-  const agg = computeAggregates();
-  const ratios = computeRatios(agg);
-  renderTopKPIs(agg);
-  renderSummaryTable(agg);
-  renderRatios(agg, ratios);
-  renderRisk(ratios);
-  renderForecasts(agg);
-  renderAccounts(agg);
-}
-
-/* =========================
-   Events & Initialization
-   ========================= */
-
-$('loadDataBtn').addEventListener('click', ()=> loadData());
-$('dataSourceSelect').addEventListener('change', ()=> {
-  const v = $('dataSourceSelect').value;
-  // if manual, show manual input
-  if(v === 'manual') $('manualInput').style.display = 'inline-block';
-  else $('manualInput').style.display = 'inline-block'; // keep visible
-});
-$('scenarioSelect').addEventListener('change', ()=> renderAll());
-$('yearSelect').addEventListener('change', ()=> renderAll());
-$('currencySelect').addEventListener('change', ()=> { localStorage.setItem('fa_currency', $('currencySelect').value); renderAll(); });
-$('langSelect').addEventListener('change', ()=> { localStorage.setItem('fa_lang', $('langSelect').value); renderAll(); });
-$('darkToggle').addEventListener('change', (e)=> {
-  if(e.target.checked){ document.body.style.background = 'linear-gradient(135deg,#071026,#071218)'; document.body.style.color = '#e6eef6'; }
-  else { document.body.style.background = 'linear-gradient(135deg,#071028 0%, #0f1724 100%)'; document.body.style.color = '#e6eef6'; }
-});
-
-// navigation buttons
-$('homeBtn').addEventListener('click', ()=> { window.location.href = 'index.html'; });
-$('reportBtn').addEventListener('click', ()=> { window.location.href = 'report.html'; });
-$('inputBtn').addEventListener('click', ()=> { window.location.href = 'input.html'; });
-$('uploadBtn').addEventListener('click', ()=> { window.location.href = 'upload.html'; });
-
-// export PDF
-$('exportPdfBtn').addEventListener('click', ()=> {
-  const el = document.querySelector('.container');
-  const opt = { margin:0.35, filename:'advanced_report.pdf', image:{type:'jpeg',quality:0.95}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'in', format:'a4', orientation:'portrait'} };
-  html2pdf().set(opt).from(el).save();
-});
-
-// initialization
-(function init(){
-  // set UI from local storage
-  $('langSelect').value = lang;
-  $('currencySelect').value = currency;
-  // try to auto-load typical keys when opening
-  const candidateKeys = ['trialData','inputData','uploadData'];
-  let found = false;
-  for(const k of candidateKeys){
-    if(localStorage.getItem(k)){
-      $('dataSourceSelect').value = k;
-      loadData();
-      found = true;
-      break;
-    }
-  }
-  if(!found){
-    // nothing found — render empty UI
-    renderAll();
-  }
-})();
-</script>
-
+  </script>
 </body>
 </html>
