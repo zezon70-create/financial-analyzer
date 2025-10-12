@@ -1,223 +1,734 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<title>Ultra Global Dashboard | Financial Analyzer</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>التقرير المالي — Financial Analyzer (Ultra)</title>
+
+<!-- CDN libraries -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+
+<!-- Fonts & basic styles -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap');
-  body { margin:0; font-family:'Cairo', sans-serif; background:#f0f2f5; transition: all 0.3s ease; color:#333;}
-  .dark-mode { background:#1c1c1c; color:#f1f1f1;}
-  header { display:flex; justify-content:space-between; align-items:center; padding:15px; background: linear-gradient(90deg,#004080,#00bfff); color:#fff;}
-  header img { height:40px; border-radius:6px;}
-  nav button, nav select { margin:0 5px; padding:8px 12px; border:none; border-radius:6px; cursor:pointer; font-weight:bold; transition:0.3s;}
-  nav select { border:1px solid #ccc; }
-  nav button:hover, nav select:hover { opacity:0.8;}
-  .container { padding:20px; }
-  h1,h2 { color:#004080; }
-  table { width:100%; border-collapse:collapse; margin-bottom:20px; background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); border-radius:6px; overflow:hidden;}
-  table th, table td { padding:10px; text-align:center; border-bottom:1px solid #ccc; }
-  table th { background: rgba(0,64,128,0.9); color:#fff; }
-  footer { background:#004080; color:#fff; text-align:center; padding:10px; }
-  canvas { margin:20px 0; max-width:100%; }
-  .controls { margin:20px 0; display:flex; flex-wrap:wrap; gap:10px; align-items:center;}
-  .comment { margin:10px 0; font-style:italic; }
+:root{
+  --bg:#f4f7fb; --card:#ffffff; --text:#0b1220; --muted:#6c757d;
+  --accent-1:#0d6efd; --accent-2:#6610f2;
+  --glass: rgba(255,255,255,0.7);
+  --glass-border: rgba(13,110,253,0.06);
+  --radius:12px;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;font-family:"Cairo",system-ui,-apple-system,"Segoe UI",Roboto,Arial;color:var(--text);background:linear-gradient(180deg,#eef5ff,#f4f7fb);transition:background .25s,color .25s}
+body.dark{ --bg:#071018; --card:#0b1620; --text:#e6eef6; --muted:#9aa6b2; background:linear-gradient(180deg,#04121a,#071018);}
+
+/* header */
+.header{position:sticky;top:0;z-index:1200;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:#fff;box-shadow:0 8px 40px rgba(13,110,253,0.08)}
+.brand{display:flex;align-items:center;gap:.75rem}
+.brand img{height:44px;border-radius:8px;box-shadow:0 6px 30px rgba(0,0,0,0.12)}
+.brand .title{font-weight:800;font-size:1.05rem}
+.controls{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.controls select, .controls button{padding:.45rem .6rem;border-radius:8px;border:0;background:rgba(255,255,255,0.12);color:#fff;font-weight:600;cursor:pointer}
+.controls select{background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.06)}
+.controls button.secondary{background:transparent;border:1px solid rgba(255,255,255,0.12)}
+.controls button:active{transform:translateY(1px)}
+
+/* main container */
+.container-main{max-width:1200px;margin:20px auto;padding:16px}
+.card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 8px 30px rgba(2,6,23,0.04);border:1px solid rgba(13,110,253,0.03);margin-bottom:16px;transition:background .25s, color .25s}
+.container-flex{display:grid;grid-template-columns:1fr 380px;gap:16px}
+@media (max-width:980px){ .container-flex{grid-template-columns:1fr} }
+
+/* controls */
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.select, .btn{padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:transparent;cursor:pointer}
+.btn-primary{background:linear-gradient(90deg,var(--accent-1),var(--accent-2));color:#fff;border:0;box-shadow:0 10px 36px rgba(102,16,242,0.08)}
+.small-muted{color:var(--muted);font-size:.95rem}
+
+/* tables */
+.table{width:100%;border-collapse:collapse;margin-bottom:8px}
+.table th, .table td{padding:10px;border-bottom:1px solid rgba(0,0,0,0.06);text-align:center}
+.table th{background:linear-gradient(90deg,rgba(13,110,253,0.06),rgba(102,16,242,0.03));font-weight:700}
+.kv{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:8px}
+
+/* comments */
+.comment{padding:10px;border-radius:8px;background:linear-gradient(180deg,rgba(13,110,253,0.04),rgba(102,16,242,0.02));color:var(--text);font-size:0.95rem;}
+
+/* charts */
+.chart-wrap{background:transparent;padding:10px;border-radius:8px}
+
+/* footer */
+.footer{padding:12px;text-align:center;color:var(--muted);font-size:0.9rem}
+
+/* responsive tweaks */
+@media (max-width:640px){ .controls{gap:.4rem} .brand .title{font-size:.95rem} .toolbar{flex-direction:column;align-items:flex-start} }
 </style>
 </head>
+
 <body>
-<header>
-  <div style="display:flex;align-items:center;gap:10px;">
-    <img src="logo.png" alt="Logo">
-    <span style="font-size:20px;font-weight:bold;" id="headerTitle">لوحة التحكم المالية</span>
-  </div>
-  <nav>
-    <button onclick="location.href='index.html'" id="homeBtn">🏠 الرئيسية</button>
-    <button onclick="location.href='report.html'" id="reportBtn">📑 التقرير المالي</button>
-    <button onclick="location.href='advanced.html'" id="advancedBtn">📊 التحليلات المتقدمة</button>
-    <button onclick="toggleDarkMode()" id="darkModeBtn">🌙/☀️</button>
-    <select id="lang" onchange="changeLanguage()">
-      <option value="ar">🇪🇬 عربي</option>
-      <option value="en">🇺🇸 English</option>
-    </select>
-    <select id="currency" onchange="updateCurrency()">
-      <option value="EGP">EGP</option>
-      <option value="USD">USD</option>
-      <option value="EUR">EUR</option>
-    </select>
-    <button onclick="exportPDF()" id="exportBtn">📄 PDF</button>
-  </nav>
-</header>
+  <!-- header -->
+  <header class="header" role="banner">
+    <div class="brand">
+      <img src="assets/logo.png" alt="logo" id="logoImg" onerror="this.style.display='none'">
+      <div>
+        <div class="title" id="brandTitle">المحلل المالي — Ultra</div>
+        <div class="small-muted" id="brandDesc">لوحة تحكم تفاعلية للتقارير والتحليلات المالية</div>
+      </div>
+    </div>
 
-<div class="container">
-  <h1 id="pageTitle">📊 لوحة التحكم المالية</h1>
+    <div class="controls" role="navigation" aria-label="controls">
+      <select id="dataSource" title="اختر مصدر البيانات" aria-label="Data source">
+        <option value="auto">اختيار تلقائي (Input → trial → upload)</option>
+        <option value="input">Input (inputData)</option>
+        <option value="trial">Trial (trialData)</option>
+        <option value="upload">Upload (uploadData)</option>
+        <option value="uploaded">Uploaded (uploadedData)</option>
+      </select>
 
-  <div class="controls">
-    <label id="yearLabel">📅 اختر السنة: </label>
-    <select id="yearSelect" onchange="refreshDashboard()"></select>
-  </div>
+      <select id="currencySelect" aria-label="اختر العملة">
+        <option value="EGP">ج.م (EGP)</option>
+        <option value="USD">$ (USD)</option>
+        <option value="EUR">€ (EUR)</option>
+      </select>
 
-  <h2 id="bsTitle">الميزانية العمومية</h2>
-  <table id="balanceSheet"></table>
-  <div class="comment" id="bsComment"></div>
-  <canvas id="balanceChart"></canvas>
+      <input id="fxInput" class="select" type="number" step="any" min="0" style="width:110px" title="سعر الصرف" aria-label="سعر الصرف" placeholder="1" />
 
-  <h2 id="isTitle">قائمة الدخل</h2>
-  <table id="incomeStatement"></table>
-  <div class="comment" id="isComment"></div>
-  <canvas id="incomeChart"></canvas>
+      <select id="langSelect" aria-label="اختر اللغة">
+        <option value="ar">العربية</option>
+        <option value="en">English</option>
+      </select>
 
-  <h2 id="cfTitle">التدفقات النقدية</h2>
-  <table id="cashFlow"></table>
-  <div class="comment" id="cfComment"></div>
-  <canvas id="cashChart"></canvas>
+      <button id="darkToggle" class="secondary btn">🌙</button>
+      <button id="refreshBtn" class="btn-secondary btn secondary">🔄 تحديث</button>
+      <button id="exportPdf" class="btn-primary btn">📄 تصدير PDF</button>
+      <button id="goAdvanced" class="btn primary" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.12)">📊 التحليلات المتقدمة</button>
+    </div>
+  </header>
 
-  <h2 id="eqTitle">حقوق الملكية</h2>
-  <table id="equity"></table>
-  <div class="comment" id="eqComment"></div>
-  <canvas id="equityChart"></canvas>
-</div>
+  <main class="container-main" id="mainContent" role="main">
+    <div class="card">
+      <div class="toolbar">
+        <div class="kv">
+          <div><strong id="pageTitle">التقرير المالي</strong></div>
+          <div class="small-muted" id="dataHint">المصدر: سيتم الكشف تلقائياً</div>
+        </div>
+      </div>
 
-<footer>
-  &copy; 2025 Financial Analyzer - جميع الحقوق محفوظة
-</footer>
+      <div class="container-flex">
+        <!-- main column -->
+        <section>
+          <!-- Balance Sheet -->
+          <div class="card" id="bsCard">
+            <h3 id="bsTitle">الميزانية العمومية</h3>
+            <div class="kv">
+              <div class="small-muted" id="bsSummary">تلخيص الأصول والخصوم وحقوق الملكية</div>
+              <div><label for="yearSelect">السنة:</label>
+                <select id="yearSelect" class="select"></select>
+              </div>
+            </div>
+
+            <div id="bsTableWrap"></div>
+            <div class="comment" id="bsComment"></div>
+            <div class="chart-wrap"><canvas id="bsChart" height="120"></canvas></div>
+          </div>
+
+          <!-- Income Statement -->
+          <div class="card" id="isCard">
+            <h3 id="isTitle">قائمة الدخل</h3>
+            <div id="isTableWrap"></div>
+            <div class="comment" id="isComment"></div>
+            <div class="chart-wrap"><canvas id="isChart" height="120"></canvas></div>
+          </div>
+
+          <!-- Cash Flow -->
+          <div class="card" id="cfCard">
+            <h3 id="cfTitle">التدفقات النقدية</h3>
+            <div id="cfTableWrap"></div>
+            <div class="comment" id="cfComment"></div>
+            <div class="chart-wrap"><canvas id="cfChart" height="120"></canvas></div>
+          </div>
+
+          <!-- Equity -->
+          <div class="card" id="eqCard">
+            <h3 id="eqTitle">حقوق الملكية</h3>
+            <div id="eqTableWrap"></div>
+            <div class="comment" id="eqComment"></div>
+            <div class="chart-wrap"><canvas id="eqChart" height="120"></canvas></div>
+          </div>
+        </section>
+
+        <!-- side column -->
+        <aside>
+          <div class="card">
+            <h4 id="summaryTitle">مؤشرات مهمة</h4>
+            <div id="kpiWrap"></div>
+          </div>
+
+          <div class="card">
+            <h4 id="notesTitle">ملاحظات سريعة</h4>
+            <div id="notesWrap" class="small-muted"></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <footer class="footer">© 2025 المحلل المالي — Financial Analyzer</footer>
+  </main>
 
 <script>
-// بيانات تجريبية - سيتم ملؤها من LocalStorage
-let currency = 'EGP';
-let lang = 'ar';
-let data = JSON.parse(localStorage.getItem('financialData')) || {
-  "years": ["2023","2022","2021"],
-  "balanceSheet": {"الأصول المتداولة":[500000,450000,400000],"الأصول الثابتة":[800000,700000,600000],"الخصوم":[400000,350000,300000],"حقوق الملكية":[900000,800000,700000]},
-  "incomeStatement": {"الإيرادات":[1200000,1000000,900000],"المصروفات":[700000,600000,500000],"صافي الربح":[500000,400000,400000]},
-  "cashFlow": {"التشغيل":[300000,250000,200000],"الاستثمار":[-100000,-80000,-70000],"التمويل":[50000,60000,50000]},
-  "equity": {"رأس المال":[500000,500000,500000],"الأرباح المحتجزة":[400000,300000,200000]}
+/* ==========================
+   Utilities & Translations
+   ========================== */
+const $ = id => document.getElementById(id);
+const LANG = {
+  ar: {
+    brandTitle: 'المحلل المالي — Ultra',
+    brandDesc: 'لوحة تحكم تفاعلية للتقارير والتحليلات المالية',
+    dataHint_auto: 'المصدر: سيتم الكشف تلقائياً (input → trial → upload)',
+    exportPdf: 'تصدير PDF',
+    bsTitle: 'الميزانية العمومية',
+    isTitle: 'قائمة الدخل',
+    cfTitle: 'التدفقات النقدية',
+    eqTitle: 'حقوق الملكية',
+    summaryTitle: 'مؤشرات مهمة',
+    notesTitle: 'ملاحظات سريعة',
+    yearLabel: 'السنة',
+    noData: 'لا توجد بيانات متاحة للمصدر المختار.',
+    kpi_accounts: 'عدد الحسابات',
+    kpi_assets: 'الأصول (تقريبي)',
+    kpi_liab: 'الخصوم (تقريبي)',
+    kpi_revenue: 'الإيرادات',
+    kpi_expense: 'المصروفات',
+    btn_refresh: 'تحديث',
+    btn_advanced: 'التحليلات المتقدمة'
+  },
+  en: {
+    brandTitle: 'Financial Analyzer — Ultra',
+    brandDesc: 'Interactive dashboard for financial reports & analysis',
+    dataHint_auto: 'Source: auto-detect (input → trial → upload)',
+    exportPdf: 'Export PDF',
+    bsTitle: 'Balance Sheet',
+    isTitle: 'Income Statement',
+    cfTitle: 'Cash Flow',
+    eqTitle: 'Equity',
+    summaryTitle: 'Key Metrics',
+    notesTitle: 'Quick Notes',
+    yearLabel: 'Year',
+    noData: 'No data available for selected source.',
+    kpi_accounts: 'Accounts',
+    kpi_assets: 'Assets (approx)',
+    kpi_liab: 'Liabilities (approx)',
+    kpi_revenue: 'Revenue',
+    kpi_expense: 'Expenses',
+    btn_refresh: 'Refresh',
+    btn_advanced: 'Advanced Analytics'
+  }
 };
 
-function toggleDarkMode(){document.body.classList.toggle('dark-mode');}
+let state = {
+  lang: 'ar',
+  currency: 'EGP',
+  fx: { USD:1, EUR:1 }, // fx: how many local units equal 1 foreign unit; used when converting display
+  source: 'auto',
+  raw: null, // loaded raw data
+  parsed: null, // parsed aggregates
+  years: ['Current'] // if multi-year available
+};
 
-function populateYears(){
-  let ySelect = document.getElementById('yearSelect');
-  ySelect.innerHTML='';
-  data.years.forEach(year=>{
-    let opt = document.createElement('option');
-    opt.value=year; opt.textContent=year;
-    ySelect.appendChild(opt);
-  });
+/* currency symbols */
+const CURRENCY_INFO = { EGP:{sym:'ج.م',pos:'after'}, USD:{sym:'$',pos:'before'}, EUR:{sym:'€',pos:'before'} };
+
+/* number formatting */
+function fmtNumber(v){
+  if(!isFinite(v)) return '-';
+  return Number(v).toLocaleString(undefined,{maximumFractionDigits:2});
+}
+function fmtMoney(v){
+  const info = CURRENCY_INFO[state.currency];
+  const symbol = info.sym || state.currency;
+  const num = fmtNumber(v);
+  return info.pos==='before' ? `${symbol}${num}` : `${num} ${symbol}`;
 }
 
-function generateTable(tableId, dataset, yearIndex){
-  let table = document.getElementById(tableId);
-  table.innerHTML='';
-  let thead = document.createElement('thead');
-  let tr = document.createElement('tr');
-  tr.innerHTML=`<th id="colItem">البند</th><th>${data.years[yearIndex]}</th>`;
-  if(data.years[yearIndex-1]) tr.innerHTML+=`<th>${data.years[yearIndex-1]}</th><th id="colDiff">الانحراف</th>`;
-  thead.appendChild(tr); table.appendChild(thead);
-  let tbody = document.createElement('tbody');
-  for(let item in dataset){
-    let valCurrent = dataset[item][yearIndex];
-    let valPrev = dataset[item][yearIndex-1]||0;
-    let diff = valPrev?(((valCurrent-valPrev)/valPrev)*100).toFixed(1)+'%':'=';
-    let trd = document.createElement('tr');
-    trd.innerHTML=`<td>${item}</td><td>${valCurrent.toLocaleString()} ${currency}</td>`+
-                  (valPrev?`<td>${valPrev.toLocaleString()} ${currency}</td><td>${diff}</td>`:'');
-    tbody.appendChild(trd);
+/* ==========================
+   Data loading (from localStorage)
+   ========================== */
+function loadFromLocalStorage(preferredSource='auto'){
+  // priority order when auto: inputData -> trialData -> uploadData -> uploadedData
+  const keys = (preferredSource === 'auto') ? ['inputData','trialData','uploadData','uploadedData'] : [preferredSource];
+  for(const k of keys){
+    try{
+      const raw = localStorage.getItem(k);
+      if(!raw) continue;
+      const parsed = JSON.parse(raw);
+      if(parsed && (Array.isArray(parsed) || typeof parsed === 'object')) {
+        state.source = k;
+        state.raw = parsed;
+        $('dataHint').textContent = (state.lang==='ar') ? (`المصدر: ${k}`) : (`Source: ${k}`);
+        return parsed;
+      }
+    }catch(e){ console.warn('parse error for',k,e); }
   }
+  state.raw = null;
+  return null;
+}
+
+/* ==========================
+   Parse raw -> aggregates
+   Accept either:
+   - array of rows: {Account, Type, Code, Debit, Credit, Year?}
+   - object aggregates { balanceSheet: {...}, incomeStatement:{...}, cashFlow:{...}, equity:{...}, years: [...] }
+   ========================== */
+function parseData(raw){
+  if(!raw) return null;
+  // If it's an object with top-level known keys -> assume already aggregated
+  const isAgg = (obj) => obj && (obj.balanceSheet || obj.incomeStatement || obj.cashFlow || obj.equity);
+  if(typeof raw === 'object' && !Array.isArray(raw) && isAgg(raw)){
+    // normalize years
+    state.years = raw.years && Array.isArray(raw.years) ? raw.years : ['Current'];
+    return {
+      years: state.years,
+      balanceSheet: raw.balanceSheet || {},
+      incomeStatement: raw.incomeStatement || {},
+      cashFlow: raw.cashFlow || {},
+      equity: raw.equity || {}
+    };
+  }
+
+  // If it's an array of rows, aggregate by Type or Account keywords
+  if(Array.isArray(raw)){
+    // detect years if provided
+    const hasYear = raw.some(r => r.Year || r.year || r.yearName);
+    let years = ['Current'];
+    if(hasYear){
+      years = Array.from(new Set(raw.map(r => r.Year || r.year || r.yearName))).sort().reverse();
+    }
+    state.years = years;
+
+    // initialize aggregates as maps: label -> array per year index
+    const initAgg = () => ({});
+    const bs = initAgg(), is = initAgg(), cf = initAgg(), eq = initAgg();
+
+    // helper to map row to numeric amounts: treat Debit as positive asset/expense, Credit as positive liability/revenue
+    function valOf(row){
+      const d = Number(row.Debit || row.debit || row.Dr || 0) || 0;
+      const c = Number(row.Credit || row.credit || row.Cr || 0) || 0;
+      return { debit:d, credit:c, net: d - c };
+    }
+
+    // classification heuristics (look at Type or Account names)
+    function classify(row){
+      const type = String(row.Type || row.type || '').toLowerCase();
+      const acc = String(row.Account || row.account || row['Account Name'] || '').toLowerCase();
+      if(/asset|أصل|cash|bank|inventory|inventory|fixed|current asset|نقد|بنك|أصول/i.test(type+acc)) return 'asset';
+      if(/liab|خصوم|payable|loan|دائن|قرض|liability/i.test(type+acc)) return 'liability';
+      if(/equity|حقوق|capital|رأس/i.test(type+acc)) return 'equity';
+      if(/rev|sales|revenue|إيراد|مبيعات|income/i.test(type+acc)) return 'revenue';
+      if(/exp|cost|مصروف|تكلفة|مصروفات/i.test(type+acc)) return 'expense';
+      if(/cash|operat|inflow|outflow/i.test(type+acc)) return 'cash';
+      return 'other';
+    }
+
+    // group by Year index
+    const yearIndex = (r) => {
+      if(!hasYear) return 0;
+      const y = r.Year || r.year || r.yearName;
+      return years.indexOf(y);
+    };
+
+    raw.forEach(row => {
+      const idx = yearIndex(row);
+      const v = valOf(row).net;
+      const cls = classify(row);
+
+      const label = (row.Account || row.account || 'حساب غير مسمى').toString();
+
+      // push into appropriate aggregate
+      function put(map, key, val){
+        if(!map[key]) map[key] = new Array(years.length).fill(0);
+        map[key][idx] += val;
+      }
+
+      if(cls === 'asset') put(bs,label,v);
+      else if(cls === 'liability') put(bs,label,-v); // liabilities as negative in assets map? We'll keep sign but later sum properly
+      else if(cls === 'equity') put(eq,label,v);
+      else if(cls === 'revenue') put(is,label,-v); // revenues usually credits -> show as positive by -net
+      else if(cls === 'expense') put(is,label,v);
+      else if(cls === 'cash') put(cf,label,v);
+      else put(bs,label,v);
+    });
+
+    // Build final aggregated objects by summing entries for major categories
+    // For balanceSheet totals we compute totals from bs (assets positives, liabilities negatives where applicable)
+    // To keep simple & robust, we'll produce aggregates per label as collected and totals computed later.
+    return {
+      years,
+      balanceSheet: bs,
+      incomeStatement: is,
+      cashFlow: cf,
+      equity: eq
+    };
+  }
+
+  // else unknown shape
+  return null;
+}
+
+/* ==========================
+   Aggregation helpers
+   ========================== */
+function sumSeries(series){
+  if(!series) return 0;
+  return series.reduce((s,x)=>s+(Number(x)||0),0);
+}
+function getTotals(agg){
+  // agg: {balanceSheet:{label:[values]}, incomeStatement:{...}, ...}
+  const years = agg.years;
+  const n = years.length;
+  const totals = { balanceSheet: new Array(n).fill(0), incomeStatement:new Array(n).fill(0), cashFlow:new Array(n).fill(0), equity:new Array(n).fill(0) };
+
+  Object.values(agg.balanceSheet).forEach(arr => { arr.forEach((v,i)=> totals.balanceSheet[i]+=Number(v)||0); });
+  Object.values(agg.incomeStatement).forEach(arr => { arr.forEach((v,i)=> totals.incomeStatement[i]+=Number(v)||0); });
+  Object.values(agg.cashFlow).forEach(arr => { arr.forEach((v,i)=> totals.cashFlow[i]+=Number(v)||0); });
+  Object.values(agg.equity).forEach(arr => { arr.forEach((v,i)=> totals.equity[i]+=Number(v)||0); });
+
+  return totals;
+}
+
+/* ==========================
+   Rendering tables, KPIs, charts, comments
+   ========================== */
+let charts = {};
+
+function clearCharts(){
+  Object.values(charts).forEach(c=>{ try{ c.destroy(); }catch(e){} });
+  charts = {};
+}
+
+function renderTableWrap(containerId, aggSection, years){
+  const wrap = $(containerId);
+  wrap.innerHTML = '';
+  if(!aggSection || Object.keys(aggSection).length===0){ wrap.innerHTML = `<div class="small-muted">${t('noData')}</div>`; return; }
+
+  const table = document.createElement('table'); table.className='table';
+  const thead = document.createElement('thead');
+  const trh = document.createElement('tr');
+  trh.innerHTML = `<th>${t('item')||'البند'}</th>`;
+  years.forEach(y => trh.innerHTML += `<th>${y}</th>`);
+  if(years.length>1) trh.innerHTML += `<th>${t('diff')||'الانحراف'}</th>`;
+  thead.appendChild(trh); table.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
+  Object.entries(aggSection).forEach(([label,arr])=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${label}</td>`;
+    arr.forEach(v => tr.innerHTML += `<td>${fmtMoney(convertForDisplay(v))}</td>`);
+    if(years.length>1){
+      const cur = Number(arr[0]||0), prev = Number(arr[1]||0);
+      const diff = prev ? (((cur-prev)/Math.abs(prev))*100).toFixed(1)+'%' : '=';
+      tr.innerHTML += `<td>${diff}</td>`;
+    }
+    tbody.appendChild(tr);
+  });
   table.appendChild(tbody);
+  wrap.appendChild(table);
 }
 
-function updateCharts(yearIndex){
-  new Chart(document.getElementById('balanceChart'), {
+/* convert number according to selected currency: if currency != base (assume base is EGP in stored data),
+   we divide by fx (i.e. show value / fx) if fx is defined as local-per-foreign. We'll assume fxInput is "1 foreign = X local",
+   so to display foreign value, do local / fx. For EGP display as-is.
+*/
+function convertForDisplay(v){
+  if(!isFinite(v)) return 0;
+  const cur = state.currency;
+  if(cur === 'EGP') return Number(v);
+  const fx = Number(state.fx[cur]||1) || 1;
+  return Number(v) / fx;
+}
+
+function renderKPIs(agg, totals){
+  const wrap = $('kpiWrap'); wrap.innerHTML = '';
+  // simple KPIs: number of accounts, assets total, liabilities total, revenue, expense
+  const accounts = Object.keys(state.parsed.balanceSheet || {}).length + Object.keys(state.parsed.incomeStatement || {}).length;
+  const yrs = state.parsed.years;
+  const idx = 0;
+  const assets = totals.balanceSheet[idx] || 0;
+  const liab = totals.balanceSheet[idx] < 0 ? -totals.balanceSheet[idx] : 0; // depending on sign convention
+  const revenue = totals.incomeStatement[idx] < 0 ? -totals.incomeStatement[idx] : totals.incomeStatement[idx];
+  const expense = totals.incomeStatement[idx] > 0 ? totals.incomeStatement[idx] : 0;
+
+  const items = [
+    {k:t('kpi_accounts'), v:accounts},
+    {k:t('kpi_assets'), v:assets},
+    {k:t('kpi_liab'), v:liab},
+    {k:t('kpi_revenue'), v:revenue},
+    {k:t('kpi_expense'), v:expense}
+  ];
+  items.forEach(it=>{
+    const div = document.createElement('div'); div.style.marginBottom='8px';
+    div.innerHTML = `<strong>${it.k}:</strong> <span>${(it.k===t('kpi_accounts'))? it.v : fmtMoney(convertForDisplay(it.v))}</span>`;
+    wrap.appendChild(div);
+  });
+}
+
+function renderCharts(agg, totals){
+  clearCharts();
+  const yrs = agg.years;
+  const labels_bs = Object.keys(agg.balanceSheet || {});
+  const data_bs_cur = labels_bs.map(l => convertForDisplay((agg.balanceSheet[l]||[])[0]||0));
+  const data_bs_prev = labels_bs.map(l => convertForDisplay((agg.balanceSheet[l]||[])[1]||0));
+  charts.bs = new Chart($('bsChart'), {
     type:'bar',
-    data:{labels:Object.keys(data.balanceSheet),datasets:[
-      {label:data.years[yearIndex],data:Object.values(data.balanceSheet).map(a=>a[yearIndex]),backgroundColor:'#004080'},
-      {label:data.years[yearIndex-1]||'',data:Object.values(data.balanceSheet).map(a=>a[yearIndex-1]||0),backgroundColor:'#00bfff'}
-    ]}
+    data:{ labels: labels_bs, datasets: [
+      { label: yrs[0], data: data_bs_cur },
+      ...(yrs[1] ? [{label: yrs[1], data: data_bs_prev}] : [])
+    ]},
+    options:{ responsive:true }
   });
-  new Chart(document.getElementById('incomeChart'), {
+
+  const labels_is = Object.keys(agg.incomeStatement || {});
+  const data_is_cur = labels_is.map(l=>convertForDisplay((agg.incomeStatement[l]||[])[0]||0));
+  charts.is = new Chart($('isChart'), {
     type:'line',
-    data:{labels:Object.keys(data.incomeStatement),datasets:[
-      {label:data.years[yearIndex],data:Object.values(data.incomeStatement).map(a=>a[yearIndex]),borderColor:'#004080',fill:false},
-      {label:data.years[yearIndex-1]||'',data:Object.values(data.incomeStatement).map(a=>a[yearIndex-1]||0),borderColor:'#00bfff',fill:false}
-    ]}
+    data:{ labels: labels_is, datasets:[
+      { label: yrs[0], data: data_is_cur, borderColor:'#0d6efd', fill:false }
+    ]},
+    options:{ responsive:true }
   });
-  new Chart(document.getElementById('cashChart'), {
+
+  const labels_cf = Object.keys(agg.cashFlow || {});
+  const data_cf_cur = labels_cf.map(l=>convertForDisplay((agg.cashFlow[l]||[])[0]||0));
+  charts.cf = new Chart($('cfChart'), {
     type:'pie',
-    data:{labels:Object.keys(data.cashFlow),datasets:[{data:Object.values(data.cashFlow).map(a=>a[yearIndex]),backgroundColor:['#28a745','#ffc107','#dc3545']}]}
+    data:{ labels: labels_cf, datasets:[{ data: data_cf_cur }]},
+    options:{ responsive:true }
   });
-  new Chart(document.getElementById('equityChart'), {
+
+  const labels_eq = Object.keys(agg.equity || {});
+  const data_eq_cur = labels_eq.map(l=>convertForDisplay((agg.equity[l]||[])[0]||0));
+  charts.eq = new Chart($('eqChart'), {
     type:'doughnut',
-    data:{labels:Object.keys(data.equity),datasets:[{data:Object.values(data.equity).map(a=>a[yearIndex]),backgroundColor:['#004080','#00bfff']}]}
+    data:{ labels: labels_eq, datasets:[{ data: data_eq_cur }]},
+    options:{ responsive:true }
   });
 }
 
-function generateComments(yearIndex){
-  document.getElementById('bsComment').textContent='الأصول والخصوم تشير إلى توازن جيد.'; 
-  document.getElementById('isComment').textContent='صافي الربح في ارتفاع مستقر، أداء إيجابي.'; 
-  document.getElementById('cfComment').textContent='التدفقات التشغيلية قوية، الاستثمارات معتدلة.'; 
-  document.getElementById('eqComment').textContent='حقوق الملكية متنامية، رأس المال مستقر.';
-}
+/* intelligent comments generator — bilingual */
+function generateComments(agg, totals){
+  const yrs = agg.years;
+  const idx = 0;
+  const totalsBS = totals.balanceSheet[idx] || 0;
+  const totalsIS = totals.incomeStatement[idx] || 0;
+  const assets = totalsBS;
+  const liabilities = Math.abs(totalsBS) * 0.5; // fallback
+  const equity = totals.equity[idx] || 0;
+  const revenue = totals.incomeStatement[idx] < 0 ? -totals.incomeStatement[idx] : totals.incomeStatement[idx];
+  const expense = totals.incomeStatement[idx] > 0 ? totals.incomeStatement[idx] : 0;
+  const net = (revenue ? revenue - expense : totalsIS);
+  // basic ratios
+  const debtToEquity = (equity!==0) ? (liabilities / (equity || 1)) : null;
+  const profitMargin = (revenue>0) ? (net / revenue) : null;
+  const roe = (equity!==0) ? (net / equity) : null;
 
-function refreshDashboard(){
-  let yearIndex = document.getElementById('yearSelect').selectedIndex;
-  generateTable('balanceSheet',data.balanceSheet,yearIndex);
-  generateTable('incomeStatement',data.incomeStatement,yearIndex);
-  generateTable('cashFlow',data.cashFlow,yearIndex);
-  generateTable('equity',data.equity,yearIndex);
-  updateCharts(yearIndex);
-  generateComments(yearIndex);
-}
+  // Arabic comments
+  const ar_bs = [];
+  ar_bs.push(`إجمالي الأصول التقريبي: ${fmtMoney(convertForDisplay(assets))}.`);
+  if(debtToEquity!==null) ar_bs.push(`نسبة الدين إلى حقوق الملكية تقريبًا: ${(debtToEquity*100).toFixed(1)}%.`);
+  else ar_bs.push('بيانات حقوق الملكية/الخصوم غير كافية لحساب نسبة الدين بدقة.');
+  const ar_is = [];
+  if(profitMargin!==null) {
+    ar_is.push(`هامش الربح الإجمالي تقريبًا: ${(profitMargin*100).toFixed(1)}% — هذا يعكس مدى ربحية المبيعات.`);
+    if(profitMargin > 0.15) ar_is.push('أداء الربحية جيد مقارنة بمعايير عامة.');
+    else if(profitMargin > 0.05) ar_is.push('هامش مقبول لكن يوجد مجال للتحسين.');
+    else ar_is.push('هامش ضئيل — راجع تكاليف التشغيل والأسعار.');
+  } else ar_is.push('لا توجد بيانات كافية لحساب هامش الربح.');
+  const ar_cf = [];
+  ar_cf.push('التدفقات التشغيلية يجب أن تكون موجبة لدعم النمو. راجع التغيرات في الأصول والالتزامات التشغيلية.');
+  const ar_eq = [];
+  ar_eq.push(`حقوق الملكية الحالية تقريبًا: ${fmtMoney(convertForDisplay(equity))}.`);
+  if(roe!==null) ar_eq.push(`العائد على حقوق الملكية: ${(roe*100).toFixed(1)}% تقريبا.`);
 
-function updateCurrency(){
-  currency = document.getElementById('currency').value;
-  refreshDashboard();
-}
+  // English comments
+  const en_bs = [];
+  en_bs.push(`Total assets (approx): ${fmtMoney(convertForDisplay(assets))}.`);
+  if(debtToEquity!==null) en_bs.push(`Debt-to-Equity ratio approx: ${(debtToEquity*100).toFixed(1)}%.`);
+  else en_bs.push('Insufficient equity/liability detail to compute debt ratio precisely.');
+  const en_is = [];
+  if(profitMargin!==null){
+    en_is.push(`Estimated profit margin: ${(profitMargin*100).toFixed(1)}% — indicates sales profitability.`);
+    if(profitMargin > 0.15) en_is.push('Profitability is strong compared to general benchmarks.');
+    else if(profitMargin > 0.05) en_is.push('Margin is acceptable but there is room for improvement.');
+    else en_is.push('Low margin — review operating costs and pricing.');
+  } else en_is.push('Not enough data to compute profit margin.');
+  const en_cf = [];
+  en_cf.push('Operating cash flows should be positive to sustain growth — check changes in working capital.');
+  const en_eq = [];
+  en_eq.push(`Equity (approx): ${fmtMoney(convertForDisplay(equity))}.`);
+  if(roe!==null) en_eq.push(`Return on Equity (ROE): ${(roe*100).toFixed(1)}% approx.`);
 
-function changeLanguage(){
-  lang = document.getElementById('lang').value;
-  if(lang==='en'){
-    document.getElementById('headerTitle').textContent='Financial Dashboard';
-    document.getElementById('pageTitle').textContent='📊 Financial Dashboard';
-    document.getElementById('yearLabel').textContent='📅 Select Year:';
-    document.getElementById('bsTitle').textContent='Balance Sheet';
-    document.getElementById('isTitle').textContent='Income Statement';
-    document.getElementById('cfTitle').textContent='Cash Flow Statement';
-    document.getElementById('eqTitle').textContent='Equity Statement';
-    document.getElementById('homeBtn').textContent='🏠 Home';
-    document.getElementById('reportBtn').textContent='📑 Report';
-    document.getElementById('advancedBtn').textContent='📊 Advanced';
-    document.getElementById('darkModeBtn').textContent='🌙/☀️';
-    document.getElementById('exportBtn').textContent='📄 Export PDF';
-    // الترجمة داخل الجداول
-    refreshDashboard();
-  }else{
-    document.getElementById('headerTitle').textContent='لوحة التحكم المالية';
-    document.getElementById('pageTitle').textContent='📊 لوحة التحكم المالية';
-    document.getElementById('yearLabel').textContent='📅 اختر السنة:';
-    document.getElementById('bsTitle').textContent='الميزانية العمومية';
-    document.getElementById('isTitle').textContent='قائمة الدخل';
-    document.getElementById('cfTitle').textContent='التدفقات النقدية';
-    document.getElementById('eqTitle').textContent='حقوق الملكية';
-    document.getElementById('homeBtn').textContent='🏠 الرئيسية';
-    document.getElementById('reportBtn').textContent='📑 التقرير المالي';
-    document.getElementById('advancedBtn').textContent='📊 التحليلات المتقدمة';
-    document.getElementById('darkModeBtn').textContent='🌙/☀️';
-    document.getElementById('exportBtn').textContent='📄 PDF';
-    refreshDashboard();
+  // set into DOM depending on language
+  if(state.lang === 'ar'){
+    $('bsComment').textContent = ar_bs.join(' ');
+    $('isComment').textContent = ar_is.join(' ');
+    $('cfComment').textContent = ar_cf.join(' ');
+    $('eqComment').textContent = ar_eq.join(' ');
+  } else {
+    $('bsComment').textContent = en_bs.join(' ');
+    $('isComment').textContent = en_is.join(' ');
+    $('cfComment').textContent = en_cf.join(' ');
+    $('eqComment').textContent = en_eq.join(' ');
   }
 }
 
-function exportPDF(){
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.text("Financial Dashboard Report",20,20);
-  doc.save("dashboard.pdf");
+/* translate UI text */
+function t(key){
+  return (LANG[state.lang] && LANG[state.lang][key]) ? LANG[state.lang][key] : (LANG['ar'][key] || key);
+}
+function applyTranslations(){
+  // header
+  $('brandTitle').textContent = t('brandTitle');
+  $('brandDesc').textContent = t('brandDesc');
+  $('exportPdf').textContent = t('exportPdf') || $('exportPdf').textContent;
+  $('bsTitle').textContent = t('bsTitle');
+  $('isTitle').textContent = t('isTitle');
+  $('cfTitle').textContent = t('cfTitle');
+  $('eqTitle').textContent = t('eqTitle');
+  $('summaryTitle').textContent = t('summaryTitle');
+  $('notesTitle').textContent = t('notesTitle');
+  $('pageTitle').textContent = (state.lang==='ar') ? 'التقرير المالي' : 'Financial Report';
+  $('dataHint').textContent = (state.source === 'auto') ? t('dataHint_auto') : `${t('dataHint_auto')}: ${state.source}`;
+  $('refreshBtn').textContent = t('btn_refresh') || $('refreshBtn').textContent;
+  $('goAdvanced').textContent = t('btn_advanced') || $('goAdvanced').textContent;
 }
 
-populateYears();
-refreshDashboard();
+/* populate year select */
+function populateYears(agg){
+  const sel = $('yearSelect'); sel.innerHTML = '';
+  (agg.years || ['Current']).forEach(y => {
+    const opt = document.createElement('option'); opt.value = y; opt.textContent = y;
+    sel.appendChild(opt);
+  });
+}
+
+/* full render function */
+function renderAll(){
+  // translate UI
+  applyTranslations();
+
+  // show no-data if nothing
+  if(!state.parsed){
+    $('bsTableWrap').innerHTML = `<div class="small-muted">${t('noData')}</div>`;
+    $('isTableWrap').innerHTML = `<div class="small-muted">${t('noData')}</div>`;
+    $('cfTableWrap').innerHTML = `<div class="small-muted">${t('noData')}</div>`;
+    $('eqTableWrap').innerHTML = `<div class="small-muted">${t('noData')}</div>`;
+    $('kpiWrap').innerHTML = '';
+    $('notesWrap').textContent = '';
+    return;
+  }
+
+  const agg = state.parsed;
+  populateYears(agg);
+  $('yearSelect').selectedIndex = 0;
+  // build tables (use first two years if exist)
+  renderTableWrap('bsTableWrap', agg.balanceSheet, agg.years);
+  renderTableWrap('isTableWrap', agg.incomeStatement, agg.years);
+  renderTableWrap('cfTableWrap', agg.cashFlow, agg.years);
+  renderTableWrap('eqTableWrap', agg.equity, agg.years);
+
+  const totals = getTotals(agg);
+  renderKPIs(agg, totals);
+  renderCharts(agg, totals);
+  generateComments(agg, totals);
+  $('notesWrap').textContent = state.lang === 'ar' ? 'جميع الأرقام تقريبية وتعتمد على جودة ومصدر البيانات. تأكد من صحة التسميات والكميات في الصفحة المصدر.' : 'Numbers are approximate and depend on the data quality/source. Ensure account labels and values are correct in the source page.';
+}
+
+/* ==========================
+   Actions & event handlers
+   ========================== */
+
+function reloadAndRender(){
+  // load raw according to selector
+  const sel = $('dataSource').value;
+  state.source = sel === 'auto' ? 'auto' : sel;
+  const raw = loadFromLocalStorage(sel === 'auto' ? 'auto' : sel);
+  if(!raw){
+    state.parsed = null;
+    renderAll();
+    return;
+  }
+  state.parsed = parseData(raw);
+  renderAll();
+}
+
+$('dataSource').addEventListener('change', (e) => {
+  reloadAndRender();
+});
+
+$('langSelect').addEventListener('change', (e) => {
+  state.lang = e.target.value;
+  applyTranslations();
+  renderAll();
+});
+
+$('currencySelect').addEventListener('change', (e) => {
+  state.currency = e.target.value;
+  // if EGP, fxInput disabled; else enable
+  if(state.currency === 'EGP'){ $('fxInput').style.display='none'; } else { $('fxInput').style.display='inline-block'; }
+  renderAll();
+});
+$('fxInput').addEventListener('change', (e) => {
+  const val = Number(e.target.value) || 1;
+  state.fx[state.currency] = val;
+  renderAll();
+});
+
+$('refreshBtn').addEventListener('click', ()=>{
+  reloadAndRender();
+});
+
+$('darkToggle').addEventListener('click', ()=>{
+  document.body.classList.toggle('dark');
+});
+
+$('exportPdf').addEventListener('click', ()=>{
+  // export the main container as PDF using html2pdf
+  const opt = { margin:0.35, filename: 'financial_report.pdf', image:{type:'jpeg',quality:0.98}, html2canvas:{scale:2, useCORS:true}, jsPDF:{unit:'in', format:'a4', orientation:'portrait'} };
+  const el = document.querySelector('.container-main');
+  html2pdf().set(opt).from(el).save();
+});
+
+$('goAdvanced').addEventListener('click', ()=> { window.location.href='advanced.html'; });
+
+/* initial load */
+(function init(){
+  // initial UI state
+  state.lang = $('langSelect').value || 'ar';
+  state.currency = $('currencySelect').value || 'EGP';
+  const fxVal = Number($('fxInput').value) || 1;
+  state.fx.USD = state.fx.USD || 1;
+  state.fx.EUR = state.fx.EUR || 1;
+
+  // if fx input hidden for EGP - hide
+  if(state.currency === 'EGP') $('fxInput').style.display='none';
+
+  // try to load data
+  const raw = loadFromLocalStorage('auto');
+  if(!raw){
+    // nothing found — try to fallback to trialData if exists
+    const trial = localStorage.getItem('trialData');
+    if(trial) {
+      try{ state.raw = JSON.parse(trial); state.source='trialData'; state.parsed = parseData(state.raw); }
+      catch(e){}
+    }
+  } else {
+    state.parsed = parseData(raw);
+  }
+
+  applyTranslations();
+  renderAll();
+})();
+
 </script>
 </body>
 </html>
