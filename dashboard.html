@@ -1,249 +1,221 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>لوحة التحكم | Financial Analyzer</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet" />
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Cairo', sans-serif;
-      background: linear-gradient(135deg, #001F3F, #0074D9);
-      color: #fff;
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-    header {
-      background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(10px);
-      padding: 15px 30px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-    }
-    header h1 { font-size: 24px; font-weight: 700; margin: 0; }
-    header nav button {
-      background: rgba(255,255,255,0.1);
-      border: none;
-      color: white;
-      margin: 0 5px;
-      padding: 10px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.3s;
-      font-weight: bold;
-    }
-    header nav button:hover { background: rgba(255,255,255,0.3); }
-
-    main {
-      padding: 30px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-      gap: 25px;
-    }
-
-    .card {
-      background: rgba(255,255,255,0.1);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-      transition: transform 0.3s ease;
-      backdrop-filter: blur(12px);
-    }
-    .card:hover { transform: translateY(-5px); }
-
-    .card h2 {
-      font-size: 20px;
-      margin-bottom: 15px;
-      border-bottom: 2px solid rgba(255,255,255,0.2);
-      padding-bottom: 5px;
-    }
-
-    .comment {
-      font-size: 14px;
-      background: rgba(0,0,0,0.3);
-      padding: 10px;
-      border-radius: 10px;
-      margin-top: 10px;
-      line-height: 1.6;
-    }
-
-    footer {
-      text-align: center;
-      padding: 20px;
-      background: rgba(0,0,0,0.5);
-      position: relative;
-      bottom: 0;
-    }
-
-    canvas { width: 100% !important; height: 260px !important; }
-
-    .lang-currency {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    select {
-      background: rgba(255,255,255,0.1);
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 6px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>لوحة القيادة الذكية | Financial Analyzer Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --bg: #0e1013;
+  --card: #1b1e24;
+  --text: #f0f0f0;
+  --accent: #00bcd4;
+}
+body {
+  font-family: 'Cairo', sans-serif;
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+header {
+  background: linear-gradient(90deg, #00bcd4, #006064);
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+}
+header h1 {
+  margin: 0;
+  font-size: 24px;
+}
+button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s;
+}
+button:hover {
+  opacity: 0.85;
+  transform: scale(1.05);
+}
+.container {
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 20px;
+}
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+  transition: 0.3s;
+}
+.card:hover {
+  transform: translateY(-3px);
+}
+.chart-container {
+  position: relative;
+  height: 250px;
+}
+.comment {
+  background: #21252b;
+  border-left: 5px solid var(--accent);
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+footer {
+  text-align: center;
+  padding: 20px;
+  color: #bbb;
+  font-size: 13px;
+}
+</style>
 </head>
 <body>
-  <header>
-    <h1 id="title">📊 لوحة التحكم الشاملة</h1>
-    <nav>
-      <button onclick="location.href='index.html'">🏠 الرئيسية</button>
-      <button onclick="location.href='report.html'">📑 التقرير</button>
-      <button onclick="location.href='advanced.html'">🧠 التحليلات المتقدمة</button>
-      <div class="lang-currency">
-        <select id="lang" onchange="changeLang()">
-          <option value="ar">🇪🇬 عربي</option>
-          <option value="en">🇺🇸 English</option>
-        </select>
-        <select id="currency" onchange="updateCurrency()">
-          <option value="EGP">EGP</option>
-          <option value="USD">USD</option>
-          <option value="EUR">EUR</option>
-        </select>
-      </div>
-    </nav>
-  </header>
+<header>
+  <h1>لوحة القيادة الذكية</h1>
+  <div>
+    <button onclick="goHome()">الصفحة الرئيسية</button>
+    <button onclick="switchLang()">🌐 تبديل اللغة</button>
+  </div>
+</header>
 
-  <main>
-    <div class="card">
-      <h2 id="card1Title">💰 الأداء المالي العام</h2>
-      <canvas id="financialChart"></canvas>
-      <div id="financialComment" class="comment"></div>
-    </div>
+<div class="container">
+  <div class="card">
+    <h2 id="title-profit">صافي الربح والتحليل الذكي</h2>
+    <div class="chart-container"><canvas id="profitChart"></canvas></div>
+    <div class="comment" id="profitComment"></div>
+  </div>
 
-    <div class="card">
-      <h2 id="card2Title">📈 مؤشرات التحليل المالي</h2>
-      <canvas id="ratiosChart"></canvas>
-      <div id="ratiosComment" class="comment"></div>
-    </div>
+  <div class="card">
+    <h2 id="title-ratios">المؤشرات المالية الرئيسية</h2>
+    <div class="chart-container"><canvas id="ratioChart"></canvas></div>
+    <div class="comment" id="ratioComment"></div>
+  </div>
 
-    <div class="card">
-      <h2 id="card3Title">🧭 التوقعات المستقبلية</h2>
-      <canvas id="forecastChart"></canvas>
-      <div id="forecastComment" class="comment"></div>
-    </div>
-  </main>
+  <div class="card">
+    <h2 id="title-risk">تحليل العائد والمخاطرة</h2>
+    <div class="chart-container"><canvas id="riskChart"></canvas></div>
+    <div class="comment" id="riskComment"></div>
+  </div>
+</div>
 
-  <footer>
-    &copy; 2025 Financial Analyzer – جميع الحقوق محفوظة.
-  </footer>
+<footer>
+  © 2025 Financial Analyzer | جميع الحقوق محفوظة
+</footer>
 
-  <script>
-    const langPack = {
-      ar: {
-        title: "📊 لوحة التحكم الشاملة",
-        card1Title: "💰 الأداء المالي العام",
-        card2Title: "📈 مؤشرات التحليل المالي",
-        card3Title: "🧭 التوقعات المستقبلية",
-      },
-      en: {
-        title: "📊 Global Dashboard",
-        card1Title: "💰 Overall Financial Performance",
-        card2Title: "📈 Financial Ratios & Insights",
-        card3Title: "🧭 Future Forecasts",
-      }
-    };
+<script>
+// ========== اللغة ==========
+let lang = localStorage.getItem('lang') || 'ar';
+function switchLang() {
+  lang = lang === 'ar' ? 'en' : 'ar';
+  localStorage.setItem('lang', lang);
+  location.reload();
+}
 
-    let currentLang = "ar";
-    function changeLang() {
-      currentLang = document.getElementById("lang").value;
-      for (const id in langPack[currentLang]) {
-        document.getElementById(id).innerText = langPack[currentLang][id];
-      }
-    }
+// ========== محاكاة البيانات ==========
+const dataReport = JSON.parse(localStorage.getItem('reportData')) || { netProfit: 850000, revenue: 1200000, assets: 2000000 };
+const dataAdvanced = JSON.parse(localStorage.getItem('advancedData')) || { roi: 0.18, roa: 0.12, risk: 0.07 };
 
-    // قراءة بيانات report و advanced من LocalStorage
-    const reportData = JSON.parse(localStorage.getItem("reportData")) || {
-      revenue: 1200000, expenses: 700000, profit: 500000
-    };
-    const advancedData = JSON.parse(localStorage.getItem("advancedData")) || {
-      roa: 0.12, roe: 0.15, liquidity: 1.8
-    };
+// ========== ترجمة ==========
+const texts = {
+  ar: {
+    titleProfit: "صافي الربح والتحليل الذكي",
+    titleRatios: "المؤشرات المالية الرئيسية",
+    titleRisk: "تحليل العائد والمخاطرة",
+    home: "الصفحة الرئيسية",
+    commentHigh: "الأداء ممتاز! يشير إلى نمو صحي وربحية قوية.",
+    commentMid: "الأداء جيد ولكن يحتاج إلى تحسين كفاءة التكاليف.",
+    commentLow: "الربحية منخفضة وتحتاج إلى مراجعة السياسات التشغيلية."
+  },
+  en: {
+    titleProfit: "Net Profit & Smart Analysis",
+    titleRatios: "Key Financial Ratios",
+    titleRisk: "Return & Risk Analysis",
+    home: "Home",
+    commentHigh: "Excellent performance with strong profitability.",
+    commentMid: "Good performance but cost efficiency can improve.",
+    commentLow: "Low profitability. Review operational policies."
+  }
+};
+document.getElementById('title-profit').textContent = texts[lang].titleProfit;
+document.getElementById('title-ratios').textContent = texts[lang].titleRatios;
+document.getElementById('title-risk').textContent = texts[lang].titleRisk;
 
-    const currency = document.getElementById("currency");
-    function updateCurrency() {
-      const symbol = currency.value === "USD" ? "$" : currency.value === "EUR" ? "€" : "ج.م";
-      document.querySelectorAll(".money").forEach(el => el.textContent = el.dataset.value + " " + symbol);
-    }
+// ========== دوال ==========
+function goHome(){ window.location.href = "index.html"; }
 
-    // الرسوم البيانية
-    const ctx1 = document.getElementById("financialChart");
-    new Chart(ctx1, {
-      type: "bar",
-      data: {
-        labels: ["الإيرادات", "المصروفات", "صافي الربح"],
-        datasets: [{
-          label: "القيمة الحالية",
-          data: [reportData.revenue, reportData.expenses, reportData.profit],
-          backgroundColor: ["#2ECC71","#E74C3C","#3498DB"]
-        }]
-      }
-    });
+function comment(value){
+  if(value > 0.15) return texts[lang].commentHigh;
+  else if(value > 0.07) return texts[lang].commentMid;
+  else return texts[lang].commentLow;
+}
 
-    const ctx2 = document.getElementById("ratiosChart");
-    new Chart(ctx2, {
-      type: "radar",
-      data: {
-        labels: ["العائد على الأصول", "العائد على حقوق الملكية", "نسبة السيولة"],
-        datasets: [{
-          label: "المؤشرات المالية",
-          data: [advancedData.roa * 100, advancedData.roe * 100, advancedData.liquidity * 100],
-          backgroundColor: "rgba(255,255,255,0.2)",
-          borderColor: "#fff",
-          pointBackgroundColor: "#FFD700"
-        }]
-      }
-    });
+// ========== الرسم البياني ==========
+new Chart(document.getElementById('profitChart'), {
+  type: 'bar',
+  data: {
+    labels: [lang === 'ar' ? 'الإيرادات' : 'Revenue', lang === 'ar' ? 'صافي الربح' : 'Net Profit'],
+    datasets: [{
+      data: [dataReport.revenue, dataReport.netProfit],
+      backgroundColor: ['#00bcd4', '#4caf50']
+    }]
+  },
+  options: { responsive: true, plugins: { legend: { display: false } } }
+});
 
-    const ctx3 = document.getElementById("forecastChart");
-    new Chart(ctx3, {
-      type: "line",
-      data: {
-        labels: ["2023","2024","2025","2026"],
-        datasets: [{
-          label: "الأرباح المتوقعة",
-          data: [
-            reportData.profit * 0.8,
-            reportData.profit * 0.9,
-            reportData.profit,
-            reportData.profit * 1.15
-          ],
-          borderColor: "#00FA9A",
-          fill: false
-        }]
-      }
-    });
+document.getElementById('profitComment').textContent = comment(dataReport.netProfit / dataReport.revenue);
 
-    // تعليقات ذكية
-    const finComment = document.getElementById("financialComment");
-    const ratioComment = document.getElementById("ratiosComment");
-    const forecastComment = document.getElementById("forecastComment");
+new Chart(document.getElementById('ratioChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['ROI', 'ROA', 'Margin'],
+    datasets: [{
+      data: [dataAdvanced.roi, dataAdvanced.roa, dataReport.netProfit / dataReport.revenue],
+      backgroundColor: ['#ff9800', '#2196f3', '#8bc34a']
+    }]
+  },
+  options: { responsive: true }
+});
 
-    finComment.textContent = reportData.profit > reportData.expenses
-      ? "📈 الأداء المالي ممتاز، الأرباح تتفوق على المصروفات بشكل جيد."
-      : "⚠️ هناك حاجة لمراجعة المصروفات لزيادة الربحية.";
+document.getElementById('ratioComment').textContent = comment((dataAdvanced.roi + dataAdvanced.roa) / 2);
 
-    ratioComment.textContent = advancedData.roa > 0.1 && advancedData.roe > 0.12
-      ? "📊 النسب المالية تُظهر كفاءة عالية في استخدام الموارد."
-      : "🔍 المؤشرات تشير إلى إمكانية تحسين العائد على الأصول وحقوق الملكية.";
+new Chart(document.getElementById('riskChart'), {
+  type: 'line',
+  data: {
+    labels: ['2023', '2024', '2025'],
+    datasets: [{
+      label: lang === 'ar' ? 'العائد المتوقع' : 'Expected Return',
+      data: [0.12, 0.15, 0.18],
+      borderColor: '#00bcd4',
+      tension: 0.4
+    },{
+      label: lang === 'ar' ? 'المخاطرة' : 'Risk',
+      data: [0.08, 0.07, dataAdvanced.risk],
+      borderColor: '#f44336',
+      tension: 0.4
+    }]
+  },
+  options: { responsive: true }
+});
 
-    forecastComment.textContent = "🔮 الاتجاه العام يُظهر نموًا مستقرًا في الأرباح حتى عام 2026.";
+document.getElementById('riskComment').textContent = dataAdvanced.risk < 0.1 ?
+ (lang === 'ar' ? "مستوى المخاطرة مقبول والأداء مستقر." : "Risk level is acceptable and performance stable.") :
+ (lang === 'ar' ? "مستوى المخاطرة مرتفع نسبيًا ويحتاج للانتباه." : "Risk level is high and needs attention.");
 
-  </script>
+</script>
 </body>
 </html>
