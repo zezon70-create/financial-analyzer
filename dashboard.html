@@ -3,106 +3,129 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard المحلل المالي | Financial Analyzer</title>
+<title>المحلل المالي المتقدم | Financial Analyzer</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-body { font-family:'Cairo', sans-serif; margin:0; background:#f5f6fa; }
-header { background:#2f3640; color:#fff; padding:20px; text-align:center; font-size:1.5em; font-weight:700; transition:0.3s; }
-header.scrolled { background:#192a56; }
-.container { max-width:1200px; margin:30px auto; background:#fff; padding:30px; border-radius:15px; box-shadow:0 10px 25px rgba(0,0,0,0.1); }
-h2 { text-align:center; margin-bottom:20px; }
-.charts { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:20px; margin-top:30px; }
-canvas { background:#fff; border-radius:10px; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
-button { padding:10px 20px; background:#44bd32; color:#fff; border:none; border-radius:8px; cursor:pointer; font-weight:600; transition:0.3s; margin-top:20px; }
-button:hover { background:#4cd137; }
-.stats { display:flex; justify-content:space-around; margin-top:20px; flex-wrap:wrap; }
-.stat-card { background:#40739e; color:#fff; padding:20px; border-radius:10px; width:200px; margin:10px; text-align:center; }
+body { font-family:'Cairo', sans-serif; margin:0; background:#f0f2f5; }
+header { background:linear-gradient(90deg,#1abc9c,#16a085); color:#fff; padding:25px; text-align:center; font-size:1.7em; font-weight:700; box-shadow:0 5px 15px rgba(0,0,0,0.1); transition:0.3s; }
+header.scrolled { background:linear-gradient(90deg,#16a085,#1abc9c); }
+.container { max-width:1300px; margin:30px auto; padding:30px; }
+h2 { text-align:center; margin-bottom:20px; color:#2c3e50; }
+.stats { display:flex; justify-content:space-around; flex-wrap:wrap; margin-bottom:30px; }
+.stat-card { background:linear-gradient(135deg,#2980b9,#3498db); color:#fff; padding:25px 20px; border-radius:15px; width:220px; margin:10px; text-align:center; box-shadow:0 10px 20px rgba(0,0,0,0.1); transition:0.3s; cursor:pointer; }
+.stat-card:hover { transform:translateY(-5px); box-shadow:0 15px 25px rgba(0,0,0,0.2); }
 .stat-card h3 { margin:0; font-size:1.2em; }
-.stat-card p { margin:5px 0 0 0; font-size:1.5em; font-weight:700; }
+.stat-card p { margin:10px 0 0 0; font-size:1.7em; font-weight:700; }
+.charts { display:grid; grid-template-columns:repeat(auto-fit,minmax(350px,1fr)); gap:25px; }
+canvas { background:#fff; border-radius:15px; box-shadow:0 8px 20px rgba(0,0,0,0.1); padding:20px; }
+button { padding:12px 25px; background:#e67e22; color:#fff; border:none; border-radius:10px; font-weight:600; cursor:pointer; transition:0.3s; margin:30px auto; display:block; box-shadow:0 5px 15px rgba(0,0,0,0.2); }
+button:hover { background:#d35400; transform:scale(1.05); }
+.tooltip { font-size:0.9em; background:#2c3e50; color:#fff; padding:3px 6px; border-radius:5px; }
 </style>
 </head>
 <body>
-<header id="mainHeader">Dashboard المحلل المالي</header>
+<header id="mainHeader">المحلل المالي المتقدم</header>
+
 <div class="container">
-  <h2>المؤشرات المالية الرئيسية</h2>
-  <div class="stats">
-    <div class="stat-card">
-      <h3>صافي الربح</h3>
-      <p id="netProfit">0</p>
-    </div>
-    <div class="stat-card">
-      <h3>العائد على الأصول (ROA)</h3>
-      <p id="roa">0%</p>
-    </div>
-    <div class="stat-card">
-      <h3>العائد على حقوق الملكية (ROE)</h3>
-      <p id="roe">0%</p>
-    </div>
-  </div>
+<h2>نظرة عامة على الأداء المالي</h2>
 
-  <div class="charts">
-    <canvas id="revenueChart"></canvas>
-    <canvas id="profitChart"></canvas>
-    <canvas id="expenseChart"></canvas>
+<div class="stats">
+  <div class="stat-card">
+    <h3>صافي الربح</h3>
+    <p id="netProfit">0</p>
   </div>
+  <div class="stat-card">
+    <h3>العائد على الأصول (ROA)</h3>
+    <p id="roa">0%</p>
+  </div>
+  <div class="stat-card">
+    <h3>العائد على حقوق الملكية (ROE)</h3>
+    <p id="roe">0%</p>
+  </div>
+  <div class="stat-card">
+    <h3>نسبة المصروفات للإيرادات</h3>
+    <p id="expRatio">0%</p>
+  </div>
+</div>
 
-  <button id="exportPDF">تصدير التقرير PDF</button>
+<div class="charts">
+  <canvas id="revenueChart"></canvas>
+  <canvas id="profitChart"></canvas>
+  <canvas id="expenseChart"></canvas>
+  <canvas id="pieChart"></canvas>
+</div>
+
+<button id="exportPDF">تصدير التقرير PDF</button>
 </div>
 
 <script>
-// تفعيل تغيير اللون عند السكروول
+// تغيير الهيدر عند السكروول
 window.addEventListener('scroll', () => {
   const header = document.getElementById('mainHeader');
   if(window.scrollY > 50) header.classList.add('scrolled');
   else header.classList.remove('scrolled');
 });
 
-// بيانات تجريبية، يمكن ربطها بالـ CSV أو API لاحقاً
+// بيانات تجريبية
 const financialData = {
-  months: ['يناير','فبراير','مارس','أبريل','مايو','يونيو'],
-  revenue: [5000, 7000, 6500, 8000, 9000, 8500],
-  profit: [2000, 3000, 2800, 4000, 4500, 4200],
-  expense: [3000, 4000, 3700, 4000, 4500, 4300]
+  months:['يناير','فبراير','مارس','أبريل','مايو','يونيو'],
+  revenue:[8000,9500,8700,11000,10500,11500],
+  profit:[2500,3000,2800,4500,4200,4800],
+  expense:[5500,6500,5900,6500,6300,6700]
 };
 
 // تحديث الإحصائيات
-document.getElementById('netProfit').innerText = financialData.profit.reduce((a,b)=>a+b,0);
-document.getElementById('roa').innerText = ((financialData.profit.reduce((a,b)=>a+b,0)/financialData.revenue.reduce((a,b)=>a+b,0))*100).toFixed(2) + '%';
-document.getElementById('roe').innerText = ((financialData.profit.reduce((a,b)=>a+b,0)/50000)*100).toFixed(2) + '%'; // مثال: حقوق الملكية 50k
+const totalProfit = financialData.profit.reduce((a,b)=>a+b,0);
+const totalRevenue = financialData.revenue.reduce((a,b)=>a+b,0);
+const totalExpense = financialData.expense.reduce((a,b)=>a+b,0);
+document.getElementById('netProfit').innerText = totalProfit;
+document.getElementById('roa').innerText = ((totalProfit/totalRevenue)*100).toFixed(2) + '%';
+document.getElementById('roe').innerText = ((totalProfit/60000)*100).toFixed(2) + '%'; // حقوق الملكية مثال
+document.getElementById('expRatio').innerText = ((totalExpense/totalRevenue)*100).toFixed(2) + '%';
 
-// إنشاء الرسوم البيانية
+// Charts
 const revenueChart = new Chart(document.getElementById('revenueChart'), {
   type:'line',
-  data: { labels: financialData.months, datasets:[{ label:'الإيرادات', data:financialData.revenue, backgroundColor:'rgba(52,152,219,0.3)', borderColor:'#2980b9', borderWidth:2, tension:0.3 }] },
-  options: { responsive:true, plugins:{legend:{position:'top'}} }
+  data: { labels: financialData.months, datasets:[{ label:'الإيرادات', data:financialData.revenue, backgroundColor:'rgba(52,152,219,0.3)', borderColor:'#2980b9', borderWidth:3, tension:0.4, fill:true }] },
+  options:{ responsive:true, plugins:{legend:{position:'top'}} }
 });
 
 const profitChart = new Chart(document.getElementById('profitChart'), {
   type:'bar',
-  data: { labels: financialData.months, datasets:[{ label:'الأرباح', data:financialData.profit, backgroundColor:'#44bd32' }] },
-  options: { responsive:true, plugins:{legend:{display:false}} }
+  data:{ labels: financialData.months, datasets:[{ label:'الأرباح', data:financialData.profit, backgroundColor:'rgba(46,204,113,0.8)' }] },
+  options:{ responsive:true, plugins:{legend:{display:false}}, animation:{duration:1000} }
 });
 
 const expenseChart = new Chart(document.getElementById('expenseChart'), {
   type:'line',
-  data: { labels: financialData.months, datasets:[{ label:'المصروفات', data:financialData.expense, backgroundColor:'rgba(231,76,60,0.3)', borderColor:'#c0392b', borderWidth:2, tension:0.3 }] },
-  options: { responsive:true, plugins:{legend:{position:'top'}} }
+  data:{ labels: financialData.months, datasets:[{ label:'المصروفات', data:financialData.expense, backgroundColor:'rgba(231,76,60,0.2)', borderColor:'#c0392b', borderWidth:3, tension:0.4, fill:true }] },
+  options:{ responsive:true }
+});
+
+const pieChart = new Chart(document.getElementById('pieChart'), {
+  type:'pie',
+  data:{
+    labels:['إيرادات','أرباح','مصروفات'],
+    datasets:[{ data:[totalRevenue,totalProfit,totalExpense], backgroundColor:['#3498db','#2ecc71','#e74c3c'], hoverOffset:10 }]
+  },
+  options:{ responsive:true, plugins:{legend:{position:'bottom'}} }
 });
 
 // تصدير PDF
 document.getElementById('exportPDF').addEventListener('click', () => {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({orientation:'landscape'});
-  doc.setFontSize(20);
-  doc.text("التقرير المالي", 150, 20, {align:'center'});
+  doc.setFontSize(22);
+  doc.text("التقرير المالي المتقدم", 150, 20, {align:'center'});
   doc.setFontSize(12);
   doc.text(`تاريخ التقرير: ${new Date().toLocaleDateString('ar-EG')}`, 10, 30);
-  doc.text(`صافي الربح: ${document.getElementById('netProfit').innerText}`, 10, 40);
-  doc.text(`العائد على الأصول: ${document.getElementById('roa').innerText}`, 10, 50);
-  doc.text(`العائد على حقوق الملكية: ${document.getElementById('roe').innerText}`, 10, 60);
-  doc.save('financial_report.pdf');
+  doc.text(`صافي الربح: ${totalProfit}`, 10, 40);
+  doc.text(`العائد على الأصول: ${((totalProfit/totalRevenue)*100).toFixed(2)}%`, 10, 50);
+  doc.text(`العائد على حقوق الملكية: ${((totalProfit/60000)*100).toFixed(2)}%`, 10, 60);
+  doc.text(`نسبة المصروفات للإيرادات: ${((totalExpense/totalRevenue)*100).toFixed(2)}%`, 10, 70);
+  doc.save('financial_report_advanced.pdf');
 });
 </script>
 </body>
