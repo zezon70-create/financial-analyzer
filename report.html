@@ -1,17 +1,6 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
-<meta http-equiv="Content-Security-Policy"
-  content="
-    default-src 'self';
-    script-src 'self' https://cdn.jsdelivr.net https://unpkg.com;
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    font-src https://fonts.gstatic.com;
-    img-src 'self' data:;
-    connect-src 'self' https://api.example.com;
-    frame-ancestors 'none';
-    base-uri 'self';
-    form-action 'self';
-  ">
+<Head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>التقرير المالي — المحلل المالي</title>
@@ -98,6 +87,18 @@
         <button id="advancedBtn" class="btn primary" title="التحليلات المتقدمة">📊 <span id="advancedText">التحليلات المتقدمة</span></button>
         <button id="exportPdf" class="btn" title="تصدير PDF">📄 <span id="exportText">تصدير PDF</span></button>
       </div>
+      <meta http-equiv="Content-Security-Policy"
+  content="
+    default-src 'self';
+    script-src 'self' https://cdn.jsdelivr.net https://unpkg.com;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src https://fonts.gstatic.com;
+    img-src 'self' data:;
+    connect-src 'self' https://api.example.com;
+    frame-ancestors 'none';
+    base-uri 'self';
+    form-action 'self';
+  ">
     </header>
 
     <!-- main -->
