@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Comparisons — المحلل المالي (Ultra Vision Pro)</title>
+
+<!-- Libraries -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+  :root{
+    --bg-dark:#071026; --bg-light:#f6f8fb;
+    --glass: rgba(255,255,255,0.06);
+    --accent1:#00b4ff; --accent2:#6a00ff;
+    --card-dark: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    --glass-border: rgba(255,255,255,0.04);
+    --text-light:#e9f2ff; --muted-light:rgba(255,255,255,0.7);
+    --text-dark:#0b1220; --muted-dark:#6c757d;
+  }
+  html,body{height:100%;margin:0;font-family:"Cairo",system-ui,Segoe UI,Roboto,Arial;}
+  body{background:linear-gradient(120deg,#04102a 0%, #071028 50%, #071427 100%);color:var(--text-light);-webkit-font-smoothing:antialiased;}
+  body[data-theme="light"]{background:linear-gradient(120deg,#f8fbff 0%,#f6f8fb 60%);color:var(--text-dark);}
+  .container{max-width:1200px;margin:18px auto;padding:18px}
+  .header{display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:12px;padding:12px;border-radius:12px;background:var(--card-dark);border:1px solid var(--glass-border);backdrop-filter: blur(6px);box-shadow:0 10px 30px rgba(2,6,23,0.4)}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand img{height:48px;width:48px;object-fit:cover;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,0.35)}
+  .title{font-weight:800;font-size:1.05rem}
+  .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{border:0;padding:.5rem .75rem;border-radius:10px;cursor:pointer;background:transparent;color:inherit}
+  .btn.primary{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;box-shadow:0 10px 40px rgba(106,0,255,0.12)}
+  .select{padding:.4rem .6rem;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
+  .panel{margin-top:14px;padding:14px;border-radius:12px;background:var(--card-dark);border:1px solid var(--glass-border);box-shadow:0 10px 30px rgba(2,6,23,0.3)}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:12px}
+  .col-4{grid-column:span 4}
+  .col-8{grid-column:span 8}
+  .col-6{grid-column:span 6}
+  h2{margin:0 0 8px 0}
+  table{width:100%;border-collapse:collapse;margin-top:8px;background:transparent}
+  th,td{padding:8px 10px;border-bottom:1px dashed rgba(255,255,255,0.04);text-align:right}
+  thead th{background:linear-gradient(90deg,var(--accent1),var(--accent2));color:#fff;border-bottom:none}
+  .muted{color:var(--muted-light);font-size:.95rem}
+  .comment{margin-top:10px;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);font-size:.95rem}
+  .small{font-size:.85rem;color:var(--muted-light)}
+  .input-multi{min-width:220px;padding:.4rem .6rem;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
+  .kpi{padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));}
+  .kpi .value{font-weight:800;font-size:1.1rem}
+  /* light theme adjustments */
+  body[data-theme="light"] .panel{box-shadow:0 8px 20px rgba(2,6,23,0.03)}
+  body[data-theme="light"] thead th{color:#fff}
+  /* responsive */
+  @media(max-width:900px){
+    .grid{grid-template-columns:repeat(6,1fr)}
+    .col-4{grid-column:span 6}
+    .col-8{grid-column:span 6}
+    .col-6{grid-column:span 6}
+    .controls{gap:6px}
+  }
+</style>
+</head>
+<body data-theme="dark">
+  <div class="container">
+    <!-- Header / Nav -->
+    <div class="header" role="banner" aria-label="Header">
+      <div class="brand">
+        <img src="assets/logo.png" alt="logo" id="siteLogo" onerror="this.style.display='none'">
+        <div>
+          <div class="title" id="brandTitle">المحلل المالي — Comparisons</div>
+          <div class="muted small" id="brandSubtitle">نسخة Ultra Vision Pro</div>
+        </div>
+      </div>
+
+      <div class="controls" role="navigation" aria-label="Main controls">
+        <button class="btn" id="homeBtn" title="الصفحة الرئيسية">🏠</button>
+        <button class="btn" id="inputBtn" title="صفحة الإدخال">✍️</button>
+        <button class="btn" id="uploadBtn" title="رفع البيانات">⬆️</button>
+        <button class="btn" id="reportBtn" title="التقرير">📄</button>
+        <button class="btn" id="advancedBtn" title="المتقدم">📊</button>
+
+        <select id="sourceSelect" class="select" title="اختر مصدر البيانات"></select>
+
+        <select id="langSelect" class="select" title="اللغة">
+          <option value="ar">العربية</option>
+          <option value="en">English</option>
+        </select>
+
+        <select id="currencySelect" class="select" title="العملة">
+          <option value="EGP">EGP</option>
+          <option value="USD">USD</option>
+          <option value="EUR">EUR</option>
+        </select>
+
+        <button class="btn" id="themeToggle" title="تبديل الوضع">🌙</button>
+        <button class="btn primary" id="exportPdfBtn" title="تصدير PDF">تصدير PDF</button>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <main>
+      <section class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <div>
+            <h2 id="pageTitle">مقارنات سنوات — Comparisons</h2>
+            <div class="muted small" id="pageSubtitle">قارن النتائج بين سنوات مختلفة، تفحص المؤشرات، واحصل على تفسير ذكي لكل نتيجة.</div>
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+            <label class="small muted" for="yearMulti" id="lblYears">السنوات</label>
+            <!-- multiple selection for years (CTRL/CMD or multiselect) -->
+            <select id="yearMulti" class="input-multi" multiple size="3" title="اختر سنوات للمقارنة"></select>
+            <button class="btn" id="refreshBtn" title="تحديث">🔄</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid" aria-live="polite">
+        <div class="col-4 panel kpi">
+          <div class="small muted" id="kpiAccountsLabel">عدد الحسابات</div>
+          <div class="value" id="kpiAccounts">0</div>
+          <div class="muted small" id="kpiAccountsComment">—</div>
+        </div>
+
+        <div class="col-4 panel kpi">
+          <div class="small muted" id="kpiAssetsLabel">الأصول (تقريبي)</div>
+          <div class="value" id="kpiAssets">0</div>
+          <div class="muted small" id="kpiAssetsComment">—</div>
+        </div>
+
+        <div class="col-4 panel kpi">
+          <div class="small muted" id="kpiLiabLabel">الخصوم (تقريبي)</div>
+          <div class="value" id="kpiLiab">0</div>
+          <div class="muted small" id="kpiLiabComment">—</div>
+        </div>
+
+        <div class="col-6 panel">
+          <h3 id="profitTitle">قائمة الدخل — مقارنة سنوية</h3>
+          <div class="muted small">مقارنة الإيرادات، المصروفات، وصافي الربح عبر السنوات المختارة</div>
+          <table id="profitTable">
+            <thead><tr><th>البند</th><th>القيمة</th><th>السنة</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <div class="comment" id="profitComment"></div>
+        </div>
+
+        <div class="col-6 panel">
+          <h3 id="bsTitle">الميزانية — مقارنة سنوية</h3>
+          <div class="muted small">مقارنة الأصول والخصوم وحقوق الملكية عبر السنوات المختارة</div>
+          <table id="bsTable">
+            <thead><tr><th>البند</th><th>القيمة</th><th>السنة</th></tr></thead>
+            <tbody></tbody>
+          </table>
+          <div class="comment" id="bsComment"></div>
+        </div>
+
+        <div class="col-8 panel">
+          <h3 id="chartTitle">الاتجاهات (Trend)</h3>
+          <canvas id="cmpChart" height="160"></canvas>
+          <div class="muted small" id="chartComment">—</div>
+        </div>
+
+        <div class="col-4 panel">
+          <h3 id="forecastTitle">تنبؤ مبسط (Forecast)</h3>
+          <div class="value" id="forecastValue">—</div>
+          <div class="muted small" id="forecastComment">—</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+/* =========================
+   Comparisons Ultra Vision Pro
+   - Source: reads from localStorage keys:
+     trialData, inputData, uploadedData, reportData, advancedData
+   - Multi-year compare, translation, theme, currency, export pdf
+   - Smart comments and simple forecast
+   ========================= */
+
+/* --- Utilities & Config --- */
+const LS_KEYS = ['trialData','inputData','uploadedData','reportData','advancedData'];
+const state = {
+  lang: localStorage.getItem('cmp_lang') || 'ar',
+  theme: localStorage.getItem('cmp_theme') || 'dark',
+  currency: localStorage.getItem('cmp_currency') || 'EGP',
+  source: localStorage.getItem('cmp_source') || '',
+  selectedYears: [],
+  rawRows: [] // normalized rows: {Account,Type,Code,Debit,Credit,Year}
+};
+
+const translations = {
+  ar: {
+    pageTitle: 'مقارنات سنوات — Comparisons',
+    pageSubtitle: 'قارن النتائج بين سنوات مختلفة، تفحص المؤشرات، واحصل على تفسير ذكي لكل نتيجة.',
+    lblYears: 'السنوات',
+    noData: 'لا توجد بيانات في المصدر المحدد.',
+    kpiAccounts: 'عدد الحسابات',
+    kpiAssets: 'الأصول (تقريبي)',
+    kpiLiab: 'الخصوم (تقريبي)',
+    profitTitle: 'قائمة الدخل — مقارنة سنوية',
+    bsTitle: 'الميزانية — مقارنة سنوية',
+    chartTitle: 'الاتجاهات (Trend)',
+    forecastTitle: 'تنبؤ مبسط (Forecast)',
+    exportPdf: 'تصدير PDF',
+    selectSource: 'اختر مصدر البيانات',
+    navHome: 'الرئيسية',
+    navInput: 'صفحة الإدخال',
+    navUpload: 'رفع البيانات',
+    navReport: 'التقرير',
+    navAdvanced: 'المتقدم'
+  },
+  en: {
+    pageTitle: 'Year Comparisons — Comparisons',
+    pageSubtitle: 'Compare results between years, inspect ratios, and get smart commentary for each outcome.',
+    lblYears: 'Years',
+    noData: 'No data in the selected source.',
+    kpiAccounts: 'Accounts',
+    kpiAssets: 'Assets (approx)',
+    kpiLiab: 'Liabilities (approx)',
+    profitTitle: 'Income Statement — Yearly Comparison',
+    bsTitle: 'Balance Sheet — Yearly Comparison',
+    chartTitle: 'Trends (Trend)',
+    forecastTitle: 'Simple Forecast',
+    exportPdf: 'Export PDF',
+    selectSource: 'Select data source',
+    navHome: 'Home',
+    navInput: 'Input Page',
+    navUpload: 'Upload Data',
+    navReport: 'Report',
+    navAdvanced: 'Advanced'
+  }
+};
+
+const $ = id => document.getElementById(id);
+
+/* --- Initialization --- */
+function init(){
+  // controls
+  populateSourceSelect();
+  populateYearsMultiselect();
+  applyTheme();
+  applyLang();
+  attachEvents();
+  loadSourceIfNeeded();
+  refreshAll();
+}
+
+/* Populate source select (list all LS keys) */
+function populateSourceSelect(){
+  const sel = $('sourceSelect'); sel.innerHTML = '';
+  const defaultOpt = document.createElement('option'); defaultOpt.value=''; defaultOpt.textContent = t('selectSource');
+  sel.appendChild(defaultOpt);
+  LS_KEYS.forEach(k=>{
+    const o = document.createElement('option'); o.value=k; o.textContent = k; sel.appendChild(o);
+  });
+  if(state.source) sel.value = state.source;
+}
+
+/* Get translation by key */
+function t(key){ return translations[state.lang] && translations[state.lang][key] ? translations[state.lang][key] : key; }
+
+/* Apply language to static texts */
+function applyLang(){
+  $('pageTitle').textContent = t('pageTitle');
+  $('pageSubtitle').textContent = t('pageSubtitle');
+  $('lblYears').textContent = t('lblYears');
+  $('profitTitle').textContent = t('profitTitle');
+  $('bsTitle').textContent = t('bsTitle');
+  $('chartTitle').textContent = t('chartTitle');
+  $('forecastTitle').textContent = t('forecastTitle');
+  $('exportPdfBtn').textContent = t('exportPdf');
+  // nav tooltips
+  $('homeBtn').title = t('navHome');
+  $('inputBtn').title = t('navInput');
+  $('uploadBtn').title = t('navUpload');
+  $('reportBtn').title = t('navReport');
+  $('advancedBtn').title = t('navAdvanced');
+}
+
+/* Theme */
+function applyTheme(){
+  document.body.setAttribute('data-theme', state.theme);
+  $('themeToggle').textContent = state.theme === 'light' ? '🌞' : '🌙';
+}
+
+/* Attach events */
+function attachEvents(){
+  // nav
+  $('homeBtn').addEventListener('click', ()=> location.href = 'index.html');
+  $('inputBtn').addEventListener('click', ()=> location.href = 'input.html');
+  $('uploadBtn').addEventListener('click', ()=> location.href = 'upload.html');
+  $('reportBtn').addEventListener('click', ()=> location.href = 'report.html');
+  $('advancedBtn').addEventListener('click', ()=> location.href = 'advanced.html');
+
+  // source selection
+  $('sourceSelect').addEventListener('change', e=>{
+    state.source = e.target.value || '';
+    localStorage.setItem('cmp_source', state.source);
+    loadSourceIfNeeded();
+  });
+
+  // language / currency / theme
+  $('langSelect').value = state.lang;
+  $('langSelect').addEventListener('change', e=>{ state.lang = e.target.value; localStorage.setItem('cmp_lang', state.lang); applyLang(); populateYearsMultiselect(); refreshAll(); });
+  $('currencySelect').value = state.currency;
+  $('currencySelect').addEventListener('change', e=>{ state.currency = e.target.value; localStorage.setItem('cmp_currency', state.currency); refreshAll(); });
+
+  $('themeToggle').addEventListener('click', ()=>{
+    state.theme = state.theme === 'light' ? 'dark' : 'light';
+    localStorage.setItem('cmp_theme', state.theme);
+    applyTheme();
+  });
+
+  $('refreshBtn').addEventListener('click', ()=> { populateYearsMultiselect(); refreshAll(); });
+
+  // multi-year selection change
+  $('yearMulti').addEventListener('change', ()=> {
+    const sel = Array.from($('yearMulti').selectedOptions).map(o=>o.value);
+    state.selectedYears = sel;
+    refreshAll();
+  });
+
+  // export pdf
+  $('exportPdfBtn').addEventListener('click', exportPdf);
+}
+
+/* Load & normalize source into state.rawRows */
+function loadSourceIfNeeded(){
+  if(!state.source){ state.rawRows = []; renderNoData(); return; }
+  try{
+    const raw = JSON.parse(localStorage.getItem(state.source) || 'null');
+    if(!raw){ state.rawRows = []; renderNoData(); return; }
+    const normalized = [];
+    if(Array.isArray(raw)){
+      raw.forEach(r => {
+        if(typeof r === 'object'){
+          const Account = r.Account || r.account || r['Account Name'] || r['اسم الحساب'] || r['الحساب'] || r.Name || r.name || '';
+          const Type = r.Type || r.type || r['Type'] || r['نوع'] || '';
+          const Code = r.Code || r.code || r['Code'] || r['كود'] || '';
+          const Debit = toNum(r.Debit || r.debit || r.Dr || r.dr || r['مدين'] || 0);
+          const Credit = toNum(r.Credit || r.credit || r.Cr || r.cr || r['دائن'] || 0);
+          const Year = r.Year || r.year || r.YYYY || null;
+          normalized.push({Account,Type,Code,Debit,Credit,Year});
+        }
+      });
+    } else if(typeof raw === 'object'){
+      Object.values(raw).forEach(v=>{
+        if(Array.isArray(v)) v.forEach(r=>{
+          const Account = r.Account || r.account || r.name || '';
+          const Type = r.Type || r.type || '';
+          const Code = r.Code || r.code || '';
+          const Debit = toNum(r.Debit || r.debit || r.Dr || 0);
+          const Credit = toNum(r.Credit || r.credit || r.Cr || 0);
+          const Year = r.Year || r.year || null;
+          normalized.push({Account,Type,Code,Debit,Credit,Year});
+        });
+      });
+    }
+    state.rawRows = normalized;
+    populateYearsMultiselect();
+    refreshAll();
+  }catch(e){
+    console.error('Error parsing source data', e);
+    state.rawRows = [];
+    renderNoData();
+  }
+}
+
+/* Populate years from all LS keys (detect Year fields) */
+function populateYearsMultiselect(){
+  const yearsSet = new Set();
+  LS_KEYS.forEach(k=>{
+    const raw = JSON.parse(localStorage.getItem(k) || 'null');
+    if(Array.isArray(raw)) raw.forEach(r=>{
+      if(r && (r.Year || r.year || r.YYYY)) yearsSet.add(String(r.Year || r.year || r.YYYY));
+    });
+    else if(raw && typeof raw === 'object'){
+      Object.values(raw).forEach(v=>{
+        if(Array.isArray(v)) v.forEach(r=>{
+          if(r && (r.Year || r.year || r.YYYY)) yearsSet.add(String(r.Year || r.year || r.YYYY));
+        });
+      });
+    }
+  });
+  // also include years from current source rows
+  state.rawRows.forEach(r=> { if(r.Year) yearsSet.add(String(r.Year)); });
+
+  const arr = Array.from(yearsSet).sort();
+  const sel = $('yearMulti'); sel.innerHTML = '';
+  if(arr.length===0){
+    // if no detected years, create placeholders P1..P5 based on data chunks
+    for(let i=1;i<=5;i++){
+      const o = document.createElement('option'); o.value = `P${i}`; o.textContent = `P${i}`; sel.appendChild(o);
+    }
+  } else {
+    arr.forEach(y=>{
+      const o = document.createElement('option'); o.value = y; o.textContent = y; sel.appendChild(o);
+    });
+  }
+  // restore previously selected years from state or auto-select last 3
+  if(state.selectedYears && state.selectedYears.length){
+    Array.from(sel.options).forEach(opt => { if(state.selectedYears.includes(opt.value)) opt.selected = true; });
+  } else {
+    const opts = Array.from(sel.options);
+    for(let i=opts.length-1,j=0;i>=0 && j<3;i--,j++) opts[i].selected = true;
+    state.selectedYears = Array.from(sel.selectedOptions).map(o=>o.value);
+  }
+}
+
+/* No data UI */
+function renderNoData(){
+  $('kpiAccounts').textContent = '0';
+  $('kpiAssets').textContent = formatCurrency(0);
+  $('kpiLiab').textContent = formatCurrency(0);
+  clearTable('profitTable'); clearTable('bsTable');
+  $('profitComment').textContent = t('noData');
+  $('bsComment').textContent = t('noData');
+  renderChart([],[]);
+  $('forecastValue').textContent = '—';
+  $('forecastComment').textContent = t('noData');
+}
+
+/* Helpers */
+function toNum(v){ const n = Number(String(v||'').replace(/[, ]+/g,'')); return isNaN(n) ? 0 : n; }
+function formatCurrency(v){
+  const c = state.currency || 'EGP';
+  const nf = Number(Math.round((v + Number.EPSILON) * 100)/100).toLocaleString();
+  if(c === 'EGP') return `${nf} ج.م`;
+  if(c === 'USD') return `$ ${nf}`;
+  if(c === 'EUR') return `€ ${nf}`;
+  return `${nf} ${c}`;
+}
+function clearTable(id){ const tb = document.querySelector(`#${id} tbody`); if(tb) tb.innerHTML = ''; }
+
+/* Build aggregates per year (based on Year field or pseudo buckets) */
+function buildAggregates(){
+  const rows = state.rawRows || [];
+  const years = {}; // year -> {revenue, expense, assets, liabilities, accounts}
+  const selYears = state.selectedYears && state.selectedYears.length ? state.selectedYears : Array.from(new Set(rows.map(r=>r.Year))).slice(-3);
+
+  // if rows have Year: group by Year value; else create buckets by partitioning rows
+  const hasYear = rows.some(r => r.Year);
+  if(hasYear){
+    rows.forEach(r=>{
+      const y = String(r.Year || 'Unknown');
+      years[y] = years[y] || {revenue:0,expense:0,assets:0,liabilities:0,accounts:0};
+      // heuristics: credits often revenue, debits often expenses/assets depending on type
+      years[y].revenue += toNum(r.Credit) || 0;
+      years[y].expense += toNum(r.Debit) || 0;
+      // assets/liabilities heuristic by Type/Account
+      const s = (r.Type || r.Account || '').toString().toLowerCase();
+      const net = toNum(r.Debit) - toNum(r.Credit);
+      if(/asset|أصل|نقد|bank|cash|current asset|fixed asset|أصول/.test(s)) years[y].assets += net;
+      else if(/liab|خصوم|payable|دائن|loan|قرض/.test(s)) years[y].liabilities += -net;
+      // fallback: classify by common account names
+      else {
+        const a = (r.Account||'').toLowerCase();
+        if(/النقد|bank|cash/.test(a)) years[y].assets += net;
+        else if(/مورد|payable|دائن/.test(a)) years[y].liabilities += -net;
+      }
+      years[y].accounts += 1;
+    });
+  } else {
+    // partition rows into buckets based on index
+    const chunks = Math.max(1, Math.ceil(rows.length / Math.max(1, (state.selectedYears.length || 3))));
+    const buckets = [];
+    for(let i=0;i<rows.length;i+=chunks) buckets.push(rows.slice(i,i+chunks));
+    buckets.forEach((b,idx)=>{
+      const label = `P${idx+1}`; years[label] = {revenue:0,expense:0,assets:0,liabilities:0,accounts:0};
+      b.forEach(r=>{
+        years[label].revenue += toNum(r.Credit);
+        years[label].expense += toNum(r.Debit);
+        const s = (r.Type || r.Account || '').toString().toLowerCase(); const net = toNum(r.Debit) - toNum(r.Credit);
+        if(/asset|أصل|نقد|bank|cash|current asset|fixed asset|أصول/.test(s)) years[label].assets += net;
+        else if(/liab|خصوم|payable|دائن|loan|قرض/.test(s)) years[label].liabilities += -net;
+        years[label].accounts += 1;
+      });
+    });
+  }
+
+  // return only selected years (if they exist), else return top sorted by year
+  const available = Object.keys(years).sort();
+  const chosen = state.selectedYears && state.selectedYears.length ? state.selectedYears.filter(y=>available.includes(y)) : available.slice(-3);
+  const result = {};
+  chosen.forEach(y => { result[y] = years[y] || {revenue:0,expense:0,assets:0,liabilities:0,accounts:0}; });
+  return result;
+}
+
+/* Render KPIs and tables */
+function refreshAll(){
+  if(!state.source){ renderNoData(); return; }
+  const aggs = buildAggregates();
+  const years = Object.keys(aggs);
+  if(years.length === 0){ renderNoData(); return; }
+
+  // KPIs: show totals across selected years (or latest if more useful)
+  const latest = aggs[years[years.length-1]];
+  $('kpiAccounts').textContent = latest.accounts || 0;
+  $('kpiAssets').textContent = formatCurrency(Math.abs(latest.assets || 0));
+  $('kpiLiab').textContent = formatCurrency(Math.abs(latest.liabilities || 0));
+  $('kpiAccountsComment').textContent = (state.lang==='ar' ? 'آخر سنة محددة: ' : 'Latest selected: ') + years[years.length-1];
+
+  // Profit table: list revenue/expense/net per year
+  clearTable('profitTable');
+  const pbody = document.querySelector('#profitTable tbody');
+  years.forEach(y=>{
+    const data = aggs[y];
+    const net = (data.revenue || 0) - (data.expense || 0);
+    // revenue
+    const tr1 = document.createElement('tr');
+    tr1.innerHTML = `<td>${state.lang==='ar' ? 'الإيرادات' : 'Revenue'}</td><td>${formatCurrency(data.revenue)}</td><td>${y}</td>`;
+    pbody.appendChild(tr1);
+    // expense
+    const tr2 = document.createElement('tr');
+    tr2.innerHTML = `<td>${state.lang==='ar' ? 'المصروفات' : 'Expenses'}</td><td>${formatCurrency(data.expense)}</td><td>${y}</td>`;
+    pbody.appendChild(tr2);
+    // net
+    const tr3 = document.createElement('tr');
+    tr3.innerHTML = `<td>${state.lang==='ar' ? 'صافي الربح' : 'Net Profit'}</td><td>${formatCurrency(net)}</td><td>${y}</td>`;
+    pbody.appendChild(tr3);
+    // separator
+    const sep = document.createElement('tr'); sep.innerHTML = `<td colspan="3"></td>`; pbody.appendChild(sep);
+  });
+
+  // Profit comment (smart)
+  $('profitComment').textContent = generateProfitComment(aggs);
+
+  // Balance sheet table
+  clearTable('bsTable');
+  const tbody = document.querySelector('#bsTable tbody');
+  years.forEach(y=>{
+    const data = aggs[y];
+    const equity = (data.assets || 0) - (data.liabilities || 0);
+    const tr1 = document.createElement('tr'); tr1.innerHTML = `<td>${state.lang==='ar' ? 'الأصول (تقريبي)' : 'Assets (approx)'}</td><td>${formatCurrency(data.assets)}</td><td>${y}</td>`;
+    const tr2 = document.createElement('tr'); tr2.innerHTML = `<td>${state.lang==='ar' ? 'الخصوم (تقريبي)' : 'Liabilities (approx)'}</td><td>${formatCurrency(data.liabilities)}</td><td>${y}</td>`;
+    const tr3 = document.createElement('tr'); tr3.innerHTML = `<td>${state.lang==='ar' ? 'حقوق الملكية (تقريبي)' : 'Equity (approx)'}</td><td>${formatCurrency(equity)}</td><td>${y}</td>`;
+    tbody.appendChild(tr1); tbody.appendChild(tr2); tbody.appendChild(tr3);
+    const sep = document.createElement('tr'); sep.innerHTML = `<td colspan="3"></td>`; tbody.appendChild(sep);
+  });
+  $('bsComment').textContent = generateBalanceComment(aggs);
+
+  // Chart: show net profit per year
+  const labels = years;
+  const dataNet = years.map(y => (aggs[y].revenue || 0) - (aggs[y].expense || 0));
+  renderChart(labels, dataNet);
+  $('chartComment').textContent = generateChartComment(dataNet);
+
+  // Forecast using simple regression on net values
+  const fc = computeLinearForecast(dataNet);
+  if(fc){
+    $('forecastValue').textContent = formatCurrency(fc.next);
+    const direction = fc.slope > 0 ? (state.lang==='ar' ? 'اتجاه تصاعدي' : 'Uptrend') : (state.lang==='ar' ? 'اتجاه تنازلي' : 'Downtrend');
+    $('forecastComment').textContent = (state.lang==='ar' ? `التوقع للسنة التالية:` : 'Next forecast:') + ` ${formatCurrency(fc.next)} — ${direction}`;
+  } else {
+    $('forecastValue').textContent = '—';
+    $('forecastComment').textContent = t('noData');
+  }
+}
+
+/* Smart commentary functions */
+function generateProfitComment(aggs){
+  // compare growth across years
+  const years = Object.keys(aggs);
+  if(years.length === 0) return t('noData');
+  // compute net per year and growth
+  const nets = years.map(y => (aggs[y].revenue || 0) - (aggs[y].expense || 0));
+  const latest = nets[nets.length-1] || 0;
+  const prev = nets.length > 1 ? nets[nets.length-2] : 0;
+  if(latest === 0 && prev === 0) return t('noData');
+  if(prev === 0 && latest > 0) return state.lang==='ar' ? `تحسن كبير في الربحية من سنة إلى التالية (${formatCurrency(latest)}).` : `Significant improvement in profitability (${formatCurrency(latest)}).`;
+  const pct = prev !== 0 ? ((latest - prev)/Math.abs(prev)) : 0;
+  if(pct >= 0.2) return state.lang==='ar' ? `نمو ربحية قوي (+${(pct*100).toFixed(1)}%).` : `Strong profitability growth (+${(pct*100).toFixed(1)}%).`;
+  if(pct >= 0.05) return state.lang==='ar' ? `نمو جيد في الربحية (+${(pct*100).toFixed(1)}%).` : `Moderate profit growth (+${(pct*100).toFixed(1)}%).`;
+  if(pct > -0.05) return state.lang==='ar' ? `استقرار نسبي في الربحية.` : `Stable profitability.`;
+  return state.lang==='ar' ? `انخفاض في الربحية (${(pct*100).toFixed(1)}%) — يتطلب مراجعة.` : `Profitability declined (${(pct*100).toFixed(1)}%) — review required.`;
+}
+function generateBalanceComment(aggs){
+  const years = Object.keys(aggs);
+  if(years.length === 0) return t('noData');
+  const last = aggs[years[years.length-1]];
+  if(!last) return t('noData');
+  const equity = (last.assets || 0) - (last.liabilities || 0);
+  if(equity > 0) return state.lang==='ar' ? `حقوق ملكية إيجابية (${formatCurrency(equity)}).` : `Positive equity (${formatCurrency(equity)}).`;
+  return state.lang==='ar' ? `حقوق ملكية سالبة (${formatCurrency(equity)}) — قد تكون مخاطرة مالية.` : `Negative equity (${formatCurrency(equity)}) — potential risk.`;
+}
+function generateChartComment(dataNet){
+  if(!dataNet || dataNet.length===0) return t('noData');
+  const last = dataNet[dataNet.length-1], prev = dataNet.length>1 ? dataNet[dataNet.length-2] : 0;
+  if(last > prev) return state.lang==='ar' ? 'اتجاه إيجابي في صافي الربح.' : 'Positive trend in net profit.';
+  if(last === prev) return state.lang==='ar' ? 'استقرار في صافي الربح.' : 'Stable net profit.';
+  return state.lang==='ar' ? 'اتجاه تنازلي في صافي الربح — انتبه.' : 'Downtrend in net profit — caution.';
+}
+
+/* Chart rendering */
+let cmpChart = null;
+function renderChart(labels, dataNet){
+  const ctx = document.getElementById('cmpChart').getContext('2d');
+  if(cmpChart) try{ cmpChart.destroy(); }catch(e){}
+  cmpChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels, datasets: [{ label: state.lang==='ar' ? 'صافي الربح' : 'Net Profit', data: dataNet, borderColor:'#00b4ff', tension:0.3, fill:false, pointRadius:4 }] },
+    options: { responsive:true, plugins:{legend:{display:false}} }
+  });
+}
+
+/* simple linear regression forecast */
+function computeLinearForecast(values){
+  if(!values || values.length < 2) return null;
+  const y = values.map(v => Number(v));
+  const x = y.map((_,i)=> i+1);
+  const n = x.length;
+  const sumX = x.reduce((a,b)=>a+b,0), sumY = y.reduce((a,b)=>a+b,0);
+  const sumXY = x.reduce((s,xi,i)=> s + xi*y[i],0);
+  const sumX2 = x.reduce((s,xi)=> s + xi*xi,0);
+  const denom = (n*sumX2 - sumX*sumX) || 1;
+  const slope = (n*sumXY - sumX*sumY)/denom;
+  const intercept = (sumY - slope*sumX)/n;
+  const nextX = n+1;
+  const next = intercept + slope * nextX;
+  return {slope,intercept,next};
+}
+
+/* Export to PDF (uses html2pdf) */
+function exportPdf(){
+  const el = document.querySelector('.container');
+  const oldTheme = document.body.getAttribute('data-theme');
+  // switch to light for print clarity
+  document.body.setAttribute('data-theme','light');
+  const opt = { margin:0.3, filename: 'comparisons_report.pdf', image:{type:'jpeg',quality:0.95}, html2canvas:{scale:2, useCORS:true, allowTaint:true}, jsPDF:{unit:'in',format:'a4',orientation:'portrait'} };
+  html2pdf().set(opt).from(el).save().finally(()=>{ document.body.setAttribute('data-theme', oldTheme || 'dark'); });
+}
+
+/* Render when no source selected or empty */
+function renderNoDataFallback(){
+  clearTable('profitTable'); clearTable('bsTable');
+  $('profitComment').textContent = t('noData');
+  $('bsComment').textContent = t('noData');
+  $('kpiAccounts').textContent = '0';
+  $('kpiAssets').textContent = formatCurrency(0);
+  $('kpiLiab').textContent = formatCurrency(0);
+  renderChart([],[]);
+  $('forecastValue').textContent = '—';
+  $('forecastComment').textContent = t('noData');
+}
+
+/* When source not selected */
+function renderNoData(){ renderNoDataFallback(); }
+
+/* Init on load */
+(function(){
+  // restore state
+  state.lang = localStorage.getItem('cmp_lang') || state.lang;
+  state.theme = localStorage.getItem('cmp_theme') || state.theme;
+  state.currency = localStorage.getItem('cmp_currency') || state.currency;
+  state.source = localStorage.getItem('cmp_source') || state.source;
+
+  // set controls values
+  $('langSelect').value = state.lang;
+  $('currencySelect').value = state.currency;
+  // if source exists, set select after populating
+  init();
+  if(state.source) { $('sourceSelect').value = state.source; loadSourceIfNeeded(); }
+})();
+</script>
+
+</body>
+</html>
