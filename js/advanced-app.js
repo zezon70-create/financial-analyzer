@@ -53,6 +53,13 @@ window.pageTranslations = {
         assetTurnover: "معدل دوران الأصول",
         assetTurnover_comment_high: "كفاءة ممتازة في استخدام الأصول لتوليد المبيعات.",
         assetTurnover_comment_low: "كفاءة منخفضة. قد تكون هناك أصول عاطلة أو ضعف في المبيعات.",
+        
+        summary_ok: "الوضع المالي يبدو مستقرًا. الربحية والسيولة ضمن النطاقات المقبولة.",
+        summary_risk: "توجد بعض مؤشرات الخطر. الربحية أو السيولة قد تحتاج إلى اهتمام فوري.",
+        alert_liquidity_risk: "🔴 خطر سيولة: نسبة التداول أقل من 1.",
+        alert_leverage_risk: "🟡 تنبيه: نسبة الدين إلى حقوق الملكية مرتفعة.",
+        alert_profit_risk: "🔴 خطر ربحية: الشركة تحقق صافي خسارة.",
+        alert_ok: "🟢 لا توجد مؤشرات خطر حرجة بناءً على النسب الأساسية.",
     },
     en: {
         pageTitle: "Advanced Analytics — Financial Analyzer",
@@ -106,6 +113,13 @@ window.pageTranslations = {
         assetTurnover: "Asset Turnover Ratio",
         assetTurnover_comment_high: "Excellent efficiency in using assets to generate sales.",
         assetTurnover_comment_low: "Low efficiency. There might be idle assets or weak sales.",
+        
+        summary_ok: "The financial position appears stable. Profitability and liquidity are within acceptable ranges.",
+        summary_risk: "Some risk indicators are present. Profitability or liquidity may require immediate attention.",
+        alert_liquidity_risk: "🔴 Liquidity Risk: Current ratio is less than 1.",
+        alert_leverage_risk: "🟡 Warning: Debt-to-Equity ratio is high.",
+        alert_profit_risk: "🔴 Profitability Risk: The company is recording a net loss.",
+        alert_ok: "🟢 No critical risk indicators based on key ratios.",
     }
 };
 
@@ -114,6 +128,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const state = { financials: {}, ratios: {} };
     const lang = localStorage.getItem('lang') || 'ar';
     const t_page = (key) => window.pageTranslations[lang]?.[key] || key;
+    const UI = {
+        smartSummary: document.getElementById('smartSummary'),
+        alertsArea: document.getElementById('alertsArea'),
+    };
 
     const calculateFinancials = () => {
         const trialData = JSON.parse(localStorage.getItem('trialData') || '[]');
@@ -224,19 +242,25 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = tableHTML + `</tbody></table></div>`;
     };
 
-    const renderAllAnalyses = () => {
-        renderRatioCategory('liquidityRatios', 'liquidityRatios', ['currentRatio', 'quickRatio']);
-        renderRatioCategory('profitabilityRatios', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
-        renderRatioCategory('leverageRatios', 'leverageRatios', ['debtToAssets', 'debtToEquity']);
-        renderRatioCategory('efficiencyRatios', 'efficiencyRatios', ['assetTurnover']);
+    const renderSidebar = () => {
+        const { netProfitMargin, currentRatio, debtToEquity } = state.ratios;
+        UI.smartSummary.textContent = netProfitMargin > 0 && currentRatio > 1.5 ? t_page('summary_ok') : t_page('summary_risk');
+
+        const alerts = [];
+        if (currentRatio < 1) alerts.push(t_page('alert_liquidity_risk'));
+        if (debtToEquity > 2) alerts.push(t_page('alert_leverage_risk'));
+        if (netProfitMargin < 0) alerts.push(t_page('alert_profit_risk'));
+        UI.alertsArea.innerHTML = alerts.length > 0 ? alerts.map(alert => `<div>${alert}</div>`).join('') : `<div>${t_page('alert_ok')}</div>`;
     };
-    
-    // ... Add renderSmartSummary and renderAlerts functions here later
 
     const runAnalysis = () => {
         calculateFinancials();
         calculateAllRatios();
-        renderAllAnalyses();
+        renderRatioCategory('liquidityRatios', 'liquidityRatios', ['currentRatio', 'quickRatio']);
+        renderRatioCategory('profitabilityRatios', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
+        renderRatioCategory('leverageRatios', 'leverageRatios', ['debtToAssets', 'debtToEquity']);
+        renderRatioCategory('efficiencyRatios', 'efficiencyRatios', ['assetTurnover']);
+        renderSidebar();
     };
 
     runAnalysis();
