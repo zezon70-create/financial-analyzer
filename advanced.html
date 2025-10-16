@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title data-translate-key="pageTitle">التحليلات المتقدمة — المحلل المالي</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+    
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-theme="light">
+
+    <header class="site-header-global">
+        <div class="container-main nav-container">
+            <a href="index.html" class="brand">
+                <img src="assets/logo.png" alt="شعار المحلل المالي">
+                <span class="title" data-translate-key="brandTitle">المحلل المالي</span>
+            </a>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link" data-translate-key="navHome">الرئيسية</a>
+                <a href="input.html" class="nav-link" data-translate-key="navInput">الإدخال</a>
+                <a href="upload.html" class="nav-link" data-translate-key="navUpload">الرفع</a>
+                <a href="report.html" class="nav-link" data-translate-key="navReport">التقرير</a>
+                <a href="advanced.html" class="nav-link active" data-translate-key="navAdvanced">تحليلات متقدمة</a>
+                <a href="dashboard.html" class="nav-link" data-translate-key="navDashboard">لوحة التحكم</a>
+                <a href="comparisons.html" class="nav-link" data-translate-key="navCompare">المقارنات</a>
+            </nav>
+            <div class="controls">
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container-main py-4">
+        
+        <section class="page-header mb-4">
+            <h1 data-translate-key="pageHeader">التحليلات المتقدمة</h1>
+            <p class="text-muted" data-translate-key="pageSubheader">استكشف النسب المالية، الاتجاهات المستقبلية، والملخصات الذكية لفهم أعمق لأدائك المالي.</p>
+        </section>
+
+        <section class="card-surface mb-4">
+             <div class="d-flex align-items-center gap-3">
+                <label for="dataSource" class="form-label fw-bold mb-0" data-translate-key="sourceLabel">مصدر البيانات:</label>
+                <select id="dataSource" class="form-select" style="max-width: 300px;">
+                    <option value="trialData">بيانات الإدخال (من صفحة Input)</option>
+                    <option value="statementData">بيانات الرفع (من صفحة Upload)</option>
+                </select>
+             </div>
+        </section>
+
+        <section class="analysis-grid">
+            <div class="analysis-main">
+                <div class="card-surface">
+                    <h5 data-translate-key="ratiosTitle">النسب المالية الرئيسية</h5>
+                    <div class="table-responsive">
+                        <table class="table table-sm table-striped">
+                            <thead>
+                                <tr>
+                                    <th data-translate-key="thRatio">النسبة</th>
+                                    <th data-translate-key="thValue">القيمة</th>
+                                    <th data-translate-key="thComment">تحليل سريع</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ratiosBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-surface">
+                    <h5 data-translate-key="trendTitle">توقعات الإيرادات المستقبلية</h5>
+                    <div class="chart-wrap">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <aside class="analysis-sidebar">
+                <div class="card-surface">
+                    <h5 data-translate-key="summaryTitle">الملخص الذكي</h5>
+                    <div id="smartSummary" class="analysis-comment"></div>
+                </div>
+                <div class="card-surface">
+                    <h5 data-translate-key="alertsTitle">تنبيهات ومؤشرات خطر</h5>
+                    <div id="alertsArea" class="small text-muted"></div>
+                </div>
+            </aside>
+        </section>
+
+    </main>
+    
+    <footer class="site-footer">
+        <div class="container-main">
+            <p data-translate-key="footerText">© 2025 المحلل المالي. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+    <script src="js/advanced-app.js"></script>
+</body>
+</html>
