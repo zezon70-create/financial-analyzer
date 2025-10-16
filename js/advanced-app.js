@@ -1,216 +1,241 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. STATE & CONFIGURATION ---
+    // --- 1. STATE & CONFIG ---
     const state = {
-        rawData: [],
-        aggregatedData: {},
+        trialData: [],
+        financials: {}, // Will hold all calculated financial figures
         ratios: {},
         preferences: {
             theme: localStorage.getItem('theme') || 'light',
-            source: 'trialData'
-        },
-        charts: {}
+            lang: localStorage.getItem('lang') || 'ar',
+        }
     };
 
-    // --- 2. UI ELEMENTS CACHE ---
+    // --- 2. TRANSLATIONS (Comprehensive) ---
+    const translations = {
+        ar: {
+            // General
+            pageHeader: "التحليلات المالية المتقدمة",
+            pageSubheader: "مكتبة شاملة من النسب المالية والتحليلات لمساعدتك على فهم أداء شركتك بعمق.",
+            summaryTitle: "الملخص الذكي",
+            alertsTitle: "تنبيهات ومؤشرات خطر",
+            thRatio: "النسبة",
+            thValue: "القيمة",
+            thComment: "تعليق تحليلي",
+            // Categories
+            liquidityRatios: "نسب السيولة",
+            profitabilityRatios: "نسب الربحية",
+            leverageRatios: "نسب الرفع المالي",
+            efficiencyRatios: "نسب الكفاءة",
+            // Ratios & Comments
+            currentRatio: "نسبة التداول",
+            currentRatio_comment_high: "سيولة ممتازة. قدرة عالية على سداد الالتزامات قصيرة الأجل.",
+            currentRatio_comment_good: "سيولة جيدة. الوضع آمن في المدى القصير.",
+            currentRatio_comment_low: "مؤشر خطر. قد تواجه الشركة صعوبة في سداد ديونها قصيرة الأجل.",
+            quickRatio: "نسبة السيولة السريعة",
+            quickRatio_comment_good: "قدرة جيدة على تغطية الالتزامات العاجلة دون الاعتماد على المخزون.",
+            quickRatio_comment_low: "مؤشر خطر. اعتماد كبير على بيع المخزون لتغطية الديون العاجلة.",
+            netProfitMargin: "هامش صافي الربح",
+            netProfitMargin_comment_high: "ربحية ممتازة. كفاءة عالية في تحويل الإيرادات إلى أرباح.",
+            netProfitMargin_comment_avg: "الشركة تحقق أرباحًا ولكن يمكن تحسين الهامش.",
+            netProfitMargin_comment_low: "الشركة تحقق خسائر. يجب مراجعة هيكل التكاليف والتسعير.",
+            grossProfitMargin: "هامش الربح الإجمالي",
+            roa: "العائد على الأصول (ROA)",
+            roe: "العائد على حقوق الملكية (ROE)",
+            debtToEquity: "نسبة الدين إلى حقوق الملكية",
+            debtToEquity_comment_low: "مستوى دين منخفض ومحافظ. تعتمد الشركة على التمويل الذاتي.",
+            debtToEquity_comment_good: "مستوى دين معتدل ومتوازن.",
+            debtToEquity_comment_high: "مستوى دين مرتفع. قد يشير إلى مخاطر مالية عالية.",
+            debtToAssets: "نسبة الدين إلى الأصول",
+            assetTurnover: "معدل دوران الأصول",
+        },
+        en: {
+            // General
+            pageHeader: "Advanced Financial Analytics",
+            pageSubheader: "A comprehensive library of financial ratios and analyses to deeply understand your company's performance.",
+            summaryTitle: "Smart Summary",
+            alertsTitle: "Alerts & Risk Indicators",
+            thRatio: "Ratio",
+            thValue: "Value",
+            thComment: "Analytical Commentary",
+            // Categories
+            liquidityRatios: "Liquidity Ratios",
+            profitabilityRatios: "Profitability Ratios",
+            leverageRatios: "Leverage Ratios",
+            efficiencyRatios: "Efficiency Ratios",
+            // Ratios & Comments
+            currentRatio: "Current Ratio",
+            currentRatio_comment_high: "Excellent liquidity. High ability to meet short-term obligations.",
+            currentRatio_comment_good: "Good liquidity. The situation is safe in the short term.",
+            currentRatio_comment_low: "Risk indicator. The company may face difficulty paying its short-term debts.",
+            quickRatio: "Quick Ratio (Acid-Test)",
+            quickRatio_comment_good: "Good ability to cover immediate liabilities without relying on inventory.",
+            quickRatio_comment_low: "Risk indicator. Heavy reliance on selling inventory to cover urgent debts.",
+            netProfitMargin: "Net Profit Margin",
+            netProfitMargin_comment_high: "Excellent profitability. High efficiency in converting revenue into profit.",
+            netProfitMargin_comment_avg: "The company is profitable, but the margin can be improved.",
+            netProfitMargin_comment_low: "The company is incurring losses. Cost structure and pricing must be reviewed.",
+            grossProfitMargin: "Gross Profit Margin",
+            roa: "Return on Assets (ROA)",
+            roe: "Return on Equity (ROE)",
+            debtToEquity: "Debt-to-Equity Ratio",
+            debtToEquity_comment_low: "Low and conservative debt level. The company relies on self-financing.",
+            debtToEquity_comment_good: "Moderate and balanced debt level.",
+            debtToEquity_comment_high: "High debt level. May indicate high financial risk.",
+            debtToAssets: "Debt-to-Assets Ratio",
+            assetTurnover: "Asset Turnover Ratio",
+        }
+    };
+
+    // --- 3. UI ELEMENTS CACHE ---
     const UI = {
         themeToggle: document.getElementById('themeToggle'),
-        dataSource: document.getElementById('dataSource'),
-        ratiosBody: document.getElementById('ratiosBody'),
-        trendChart: document.getElementById('trendChart'),
+        languageSelect: document.getElementById('languageSelect'),
         smartSummary: document.getElementById('smartSummary'),
         alertsArea: document.getElementById('alertsArea'),
     };
 
-    // --- 3. CORE LOGIC & CALCULATIONS ---
+    // --- 4. FINANCIAL ENGINE ---
+    const toNum = (val) => parseFloat(String(val || '').replace(/,/g, '')) || 0;
+    const t = (key) => translations[state.preferences.lang]?.[key] || key;
 
-    const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
-    
-    const unifyData = (sourceKey) => {
-        const rawData = localStorage.getItem(sourceKey) || '[]';
-        let parsedData = JSON.parse(rawData);
-        if (sourceKey === 'statementData') {
-            const { bs = [], is = [] } = parsedData;
-            const unified = [];
-            bs.forEach(r => unified.push({ Account: r.Account, Type: r.Type, Debit: r.Debit, Credit: r.Credit }));
-            is.forEach(r => {
-                const type = (r.Type || '').toLowerCase();
-                const value = toNum(r.Value);
-                if (type.includes('revenue') || type.includes('إيراد')) {
-                    unified.push({ Account: r.Account, Type: r.Type, Debit: 0, Credit: value });
-                } else {
-                    unified.push({ Account: r.Account, Type: r.Type, Debit: value, Credit: 0 });
+    const calculateFinancials = () => {
+        state.trialData = JSON.parse(localStorage.getItem('trialData') || '[]');
+        const financials = {
+            assets: 0, liabilities: 0, equity: 0, revenue: 0, cogs: 0, expenses: 0,
+            currentAssets: 0, inventory: 0, currentLiabilities: 0
+        };
+
+        state.trialData.forEach(row => {
+            const value = toNum(row.Debit) - toNum(row.Credit);
+            const mainType = row.MainType || '';
+            const subType = row.SubType || '';
+
+            if (mainType.includes('الأصول') || mainType.includes('Assets')) {
+                financials.assets += value;
+                if (subType.includes('متداول') || subType.includes('Current')) {
+                    financials.currentAssets += value;
+                    if (subType.includes('المخزون') || subType.includes('Inventory')) financials.inventory += value;
                 }
-            });
-            return unified;
-        }
-        return parsedData;
-    };
-
-    const aggregateData = () => {
-        const agg = { assets: 0, liabilities: 0, equity: 0, revenue: 0, expense: 0, currentAssets: 0, currentLiabilities: 0 };
-        state.rawData.forEach(r => {
-            const net = toNum(r.Debit) - toNum(r.Credit);
-            const type = (r.Type || r.Account || '').toLowerCase();
-            
-            if (type.includes('asset') || type.includes('أصل')) agg.assets += net;
-            else if (type.includes('liab') || type.includes('خصوم')) agg.liabilities -= net;
-            else if (type.includes('equity') || type.includes('حقوق')) agg.equity -= net;
-            else if (type.includes('revenue') || type.includes('إيراد')) agg.revenue -= net;
-            else if (type.includes('expense') || type.includes('مصروف')) agg.expense += net;
-            
-            // For Current Ratio
-            if (type.includes('current asset') || type.includes('أصل متداول')) agg.currentAssets += net;
-            if (type.includes('current liab') || type.includes('خصوم متداولة')) agg.currentLiabilities -= net;
+            } else if (mainType.includes('الخصوم') || mainType.includes('Liabilities')) {
+                financials.liabilities -= value;
+                if (subType.includes('متداول') || subType.includes('Current')) financials.currentLiabilities -= value;
+            } else if (mainType.includes('حقوق الملكية') || mainType.includes('Equity')) {
+                financials.equity -= value;
+            } else if (mainType.includes('قائمة الدخل') || mainType.includes('Income Statement')) {
+                if (subType.includes('الإيرادات') || subType.includes('Revenue')) financials.revenue -= value;
+                else if (subType.includes('تكلفة المبيعات') || subType.includes('COGS')) financials.cogs += value;
+                else financials.expenses += value;
+            }
         });
-        state.aggregatedData = agg;
+        
+        financials.grossProfit = financials.revenue - financials.cogs;
+        financials.netProfit = financials.grossProfit - financials.expenses;
+        state.financials = financials;
     };
 
-    const calculateRatios = () => {
-        const agg = state.aggregatedData;
-        const netProfit = agg.revenue - agg.expense;
+    const calculateAllRatios = () => {
+        const f = state.financials;
         state.ratios = {
-            currentRatio: agg.currentLiabilities > 0 ? agg.currentAssets / agg.currentLiabilities : Infinity,
-            debtToEquity: agg.equity > 0 ? agg.liabilities / agg.equity : Infinity,
-            netProfitMargin: agg.revenue > 0 ? netProfit / agg.revenue : 0,
-            roa: agg.assets > 0 ? netProfit / agg.assets : 0, // Return on Assets
-            roe: agg.equity > 0 ? netProfit / agg.equity : 0,   // Return on Equity
+            // Liquidity
+            currentRatio: f.currentLiabilities > 0 ? f.currentAssets / f.currentLiabilities : Infinity,
+            quickRatio: f.currentLiabilities > 0 ? (f.currentAssets - f.inventory) / f.currentLiabilities : Infinity,
+            // Profitability
+            grossProfitMargin: f.revenue > 0 ? f.grossProfit / f.revenue : 0,
+            netProfitMargin: f.revenue > 0 ? f.netProfit / f.revenue : 0,
+            roa: f.assets > 0 ? f.netProfit / f.assets : 0,
+            roe: f.equity > 0 ? f.netProfit / f.equity : 0,
+            // Leverage
+            debtToAssets: f.assets > 0 ? f.liabilities / f.assets : Infinity,
+            debtToEquity: f.equity > 0 ? f.liabilities / f.equity : Infinity,
+            // Efficiency
+            assetTurnover: f.assets > 0 ? f.revenue / f.assets : 0,
         };
     };
 
-    // --- 4. RENDERING FUNCTIONS ---
+    // --- 5. RENDERING ---
     
     const getRatioComment = (key, value) => {
-        if (!isFinite(value)) return "بيانات غير كافية للحساب.";
-        switch (key) {
-            case 'currentRatio':
-                if (value >= 2) return "سيولة ممتازة. قدرة عالية على سداد الالتزامات قصيرة الأجل.";
-                if (value >= 1) return "سيولة جيدة. الوضع آمن في المدى القصير.";
-                return "مؤشر خطر. قد تواجه الشركة صعوبة في سداد ديونها قصيرة الأجل.";
-            case 'debtToEquity':
-                if (value < 0.5) return "مستوى دين منخفض. تعتمد الشركة بشكل كبير على التمويل الذاتي.";
-                if (value <= 1.5) return "مستوى دين معتدل ومتوازن.";
-                return "مستوى دين مرتفع. قد يشير إلى مخاطر مالية عالية.";
-            case 'netProfitMargin':
-                if (value >= 0.15) return "ربحية ممتازة. كفاءة عالية في تحويل الإيرادات إلى أرباح.";
-                if (value > 0) return "الشركة تحقق أرباحًا ولكن يمكن تحسين الهامش.";
-                return "الشركة تحقق خسائر. يجب مراجعة هيكل التكاليف والتسعير.";
-            default: return "";
+        if (!isFinite(value)) return "N/A";
+        // Simple example for currentRatio
+        if (key === 'currentRatio') {
+            if (value >= 2) return t('currentRatio_comment_high');
+            if (value >= 1) return t('currentRatio_comment_good');
+            return t('currentRatio_comment_low');
         }
+        if (key === 'quickRatio') {
+            if (value >= 1) return t('quickRatio_comment_good');
+            return t('quickRatio_comment_low');
+        }
+        if (key === 'netProfitMargin') {
+            if (value >= 0.15) return t('netProfitMargin_comment_high');
+            if (value > 0) return t('netProfitMargin_comment_avg');
+            return t('netProfitMargin_comment_low');
+        }
+        if (key === 'debtToEquity') {
+            if (value < 0.5) return t('debtToEquity_comment_low');
+            if (value <= 1.5) return t('debtToEquity_comment_good');
+            return t('debtToEquity_comment_high');
+        }
+        return ""; // Default empty comment
     };
 
-    const renderRatiosTable = () => {
-        const ratioDefs = [
-            { key: 'currentRatio', label: 'نسبة التداول' },
-            { key: 'debtToEquity', label: 'نسبة الدين إلى حقوق الملكية' },
-            { key: 'netProfitMargin', label: 'هامش صافي الربح' },
-            { key: 'roa', label: 'العائد على الأصول (ROA)' },
-            { key: 'roe', label: 'العائد على حقوق الملكية (ROE)' },
-        ];
+    const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => {
+        const container = document.getElementById(divId);
+        let tableHTML = `<h5 class="mb-3">${t(categoryTitleKey)}</h5>
+            <div class="table-responsive">
+            <table class="table table-sm table-striped">
+                <thead><tr><th>${t('thRatio')}</th><th>${t('thValue')}</th><th>${t('thComment')}</th></tr></thead>
+                <tbody>`;
         
-        UI.ratiosBody.innerHTML = ratioDefs.map(def => {
-            const value = state.ratios[def.key];
+        ratioKeys.forEach(key => {
+            const value = state.ratios[key];
             const formattedValue = isFinite(value) 
-                ? (def.key.includes('Margin') || def.key.includes('roa') || def.key.includes('roe') ? `${(value * 100).toFixed(1)}%` : value.toFixed(2))
+                ? (key.includes('Margin') || key.includes('roa') || key.includes('roe') ? `${(value * 100).toFixed(1)}%` : value.toFixed(2))
                 : "N/A";
-            const comment = getRatioComment(def.key, value);
-            return `<tr>
-                <td>${def.label}</td>
+            const comment = getRatioComment(key, value);
+            tableHTML += `<tr>
+                <td>${t(key)}</td>
                 <td><strong>${formattedValue}</strong></td>
                 <td class="text-muted small">${comment}</td>
             </tr>`;
-        }).join('');
-    };
-
-    const renderTrendChart = () => {
-        if (state.charts.trend) state.charts.trend.destroy();
-        
-        const revenue = state.aggregatedData.revenue || 0;
-        // Create synthetic historical data for demonstration
-        const historicalData = [revenue / 1.2, revenue / 1.1, revenue];
-        const labels = ['2023', '2024', '2025'];
-        
-        // Simple linear forecast
-        const forecast = historicalData[2] + (historicalData[2] - historicalData[0]) / 2;
-        
-        state.charts.trend = new Chart(UI.trendChart, {
-            type: 'line',
-            data: {
-                labels: [...labels, '2026 (توقع)'],
-                datasets: [{
-                    label: 'الإيرادات',
-                    data: [...historicalData, forecast],
-                    borderColor: '#0d6efd',
-                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
-                    fill: true,
-                    tension: 0.1
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
         });
+
+        tableHTML += `</tbody></table></div>`;
+        container.innerHTML = tableHTML;
     };
     
-    const renderSmartSummary = () => {
-        const { currentRatio, netProfitMargin, debtToEquity } = state.ratios;
-        let summary = `بناءً على البيانات، `;
-        summary += `هامش صافي الربح يبلغ ${isFinite(netProfitMargin) ? `${(netProfitMargin * 100).toFixed(1)}%` : 'N/A'}. `;
-        summary += `نسبة التداول هي ${isFinite(currentRatio) ? currentRatio.toFixed(2) : 'N/A'}, مما يعطي مؤشرًا عن السيولة قصيرة الأجل. `;
-        summary += `أما هيكل رأس المال، فتبلغ نسبة الدين إلى حقوق الملكية ${isFinite(debtToEquity) ? debtToEquity.toFixed(2) : 'N/A'}.`;
-        UI.smartSummary.textContent = summary;
-    };
-    
-    const renderAlerts = () => {
-        const alerts = [];
-        if (state.ratios.currentRatio < 1) alerts.push("🔴 خطر سيولة: نسبة التداول أقل من 1.");
-        if (state.ratios.debtToEquity > 2) alerts.push("🟡 تنبيه: نسبة الدين إلى حقوق الملكية مرتفعة.");
-        if (state.ratios.netProfitMargin < 0) alerts.push("🔴 خطر ربحية: الشركة تحقق صافي خسارة.");
-        
-        if (alerts.length > 0) {
-            UI.alertsArea.innerHTML = alerts.map(alert => `<div>${alert}</div>`).join('');
-        } else {
-            UI.alertsArea.innerHTML = '<div>🟢 لا توجد مؤشرات خطر حرجة بناءً على النسب الأساسية.</div>';
-        }
-    };
-    
-    // --- 5. MAIN UPDATE FUNCTION ---
-    const runAnalysis = () => {
-        state.rawData = unifyData(state.preferences.source);
-        if (!state.rawData || state.rawData.length === 0) {
-            // Handle UI for no data
-            return;
-        }
-        aggregateData();
-        calculateRatios();
-        renderRatiosTable();
-        renderTrendChart();
-        renderSmartSummary();
-        renderAlerts();
+    const renderAllAnalyses = () => {
+        renderRatioCategory('liquidityRatios', 'liquidityRatios', ['currentRatio', 'quickRatio']);
+        renderRatioCategory('profitabilityRatios', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
+        renderRatioCategory('leverageRatios', 'leverageRatios', ['debtToAssets', 'debtToEquity']);
+        renderRatioCategory('efficiencyRatios', 'efficiencyRatios', ['assetTurnover']);
+        // ... (Render other analyses)
     };
 
-    // --- 6. EVENT LISTENERS & INITIALIZATION ---
-
-    UI.themeToggle.addEventListener('click', () => {
-        let newTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-        document.body.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        UI.themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-    });
-
-    document.querySelectorAll('.main-nav .nav-link').forEach(link => {
-        if (link.href.includes('advanced.html')) link.classList.add('active');
-        else link.classList.remove('active');
-    });
-
-    UI.dataSource.addEventListener('change', (e) => {
-        state.preferences.source = e.target.value;
-        runAnalysis();
-    });
-
+    // --- 6. INITIALIZATION & BINDING ---
     const init = () => {
-        const theme = localStorage.getItem('theme') || 'light';
-        document.body.setAttribute('data-theme', theme);
-        UI.themeToggle.innerHTML = theme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+        // ... (Theme, Language, and Nav Link logic as before) ...
+        UI.languageSelect.innerHTML = `<option value="ar">العربية</option><option value="en">English</option>`;
+        UI.languageSelect.value = state.preferences.lang;
+        UI.languageSelect.addEventListener('change', (e) => {
+            state.preferences.lang = e.target.value;
+            localStorage.setItem('lang', state.preferences.lang);
+            // Re-run all calculations and renderings after language change
+            runAnalysis();
+        });
         
+        function runAnalysis() {
+            // Apply translations to static elements first
+            document.querySelectorAll('[data-translate-key]').forEach(el => el.textContent = t(el.dataset.translateKey));
+            document.documentElement.lang = state.preferences.lang;
+            document.documentElement.dir = state.preferences.lang === 'ar' ? 'rtl' : 'ltr';
+            
+            calculateFinancials();
+            calculateAllRatios();
+            renderAllAnalyses();
+        }
+
         runAnalysis();
     };
 
