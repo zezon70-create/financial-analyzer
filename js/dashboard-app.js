@@ -19,7 +19,7 @@ window.pageTranslations = {
         assets: "الأصول",
         liabilities: "الخصوم",
         equity: "حقوق الملكية",
-        noData: "لا توجد بيانات كافية لعرض لوحة التحكم. يرجى إدخال البيانات أولاً.",
+        noData: "لا توجد بيانات كافية لعرض لوحة التحكم. يرجى إدخال البيانات أولاً في صفحة الإدخال.",
         summary_profit: "أداء جيد. الشركة تحقق ربحية ويمكنها تغطية التزاماتها قصيرة الأجل بشكل مريح.",
         summary_loss: "يتطلب الانتباه. الشركة تواجه تحديات في الربحية ويجب مراقبة وضع السيولة.",
         alert_liquidity_risk: "🔴 خطر سيولة: نسبة التداول أقل من 1.",
@@ -45,7 +45,7 @@ window.pageTranslations = {
         assets: "Assets",
         liabilities: "Liabilities",
         equity: "Equity",
-        noData: "Not enough data to display the dashboard. Please enter data first.",
+        noData: "Not enough data to display the dashboard. Please enter data in the Input page first.",
         summary_profit: "Good performance. The company is profitable and can comfortably meet its short-term obligations.",
         summary_loss: "Attention required. The company faces profitability challenges and liquidity should be monitored.",
         alert_liquidity_risk: "🔴 Liquidity Risk: Current ratio is less than 1.",
@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const state = { financials: {}, ratios: {}, charts: {} };
     const lang = localStorage.getItem('lang') || 'ar';
     const t_page = (key) => window.pageTranslations[lang]?.[key] || key;
+    
     const UI = {
         kpiRow: document.getElementById('kpiRow'),
         profitabilityChart: document.getElementById('profitabilityChart'),
@@ -143,8 +144,8 @@ document.addEventListener('DOMContentLoaded', () => {
         state.charts.structure = new Chart(UI.structureChart, {
             type: 'doughnut',
             data: {
-                labels: [t_page('liabilities'), t_page('equity'), t_page('assets')],
-                datasets: [{ data: [liabilities, equity, -assets], backgroundColor: ['#ffc107', '#0d6efd', '#dc3545'] }]
+                labels: [t_page('assets'), t_page('liabilities'), t_page('equity')],
+                datasets: [{ data: [assets, liabilities, equity], backgroundColor: ['#0d6efd', '#ffc107', '#20c997'] }]
             },
             options: { responsive: true, maintainAspectRatio: false }
         });
@@ -165,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasData = calculateAllFinancials();
         if (!hasData) {
             document.querySelector('.dashboard-grid').innerHTML = `<div class="alert alert-warning">${t_page('noData')}</div>`;
+            document.getElementById('kpiRow').innerHTML = ''; // Clear KPIs too
             return;
         }
         renderKPIs();
