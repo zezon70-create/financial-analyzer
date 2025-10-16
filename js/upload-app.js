@@ -1,6 +1,5 @@
 // js/upload-app.js
 
-// Page-specific translations
 window.pageTranslations = {
     ar: {
         pageTitle: "رفع وإدخال القوائم — المحلل المالي",
@@ -17,15 +16,13 @@ window.pageTranslations = {
         entryTitle: "إدخال البيانات اليدوي",
         tabBS: "الميزانية العمومية",
         tabIS: "قائمة الدخل",
-        tabCF: "التدفقات النقدية",
-        tabEQ: "حقوق الملكية",
         addBS: "إضافة بند للميزانية",
         addIS: "إضافة بند للدخل",
-        addCF: "إضافة بند للتدفقات",
-        addEQ: "إضافة بند لحقوق الملكية",
         confirmClear: "هل أنت متأكد من مسح جميع البيانات في كل الجداول؟",
         savedSuccess: "تم حفظ البيانات بنجاح!",
         noDataToSave: "لا توجد بيانات لحفظها.",
+        saveAsSuccess: "تم حفظ البيانات بنجاح باسم",
+        saveAsError: "الرجاء إدخال اسم لحفظ مجموعة البيانات.",
     },
     en: {
         pageTitle: "Upload & Enter Statements — Financial Analyzer",
@@ -42,24 +39,22 @@ window.pageTranslations = {
         entryTitle: "Manual Data Entry",
         tabBS: "Balance Sheet",
         tabIS: "Income Statement",
-        tabCF: "Cash Flow",
-        tabEQ: "Equity",
         addBS: "Add Balance Sheet Item",
         addIS: "Add Income Item",
-        addCF: "Add Cash Flow Item",
-        addEQ: "Add Equity Item",
         confirmClear: "Are you sure you want to clear all data in all tables?",
         savedSuccess: "Data saved successfully!",
         noDataToSave: "No data to save.",
+        saveAsSuccess: "Data saved successfully as",
+        saveAsError: "Please enter a name to save the dataset.",
     }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    const state = {
-        data: { bs: [], is: [], cf: [], eq: [] },
-    };
-
+    const state = { data: { bs: [], is: [] } };
+    const lang = localStorage.getItem('lang') || 'ar';
+    const t_page = (key) => window.pageTranslations[lang]?.[key] || key;
+    
     const UI = {
         saveAsNameInput: document.getElementById('saveAsName'),
         saveAsBtn: document.getElementById('saveAsBtn'),
@@ -69,44 +64,37 @@ document.addEventListener('DOMContentLoaded', () => {
         fileInput: document.getElementById('fileInput'),
     };
     
-    const lang = localStorage.getItem('lang') || 'ar';
-    const t_page = (key) => window.pageTranslations[lang]?.[key] || key;
-
     const config = {
         tables: {
-            bs: { headers: {ar: ['الحساب', 'النوع', 'مدين', 'دائن', 'إجراء'], en: ['Account', 'Type', 'Debit', 'Credit', 'Action']}, fields: ['Account', 'Type', 'Debit', 'Credit'] },
-            is: { headers: {ar: ['البند', 'النوع', 'القيمة', 'إجراء'], en: ['Item', 'Type', 'Value', 'Action']}, fields: ['Account', 'Type', 'Value'] },
-            cf: { headers: {ar: ['البند', 'نوع التدفق', 'القيمة', 'إجراء'], en: ['Item', 'Flow Type', 'Value', 'Action']}, fields: ['Account', 'Type', 'Value'] },
-            eq: { headers: {ar: ['البند', 'النوع', 'القيمة', 'إجراء'], en: ['Item', 'Type', 'Value', 'Action']}, fields: ['Account', 'Type', 'Value'] },
+            bs: { headers: {ar: ['الحساب', 'القيمة', 'إجراء'], en: ['Account', 'Value', 'Action']}, fields: ['Account', 'Value'] },
+            is: { headers: {ar: ['البند', 'القيمة', 'إجراء'], en: ['Item', 'Value', 'Action']}, fields: ['Account', 'Value'] },
         }
     };
 
     const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
 
     const saveData = () => localStorage.setItem('statementData', JSON.stringify(state.data));
+
     const loadData = () => {
         const storedData = JSON.parse(localStorage.getItem('statementData') || '{}');
         const defaultRow = (fields) => fields.reduce((acc, field) => ({ ...acc, [field]: '' }), {});
         for (const key in config.tables) {
-            state.data[key] = storedData[key]?.length ? storedData[key] : [defaultRow(config.tables[key].fields)];
+            state.data[key] = storedData[key]?.length > 0 ? storedData[key] : [defaultRow(config.tables[key].fields)];
         }
     };
-
+    
     const handleSaveAs = () => {
         const name = UI.saveAsNameInput.value.trim();
         if (!name) { alert(t_page('saveAsError')); return; }
-        const { bs, is } = state.data;
-        const unifiedDataset = [];
 
-        bs.forEach(row => unifiedDataset.push({ Account: row.Account || '', Type: row.Type || 'Balance Sheet', Debit: toNum(row.Debit), Credit: toNum(row.Credit) }));
-        is.forEach(row => {
-            const type = (row.Type || '').toLowerCase();
-            const value = toNum(row.Value);
-            if (type.includes('revenue') || type.includes('إيراد')) {
-                unifiedDataset.push({ Account: row.Account, Type: row.Type, Debit: 0, Credit: value });
-            } else {
-                unifiedDataset.push({ Account: row.Account, Type: row.Type, Debit: value, Credit: 0 });
-            }
+        const unifiedDataset = [];
+        // A simplified logic to unify data for trialData format
+        // This logic needs to be robust based on how you want to interpret these simplified statements
+        state.data.bs.forEach(row => {
+            unifiedDataset.push({ Account: row.Account, Debit: toNum(row.Value), Credit: 0, MainType: 'Assets', SubType: 'Current Asset' });
+        });
+        state.data.is.forEach(row => {
+            unifiedDataset.push({ Account: row.Account, Debit: toNum(row.Value), Credit: 0, MainType: 'Income Statement', SubType: 'Revenue' });
         });
 
         if (unifiedDataset.length === 0) { alert(t_page('noDataToSave')); return; }
@@ -116,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
             UI.saveAsNameInput.value = '';
         } catch (e) { alert("Error saving data."); }
     };
-
+    
     const renderTable = (tableKey) => {
         const tableEl = document.getElementById(`${tableKey}Table`);
         const tableConfig = config.tables[tableKey];
@@ -131,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let cellsHTML = '';
             tableConfig.fields.forEach(field => {
                 const value = row[field] || '';
-                const inputType = (field === 'Debit' || field === 'Credit' || field === 'Value') ? 'number' : 'text';
+                const inputType = field === 'Value' ? 'number' : 'text';
                 cellsHTML += `<td><input class="form-control form-control-sm" type="${inputType}" data-field="${field}" value="${value}"></td>`;
             });
             cellsHTML += `<td><button class="btn btn-sm btn-outline-danger btn-delete"><i class="bi bi-trash"></i></button></td>`;
@@ -153,12 +141,12 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderAllTables = () => Object.keys(config.tables).forEach(key => renderTable(key));
-
+    
     const init = () => {
         UI.saveBtn.addEventListener('click', () => { saveData(); alert(t_page('savedSuccess')); });
         UI.clearBtn.addEventListener('click', () => {
             if (confirm(t_page('confirmClear'))) {
-                for (const key in config.tables) localStorage.removeItem(`statementData_${key}`);
+                localStorage.removeItem('statementData');
                 loadData();
                 renderAllTables();
             }
