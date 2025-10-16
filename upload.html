@@ -70,26 +70,42 @@
         <section class="card-surface">
             <h5 data-translate-key="entryTitle"></h5>
             <ul class="nav nav-tabs mt-3" id="statementTabs" role="tablist">
-                <li class="nav-item" role="presentation"><button class="nav-link active" id="bs-tab" data-bs-toggle="tab" data-bs-target="#bs-pane" type="button" role="tab" data-translate-key="tabBS"></button></li>
-                <li class="nav-item" role="presentation"><button class="nav-link" id="is-tab" data-bs-toggle="tab" data-bs-target="#is-pane" type="button" role="tab" data-translate-key="tabIS"></button></li>
-                <li class="nav-item" role="presentation"><button class="nav-link" id="cf-tab" data-bs-toggle="tab" data-bs-target="#cf-pane" type="button" role="tab" data-translate-key="tabCF"></button></li>
-                <li class="nav-item" role="presentation"><button class="nav-link" id="eq-tab" data-bs-toggle="tab" data-bs-target="#eq-pane" type="button" role="tab" data-translate-key="tabEQ"></button></li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="bs-tab" data-bs-toggle="tab" data-bs-target="#bs-pane" type="button" role="tab" aria-controls="bs-pane" aria-selected="true">
+                        <span data-translate-key="tabBS"></span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="is-tab" data-bs-toggle="tab" data-bs-target="#is-pane" type="button" role="tab" aria-controls="is-pane" aria-selected="false">
+                        <span data-translate-key="tabIS"></span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="cf-tab" data-bs-toggle="tab" data-bs-target="#cf-pane" type="button" role="tab" aria-controls="cf-pane" aria-selected="false">
+                        <span data-translate-key="tabCF"></span>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="eq-tab" data-bs-toggle="tab" data-bs-target="#eq-pane" type="button" role="tab" aria-controls="eq-pane" aria-selected="false">
+                        <span data-translate-key="tabEQ"></span>
+                    </button>
+                </li>
             </ul>
 
             <div class="tab-content pt-3">
-                <div class="tab-pane fade show active" id="bs-pane" role="tabpanel">
+                <div class="tab-pane fade show active" id="bs-pane" role="tabpanel" aria-labelledby="bs-tab">
                     <div class="table-responsive"><table id="bsTable" class="table align-middle"></table></div>
                     <button class="btn btn-sm btn-outline-primary mt-2" data-table="bs"><i class="bi bi-plus"></i> <span data-translate-key="addBS"></span></button>
                 </div>
-                <div class="tab-pane fade" id="is-pane" role="tabpanel">
+                <div class="tab-pane fade" id="is-pane" role="tabpanel" aria-labelledby="is-tab">
                     <div class="table-responsive"><table id="isTable" class="table align-middle"></table></div>
                     <button class="btn btn-sm btn-outline-primary mt-2" data-table="is"><i class="bi bi-plus"></i> <span data-translate-key="addIS"></span></button>
                 </div>
-                <div class="tab-pane fade" id="cf-pane" role="tabpanel">
+                <div class="tab-pane fade" id="cf-pane" role="tabpanel" aria-labelledby="cf-tab">
                     <div class="table-responsive"><table id="cfTable" class="table align-middle"></table></div>
                     <button class="btn btn-sm btn-outline-primary mt-2" data-table="cf"><i class="bi bi-plus"></i> <span data-translate-key="addCF"></span></button>
                 </div>
-                <div class="tab-pane fade" id="eq-pane" role="tabpanel">
+                <div class="tab-pane fade" id="eq-pane" role="tabpanel" aria-labelledby="eq-tab">
                     <div class="table-responsive"><table id="eqTable" class="table align-middle"></table></div>
                     <button class="btn btn-sm btn-outline-primary mt-2" data-table="eq"><i class="bi bi-plus"></i> <span data-translate-key="addEQ"></span></button>
                 </div>
