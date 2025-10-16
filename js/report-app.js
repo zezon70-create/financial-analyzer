@@ -23,7 +23,7 @@ window.pageTranslations = {
         equity: "حقوق الملكية",
         totalEquity: "إجمالي حقوق الملكية",
         totalLiabilitiesAndEquity: "إجمالي الخصوم وحقوق الملكية",
-        bs_comment_balanced: "تحليل إيجابي: قائمة المركز المالي متوازنة، مما يعكس دقة البيانات وصحة المعادلة المحاسبية.",
+        bs_comment_balanced: "تحليل إيجابي: قائمة المركز المالي متوازنة، مما يعكس دقة البيانات وصحة المعادلة المحاسبية (الأصول = الخصوم + حقوق الملكية).",
         bs_comment_unbalanced: "تحليل يتطلب الانتباه: القائمة غير متوازنة بفارق {diff}. يرجى مراجعة التصنيفات والإدخالات.",
         
         isTitle: "قائمة الدخل الشامل",
@@ -144,9 +144,9 @@ document.addEventListener('DOMContentLoaded', () => {
         state.statements = financials;
     };
 
-    const renderStatementSection = (items, totalLabel, isSubSection = false) => {
+    const renderStatementSection = (items, totalLabel) => {
         let total = 0;
-        let html = isSubSection ? '' : '<table class="table table-sm report-table"><tbody>';
+        let html = '<table class="table table-sm report-table"><tbody>';
         items.forEach(item => {
             html += `<tr><td>${item.Account}</td><td class="text-end">${formatCurrency(item.value)}</td></tr>`;
             total += item.value;
@@ -154,29 +154,31 @@ document.addEventListener('DOMContentLoaded', () => {
         if (totalLabel) {
             html += `<tr class="subtotal-row"><td>${totalLabel}</td><td class="text-end">${formatCurrency(total)}</td></tr>`;
         }
-        html += isSubSection ? '' : '</tbody></table>';
+        html += '</tbody></table>';
         return { html, total };
     };
 
     const renderBalanceSheet = () => {
         const { assets, liabilities, equity } = state.statements;
-        let html = `<h6>${t_page('assets')}</h6><table class="table table-sm report-table"><tbody>`;
-        const currentAssets = renderStatementSection(assets.current, `${t_page('total')} ${t_page('currentAssets')}`, true);
-        const nonCurrentAssets = renderStatementSection(assets.nonCurrent, `${t_page('total')} ${t_page('nonCurrentAssets')}`, true);
+        let html = `<h6>${t_page('assets')}</h6>`;
+        const currentAssets = renderStatementSection(assets.current, `${t_page('total')} ${t_page('currentAssets')}`);
+        const nonCurrentAssets = renderStatementSection(assets.nonCurrent, `${t_page('total')} ${t_page('nonCurrentAssets')}`);
         const totalAssets = currentAssets.total + nonCurrentAssets.total;
-        html += currentAssets.html + nonCurrentAssets.html + `</tbody></table><table class="table report-table"><tr class="total-row"><td>${t_page('totalAssets')}</td><td class="text-end">${formatCurrency(totalAssets)}</td></tr></table>`;
+        html += currentAssets.html + nonCurrentAssets.html;
+        html += `<table class="table report-table"><tbody class="total-row"><tr><td>${t_page('totalAssets')}</td><td class="text-end">${formatCurrency(totalAssets)}</td></tr></tbody></table>`;
 
-        html += `<h6 class="mt-4">${t_page('liabilities')} & ${t_page('equity')}</h6><table class="table table-sm report-table"><tbody>`;
-        const currentLiabs = renderStatementSection(liabilities.current, `${t_page('total')} ${t_page('currentLiabilities')}`, true);
-        const nonCurrentLiabs = renderStatementSection(liabilities.nonCurrent, `${t_page('total')} ${t_page('nonCurrentLiabilities')}`, true);
+        html += `<h6 class="mt-4">${t_page('liabilities')} & ${t_page('equity')}</h6>`;
+        const currentLiabs = renderStatementSection(liabilities.current, `${t_page('total')} ${t_page('currentLiabilities')}`);
+        const nonCurrentLiabs = renderStatementSection(liabilities.nonCurrent, `${t_page('total')} ${t_page('nonCurrentLiabilities')}`);
         const totalLiabs = currentLiabs.total + nonCurrentLiabs.total;
-        html += currentLiabs.html + nonCurrentLiabs.html + `</tbody></table><table class="table report-table"><tr class="subtotal-row"><td>${t_page('totalLiabilities')}</td><td class="text-end">${formatCurrency(totalLiabs)}</td></tr></table>`;
-
+        html += currentLiabs.html + nonCurrentLiabs.html;
+        html += `<table class="table report-table"><tbody class="subtotal-row"><tr><td>${t_page('totalLiabilities')}</td><td class="text-end">${formatCurrency(totalLiabs)}</td></tr></tbody></table>`;
+        
         const totalEquity = renderStatementSection(equity.capital.concat(equity.retainedEarnings), t_page('totalEquity'));
         html += totalEquity.html;
 
         const totalLiabsAndEquity = totalLiabs + totalEquity.total;
-        html += `<table class="table report-table"><tr class="total-row"><td>${t_page('totalLiabilitiesAndEquity')}</td><td class="text-end">${formatCurrency(totalLiabsAndEquity)}</td></tr></table>`;
+        html += `<table class="table report-table"><tbody class="total-row"><tr><td>${t_page('totalLiabilitiesAndEquity')}</td><td class="text-end">${formatCurrency(totalLiabsAndEquity)}</td></tr></tbody></table>`;
 
         document.getElementById('balanceSheetTable').innerHTML = html;
         const diff = totalAssets - totalLiabsAndEquity;
@@ -194,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const totalExpenses = renderStatementSection(expenses, `(-) ${t_page('operatingExpenses')}`, true);
         const netProfit = grossProfit - totalExpenses.total;
-        html += totalExpenses.html + `</tbody></table><table class="table report-table"><tr class="total-row"><td>${t_page('netProfit')}</td><td class="text-end">${formatCurrency(netProfit)}</td></tr></table>`;
+        html += totalExpenses.html + `</tbody></table><table class="table report-table"><tbody class="total-row"><tr><td>${t_page('netProfit')}</td><td class="text-end">${formatCurrency(netProfit)}</td></tr></tbody></table>`;
 
         document.getElementById('incomeStatementTable').innerHTML = html;
         const margin = totalRevenue.total !== 0 ? (netProfit / totalRevenue.total) * 100 : 0;
@@ -210,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
         html += `<tr class="subtotal-row"><td>${t_page('operatingActivities')}</td><td class="text-end">${formatCurrency(netProfit)}</td></tr>`;
         html += `<tr><td>${t_page('investingActivities')}</td><td class="text-end">0</td></tr>`;
         html += `<tr><td>${t_page('financingActivities')}</td><td class="text-end">0</td></tr>`;
-        html += `</tbody></table><table class="table report-table"><tr class="total-row"><td>${t_page('netCashFlow')}</td><td class="text-end">${formatCurrency(netProfit)}</td></tr></table>`;
+        html += `</tbody></table><table class="table report-table"><tbody class="total-row"><tr><td>${t_page('netCashFlow')}</td><td class="text-end">${formatCurrency(netProfit)}</td></tr></tbody></table>`;
         
         document.getElementById('cashFlowStatementTable').innerHTML = html;
         document.getElementById('cashFlowStatementComment').textContent = netProfit > 0 ? t_page('cf_comment_positive') : t_page('cf_comment_negative');
@@ -218,7 +220,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const renderEquityStatement = () => {
         const openingEquity = state.statements.equity.capital.reduce((s,r)=>s+r.value, 0);
-        const netProfit = (state.statements.income.revenue.reduce((s,r)=>s+r.value,0)) - (state.statements.income.cogs.reduce((s,r)=>s+r.value,0)) - (state.statements.income.expenses.reduce((s,r)=>s+r.value,0));
+        const netProfit = (state.statements.income.revenue.reduce((s,r)=>s-r.value,0)) - (state.statements.income.cogs.reduce((s,r)=>s+r.value,0)) - (state.statements.income.expenses.reduce((s,r)=>s+r.value,0));
         const closingEquity = openingEquity + netProfit;
         
         let html = `<table class="table table-sm report-table"><tbody>`;
@@ -234,23 +236,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const init = () => {
         document.getElementById('exportPdfBtn').addEventListener('click', () => {
             const element = document.getElementById('report-content');
-            const opt = { margin: 0.5, filename: 'Financial_Report.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }};
+            const opt = { 
+                margin:       0.5,
+                filename:     'Financial_Report.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
             html2pdf().from(element).set(opt).save();
         });
-        
+
         document.getElementById('exportExcelBtn').addEventListener('click', () => {
             const wb = XLSX.utils.book_new();
-            const addSheet = (elementId, sheetName) => {
-                const table = document.getElementById(elementId).querySelector('table');
-                if (table) {
-                    const ws = XLSX.utils.table_to_sheet(table);
+            const addSheet = (element, sheetName) => {
+                if (element) {
+                    const ws = XLSX.utils.table_to_sheet(element.querySelector('table'));
                     XLSX.utils.book_append_sheet(wb, ws, sheetName);
                 }
             };
-            addSheet('balanceSheetTable', 'Balance Sheet');
-            addSheet('incomeStatementTable', 'Income Statement');
-            addSheet('cashFlowStatementTable', 'Cash Flow');
-            addSheet('equityStatementTable', 'Equity');
+            addSheet(document.getElementById('balanceSheetTable'), 'Balance Sheet');
+            addSheet(document.getElementById('incomeStatementTable'), 'Income Statement');
+            addSheet(document.getElementById('cashFlowStatementTable'), 'Cash Flow');
+            addSheet(document.getElementById('equityStatementTable'), 'Equity');
             XLSX.writeFile(wb, "Financial_Statements.xlsx");
         });
         
@@ -263,3 +270,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     init();
 });
+
