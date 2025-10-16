@@ -131,8 +131,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const metrics = ['revenue', 'expense', 'netProfit', 'assets', 'liabilities', 'equity'];
         
         let tableHTML = `<table class="table table-hover"><thead><tr>
-            <th>${t_page('metric')}</th><th>${periodA.name}</th><th>${periodB.name}</th>
-            <th>${t_page('changeValue')}</th><th>${t_page('changePercent')}</th>
+            <th>${t_page('metric')}</th>
+            <th>${periodA.name}</th>
+            <th>${periodB.name}</th>
+            <th>${t_page('changeValue')}</th>
+            <th>${t_page('changePercent')}</th>
         </tr></thead><tbody>`;
 
         metrics.forEach(key => {
@@ -140,11 +143,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const valB = periodB[key];
             const change = valB - valA;
             const percentChange = valA !== 0 ? (change / Math.abs(valA)) * 100 : Infinity;
+            
             tableHTML += `<tr>
                 <td>${t_page(key)}</td>
-                <td>${valA.toLocaleString()}</td>
-                <td>${valB.toLocaleString()}</td>
-                <td class="${change >= 0 ? 'text-success' : 'text-danger'}">${change.toLocaleString()}</td>
+                <td>${valA.toLocaleString(undefined, {maximumFractionDigits: 0})}</td>
+                <td>${valB.toLocaleString(undefined, {maximumFractionDigits: 0})}</td>
+                <td class="${change >= 0 ? 'text-success' : 'text-danger'}">${change.toLocaleString(undefined, {maximumFractionDigits: 0})}</td>
                 <td class="${change >= 0 ? 'text-success' : 'text-danger'}">${isFinite(percentChange) ? `${percentChange.toFixed(1)}%` : 'N/A'}</td>
             </tr>`;
         });
@@ -173,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderComparisonChart();
         UI.resultsSection.style.display = 'block';
     };
-
+    
     UI.compareBtn.addEventListener('click', runComparison);
     findAndLoadDatasets();
     populateSelectors();
