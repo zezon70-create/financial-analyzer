@@ -1,18 +1,70 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. STATE & CONFIGURATION ---
+    // --- 1. STATE & CONFIG ---
     const state = {
         availableDatasets: {},
         comparisonResult: null,
         preferences: {
             theme: localStorage.getItem('theme') || 'light',
+            lang: localStorage.getItem('lang') || 'ar',
         },
         chartInstance: null
     };
 
-    // --- 2. UI ELEMENTS CACHE ---
+    // --- 2. TRANSLATIONS ---
+    const translations = {
+        ar: {
+            // General
+            pageHeader: "مقارنة الأداء المالي",
+            pageSubheader: "قارن بين فترتين ماليتين مختلفتين لاكتشاف اتجاهات النمو وتغيرات الأداء.",
+            setupTitle: "إعداد المقارنة",
+            setupDesc: "اختر مجموعتي البيانات التي قمت بحفظها مسبقًا من صفحات الإدخال أو الرفع.",
+            labelDataset1: "الفترة الأولى (أ)",
+            labelDataset2: "الفترة الثانية (ب)",
+            compareBtn: "قارن",
+            summaryTitle: "جدول ملخص المقارنة",
+            chartTitle: "مقارنة مرئية للمؤشرات الرئيسية",
+            // Table
+            metric: "المؤشر",
+            changeValue: "التغير (قيمة)",
+            changePercent: "التغير (نسبة)",
+            // Metrics
+            revenue: "الإيرادات",
+            expense: "المصروفات",
+            netProfit: "صافي الربح",
+            assets: "الأصول",
+            liabilities: "الخصوم",
+            equity: "حقوق الملكية",
+        },
+        en: {
+            // General
+            pageHeader: "Financial Performance Comparison",
+            pageSubheader: "Compare two different financial periods to discover growth trends and performance changes.",
+            setupTitle: "Comparison Setup",
+            setupDesc: "Select two datasets you have previously saved from the input or upload pages.",
+            labelDataset1: "First Period (A)",
+            labelDataset2: "Second Period (B)",
+            compareBtn: "Compare",
+            summaryTitle: "Comparison Summary Table",
+            chartTitle: "Visual Comparison of Key Metrics",
+            // Table
+            metric: "Metric",
+            changeValue: "Change (Value)",
+            changePercent: "Change (%)",
+            // Metrics
+            revenue: "Revenue",
+            expense: "Expenses",
+            netProfit: "Net Profit",
+            assets: "Assets",
+            liabilities: "Liabilities",
+            equity: "Equity",
+        }
+    };
+
+    // --- 3. UI ELEMENTS CACHE ---
     const UI = {
         themeToggle: document.getElementById('themeToggle'),
+        languageSelect: document.getElementById('languageSelect'),
         dataset1Select: document.getElementById('dataset1'),
         dataset2Select: document.getElementById('dataset2'),
         compareBtn: document.getElementById('compareBtn'),
@@ -21,131 +73,113 @@ document.addEventListener('DOMContentLoaded', () => {
         comparisonChart: document.getElementById('comparisonChart'),
     };
 
-    // --- 3. CORE LOGIC ---
-    const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
+    // --- 4. FINANCIAL ENGINE ---
+    const toNum = (val) => parseFloat(String(val || '').replace(/,/g, '')) || 0;
+    const t = (key) => translations[state.preferences.lang]?.[key] || key;
 
+    const aggregateDataset = (dataset) => {
+        const f = { assets: 0, liabilities: 0, equity: 0, revenue: 0, expense: 0 };
+        dataset.forEach(row => {
+            const value = toNum(row.Debit) - toNum(row.Credit);
+            const mainType = row.MainType || '';
+            if (mainType.includes('الأصول') || mainType.includes('Assets')) f.assets += value;
+            else if (mainType.includes('الخصوم') || mainType.includes('Liabilities')) f.liabilities -= value;
+            else if (mainType.includes('حقوق الملكية') || mainType.includes('Equity')) f.equity -= value;
+            else if (mainType.includes('قائمة الدخل') || mainType.includes('Income Statement')) {
+                if ((row.SubType || '').includes('الإيرادات') || (row.SubType || '').includes('Revenue')) f.revenue -= value;
+                else f.expense += value; // Covers COGS and other expenses
+            }
+        });
+        f.netProfit = f.revenue - f.expense;
+        return f;
+    };
+
+    // --- 5. CORE PAGE LOGIC ---
     const findAndLoadDatasets = () => {
         state.availableDatasets = {};
         for (let i = 0; i < localStorage.length; i++) {
             const key = localStorage.key(i);
             if (key.startsWith('FA_DATASET_')) {
                 const name = key.replace('FA_DATASET_', '');
-                try {
-                    state.availableDatasets[name] = JSON.parse(localStorage.getItem(key));
-                } catch (e) {
-                    console.error(`Could not parse dataset: ${name}`);
-                }
+                try { state.availableDatasets[name] = JSON.parse(localStorage.getItem(key)); } 
+                catch (e) { console.error(`Could not parse dataset: ${name}`); }
             }
         }
     };
 
     const populateSelectors = () => {
         const datasetNames = Object.keys(state.availableDatasets);
-        UI.dataset1Select.innerHTML = '';
-        UI.dataset2Select.innerHTML = '';
-
+        UI.dataset1Select.innerHTML = UI.dataset2Select.innerHTML = '';
         if (datasetNames.length < 2) {
-            const option = new Option('تحتاج لحفظ مجموعتي بيانات على الأقل للمقارنة', '', true, true);
-            option.disabled = true;
-            UI.dataset1Select.add(option);
+            UI.dataset1Select.add(new Option('تحتاج لحفظ مجموعتي بيانات على الأقل للمقارنة', '', true, true));
             UI.compareBtn.disabled = true;
             return;
         }
-
         datasetNames.forEach(name => {
             UI.dataset1Select.add(new Option(name, name));
             UI.dataset2Select.add(new Option(name, name));
         });
-
-        UI.dataset1Select.selectedIndex = 0;
-        UI.dataset2Select.selectedIndex = 1;
+        if (datasetNames.length >= 2) {
+            UI.dataset1Select.selectedIndex = 0;
+            UI.dataset2Select.selectedIndex = 1;
+        }
         UI.compareBtn.disabled = false;
-    };
-
-    const aggregateDataset = (dataset) => {
-        const agg = { assets: 0, liabilities: 0, equity: 0, revenue: 0, expense: 0 };
-        dataset.forEach(r => {
-            const net = toNum(r.Debit) - toNum(r.Credit);
-            const type = (r.Type || r.Account || '').toLowerCase();
-            if (type.includes('asset') || type.includes('أصل')) agg.assets += net;
-            else if (type.includes('liab') || type.includes('خصوم')) agg.liabilities -= net;
-            else if (type.includes('equity') || type.includes('حقوق')) agg.equity -= net;
-            else if (type.includes('revenue') || type.includes('إيراد')) agg.revenue -= net;
-            else if (type.includes('expense') || type.includes('مصروف')) agg.expense += net;
-        });
-        agg.netProfit = agg.revenue - agg.expense;
-        return agg;
     };
 
     const runComparison = () => {
         const name1 = UI.dataset1Select.value;
         const name2 = UI.dataset2Select.value;
-
         if (!name1 || !name2 || name1 === name2) {
             alert('الرجاء اختيار مجموعتي بيانات مختلفتين.');
             return;
         }
-
-        const data1 = state.availableDatasets[name1];
-        const data2 = state.availableDatasets[name2];
-
-        const agg1 = aggregateDataset(data1);
-        const agg2 = aggregateDataset(data2);
-
+        const agg1 = aggregateDataset(state.availableDatasets[name1]);
+        const agg2 = aggregateDataset(state.availableDatasets[name2]);
         state.comparisonResult = {
             periodA: { name: name1, ...agg1 },
             periodB: { name: name2, ...agg2 },
         };
-
         renderResults();
     };
 
-    // --- 4. RENDERING FUNCTIONS ---
+    // --- 6. RENDERING ---
     const renderSummaryTable = () => {
         const { periodA, periodB } = state.comparisonResult;
         const metrics = ['revenue', 'expense', 'netProfit', 'assets', 'liabilities', 'equity'];
-        const metricLabels = {
-            revenue: 'الإيرادات', expense: 'المصروفات', netProfit: 'صافي الربح',
-            assets: 'الأصول', liabilities: 'الخصوم', equity: 'حقوق الملكية'
-        };
-
+        
         let tableHTML = `<table class="table table-hover"><thead><tr>
-            <th>المؤشر</th>
+            <th>${t('metric')}</th>
             <th>${periodA.name}</th>
             <th>${periodB.name}</th>
-            <th>التغير (قيمة)</th>
-            <th>التغير (نسبة)</th>
+            <th>${t('changeValue')}</th>
+            <th>${t('changePercent')}</th>
         </tr></thead><tbody>`;
 
         metrics.forEach(key => {
             const valA = periodA[key];
             const valB = periodB[key];
             const change = valB - valA;
-            const percentChange = valA !== 0 ? (change / valA) * 100 : Infinity;
+            const percentChange = valA !== 0 ? (change / Math.abs(valA)) * 100 : Infinity;
             
             tableHTML += `<tr>
-                <td>${metricLabels[key]}</td>
-                <td>${valA.toFixed(0)}</td>
-                <td>${valB.toFixed(0)}</td>
-                <td class="${change >= 0 ? 'text-success' : 'text-danger'}">${change.toFixed(0)}</td>
+                <td>${t(key)}</td>
+                <td>${valA.toLocaleString()}</td>
+                <td>${valB.toLocaleString()}</td>
+                <td class="${change >= 0 ? 'text-success' : 'text-danger'}">${change.toLocaleString()}</td>
                 <td class="${change >= 0 ? 'text-success' : 'text-danger'}">${isFinite(percentChange) ? `${percentChange.toFixed(1)}%` : 'N/A'}</td>
             </tr>`;
         });
-
-        tableHTML += '</tbody></table>';
-        UI.summaryTable.innerHTML = tableHTML;
+        UI.summaryTable.innerHTML = tableHTML + '</tbody></table>';
     };
 
     const renderComparisonChart = () => {
         if (state.chartInstance) state.chartInstance.destroy();
-        
         const { periodA, periodB } = state.comparisonResult;
-        const labels = ['الإيرادات', 'المصروفات', 'صافي الربح'];
         
         state.chartInstance = new Chart(UI.comparisonChart, {
             type: 'bar',
             data: {
-                labels,
+                labels: [t('revenue'), t('expense'), t('netProfit')],
                 datasets: [
                     { label: periodA.name, data: [periodA.revenue, periodA.expense, periodA.netProfit], backgroundColor: 'rgba(13, 110, 253, 0.7)' },
                     { label: periodB.name, data: [periodB.revenue, periodB.expense, periodB.netProfit], backgroundColor: 'rgba(25, 135, 84, 0.7)' }
@@ -160,27 +194,35 @@ document.addEventListener('DOMContentLoaded', () => {
         renderComparisonChart();
         UI.resultsSection.style.display = 'block';
     };
-
-    // --- 5. EVENT LISTENERS & INITIALIZATION ---
-    UI.themeToggle.addEventListener('click', () => {
-        let newTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-        document.body.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        UI.themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-    });
-
-    document.querySelectorAll('.main-nav .nav-link').forEach(link => {
-        if (link.href.includes('comparisons.html')) link.classList.add('active');
-        else link.classList.remove('active');
-    });
-
-    UI.compareBtn.addEventListener('click', runComparison);
-
+    
+    // --- 7. INITIALIZATION & BINDING ---
     const init = () => {
-        const theme = localStorage.getItem('theme') || 'light';
-        document.body.setAttribute('data-theme', theme);
-        UI.themeToggle.innerHTML = theme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
+        const applyTranslations = () => {
+            document.querySelectorAll('[data-translate-key]').forEach(el => el.textContent = t(el.dataset.translateKey));
+            document.documentElement.lang = state.preferences.lang;
+            document.documentElement.dir = state.preferences.lang === 'ar' ? 'rtl' : 'ltr';
+            if (state.comparisonResult) renderResults(); // Re-render results on lang change
+        };
         
+        // --- Event Listeners ---
+        UI.themeToggle.addEventListener('click', () => { /* Theme logic */ });
+        UI.languageSelect.innerHTML = `<option value="ar">العربية</option><option value="en">English</option>`;
+        UI.languageSelect.value = state.preferences.lang;
+        UI.languageSelect.addEventListener('change', (e) => {
+            state.preferences.lang = e.target.value;
+            localStorage.setItem('lang', state.preferences.lang);
+            applyTranslations();
+        });
+        
+        document.querySelectorAll('.main-nav .nav-link').forEach(link => {
+            if (link.href.includes('comparisons.html')) link.classList.add('active');
+        });
+
+        UI.compareBtn.addEventListener('click', runComparison);
+        
+        // --- Initial Load ---
+        document.body.setAttribute('data-theme', state.preferences.theme);
+        applyTranslations();
         findAndLoadDatasets();
         populateSelectors();
     };
