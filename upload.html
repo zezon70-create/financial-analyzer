@@ -28,7 +28,8 @@
                 <a href="dashboard.html" class="nav-link" data-translate-key="navDashboard">لوحة التحكم</a>
                 <a href="comparisons.html" class="nav-link" data-translate-key="navCompare">المقارنات</a>
             </nav>
-            <div class="controls">
+            <div class="controls d-flex align-items-center gap-3">
+                <select id="languageSelect" class="form-select form-select-sm" style="width: auto;"></select>
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i></button>
             </div>
         </div>
@@ -68,28 +69,28 @@
         <section class="card-surface">
             <h5 data-translate-key="entryTitle">إدخال البيانات اليدوي</h5>
             <ul class="nav nav-tabs mt-3" id="statementTabs" role="tablist">
-                <li class="nav-item" role="presentation"><button class="nav-link active" id="bs-tab" data-bs-toggle="tab" data-bs-target="#bs-pane" type="button" role="tab">الميزانية العمومية</button></li>
-                <li class="nav-item" role="presentation"><button class="nav-link" id="is-tab" data-bs-toggle="tab" data-bs-target="#is-pane" type="button" role="tab">قائمة الدخل</button></li>
-                <li class="nav-item" role="presentation"><button class="nav-link" id="cf-tab" data-bs-toggle="tab" data-bs-target="#cf-pane" type="button" role="tab">التدفقات النقدية</button></li>
-                <li class="nav-item" role="presentation"><button class="nav-link" id="eq-tab" data-bs-toggle="tab" data-bs-target="#eq-pane" type="button" role="tab">حقوق الملكية</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link active" id="bs-tab" data-bs-toggle="tab" data-bs-target="#bs-pane" type="button" role="tab" data-translate-key="tabBS">الميزانية العمومية</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" id="is-tab" data-bs-toggle="tab" data-bs-target="#is-pane" type="button" role="tab" data-translate-key="tabIS">قائمة الدخل</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" id="cf-tab" data-bs-toggle="tab" data-bs-target="#cf-pane" type="button" role="tab" data-translate-key="tabCF">التدفقات النقدية</button></li>
+                <li class="nav-item" role="presentation"><button class="nav-link" id="eq-tab" data-bs-toggle="tab" data-bs-target="#eq-pane" type="button" role="tab" data-translate-key="tabEQ">حقوق الملكية</button></li>
             </ul>
 
             <div class="tab-content pt-3">
                 <div class="tab-pane fade show active" id="bs-pane" role="tabpanel">
                     <div class="table-responsive"><table id="bsTable" class="table align-middle"></table></div>
-                    <button class="btn btn-sm btn-outline-primary mt-2" data-table="bs"><i class="bi bi-plus"></i> إضافة بند للميزانية</button>
+                    <button class="btn btn-sm btn-outline-primary mt-2" data-table="bs"><i class="bi bi-plus"></i> <span data-translate-key="addBS">إضافة بند للميزانية</span></button>
                 </div>
                 <div class="tab-pane fade" id="is-pane" role="tabpanel">
                     <div class="table-responsive"><table id="isTable" class="table align-middle"></table></div>
-                    <button class="btn btn-sm btn-outline-primary mt-2" data-table="is"><i class="bi bi-plus"></i> إضافة بند للدخل</button>
+                    <button class="btn btn-sm btn-outline-primary mt-2" data-table="is"><i class="bi bi-plus"></i> <span data-translate-key="addIS">إضافة بند للدخل</span></button>
                 </div>
                 <div class="tab-pane fade" id="cf-pane" role="tabpanel">
                     <div class="table-responsive"><table id="cfTable" class="table align-middle"></table></div>
-                    <button class="btn btn-sm btn-outline-primary mt-2" data-table="cf"><i class="bi bi-plus"></i> إضافة بند للتدفقات</button>
+                    <button class="btn btn-sm btn-outline-primary mt-2" data-table="cf"><i class="bi bi-plus"></i> <span data-translate-key="addCF">إضافة بند للتدفقات</span></button>
                 </div>
                 <div class="tab-pane fade" id="eq-pane" role="tabpanel">
                     <div class="table-responsive"><table id="eqTable" class="table align-middle"></table></div>
-                    <button class="btn btn-sm btn-outline-primary mt-2" data-table="eq"><i class="bi bi-plus"></i> إضافة بند لحقوق الملكية</button>
+                    <button class="btn btn-sm btn-outline-primary mt-2" data-table="eq"><i class="bi bi-plus"></i> <span data-translate-key="addEQ">إضافة بند لحقوق الملكية</span></button>
                 </div>
             </div>
         </section>
