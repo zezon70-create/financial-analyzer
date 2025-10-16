@@ -1,60 +1,66 @@
+// js/dashboard-app.js
+
+window.pageTranslations = {
+    ar: {
+        pageTitle: "لوحة التحكم — المحلل المالي",
+        pageHeader: "لوحة التحكم المالية",
+        pageSubheader: "نظرة عامة مرئية على أهم مؤشرات الأداء المالي لشركتك.",
+        kpi_netProfit: "صافي الربح",
+        kpi_netProfitMargin: "هامش صافي الربح",
+        kpi_currentRatio: "نسبة التداول",
+        kpi_roe: "العائد على حقوق الملكية",
+        chartProfitTitle: "تحليل الربحية",
+        chartStructureTitle: "الهيكل المالي",
+        summaryTitle: "ملخص الأداء الذكي",
+        alertsTitle: "تنبيهات وملاحظات",
+        revenue: "الإيرادات",
+        grossProfit: "مجمل الربح",
+        netProfit: "صافي الربح",
+        assets: "الأصول",
+        liabilities: "الخصوم",
+        equity: "حقوق الملكية",
+        noData: "لا توجد بيانات كافية لعرض لوحة التحكم. يرجى إدخال البيانات أولاً.",
+        summary_profit: "أداء جيد. الشركة تحقق ربحية ويمكنها تغطية التزاماتها قصيرة الأجل بشكل مريح.",
+        summary_loss: "يتطلب الانتباه. الشركة تواجه تحديات في الربحية ويجب مراقبة وضع السيولة.",
+        alert_liquidity_risk: "🔴 خطر سيولة: نسبة التداول أقل من 1.",
+        alert_leverage_risk: "🟡 تنبيه: نسبة الدين إلى حقوق الملكية مرتفعة.",
+        alert_profit_risk: "🔴 خطر ربحية: الشركة تحقق صافي خسارة.",
+        alert_ok: "🟢 لا توجد مؤشرات خطر حرجة بناءً على النسب الأساسية.",
+    },
+    en: {
+        pageTitle: "Dashboard — Financial Analyzer",
+        pageHeader: "Financial Dashboard",
+        pageSubheader: "A visual overview of your company's key financial performance indicators.",
+        kpi_netProfit: "Net Profit",
+        kpi_netProfitMargin: "Net Profit Margin",
+        kpi_currentRatio: "Current Ratio",
+        kpi_roe: "Return on Equity (ROE)",
+        chartProfitTitle: "Profitability Analysis",
+        chartStructureTitle: "Financial Structure",
+        summaryTitle: "Smart Performance Summary",
+        alertsTitle: "Alerts & Notes",
+        revenue: "Revenue",
+        grossProfit: "Gross Profit",
+        netProfit: "Net Profit",
+        assets: "Assets",
+        liabilities: "Liabilities",
+        equity: "Equity",
+        noData: "Not enough data to display the dashboard. Please enter data first.",
+        summary_profit: "Good performance. The company is profitable and can comfortably meet its short-term obligations.",
+        summary_loss: "Attention required. The company faces profitability challenges and liquidity should be monitored.",
+        alert_liquidity_risk: "🔴 Liquidity Risk: Current ratio is less than 1.",
+        alert_leverage_risk: "🟡 Warning: Debt-to-Equity ratio is high.",
+        alert_profit_risk: "🔴 Profitability Risk: The company is recording a net loss.",
+        alert_ok: "🟢 No critical risk indicators based on key ratios.",
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. STATE & CONFIG ---
-    const state = {
-        financials: {},
-        ratios: {},
-        preferences: {
-            theme: localStorage.getItem('theme') || 'light',
-            lang: localStorage.getItem('lang') || 'ar',
-        },
-        charts: {}
-    };
-
-    // --- 2. TRANSLATIONS ---
-    const translations = {
-        ar: {
-            pageHeader: "لوحة التحكم المالية",
-            pageSubheader: "نظرة عامة مرئية على أهم مؤشرات الأداء المالي لشركتك.",
-            kpi_netProfit: "صافي الربح",
-            kpi_netProfitMargin: "هامش صافي الربح",
-            kpi_currentRatio: "نسبة التداول",
-            kpi_roe: "العائد على حقوق الملكية",
-            chartProfitTitle: "تحليل الربحية",
-            chartStructureTitle: "الهيكل المالي",
-            summaryTitle: "ملخص الأداء الذكي",
-            alertsTitle: "تنبيهات وملاحظات",
-            revenue: "الإيرادات",
-            grossProfit: "مجمل الربح",
-            netProfit: "صافي الربح",
-            assets: "الأصول",
-            liabilities: "الخصوم",
-            equity: "حقوق الملكية",
-        },
-        en: {
-            pageHeader: "Financial Dashboard",
-            pageSubheader: "A visual overview of your company's key financial performance indicators.",
-            kpi_netProfit: "Net Profit",
-            kpi_netProfitMargin: "Net Profit Margin",
-            kpi_currentRatio: "Current Ratio",
-            kpi_roe: "Return on Equity (ROE)",
-            chartProfitTitle: "Profitability Analysis",
-            chartStructureTitle: "Financial Structure",
-            summaryTitle: "Smart Performance Summary",
-            alertsTitle: "Alerts & Notes",
-            revenue: "Revenue",
-            grossProfit: "Gross Profit",
-            netProfit: "Net Profit",
-            assets: "Assets",
-            liabilities: "Liabilities",
-            equity: "Equity",
-        }
-    };
-
-    // --- 3. UI ELEMENTS CACHE ---
+    const state = { financials: {}, ratios: {}, charts: {} };
+    const lang = localStorage.getItem('lang') || 'ar';
+    const t_page = (key) => window.pageTranslations[lang]?.[key] || key;
     const UI = {
-        themeToggle: document.getElementById('themeToggle'),
-        languageSelect: document.getElementById('languageSelect'),
         kpiRow: document.getElementById('kpiRow'),
         profitabilityChart: document.getElementById('profitabilityChart'),
         structureChart: document.getElementById('structureChart'),
@@ -62,15 +68,13 @@ document.addEventListener('DOMContentLoaded', () => {
         alertsArea: document.getElementById('alertsArea'),
     };
 
-    // --- 4. FINANCIAL ENGINE (Copied from advanced-app.js) ---
-    const toNum = (val) => parseFloat(String(val || '').replace(/,/g, '')) || 0;
-    const t = (key) => translations[state.preferences.lang]?.[key] || key;
-
     const calculateAllFinancials = () => {
         const trialData = JSON.parse(localStorage.getItem('trialData') || '[]');
+        if (trialData.length === 0) return false;
+
         const f = { assets: 0, liabilities: 0, equity: 0, revenue: 0, cogs: 0, expenses: 0, currentAssets: 0, inventory: 0, currentLiabilities: 0 };
         trialData.forEach(row => {
-            const value = toNum(row.Debit) - toNum(row.Credit);
+            const value = (parseFloat(row.Debit) || 0) - (parseFloat(row.Credit) || 0);
             const mainType = row.MainType || '';
             const subType = row.SubType || '';
             if (mainType.includes('الأصول') || mainType.includes('Assets')) {
@@ -93,15 +97,16 @@ document.addEventListener('DOMContentLoaded', () => {
         f.grossProfit = f.revenue - f.cogs;
         f.netProfit = f.grossProfit - f.expenses;
         state.financials = f;
+        
         state.ratios = {
             currentRatio: f.currentLiabilities > 0 ? f.currentAssets / f.currentLiabilities : Infinity,
             debtToEquity: f.equity > 0 ? f.liabilities / f.equity : Infinity,
             netProfitMargin: f.revenue > 0 ? f.netProfit / f.revenue : 0,
             roe: f.equity > 0 ? f.netProfit / f.equity : 0,
         };
+        return true;
     };
 
-    // --- 5. RENDERING FUNCTIONS ---
     const formatCurrency = (value) => new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value || 0);
     
     const renderKPIs = () => {
@@ -115,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ];
         UI.kpiRow.innerHTML = kpis.map(kpi => `
             <div class="kpi-card">
-                <div class="label">${t(kpi.key)}</div>
+                <div class="label">${t_page(kpi.key)}</div>
                 <div class="value">${kpi.value}</div>
             </div>
         `).join('');
@@ -128,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
         state.charts.profitability = new Chart(UI.profitabilityChart, {
             type: 'bar',
             data: {
-                labels: [t('revenue'), t('grossProfit'), t('netProfit')],
+                labels: [t_page('revenue'), t_page('grossProfit'), t_page('netProfit')],
                 datasets: [{ data: [revenue, grossProfit, netProfit], backgroundColor: ['#0d6efd', '#6f42c1', '#198754'] }]
             },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
@@ -138,49 +143,34 @@ document.addEventListener('DOMContentLoaded', () => {
         state.charts.structure = new Chart(UI.structureChart, {
             type: 'doughnut',
             data: {
-                labels: [t('liabilities'), t('equity')],
-                datasets: [{ data: [liabilities, equity], backgroundColor: ['#ffc107', '#0d6efd'] }]
+                labels: [t_page('liabilities'), t_page('equity'), t_page('assets')],
+                datasets: [{ data: [liabilities, equity, -assets], backgroundColor: ['#ffc107', '#0d6efd', '#dc3545'] }]
             },
             options: { responsive: true, maintainAspectRatio: false }
         });
     };
-    
-    // ... (renderSummaryAndAlerts function would also go here)
 
-    // --- 6. INITIALIZATION & BINDING ---
-    const init = () => {
-        const applyTranslations = () => {
-            document.querySelectorAll('[data-translate-key]').forEach(el => el.textContent = t(el.dataset.translateKey));
-            document.documentElement.lang = state.preferences.lang;
-            document.documentElement.dir = state.preferences.lang === 'ar' ? 'rtl' : 'ltr';
-            updateDashboard(); // Re-render with new language
-        };
+    const renderSummaryAndAlerts = () => {
+        const { netProfitMargin, currentRatio, debtToEquity } = state.ratios;
+        UI.performanceSummary.textContent = netProfitMargin > 0 && currentRatio > 1.5 ? t_page('summary_profit') : t_page('summary_loss');
         
-        const updateDashboard = () => {
-            calculateAllFinancials();
-            renderKPIs();
-            renderCharts();
-            // renderSummaryAndAlerts();
-        };
-
-        // --- Event Listeners ---
-        UI.themeToggle.addEventListener('click', () => { /* ... (Theme toggle logic) ... */ });
-        UI.languageSelect.innerHTML = `<option value="ar">العربية</option><option value="en">English</option>`;
-        UI.languageSelect.value = state.preferences.lang;
-        UI.languageSelect.addEventListener('change', (e) => {
-            state.preferences.lang = e.target.value;
-            localStorage.setItem('lang', state.preferences.lang);
-            applyTranslations();
-        });
-        
-        // --- Initial Load ---
-        document.body.setAttribute('data-theme', state.preferences.theme);
-        document.querySelectorAll('.main-nav .nav-link').forEach(link => {
-            if (link.href.includes('dashboard.html')) link.classList.add('active');
-        });
-        
-        applyTranslations();
+        const alerts = [];
+        if (currentRatio < 1) alerts.push(t_page('alert_liquidity_risk'));
+        if (debtToEquity > 2) alerts.push(t_page('alert_leverage_risk'));
+        if (netProfitMargin < 0) alerts.push(t_page('alert_profit_risk'));
+        UI.alertsArea.innerHTML = alerts.length > 0 ? alerts.map(alert => `<div>${alert}</div>`).join('') : `<div>${t_page('alert_ok')}</div>`;
     };
 
-    init();
+    const updateDashboard = () => {
+        const hasData = calculateAllFinancials();
+        if (!hasData) {
+            document.querySelector('.dashboard-grid').innerHTML = `<div class="alert alert-warning">${t_page('noData')}</div>`;
+            return;
+        }
+        renderKPIs();
+        renderCharts();
+        renderSummaryAndAlerts();
+    };
+
+    updateDashboard();
 });
