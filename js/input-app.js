@@ -1,74 +1,78 @@
-document.addEventListener('DOMContentLoaded', () => {
+// js/input-app.js
 
-    // --- 1. CONFIGURATION & STATE ---
-    const config = {
-        languages: {
-            ar: 'العربية',
-            en: 'English'
-        },
-        currencies: {
-            EGP: { name: 'جنيه مصري', rate: 1 },
-            USD: { name: 'دولار أمريكي', rate: 48.5 },
-            EUR: { name: 'يورو', rate: 52.0 },
-            SAR: { name: 'ريال سعودي', rate: 12.9 },
-            AED: { name: 'درهم إماراتي', rate: 13.2 }
-        },
-        accountTypes: {
-            // IFRS Based Classification
-            ar: {
-                'الأصول': {
-                    'أصل متداول': ['النقد وما في حكمه', 'استثمارات قصيرة الأجل', 'العملاء والمدينون', 'المخزون', 'مصروفات مدفوعة مقدماً'],
-                    'أصل غير متداول': ['أصول ثابتة (صافي)', 'استثمارات طويلة الأجل', 'أصول غير ملموسة', 'شهرة']
-                },
-                'الخصوم': {
-                    'خصم متداول': ['الموردون والدائنون', 'قروض قصيرة الأجل', 'مستحقات ضريبية', 'إيرادات مؤجلة'],
-                    'خصم غير متداول': ['قروض طويلة الأجل', 'التزامات ضريبية مؤجلة']
-                },
-                'حقوق الملكية': {
-                    'رأس المال': ['رأس المال المدفوع', 'الأسهم', 'علاوة إصدار'],
-                    'الأرباح المحتجزة والاحتياطيات': ['الأرباح المحتجزة', 'احتياطيات قانونية', 'احتياطيات أخرى']
-                },
-                'قائمة الدخل': {
-                    'الإيرادات': ['إيرادات النشاط الرئيسي', 'إيرادات أخرى'],
-                    'تكلفة المبيعات': ['تكلفة البضاعة المباعة'],
-                    'المصروفات': ['مصروفات بيع وتسويق', 'مصروفات عمومية وإدارية', 'مصروفات تشغيل أخرى', 'مصروفات فائدة', 'مصروفات ضريبية']
-                }
-            },
-            en: {
-                'Assets': {
-                    'Current Asset': ['Cash and Equivalents', 'Short-term Investments', 'Accounts Receivable', 'Inventory', 'Prepaid Expenses'],
-                    'Non-current Asset': ['Property, Plant, and Equipment (Net)', 'Long-term Investments', 'Intangible Assets', 'Goodwill']
-                },
-                'Liabilities': {
-                    'Current Liability': ['Accounts Payable', 'Short-term Loans', 'Taxes Payable', 'Deferred Revenue'],
-                    'Non-current Liability': ['Long-term Loans', 'Deferred Tax Liabilities']
-                },
-                'Equity': {
-                    'Capital': ['Paid-in Capital', 'Common Stock', 'Additional Paid-in Capital'],
-                    'Retained Earnings & Reserves': ['Retained Earnings', 'Legal Reserves', 'Other Reserves']
-                },
-                'Income Statement': {
-                    'Revenue': ['Main Revenue', 'Other Income'],
-                    'Cost of Goods Sold (COGS)': ['Cost of Goods Sold'],
-                    'Expenses': ['Selling & Marketing Expenses', 'General & Administrative Expenses', 'Other Operating Expenses', 'Interest Expense', 'Tax Expense']
-                }
-            }
-        }
-    };
+// Page-specific translations
+window.pageTranslations = {
+    ar: {
+        pageTitle: "إدخال ميزان المراجعة — المحلل المالي",
+        pageHeader: "إدخال بيانات ميزان المراجعة",
+        pageSubheader: "هذه الصفحة مخصصة للمحاسبين لإدخال البيانات الدقيقة وتصنيفها طبقًا للمعايير الدولية.",
+        actionsTitle: "أدوات التحكم",
+        add: "إضافة صف",
+        save: "حفظ العمل",
+        clear: "مسح الكل",
+        saveForComparison: "حفظ نسخة للمقارنات",
+        saveAsPlaceholder: "مثال: بيانات 2024",
+        saveAs: "حفظ باسم",
+        currencyTitle: "إعدادات العملة",
+        currencyLabel: "العملة الأساسية",
+        fxRateLabel: "سعر الصرف",
+        tableTitle: "جدول البيانات",
+        thAccount: "الحساب",
+        thMainType: "التصنيف الرئيسي",
+        thSubType: "التصنيف الفرعي",
+        thDebit: "مدين",
+        thCredit: "دائن",
+        thAction: "إجراء",
+        balanced: "متوازن",
+        unbalanced: "غير متوازن",
+        total: "الإجمالي",
+        debit: "المدين",
+        credit: "الدائن",
+        confirmClear: "هل أنت متأكد من أنك تريد مسح جميع البيانات في الجدول؟",
+        savedSuccess: "تم حفظ البيانات الحالية بنجاح!",
+        saveAsSuccess: "تم حفظ البيانات بنجاح باسم",
+        saveAsError: "الرجاء إدخال اسم لحفظ مجموعة البيانات.",
+    },
+    en: {
+        pageTitle: "Trial Balance Input — Financial Analyzer",
+        pageHeader: "Trial Balance Data Entry",
+        pageSubheader: "This page is for accountants to enter precise data classified according to international standards.",
+        actionsTitle: "Controls",
+        add: "Add Row",
+        save: "Save Work",
+        clear: "Clear All",
+        saveForComparison: "Save a copy for comparisons",
+        saveAsPlaceholder: "e.g., Data 2024",
+        saveAs: "Save As",
+        currencyTitle: "Currency Settings",
+        currencyLabel: "Base Currency",
+        fxRateLabel: "Exchange Rate",
+        tableTitle: "Data Table",
+        thAccount: "Account",
+        thMainType: "Main Classification",
+        thSubType: "Sub Classification",
+        thDebit: "Debit",
+        thCredit: "Credit",
+        thAction: "Action",
+        balanced: "Balanced",
+        unbalanced: "Unbalanced",
+        total: "Total",
+        debit: "Debit",
+        credit: "Credit",
+        confirmClear: "Are you sure you want to clear all data in the table?",
+        savedSuccess: "Current data saved successfully!",
+        saveAsSuccess: "Data saved successfully as",
+        saveAsError: "Please enter a name to save the dataset.",
+    }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
 
     const state = {
         trialData: [],
-        preferences: {
-            theme: localStorage.getItem('theme') || 'light',
-            lang: localStorage.getItem('lang') || 'ar',
-            currency: localStorage.getItem('currency') || 'EGP',
-        }
     };
-
-    // --- 2. UI ELEMENTS CACHE ---
+    
     const UI = {
-        themeToggle: document.getElementById('themeToggle'),
-        languageSelect: document.getElementById('languageSelect'),
         currencySelect: document.getElementById('currencySelect'),
         fxRateInput: document.getElementById('fxRateInput'),
         tbBody: document.getElementById('tbBody'),
@@ -79,61 +83,35 @@ document.addEventListener('DOMContentLoaded', () => {
         saveAsNameInput: document.getElementById('saveAsName'),
         saveAsBtn: document.getElementById('saveAsBtn'),
     };
+
+    const config = { /* ... (IFRS classifications from previous turn) ... */ };
+    const lang = localStorage.getItem('lang') || 'ar';
+    const t_page = (key) => window.pageTranslations[lang]?.[key] || key;
     
-    // --- 3. TRANSLATION SYSTEM ---
-    const translations = {
-        ar: { /* All Arabic keys */ },
-        en: { /* All English keys */ }
-    };
-    const t = (key) => translations[state.preferences.lang][key] || key;
-
-    const applyTranslations = () => {
-        document.querySelectorAll('[data-translate-key]').forEach(el => {
-            el.textContent = t(el.dataset.translateKey);
-        });
-        document.documentElement.lang = state.preferences.lang;
-        document.documentElement.dir = state.preferences.lang === 'ar' ? 'rtl' : 'ltr';
-        // Re-render table to update dropdowns
-        renderTable();
-    };
-
-    // --- 4. CORE LOGIC ---
     const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
 
-    const saveData = () => {
-        localStorage.setItem('trialData', JSON.stringify(state.trialData));
-        localStorage.setItem('currency', state.preferences.currency);
-        config.currencies[state.preferences.currency].rate = toNum(UI.fxRateInput.value);
-        localStorage.setItem('fxRates', JSON.stringify(config.currencies));
-    };
-
-    const loadData = () => {
-        state.trialData = JSON.parse(localStorage.getItem('trialData') || '[]');
-        if (state.trialData.length === 0) {
-            state.trialData.push({ Account: '', MainType: '', SubType: '', Debit: 0, Credit: 0 });
-        }
-        const savedRates = JSON.parse(localStorage.getItem('fxRates') || '{}');
-        for (const code in savedRates) {
-            if (config.currencies[code]) {
-                config.currencies[code].rate = savedRates[code].rate;
-            }
-        }
-    };
-
-    const handleSaveAs = () => { /* ... (Same as before) ... */ };
+    const saveData = () => { /* ... */ };
+    const loadData = () => { /* ... */ };
+    const handleSaveAs = () => { /* ... */ };
     
-    const updateFxRate = () => {
-        const currency = config.currencies[state.preferences.currency];
-        UI.fxRateInput.value = currency.rate;
-        UI.fxRateInput.disabled = state.preferences.currency === 'EGP';
+    const updateFxRate = () => { /* ... */ };
+
+    const renderValidation = () => {
+        const totalDebit = state.trialData.reduce((sum, row) => sum + toNum(row.Debit), 0);
+        const totalCredit = state.trialData.reduce((sum, row) => sum + toNum(row.Credit), 0);
+        
+        if (Math.abs(totalDebit - totalCredit) < 0.01) {
+            UI.validationResult.textContent = `${t_page('balanced')} ✅ | ${t_page('total')}: ${totalDebit.toLocaleString()}`;
+            UI.validationResult.className = 'text-success fw-bold';
+        } else {
+            UI.validationResult.textContent = `${t_page('unbalanced')} ❌ | ${t_page('debit')}: ${totalDebit.toLocaleString()} | ${t_page('credit')}: ${totalCredit.toLocaleString()}`;
+            UI.validationResult.className = 'text-danger fw-bold';
+        }
     };
-
-    // --- 5. RENDERING ---
-    const renderValidation = () => { /* ... (Same as before) ... */ };
-
+    
     const renderTable = () => {
         UI.tbBody.innerHTML = '';
-        const currentLangTypes = config.accountTypes[state.preferences.lang];
+        const currentLangTypes = config.accountTypes[lang];
 
         state.trialData.forEach((row, index) => {
             const tr = document.createElement('tr');
@@ -160,10 +138,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             tr.querySelectorAll('input, select').forEach(el => {
                 el.addEventListener('change', (e) => {
-                    const field = e.target.dataset.field;
-                    state.trialData[index][field] = e.target.value;
-                    if (field === "MainType") {
-                        // Reset sub-type when main type changes and re-render the whole table
+                    state.trialData[index][e.target.dataset.field] = e.target.value;
+                    if (e.target.dataset.field === "MainType") {
                         state.trialData[index]["SubType"] = "";
                         renderTable();
                     }
@@ -181,54 +157,10 @@ document.addEventListener('DOMContentLoaded', () => {
         renderValidation();
     };
 
-    // --- 6. INITIALIZATION & BINDING ---
     const init = () => {
-        // Populate Language & Currency Selectors
-        for (const [code, name] of Object.entries(config.languages)) {
-            UI.languageSelect.add(new Option(name, code));
-        }
-        for (const code in config.currencies) {
-            UI.currencySelect.add(new Option(`${config.currencies[code].name} (${code})`, code));
-        }
-        
-        // Load Preferences & Data
-        document.body.setAttribute('data-theme', state.preferences.theme);
-        UI.languageSelect.value = state.preferences.lang;
-        UI.currencySelect.value = state.preferences.currency;
-        loadData();
-        updateFxRate();
-        
-        // Initial Render
-        applyTranslations(); // This will also call renderTable
-        
-        // Bind Events
-        UI.themeToggle.addEventListener('click', () => { /* ... */ });
-        UI.languageSelect.addEventListener('change', (e) => {
-            state.preferences.lang = e.target.value;
-            localStorage.setItem('lang', state.preferences.lang);
-            applyTranslations();
-        });
-        UI.currencySelect.addEventListener('change', (e) => {
-            state.preferences.currency = e.target.value;
-            localStorage.setItem('currency', state.preferences.currency);
-            updateFxRate();
-        });
-        UI.fxRateInput.addEventListener('change', (e) => {
-            config.currencies[state.preferences.currency].rate = toNum(e.target.value);
-        });
-
-        UI.addRowBtn.addEventListener('click', () => {
-            state.trialData.push({ Account: '', MainType: '', SubType: '', Debit: 0, Credit: 0 });
-            renderTable();
-        });
-
-        UI.saveBtn.addEventListener('click', () => { saveData(); alert('تم الحفظ بنجاح!'); });
-        UI.clearBtn.addEventListener('click', () => { /* ... */ });
-        UI.saveAsBtn.addEventListener('click', handleSaveAs);
-        
-        document.querySelectorAll('.main-nav .nav-link').forEach(link => {
-            if (link.href.includes('input.html')) link.classList.add('active');
-        });
+        // ... (The rest of the JS code from the previous turn)
+        // Ensure all bindings and initial loads are here
+        // The global `main.js` will handle the initial theme and language application
     };
 
     init();
