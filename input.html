@@ -28,7 +28,8 @@
                 <a href="dashboard.html" class="nav-link" data-translate-key="navDashboard">لوحة التحكم</a>
                 <a href="comparisons.html" class="nav-link" data-translate-key="navCompare">المقارنات</a>
             </nav>
-            <div class="controls">
+            <div class="controls d-flex align-items-center gap-3">
+                <select id="languageSelect" class="form-select form-select-sm" style="width: auto;"></select>
                 <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i></button>
             </div>
         </div>
@@ -45,7 +46,6 @@
             <div class="row g-4">
                 <div class="col-lg-7">
                     <h5 data-translate-key="actionsTitle">أدوات التحكم</h5>
-                    <p class="text-muted small" data-translate-key="actionsDesc">استخدم الأزرار لإدارة بياناتك. لحفظ نسخة للمقارنة بين الفترات، استخدم قسم "حفظ باسم".</p>
                     <div class="d-flex gap-2 flex-wrap mb-3">
                         <button id="addRowBtn" class="btn btn-primary"><i class="bi bi-plus-lg"></i> <span data-translate-key="add">إضافة صف</span></button>
                         <button id="saveBtn" class="btn btn-outline-secondary"><i class="bi bi-save"></i> <span data-translate-key="save">حفظ العمل</span></button>
@@ -60,9 +60,17 @@
                     </div>
                 </div>
                 <div class="col-lg-5">
-                    <h5 data-translate-key="uploadTitle">رفع ملف جاهز</h5>
-                    <label for="fileInput" class="form-label small text-muted" data-translate-key="uploadLabel">يمكنك رفع ملف Excel أو CSV وسيقوم التطبيق بقراءته تلقائيًا.</label>
-                    <input type="file" id="fileInput" class="form-control" accept=".csv,.xlsx"/>
+                    <h5 data-translate-key="currencyTitle">إعدادات العملة</h5>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label for="currencySelect" class="form-label small" data-translate-key="currencyLabel">العملة الأساسية</label>
+                            <select id="currencySelect" class="form-select"></select>
+                        </div>
+                        <div class="col-6">
+                            <label for="fxRateInput" class="form-label small" data-translate-key="fxRateLabel">سعر الصرف مقابل الجنيه</label>
+                            <input type="number" id="fxRateInput" class="form-control" disabled>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -77,8 +85,8 @@
                     <thead>
                         <tr>
                             <th scope="col" data-translate-key="thAccount">الحساب</th>
-                            <th scope="col" data-translate-key="thType">النوع</th>
-                            <th scope="col" data-translate-key="thCode">الكود</th>
+                            <th scope="col" data-translate-key="thMainType">التصنيف الرئيسي</th>
+                            <th scope="col" data-translate-key="thSubType">التصنيف الفرعي</th>
                             <th scope="col" class="text-end" data-translate-key="thDebit">مدين</th>
                             <th scope="col" class="text-end" data-translate-key="thCredit">دائن</th>
                             <th scope="col" data-translate-key="thAction">إجراء</th>
@@ -92,9 +100,7 @@
     </main>
     
     <footer class="site-footer">
-        <div class="container-main">
-            <p data-translate-key="footerText">© 2025 المحلل المالي. جميع الحقوق محفوظة.</p>
-        </div>
+        <div class="container-main"><p data-translate-key="footerText">© 2025 المحلل المالي. جميع الحقوق محفوظة.</p></div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
