@@ -1,47 +1,33 @@
-document.addEventListener('DOMContentLoaded', () => {
+// js/index-app.js
 
-    // --- 1. THEME SWITCHER ---
-    const themeToggle = document.getElementById('themeToggle');
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    
-    document.body.setAttribute('data-theme', currentTheme);
-    if (currentTheme === 'dark') {
-        themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
-    } else {
-        themeToggle.innerHTML = '<i class="fa-solid fa-moon"></i>';
+// Translations specific to this page are now here
+window.pageTranslations = {
+    ar: {
+        pageTitle: "المحلل المالي - رؤى دقيقة لقرارات واثقة",
+        heroTitle: "حوّل الأرقام إلى قرارات استراتيجية",
+        heroSubtitle: "تحليل مالي شامل، تقارير احترافية، وتنبؤات ذكية. كل ذلك بخصوصية تامة، فبياناتك لا تغادر جهازك أبدًا.",
+        ctaAccountant: "ابدأ كـ محاسب (ميزان المراجعة)",
+        ctaOwner: "ابدأ كـ صاحب عمل (قوائم مالية)",
+        howTitle: "تحليل مالي في 3 خطوات بسيطة",
+        step1Title: "1. أدخل بياناتك",
+        step1Desc: "اختر الطريقة التي تناسبك: إدخال يدوي دقيق لميزان المراجعة أو رفع سريع للقوائم المالية الجاهزة.",
+        step2Title: "2. احصل على رؤى فورية",
+        step2Desc: "يقوم المحلل المالي بإنشاء التقارير، حساب النسب، وعرض التحليلات المتقدمة في لوحة تحكم تفاعلية.",
+        step3Title: "3. قارن واتخذ القرار",
+        step3Desc: "قارن الأداء بين الفترات المختلفة واكتشف الاتجاهات لاتخاذ قرارات مالية واثقة ومبنية على البيانات.",
+    },
+    en: {
+        pageTitle: "Financial Analyzer - Accurate Insights for Confident Decisions",
+        heroTitle: "Turn Numbers into Strategic Decisions",
+        heroSubtitle: "Comprehensive financial analysis, professional reports, and smart forecasts. All with complete privacy—your data never leaves your device.",
+        ctaAccountant: "Start as Accountant (Trial Balance)",
+        ctaOwner: "Start as Business Owner (Financial Statements)",
+        howTitle: "Financial Analysis in 3 Simple Steps",
+        step1Title: "1. Input Your Data",
+        step1Desc: "Choose your method: precise manual entry of a trial balance or a quick upload of ready-made financial statements.",
+        step2Title: "2. Get Instant Insights",
+        step2Desc: "The Financial Analyzer generates reports, calculates ratios, and displays advanced analytics in an interactive dashboard.",
+        step3Title: "3. Compare and Decide",
+        step3Desc: "Compare performance across different periods and discover trends to make confident, data-driven financial decisions.",
     }
-
-    themeToggle.addEventListener('click', () => {
-        let newTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-        document.body.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-
-        if (newTheme === 'dark') {
-            themeToggle.innerHTML = '<i class="fa-solid fa-sun"></i>';
-        } else {
-            themeToggle.innerHTML = '<i class="fa-solid fa-moon"></i>';
-        }
-    });
-
-
-    // --- 2. ACTIVE NAVIGATION LINK ---
-    // This simple logic highlights the current page in the navigation bar.
-    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
-    const navLinks = document.querySelectorAll('.main-nav .nav-link');
-
-    navLinks.forEach(link => {
-        if (link.getAttribute('href') === currentPage) {
-            link.classList.add('active');
-        } else {
-            link.classList.remove('active');
-        }
-    });
-
-
-    // --- 3. TRANSLATION SYSTEM (Basic for now, can be expanded) ---
-    // In the future, you can add a language toggle button and expand this object.
-    const translations = {
-        // ... (Translation key-value pairs will go here)
-    };
-
-});
+};
