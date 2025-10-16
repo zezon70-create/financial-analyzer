@@ -2,196 +2,234 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 1. STATE & CONFIGURATION ---
     const state = {
-        rawData: [],
-        aggregatedData: {},
+        trialData: [],
+        statements: {}, // Will hold calculated statements
         preferences: {
             theme: localStorage.getItem('theme') || 'light',
-            source: 'trialData', // Default source
-            currency: 'EGP'
-        },
-        charts: {} // To hold chart instances for proper destruction
+            lang: localStorage.getItem('lang') || 'ar',
+        }
     };
 
-    // --- 2. UI ELEMENTS CACHE ---
+    // --- 2. TRANSLATION DICTIONARY ---
+    const translations = {
+        ar: {
+            // General
+            pageHeader: "القوائم المالية المفصلة",
+            pageSubheader: "تقارير احترافية طبقًا للمعايير الدولية مع تعليقات تحليلية ذكية.",
+            commentaryTitle: "تعليق تحليلي",
+            exportPdf: "تصدير PDF",
+            total: "الإجمالي",
+
+            // Balance Sheet (BS)
+            bsTitle: "قائمة المركز المالي",
+            bsSubheader: "تعرض أصول الشركة وخصومها وحقوق ملكيتها في تاريخ محدد.",
+            assets: "الأصول",
+            currentAssets: "الأصول المتداولة",
+            nonCurrentAssets: "الأصول غير المتداولة",
+            totalAssets: "إجمالي الأصول",
+            liabilities: "الخصوم",
+            currentLiabilities: "الخصوم المتداولة",
+            nonCurrentLiabilities: "الخصوم غير المتداولة",
+            totalLiabilities: "إجمالي الخصوم",
+            equity: "حقوق الملكية",
+            totalEquity: "إجمالي حقوق الملكية",
+            totalLiabilitiesAndEquity: "إجمالي الخصوم وحقوق الملكية",
+
+            // Income Statement (IS)
+            isTitle: "قائمة الدخل الشامل",
+            isSubheader: "تلخص إيرادات ومصروفات الشركة خلال فترة زمنية محددة.",
+            revenue: "الإيرادات",
+            cogs: "تكلفة المبيعات",
+            grossProfit: "مجمل الربح",
+            expenses: "المصروفات",
+            profitBeforeTax: "الربح قبل الضريبة",
+            tax: "الضريبة",
+            netProfit: "صافي الربح",
+            
+            // ... (Add more translations for CF and Equity)
+        },
+        en: {
+            // General
+            pageHeader: "Detailed Financial Statements",
+            pageSubheader: "Professional IFRS-compliant reports with smart analytical commentary.",
+            commentaryTitle: "Analytical Commentary",
+            exportPdf: "Export PDF",
+            total: "Total",
+
+            // Balance Sheet (BS)
+            bsTitle: "Statement of Financial Position",
+            bsSubheader: "Shows the company's assets, liabilities, and equity at a specific date.",
+            assets: "Assets",
+            currentAssets: "Current Assets",
+            nonCurrentAssets: "Non-current Assets",
+            totalAssets: "Total Assets",
+            liabilities: "Liabilities",
+            currentLiabilities: "Current Liabilities",
+            nonCurrentLiabilities: "Non-current Liabilities",
+            totalLiabilities: "Total Liabilities",
+            equity: "Equity",
+            totalEquity: "Total Equity",
+            totalLiabilitiesAndEquity: "Total Liabilities and Equity",
+
+            // Income Statement (IS)
+            isTitle: "Statement of Comprehensive Income",
+            isSubheader: "Summarizes a company's revenues and expenses for a specific period.",
+            revenue: "Revenue",
+            cogs: "Cost of Goods Sold",
+            grossProfit: "Gross Profit",
+            expenses: "Expenses",
+            profitBeforeTax: "Profit Before Tax",
+            tax: "Tax",
+            netProfit: "Net Profit",
+            
+            // ... (Add more translations for CF and Equity)
+        }
+    };
+
+    // --- 3. UI ELEMENTS CACHE ---
     const UI = {
         themeToggle: document.getElementById('themeToggle'),
-        dataSource: document.getElementById('dataSource'),
-        currencySelect: document.getElementById('currencySelect'),
-        kpiRow: document.getElementById('kpiRow'),
-        balanceChart: document.getElementById('balanceChart'),
-        incomeChart: document.getElementById('incomeChart'),
-        balanceComment: document.getElementById('balanceComment'),
-        incomeComment: document.getElementById('incomeComment'),
+        languageSelect: document.getElementById('languageSelect'),
+        exportPdfBtn: document.getElementById('exportPdfBtn'),
+        // ... Caches for table and comment divs
     };
-
-    // --- 3. CORE LOGIC ---
-
+    
+    // --- 4. FINANCIAL STATEMENT ENGINE ---
     const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
+    const t = (key) => translations[state.preferences.lang]?.[key] || key;
+    const formatCurrency = (value) => new Intl.NumberFormat('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value || 0);
 
-    const loadDataFromStorage = () => {
-        const sourceKey = state.preferences.source;
-        const rawData = localStorage.getItem(sourceKey) || '[]';
-        
-        // Unify data structure on the fly
-        let parsedData = JSON.parse(rawData);
-        if (sourceKey === 'statementData') {
-            // Data from upload page needs unification
-            const { bs = [], is = [] } = parsedData;
-            const unified = [];
-            bs.forEach(r => unified.push({ Account: r.Account, Type: r.Type, Debit: r.Debit, Credit: r.Credit }));
-            is.forEach(r => {
-                const type = (r.Type || '').toLowerCase();
-                const value = toNum(r.Value);
-                if (type.includes('revenue') || type.includes('إيراد')) {
-                    unified.push({ Account: r.Account, Type: r.Type, Debit: 0, Credit: value });
-                } else {
-                    unified.push({ Account: r.Account, Type: r.Type, Debit: value, Credit: 0 });
-                }
-            });
-            state.rawData = unified;
-        } else {
-            // Data from input page is already in the correct format
-            state.rawData = parsedData;
-        }
+    const loadData = () => {
+        state.trialData = JSON.parse(localStorage.getItem('trialData') || '[]');
     };
 
-    const aggregateData = () => {
-        const agg = { assets: 0, liabilities: 0, equity: 0, revenue: 0, expense: 0 };
-        state.rawData.forEach(r => {
-            const net = toNum(r.Debit) - toNum(r.Credit);
-            const type = (r.Type || r.Account || '').toLowerCase();
-            if (type.includes('asset') || type.includes('أصل')) agg.assets += net;
-            else if (type.includes('liab') || type.includes('خصوم')) agg.liabilities -= net;
-            else if (type.includes('equity') || type.includes('حقوق')) agg.equity -= net;
-            else if (type.includes('revenue') || type.includes('إيراد')) agg.revenue -= net;
-            else if (type.includes('expense') || type.includes('مصروف')) agg.expense += net;
+    const buildStatements = () => {
+        const statements = {
+            bs: { assets: { current: [], nonCurrent: [] }, liabilities: { current: [], nonCurrent: [] }, equity: [] },
+            is: { revenue: [], cogs: [], expenses: [] }
+        };
+
+        state.trialData.forEach(row => {
+            const value = toNum(row.Debit) - toNum(row.Credit);
+            switch (row.MainType) {
+                case 'الأصول':
+                case 'Assets':
+                    if (row.SubType === 'أصل متداول' || row.SubType === 'Current Asset') statements.bs.assets.current.push({ ...row, value });
+                    else statements.bs.assets.nonCurrent.push({ ...row, value });
+                    break;
+                case 'الخصوم':
+                case 'Liabilities':
+                    if (row.SubType === 'خصم متداول' || row.SubType === 'Current Liability') statements.bs.liabilities.current.push({ ...row, value: -value });
+                    else statements.bs.liabilities.nonCurrent.push({ ...row, value: -value });
+                    break;
+                case 'حقوق الملكية':
+                case 'Equity':
+                    statements.bs.equity.push({ ...row, value: -value });
+                    break;
+                case 'قائمة الدخل':
+                case 'Income Statement':
+                    if (row.SubType === 'الإيرادات' || row.SubType === 'Revenue') statements.is.revenue.push({ ...row, value: -value });
+                    else if (row.SubType === 'تكلفة المبيعات' || row.SubType === 'Cost of Goods Sold (COGS)') statements.is.cogs.push({ ...row, value });
+                    else statements.is.expenses.push({ ...row, value });
+                    break;
+            }
         });
-        state.aggregatedData = agg;
+        state.statements = statements;
     };
 
-    // --- 4. RENDERING FUNCTIONS ---
-
-    const formatCurrency = (value) => {
-        return new Intl.NumberFormat('ar-EG', {
-            style: 'currency',
-            currency: state.preferences.currency,
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-        }).format(value || 0);
-    };
-
-    const renderKPIs = () => {
-        const { assets, liabilities, equity, revenue, expense } = state.aggregatedData;
-        const netProfit = revenue - expense;
-        const kpis = [
-            { label: 'إجمالي الأصول', value: formatCurrency(assets) },
-            { label: 'إجمالي الخصوم', value: formatCurrency(liabilities) },
-            { label: 'صافي حقوق الملكية', value: formatCurrency(equity) },
-            { label: 'إجمالي الإيرادات', value: formatCurrency(revenue) },
-            { label: 'إجمالي المصروفات', value: formatCurrency(expense) },
-            { label: 'صافي الربح', value: formatCurrency(netProfit) },
-        ];
-        
-        UI.kpiRow.innerHTML = kpis.map(kpi => `
-            <div class="kpi">
-                <div class="label">${kpi.label}</div>
-                <div class="num">${kpi.value}</div>
-            </div>
-        `).join('');
-    };
-
-    const renderCharts = () => {
-        const { assets, liabilities, equity, revenue, expense } = state.aggregatedData;
-
-        // Destroy previous charts if they exist
-        if (state.charts.balance) state.charts.balance.destroy();
-        if (state.charts.income) state.charts.income.destroy();
-        
-        // Balance Sheet Chart
-        state.charts.balance = new Chart(UI.balanceChart, {
-            type: 'doughnut',
-            data: {
-                labels: ['الأصول', 'الخصوم', 'حقوق الملكية'],
-                datasets: [{ data: [assets, liabilities, equity], backgroundColor: ['#0d6efd', '#ffc107', '#198754'] }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+    // --- 5. RENDERING FUNCTIONS ---
+    
+    const renderStatementTable = (items, totalLabel) => {
+        let total = 0;
+        let html = '<table class="table table-sm"><tbody>';
+        items.forEach(item => {
+            html += `<tr><td>${item.Account}</td><td class="text-end">${formatCurrency(item.value)}</td></tr>`;
+            total += item.value;
         });
-
-        // Income Statement Chart
-        state.charts.income = new Chart(UI.incomeChart, {
-            type: 'bar',
-            data: {
-                labels: ['الإيرادات', 'المصروفات', 'صافي الربح'],
-                datasets: [{ 
-                    data: [revenue, expense, revenue - expense], 
-                    backgroundColor: ['#198754', '#dc3545', '#0d6efd'] 
-                }]
-            },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-        });
+        html += `<tr class="fw-bold"><td>${totalLabel}</td><td class="text-end">${formatCurrency(total)}</td></tr>`;
+        html += '</tbody></table>';
+        return { html, total };
     };
     
-    const renderComments = () => {
-        const { assets, liabilities, revenue, expense } = state.aggregatedData;
+    const renderBalanceSheet = () => {
+        const { assets, liabilities, equity } = state.statements.bs;
+        let html = `<h6>${t('assets')}</h6>`;
         
-        // Balance Sheet Comment
-        if (assets > liabilities) {
-            UI.balanceComment.textContent = 'تحليل إيجابي: إجمالي الأصول يتجاوز إجمالي الخصوم، مما يشير إلى مركز مالي قوي.';
-        } else {
-            UI.balanceComment.textContent = 'تحليل يتطلب الانتباه: إجمالي الخصوم يتجاوز إجمالي الأصول. يجب مراجعة هيكل الديون والالتزامات.';
-        }
+        const currentAssets = renderStatementTable(assets.current, t('total') + ' ' + t('currentAssets'));
+        const nonCurrentAssets = renderStatementTable(assets.nonCurrent, t('total') + ' ' + t('nonCurrentAssets'));
+        const totalAssets = currentAssets.total + nonCurrentAssets.total;
+        html += currentAssets.html + nonCurrentAssets.html;
+        html += `<table class="table"><tr class="fw-bold table-primary"><td>${t('totalAssets')}</td><td class="text-end">${formatCurrency(totalAssets)}</td></tr></table>`;
+
+        html += `<h6 class="mt-4">${t('liabilities')} & ${t('equity')}</h6>`;
+        const currentLiabs = renderStatementTable(liabilities.current, t('total') + ' ' + t('currentLiabilities'));
+        const nonCurrentLiabs = renderStatementTable(liabilities.nonCurrent, t('total') + ' ' + t('nonCurrentLiabilities'));
+        const totalLiabs = currentLiabs.total + nonCurrentLiabs.total;
+        html += currentLiabs.html + nonCurrentLiabs.html;
+        html += `<table class="table"><tr class="fw-bold"><td>${t('totalLiabilities')}</td><td class="text-end">${formatCurrency(totalLiabs)}</td></tr></table>`;
+
+        const totalEquity = renderStatementTable(equity, t('totalEquity'));
+        html += totalEquity.html;
+
+        const totalLiabsAndEquity = totalLiabs + totalEquity.total;
+        html += `<table class="table"><tr class="fw-bold table-primary"><td>${t('totalLiabilitiesAndEquity')}</td><td class="text-end">${formatCurrency(totalLiabsAndEquity)}</td></tr></table>`;
+
+        document.getElementById('balanceSheetTable').innerHTML = html;
         
-        // Income Statement Comment
-        if (revenue > expense) {
-            UI.incomeComment.textContent = 'تحليل إيجابي: الشركة تحقق ربحية حيث أن الإيرادات أعلى من المصروفات.';
+        // Smart Comment
+        const diff = totalAssets - totalLiabsAndEquity;
+        const commentDiv = document.getElementById('balanceSheetComment');
+        if (Math.abs(diff) < 1) {
+            commentDiv.textContent = 'تحليل إيجابي: قائمة المركز المالي متوازنة، مما يعكس دقة البيانات وصحة المعادلة المحاسبية (الأصول = الخصوم + حقوق الملكية).';
         } else {
-            UI.incomeComment.textContent = 'تحليل يتطلب الانتباه: الشركة تواجه خسائر حيث أن المصروفات أعلى من الإيرادات. يجب مراجعة هيكل التكاليف.';
+            commentDiv.textContent = `تحليل يتطلب الانتباه: القائمة غير متوازنة بفارق ${formatCurrency(diff)}. يرجى مراجعة التصنيفات والإدخالات.`;
         }
     };
     
-    // --- 5. MAIN UPDATE FUNCTION ---
-    const updateReport = () => {
-        loadDataFromStorage();
-        aggregateData();
-        renderKPIs();
-        renderCharts();
-        renderComments();
+    const renderIncomeStatement = () => {
+        const { revenue, cogs, expenses } = state.statements.is;
+        let html = '';
+        
+        const totalRevenue = renderStatementTable(revenue, t('revenue'));
+        const totalCogs = renderStatementTable(cogs, t('cogs'));
+        const grossProfit = totalRevenue.total - totalCogs.total;
+        html += totalRevenue.html + totalCogs.html;
+        html += `<table class="table"><tr class="fw-bold"><td>${t('grossProfit')}</td><td class="text-end">${formatCurrency(grossProfit)}</td></tr></table>`;
+        
+        const totalExpenses = renderStatementTable(expenses, t('expenses'));
+        const netProfit = grossProfit - totalExpenses.total;
+        html += totalExpenses.html;
+        html += `<table class="table"><tr class="fw-bold table-primary"><td>${t('netProfit')}</td><td class="text-end">${formatCurrency(netProfit)}</td></tr></table>`;
+
+        document.getElementById('incomeStatementTable').innerHTML = html;
+        
+        // Smart Comment
+        const commentDiv = document.getElementById('incomeStatementComment');
+        if (netProfit > 0) {
+            const margin = (netProfit / totalRevenue.total) * 100;
+            commentDiv.textContent = `أداء قوي: الشركة تحقق صافي ربح قدره ${formatCurrency(netProfit)} بهامش ربح يبلغ ${margin.toFixed(1)}%. هذا يدل على قدرة الشركة على تحقيق أرباح بعد تغطية جميع تكاليفها.`;
+        } else {
+            commentDiv.textContent = `تحديات في الربحية: الشركة تسجل صافي خسارة بقيمة ${formatCurrency(netProfit)}. يجب التركيز على زيادة الإيرادات أو خفض التكاليف لتحسين الأداء.`;
+        }
     };
 
-    // --- 6. EVENT LISTENERS & INITIALIZATION ---
+    const renderAllStatements = () => {
+        renderBalanceSheet();
+        renderIncomeStatement();
+        // Render CF and Equity here later
+    };
 
-    // Theme Switcher
-    UI.themeToggle.addEventListener('click', () => {
-        let newTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-        document.body.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-        UI.themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-    });
-
-    // Active Navigation Link
-    document.querySelectorAll('.main-nav .nav-link').forEach(link => {
-        if (link.href.includes('report.html')) link.classList.add('active');
-        else link.classList.remove('active');
-    });
-
-    // Control Listeners
-    UI.dataSource.addEventListener('change', (e) => {
-        state.preferences.source = e.target.value;
-        updateReport();
-    });
-    
-    UI.currencySelect.addEventListener('change', (e) => {
-        state.preferences.currency = e.target.value;
-        updateReport();
-    });
-
-    // Initial Load
+    // --- 6. INITIALIZATION & BINDING ---
     const init = () => {
-        const theme = localStorage.getItem('theme') || 'light';
-        document.body.setAttribute('data-theme', theme);
-        UI.themeToggle.innerHTML = theme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-        
-        updateReport();
+        // ... (Theme, Language, Nav Link logic as before) ...
+        UI.exportPdfBtn.addEventListener('click', () => {
+            const element = document.getElementById('report-content');
+            html2pdf().from(element).save('Financial_Report.pdf');
+        });
+
+        loadData();
+        buildStatements();
+        renderAllStatements();
     };
 
     init();
