@@ -1,92 +1,0 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title data-translate-key="pageTitle">التقرير المالي — المحلل المالي</title>
-    
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body data-theme="light">
-
-    <div class="container">
-        <header class="site-header" role="banner">
-            <div class="brand">
-                <img src="assets/logo.png" alt="logo">
-                <div>
-                    <div class="title" data-translate-key="brandText">المحلل المالي</div>
-                    <div class="small-muted" data-translate-key="brandDesc">تقرير مالي ذكي</div>
-                </div>
-            </div>
-            <nav class="controls" role="navigation">
-                <a class="btn btn-sm btn-outline-secondary" href="input.html" data-translate-key="navInput" title="الإدخال"><i class="bi bi-input-cursor-text"></i></a>
-                <a class="btn btn-sm btn-outline-secondary" href="upload.html" data-translate-key="navUpload" title="الرفع"><i class="bi bi-cloud-arrow-up"></i></a>
-                <select id="languageSelect" class="form-select form-select-sm"></select>
-                <div class="form-check form-switch mb-0">
-                    <input class="form-check-input" id="darkModeToggle" type="checkbox" role="switch">
-                </div>
-                <button id="exportPdfBtn" class="btn btn-primary btn-sm"><i class="bi bi-file-earmark-pdf"></i> <span data-translate-key="exportPdf">تصدير PDF</span></button>
-            </nav>
-        </header>
-
-        <main id="mainArea" role="main">
-            <section class="card">
-                <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
-                    <h2 data-translate-key="reportTitle">📑 التقرير المالي</h2>
-                    <div class="d-flex gap-2 align-items-center">
-                        <span class="badge bg-primary-subtle text-primary-emphasis" id="sourceLabel"></span>
-                        <span class="badge bg-success-subtle text-success-emphasis" id="statusLabel"></span>
-                    </div>
-                </div>
-                <div class="row g-3 mt-2">
-                    <div class="col-md-6">
-                        <label for="dataSource" class="form-label" data-translate-key="sourceLabel">مصدر البيانات</label>
-                        <select id="dataSource" class="form-select">
-                            <option value="trialData" data-translate-key="sourceInput">من صفحة الإدخال (input)</option>
-                            <option value="statementData" data-translate-key="sourceUpload">من صفحة الرفع (upload)</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label for="currencySelect" class="form-label" data-translate-key="currencyLabel">العملة</label>
-                        <select id="currencySelect" class="form-select"></select>
-                    </div>
-                </div>
-            </section>
-
-            <section class="card">
-                <h3 data-translate-key="kpiTitle">المؤشرات الرئيسية</h3>
-                <div class="kpi-row" id="kpiRow"></div>
-            </section>
-
-            <div class="row g-3">
-                <div class="col-lg-6">
-                    <section class="card h-100">
-                        <h4 data-translate-key="balanceTitle">الميزانية العمومية</h4>
-                        <canvas id="balanceChart" height="200"></canvas>
-                        <div class="comment" id="balanceComment"></div>
-                    </section>
-                </div>
-                <div class="col-lg-6">
-                    <section class="card h-100">
-                        <h4 data-translate-key="incomeTitle">قائمة الدخل</h4>
-                        <canvas id="incomeChart" height="200"></canvas>
-                        <div class="comment" id="incomeComment"></div>
-                    </section>
-                </div>
-            </div>
-
-             <section class="card">
-                <h3 data-translate-key="previewTitle">معاينة البيانات</h3>
-                <div id="previewTableWrap" class="table-responsive"></div>
-            </section>
-
-            <footer class="text-center py-3 small" data-translate-key="footer">© 2025 المحلل المالي — جميع الحقوق محفوظة</footer>
-        </main>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
-    
-    <script src="js/report-app.js"></script>
-</body>
-</html>
