@@ -1,35 +1,76 @@
+// js/upload-app.js
+
+// Page-specific translations
+window.pageTranslations = {
+    ar: {
+        pageTitle: "رفع وإدخال القوائم — المحلل المالي",
+        pageHeader: "رفع وإدخال القوائم المالية",
+        pageSubheader: "هذه الصفحة مخصصة لغير المتخصصين لرفع القوائم المالية الجاهزة أو إدخالها بسهولة.",
+        actionsTitle: "أدوات التحكم",
+        save: "حفظ العمل",
+        clear: "مسح الكل",
+        saveForComparison: "حفظ نسخة للمقارنات",
+        saveAsPlaceholder: "مثال: بيانات 2025",
+        saveAs: "حفظ باسم",
+        uploadTitle: "رفع ملف جاهز",
+        uploadLabel: "يمكنك رفع ملف Excel أو CSV يحتوي على أي من القوائم المالية.",
+        entryTitle: "إدخال البيانات اليدوي",
+        tabBS: "الميزانية العمومية",
+        tabIS: "قائمة الدخل",
+        tabCF: "التدفقات النقدية",
+        tabEQ: "حقوق الملكية",
+        addBS: "إضافة بند للميزانية",
+        addIS: "إضافة بند للدخل",
+        addCF: "إضافة بند للتدفقات",
+        addEQ: "إضافة بند لحقوق الملكية",
+        confirmClear: "هل أنت متأكد من مسح جميع البيانات في كل الجداول؟",
+        savedSuccess: "تم حفظ البيانات بنجاح!",
+        noDataToSave: "لا توجد بيانات لحفظها.",
+    },
+    en: {
+        pageTitle: "Upload & Enter Statements — Financial Analyzer",
+        pageHeader: "Upload & Enter Financial Statements",
+        pageSubheader: "This page is for non-specialists to easily upload ready-made financial statements or enter them manually.",
+        actionsTitle: "Controls",
+        save: "Save Work",
+        clear: "Clear All",
+        saveForComparison: "Save a copy for comparisons",
+        saveAsPlaceholder: "e.g., Data 2025",
+        saveAs: "Save As",
+        uploadTitle: "Upload a File",
+        uploadLabel: "You can upload an Excel or CSV file containing any of the financial statements.",
+        entryTitle: "Manual Data Entry",
+        tabBS: "Balance Sheet",
+        tabIS: "Income Statement",
+        tabCF: "Cash Flow",
+        tabEQ: "Equity",
+        addBS: "Add Balance Sheet Item",
+        addIS: "Add Income Item",
+        addCF: "Add Cash Flow Item",
+        addEQ: "Add Equity Item",
+        confirmClear: "Are you sure you want to clear all data in all tables?",
+        savedSuccess: "Data saved successfully!",
+        noDataToSave: "No data to save.",
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- 1. STATE & CONFIGURATION ---
     const state = {
-        data: {
-            bs: [], // Balance Sheet
-            is: [], // Income Statement
-            cf: [], // Cash Flow
-            eq: []  // Equity
-        },
-        preferences: {
-            theme: localStorage.getItem('theme') || 'light',
-            lang: localStorage.getItem('lang') || 'ar'
-        }
+        data: { bs: [], is: [], cf: [], eq: [] },
+    };
+
+    const UI = {
+        saveAsNameInput: document.getElementById('saveAsName'),
+        saveAsBtn: document.getElementById('saveAsBtn'),
+        saveBtn: document.getElementById('saveBtn'),
+        clearBtn: document.getElementById('clearBtn'),
+        tabContent: document.querySelector('.tab-content'),
+        fileInput: document.getElementById('fileInput'),
     };
     
-    // --- 2. CONFIG & TRANSLATIONS (Example) ---
-    // (This should be expanded with all your text)
-    const translations = {
-        ar: {
-            pageHeader: "إدخال القوائم المالية",
-            pageSubheader: "هذه الصفحة مخصصة لغير المتخصصين وأصحاب الأعمال لرفع القوائم المالية الجاهزة أو إدخالها بسهولة.",
-            actionsTitle: "أدوات التحكم",
-            // ... more keys
-        },
-        en: {
-            pageHeader: "Financial Statement Entry",
-            pageSubheader: "This page is for non-specialists and business owners to easily upload or enter financial statements.",
-            actionsTitle: "Controls",
-            // ... more keys
-        }
-    };
+    const lang = localStorage.getItem('lang') || 'ar';
+    const t_page = (key) => window.pageTranslations[lang]?.[key] || key;
 
     const config = {
         tables: {
@@ -40,55 +81,49 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // --- 3. UI ELEMENTS CACHE ---
-    const UI = {
-        themeToggle: document.getElementById('themeToggle'),
-        languageSelect: document.getElementById('languageSelect'),
-        saveAsNameInput: document.getElementById('saveAsName'),
-        saveAsBtn: document.getElementById('saveAsBtn'),
-        saveBtn: document.getElementById('saveBtn'),
-        clearBtn: document.getElementById('clearBtn'),
-        tabContent: document.querySelector('.tab-content'),
-        fileInput: document.getElementById('fileInput'),
-    };
-
-    // --- 4. CORE LOGIC ---
     const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
-    const t = (key) => translations[state.preferences.lang]?.[key] || key;
 
-    const applyTranslations = () => {
-        document.querySelectorAll('[data-translate-key]').forEach(el => el.textContent = t(el.dataset.translateKey));
-        document.documentElement.lang = state.preferences.lang;
-        document.documentElement.dir = state.preferences.lang === 'ar' ? 'rtl' : 'ltr';
-        renderAllTables(); // Re-render tables to update headers
-    };
-
-    const saveData = () => {
-        localStorage.setItem('statementData', JSON.stringify(state.data));
-    };
-
+    const saveData = () => localStorage.setItem('statementData', JSON.stringify(state.data));
     const loadData = () => {
         const storedData = JSON.parse(localStorage.getItem('statementData') || '{}');
         const defaultRow = (fields) => fields.reduce((acc, field) => ({ ...acc, [field]: '' }), {});
-        
         for (const key in config.tables) {
-            state.data[key] = storedData[key]?.length > 0 ? storedData[key] : [defaultRow(config.tables[key].fields)];
+            state.data[key] = storedData[key]?.length ? storedData[key] : [defaultRow(config.tables[key].fields)];
         }
     };
 
-    const handleSaveAs = () => { /* ... (Same logic as before to unify and save) ... */ };
-    
-    // --- 5. RENDERING FUNCTIONS ---
+    const handleSaveAs = () => {
+        const name = UI.saveAsNameInput.value.trim();
+        if (!name) { alert(t_page('saveAsError')); return; }
+        const { bs, is } = state.data;
+        const unifiedDataset = [];
+
+        bs.forEach(row => unifiedDataset.push({ Account: row.Account || '', Type: row.Type || 'Balance Sheet', Debit: toNum(row.Debit), Credit: toNum(row.Credit) }));
+        is.forEach(row => {
+            const type = (row.Type || '').toLowerCase();
+            const value = toNum(row.Value);
+            if (type.includes('revenue') || type.includes('إيراد')) {
+                unifiedDataset.push({ Account: row.Account, Type: row.Type, Debit: 0, Credit: value });
+            } else {
+                unifiedDataset.push({ Account: row.Account, Type: row.Type, Debit: value, Credit: 0 });
+            }
+        });
+
+        if (unifiedDataset.length === 0) { alert(t_page('noDataToSave')); return; }
+        try {
+            localStorage.setItem(`FA_DATASET_${name}`, JSON.stringify(unifiedDataset));
+            alert(`${t_page('saveAsSuccess')} "${name}"!`);
+            UI.saveAsNameInput.value = '';
+        } catch (e) { alert("Error saving data."); }
+    };
+
     const renderTable = (tableKey) => {
         const tableEl = document.getElementById(`${tableKey}Table`);
         const tableConfig = config.tables[tableKey];
         const tableData = state.data[tableKey];
-        const headers = tableConfig.headers[state.preferences.lang];
+        const headers = tableConfig.headers[lang];
         
-        tableEl.innerHTML = `
-            <thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
-            <tbody></tbody>
-        `;
+        tableEl.innerHTML = `<thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody></tbody>`;
         const tbody = tableEl.querySelector('tbody');
 
         tableData.forEach((row, index) => {
@@ -117,48 +152,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    const renderAllTables = () => {
-        Object.keys(config.tables).forEach(key => renderTable(key));
-    };
+    const renderAllTables = () => Object.keys(config.tables).forEach(key => renderTable(key));
 
-    // --- 6. EVENT LISTENERS & INITIALIZATION ---
     const init = () => {
-        // Theme
-        const theme = localStorage.getItem('theme') || 'light';
-        document.body.setAttribute('data-theme', theme);
-        UI.themeToggle.innerHTML = theme === 'dark' ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>';
-        UI.themeToggle.addEventListener('click', () => { /* ... (Theme toggle logic) ... */ });
-        
-        // Language
-        UI.languageSelect.innerHTML = `<option value="ar">العربية</option><option value="en">English</option>`;
-        UI.languageSelect.value = state.preferences.lang;
-        UI.languageSelect.addEventListener('change', (e) => {
-            state.preferences.lang = e.target.value;
-            localStorage.setItem('lang', state.preferences.lang);
-            applyTranslations();
+        UI.saveBtn.addEventListener('click', () => { saveData(); alert(t_page('savedSuccess')); });
+        UI.clearBtn.addEventListener('click', () => {
+            if (confirm(t_page('confirmClear'))) {
+                for (const key in config.tables) localStorage.removeItem(`statementData_${key}`);
+                loadData();
+                renderAllTables();
+            }
         });
-
-        // Nav Link
-        document.querySelectorAll('.main-nav .nav-link').forEach(link => {
-            if (link.href.includes('upload.html')) link.classList.add('active');
-        });
-
-        // Page Actions
-        UI.saveBtn.addEventListener('click', () => { saveData(); alert(t('saved')); });
-        UI.clearBtn.addEventListener('click', () => { /* ... (Clear logic) ... */ });
         UI.saveAsBtn.addEventListener('click', handleSaveAs);
         UI.tabContent.addEventListener('click', (e) => {
-            if (e.target.matches('[data-table]')) {
-                const tableKey = e.target.dataset.table;
+            const btn = e.target.closest('[data-table]');
+            if (btn) {
+                const tableKey = btn.dataset.table;
                 const newRow = config.tables[tableKey].fields.reduce((acc, field) => ({ ...acc, [field]: '' }), {});
                 state.data[tableKey].push(newRow);
                 renderTable(tableKey);
             }
         });
         
-        // Initial Load
         loadData();
-        applyTranslations();
+        renderAllTables();
     };
 
     init();
