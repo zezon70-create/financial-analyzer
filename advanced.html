@@ -36,32 +36,7 @@
 
         <div class="tab-content" id="advancedTabsContent">
 
-            <div class="tab-pane fade show active" id="ratios-pane" role="tabpanel"> 
-                 <div class="row g-4"> 
-                      <div class="col-lg-8"> 
-                           {/* --- START: Industry Selection Added --- */}
-                           <div class="card-surface mb-4 p-3">
-                                <label for="industrySelect" class="form-label fw-bold" data-translate-key="selectIndustryLabel"></label>
-                                <select class="form-select" id="industrySelect">
-                                     {/* Options added by JS */}
-                                </select>
-                                <div class="form-text" data-translate-key="selectIndustryDesc"></div>
-                           </div>
-                           {/* --- END: Industry Selection Added --- */}
-                           
-                           <div id="liquidityRatios" class="card-surface mb-4"></div> 
-                           <div id="profitabilityRatios" class="card-surface mb-4"></div> 
-                           <div id="leverageRatios" class="card-surface mb-4"></div> 
-                           <div id="efficiencyRatios" class="card-surface mb-4"></div> 
-                      </div> 
-                      <aside class="col-lg-4"> 
-                           <div class="analysis-sidebar"> 
-                                <div class="card-surface"> <h5 data-translate-key="summaryTitle"></h5> <div id="smartSummary" class="analysis-comment"></div> </div> 
-                                <div class="card-surface"> <h5 data-translate-key="alertsTitle"></h5> <div id="alertsArea" class="small text-muted"></div> </div> 
-                           </div> 
-                      </aside> 
-                 </div> 
-            </div>
+            <div class="tab-pane fade show active" id="ratios-pane" role="tabpanel"> <div class="row g-4"> <div class="col-lg-8"> <div id="liquidityRatios" class="card-surface mb-4"></div> <div id="profitabilityRatios" class="card-surface mb-4"></div> <div id="leverageRatios" class="card-surface mb-4"></div> <div id="efficiencyRatios" class="card-surface mb-4"></div> </div> <aside class="col-lg-4"> <div class="analysis-sidebar"> <div class="card-surface"> <h5 data-translate-key="summaryTitle"></h5> <div id="smartSummary" class="analysis-comment"></div> </div> <div class="card-surface"> <h5 data-translate-key="alertsTitle"></h5> <div id="alertsArea" class="small text-muted"></div> </div> </div> </aside> </div> </div>
             
             <div class="tab-pane fade" id="breakeven-pane" role="tabpanel"> <div class="row g-4"> <div class="col-lg-4"> <div class="card-surface"> <h5 data-translate-key="beInputTitle"></h5> <div class="mb-3"> <label for="fixedCosts" class="form-label" data-translate-key="labelFixedCosts"></label> <input type="number" class="form-control" id="fixedCosts" placeholder="e.g., 10000"> </div> <div class="mb-3"> <label for="variableCost" class="form-label" data-translate-key="labelVariableCost"></label> <input type="number" class="form-control" id="variableCost" placeholder="e.g., 30"> </div> <div class="mb-3"> <label for="sellingPrice" class="form-label" data-translate-key="labelSellingPrice"></label> <input type="number" class="form-control" id="sellingPrice" placeholder="e.g., 50"> </div> <button id="calculateBreakeven" class="btn btn-primary w-100" data-translate-key="btnCalculate"></button> </div> <div id="breakevenResults" class="card-surface mt-4" style="display: none;"> <h5 data-translate-key="beResultsTitle"></h5> <div class="text-center"> <p class="text-muted mb-1" data-translate-key="bepUnits"></p> <p class="h3 text-primary fw-bold" id="bepUnitsResult"></p> <hr> <p class="text-muted mb-1" data-translate-key="bepValue"></p> <p class="h3 text-success fw-bold" id="bepValueResult"></p> </div> </div> </div> <div class="col-lg-8"> <div class="card-surface"> <h5 data-translate-key="beChartTitle"></h5> <div class="chart-wrap" style="height: 400px;"> <canvas id="breakevenChart"></canvas> </div> </div> </div> </div> </div>
             
