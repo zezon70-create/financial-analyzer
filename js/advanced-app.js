@@ -5,11 +5,9 @@ window.pageTranslations = {
         pageTitle: "التحليلات المتقدمة — المحلل المالي",
         pageHeader: "التحليلات المتقدمة",
         pageSubheader: "استخدم أدوات تحليلية متخصصة للحصول على رؤى أعمق حول أداء عملك.",
-                // Tab Names
         tabRatios: "النسب المالية",
         tabBreakeven: "تحليل التعادل",
         tabDupont: "تحليل دوبونت",
-        // Ratios Pane (Original)
         summaryTitle: "الملخص الذكي",
         alertsTitle: "تنبيهات ومؤشرات خطر",
         thRatio: "النسبة",
@@ -56,7 +54,6 @@ window.pageTranslations = {
         alert_profit_risk: "🔴 خطر ربحية: الشركة تحقق صافي خسارة.",
         alert_ok: "🟢 لا توجد مؤشرات خطر حرجة بناءً على النسب الأساسية.",
         noDataForRatios: "لا توجد بيانات كافية لحساب النسب. يرجى إدخال ميزان المراجعة أولاً.",
-        // Breakeven Pane (NEW)
         beInputTitle: "مدخلات الحساب",
         labelFixedCosts: "إجمالي التكاليف الثابتة",
         labelVariableCost: "التكلفة المتغيرة للوحدة",
@@ -68,7 +65,6 @@ window.pageTranslations = {
         beChartTitle: "رسم بياني لنقطة التعادل",
         errorPrice: "يجب أن يكون سعر البيع أعلى من التكلفة المتغيرة.",
         errorPositiveValues: "الرجاء إدخال قيم موجبة.",
-        // DuPont Pane (NEW)
         dupontTitle: "تحليل دوبونت للعائد على حقوق الملكية",
         dupontDesc: "يساعد هذا التحليل على تفكيك العائد على حقوق الملكية (ROE) إلى مكوناته الرئيسية: كفاءة التشغيل (هامش صافي الربح)، كفاءة استخدام الأصول (دوران الأصول)، والرفع المالي (مضاعف حقوق الملكية).",
         dupontEquation: "معادلة دوبونت:",
@@ -84,17 +80,21 @@ window.pageTranslations = {
         dupontFactorLeverage: "استخدام الرفع المالي (مضاعف حقوق ملكية مرتفع - قد يزيد المخاطر).",
         dupontFactorLowProfitability: "ربحية تشغيلية ضعيفة (هامش صافي ربح منخفض).",
         dupontFactorLowEfficiency: "كفاءة منخفضة في استخدام الأصول (دوران أصول منخفض).",
-        dupontFactorLowLeverage: "اعتماد منخفض على الديون (مضاعف حقوق ملكية منخفض - أكثر أمانًا ولكن قد يحد من العائد)."
+        dupontFactorLowLeverage: "اعتماد منخفض على الديون (مضاعف حقوق ملكية منخفض - أكثر أمانًا ولكن قد يحد من العائد).",
+        // Additional keys for BE chart labels if needed
+        revenue: 'الإيرادات',
+        totalCosts: 'إجمالي التكاليف',
+        fixedCosts: 'التكاليف الثابتة',
+        unitsSold: 'الوحدات المباعة',
+        value: 'القيمة'
     },
     en: {
         pageTitle: "Advanced Analytics — Financial Analyzer",
         pageHeader: "Advanced Analytics", 
         pageSubheader: "Use specialized analytical tools to gain deeper insights into your business performance.", 
-        // Tab Names
         tabRatios: "Financial Ratios",
         tabBreakeven: "Break-even Analysis",
         tabDupont: "DuPont Analysis",
-        // Ratios Pane (Original)
         summaryTitle: "Smart Summary",
         alertsTitle: "Alerts & Risk Indicators",
         thRatio: "Ratio",
@@ -141,7 +141,6 @@ window.pageTranslations = {
         alert_profit_risk: "🔴 Profitability Risk: The company is recording a net loss.",
         alert_ok: "🟢 No critical risk indicators based on key ratios.",
         noDataForRatios: "Insufficient data to calculate ratios. Please enter trial balance data first.",
-                // Breakeven Pane (NEW)
         beInputTitle: "Calculation Inputs",
         labelFixedCosts: "Total Fixed Costs",
         labelVariableCost: "Variable Cost Per Unit",
@@ -153,7 +152,6 @@ window.pageTranslations = {
         beChartTitle: "Break-even Point Chart",
         errorPrice: "Selling price must be higher than variable cost.",
         errorPositiveValues: "Please enter positive values.",
-        // DuPont Pane (NEW)
         dupontTitle: "DuPont Analysis for ROE",
         dupontDesc: "This analysis breaks down Return on Equity (ROE) into its key components: operating efficiency (Net Profit Margin), asset use efficiency (Asset Turnover), and financial leverage (Equity Multiplier).",
         dupontEquation: "DuPont Equation:",
@@ -169,17 +167,26 @@ window.pageTranslations = {
         dupontFactorLeverage: "Use of financial leverage (high Equity Multiplier - potentially risky).",
         dupontFactorLowProfitability: "Weak operating profitability (low Net Profit Margin).",
         dupontFactorLowEfficiency: "Low asset efficiency (low Asset Turnover).",
-        dupontFactorLowLeverage: "Low reliance on debt (low Equity Multiplier - safer but may limit returns)."
+        dupontFactorLowLeverage: "Low reliance on debt (low Equity Multiplier - safer but may limit returns).",
+        // Additional keys for BE chart labels if needed
+        revenue: 'Revenue',
+        totalCosts: 'Total Costs',
+        fixedCosts: 'Fixed Costs',
+        unitsSold: 'Units Sold',
+        value: 'Value'
     }
 };
+
 document.addEventListener('DOMContentLoaded', () => {
+
     const state = { 
         financials: {}, 
         ratios: {},
         breakevenChart: null 
     };
     const lang = localStorage.getItem('lang') || 'ar';
-    const t_page = (key) => window.pageTranslations[lang]?.[key] || key;
+    // Ensure t_page handles potential missing keys gracefully
+    const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`; // Show key if missing
 
     const UI = {
         // Ratio UI elements
@@ -208,19 +215,25 @@ document.addEventListener('DOMContentLoaded', () => {
         dupontValueROE: document.getElementById('dupontValueROE'),
         dupontInterpretation: document.getElementById('dupontInterpretation')
     };
-        const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
+    
+    // Helper functions
+    const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
     const formatPercent = (value) => isFinite(value) ? `${(value * 100).toFixed(1)}%` : "N/A";
     const formatRatio = (value) => isFinite(value) ? value.toFixed(2) : "N/A";
+
     // ==============================================
-    // === FINANCIAL RATIO FUNCTIONS (Original) ===
+    // === FINANCIAL RATIO FUNCTIONS (Original + Refined) ===
     // ==============================================
+
     const calculateFinancials = () => {
         state.financials = {}; // Reset financials
         const trialData = JSON.parse(localStorage.getItem('trialData') || '[]');
-        if (trialData.length === 0 || (trialData.length === 1 && !trialData[0].Account)) {
+        // Check for valid data (more than just an empty array or array with one empty row)
+        if (trialData.length === 0 || (trialData.length === 1 && !trialData[0].Account && !toNum(trialData[0].Debit) && !toNum(trialData[0].Credit))) {
              console.warn("No valid trialData found for ratio calculation.");
              return false; // Indicate failure
         }
+
         const f = {
             assets: 0, liabilities: 0, equity: 0, revenue: 0, cogs: 0, expenses: 0, netProfit: 0, grossProfit: 0,
             currentAssets: 0, inventory: 0, currentLiabilities: 0
@@ -235,39 +248,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 f.assets += value;
                 if (subType.includes('متداول') || subType.includes('Current')) {
                     f.currentAssets += value;
-                    // Improved Inventory Check: look for keywords in account name too
                     if (subType.includes('المخزون') || subType.includes('Inventory') || accountName.includes('inventory') || accountName.includes('مخزون')) {
                          f.inventory += value;
                     }
                 }
             } else if (mainType.includes('الخصوم') || mainType.includes('Liabilities')) {
-                f.liabilities -= value; // Liabilities have credit nature, so subtract the value
+                f.liabilities -= value; 
                 if (subType.includes('متداول') || subType.includes('Current')) f.currentLiabilities -= value;
             } else if (mainType.includes('حقوق الملكية') || mainType.includes('Equity')) {
-                f.equity -= value; // Equity has credit nature
+                f.equity -= value; 
             } else if (mainType.includes('قائمة الدخل') || mainType.includes('Income Statement')) {
-                if (subType.includes('الإيرادات') || subType.includes('Revenue')) f.revenue -= value; // Revenue has credit nature
-                else if (subType.includes('تكلفة المبيعات') || subType.includes('COGS')) f.cogs += value; // COGS is an expense (debit)
-                else f.expenses += value; // Other expenses (debit)
+                if (subType.includes('الإيرادات') || subType.includes('Revenue')) f.revenue -= value; 
+                else if (subType.includes('تكلفة المبيعات') || subType.includes('COGS')) f.cogs += value; 
+                else f.expenses += value; 
             }
         });
-                // Handle potential zero division issues more gracefully
-        f.assets = f.assets || 0;
-        f.liabilities = f.liabilities || 0;
-        f.equity = f.equity || 0;
-        f.revenue = f.revenue || 0;
-        f.cogs = f.cogs || 0;
-        f.expenses = f.expenses || 0;
-        f.currentAssets = f.currentAssets || 0;
-        f.inventory = f.inventory || 0;
-        f.currentLiabilities = f.currentLiabilities || 0;
+        
+        // Ensure values are numbers, default to 0
+        Object.keys(f).forEach(key => f[key] = f[key] || 0);
+
         f.grossProfit = f.revenue - f.cogs;
         f.netProfit = f.grossProfit - f.expenses;
-                // Basic Balance Sheet Check (A = L + E)
-        if (Math.abs(f.assets - (f.liabilities + f.equity + f.netProfit)) > 0.01) {
-             console.warn("Balance sheet check failed:", f.assets, "!=", f.liabilities + f.equity + f.netProfit);
-             // Net profit is implicitly part of equity in TB context, so check A vs L+E+NP
+        
+        // Balance Sheet Check (A = L + E + Current Period Profit/Loss)
+        const balanceCheck = f.assets - (f.liabilities + f.equity + f.netProfit);
+        if (Math.abs(balanceCheck) > 1) { // Allow for small rounding diffs
+             console.warn(`Balance sheet check failed: Assets (${f.assets.toFixed(2)}) != L+E+NP (${(f.liabilities + f.equity + f.netProfit).toFixed(2)}). Difference: ${balanceCheck.toFixed(2)}`);
+             // Maybe display a warning to the user if the difference is significant
         }
+
         state.financials = f;
         console.log("Calculated Financials:", f);
         return true; // Indicate success
@@ -280,74 +289,54 @@ document.addEventListener('DOMContentLoaded', () => {
              console.warn("Financials not calculated, skipping ratio calculation.");
              return false; // Indicate failure
         }
-                // Calculate Equity Multiplier (Leverage for DuPont)
-        const equityMultiplier = f.equity > 0 ? f.assets / f.equity : Infinity;
+        
+        // Calculate Equity Multiplier (Leverage for DuPont) - Handle zero or negative equity
+        const equityMultiplier = (f.equity !== 0 && f.assets !== 0) ? f.assets / f.equity : Infinity; 
+        
+        // Calculate standard ROE - Handle zero or negative equity
+        const roeStandard = (f.equity !== 0) ? f.netProfit / f.equity : Infinity; 
+
         state.ratios = {
             currentRatio: f.currentLiabilities !== 0 ? f.currentAssets / f.currentLiabilities : Infinity,
             quickRatio: f.currentLiabilities !== 0 ? (f.currentAssets - f.inventory) / f.currentLiabilities : Infinity,
             grossProfitMargin: f.revenue !== 0 ? f.grossProfit / f.revenue : 0,
             netProfitMargin: f.revenue !== 0 ? f.netProfit / f.revenue : 0,
             roa: f.assets !== 0 ? f.netProfit / f.assets : 0,
-            roe: f.equity !== 0 ? f.netProfit / f.equity : 0, // Standard ROE calculation
+            roe: roeStandard, // Standard ROE calculation
             debtToAssets: f.assets !== 0 ? f.liabilities / f.assets : Infinity,
             debtToEquity: f.equity !== 0 ? f.liabilities / f.equity : Infinity,
             assetTurnover: f.assets !== 0 ? f.revenue / f.assets : 0,
-            // Add Equity Multiplier for DuPont
-            equityMultiplier: equityMultiplier
+            equityMultiplier: equityMultiplier // Assets / Equity
         };
         console.log("Calculated Ratios (incl. EM):", state.ratios);
         return true; // Indicate success
     };
+
     const getRatioComment = (key, value) => {
         if (!isFinite(value)) return "N/A";
         // (Original comment logic remains unchanged)
-        if (key === 'currentRatio') {
-            if (value >= 2) return t_page('currentRatio_comment_high');
-            if (value >= 1) return t_page('currentRatio_comment_good');
-            return t_page('currentRatio_comment_low');
-        }
-        if (key === 'quickRatio') {
-            if (value >= 1) return t_page('quickRatio_comment_good');
-            return t_page('quickRatio_comment_low');
-        }
-        if (key === 'netProfitMargin') {
-            if (value >= 0.15) return t_page('netProfitMargin_comment_high');
-            if (value > 0) return t_page('netProfitMargin_comment_avg');
-            return t_page('netProfitMargin_comment_low');
-        }
-        if (key === 'grossProfitMargin') {
-            return value >= 0.4 ? t_page('grossProfitMargin_comment_high') : t_page('grossProfitMargin_comment_low');
-        }
-        if (key === 'roa') {
-            return value >= 0.05 ? t_page('roa_comment_high') : t_page('roa_comment_low');
-        }
-        if (key === 'roe') {
-            return value >= 0.15 ? t_page('roe_comment_high') : t_page('roe_comment_low');
-        }
-        if (key === 'debtToEquity') {
-            if (value < 0.5) return t_page('debtToEquity_comment_low');
-            if (value <= 1.5) return t_page('debtToEquity_comment_good');
-            return t_page('debtToEquity_comment_high');
-        }
-        if (key === 'debtToAssets') {
-            return value < 0.4 ? t_page('debtToAssets_comment_low') : t_page('debtToAssets_comment_high');
-        }
-        if (key === 'assetTurnover') {
-            return value >= 1 ? t_page('assetTurnover_comment_high') : t_page('assetTurnover_comment_low');
-        }
+        if (key === 'currentRatio') { if (value >= 2) return t_page('currentRatio_comment_high'); if (value >= 1) return t_page('currentRatio_comment_good'); return t_page('currentRatio_comment_low'); }
+        if (key === 'quickRatio') { if (value >= 1) return t_page('quickRatio_comment_good'); return t_page('quickRatio_comment_low'); }
+        if (key === 'netProfitMargin') { if (value >= 0.15) return t_page('netProfitMargin_comment_high'); if (value > 0) return t_page('netProfitMargin_comment_avg'); return t_page('netProfitMargin_comment_low'); }
+        if (key === 'grossProfitMargin') { return value >= 0.4 ? t_page('grossProfitMargin_comment_high') : t_page('grossProfitMargin_comment_low'); }
+        if (key === 'roa') { return value >= 0.05 ? t_page('roa_comment_high') : t_page('roa_comment_low'); }
+        if (key === 'roe') { return value >= 0.15 ? t_page('roe_comment_high') : t_page('roe_comment_low'); }
+        if (key === 'debtToEquity') { if (value < 0.5) return t_page('debtToEquity_comment_low'); if (value <= 1.5) return t_page('debtToEquity_comment_good'); return t_page('debtToEquity_comment_high'); }
+        if (key === 'debtToAssets') { return value < 0.4 ? t_page('debtToAssets_comment_low') : t_page('debtToAssets_comment_high'); }
+        if (key === 'assetTurnover') { return value >= 1 ? t_page('assetTurnover_comment_high') : t_page('assetTurnover_comment_low'); }
         return "";
     };
+
     const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => {
         const container = document.getElementById(divId);
         if (!container) { console.error(`Element not found: ${divId}`); return; }
         
-        if (Object.keys(state.ratios).length === 0) {
-             container.innerHTML = `
-                <h5 class="mb-3">${t_page(categoryTitleKey)}</h5>
-                <p class="text-muted">${t_page('noDataForRatios')}</p>
-             `;
+        // Use state.hasRatioData flag set by runAnalysis
+        if (!state.hasRatioData) {
+             container.innerHTML = `<h5 class="mb-3">${t_page(categoryTitleKey)}</h5> <p class="text-muted">${t_page('noDataForRatios')}</p>`;
              return;
         }
+
         let tableHTML = `<h5 class="mb-3">${t_page(categoryTitleKey)}</h5>
             <div class="table-responsive">
             <table class="table table-sm table-striped">
@@ -355,9 +344,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 <tbody>`;
         ratioKeys.forEach(key => {
             const value = state.ratios[key];
-            const formattedValue = (key === 'assetTurnover' || key === 'equityMultiplier' || key === 'debtToEquity' || key === 'currentRatio' || key === 'quickRatio') 
-                ? formatRatio(value) 
-                : formatPercent(value);
+            // Refined formatting logic
+            const isPercentage = key.includes('Margin') || key.includes('roa') || key.includes('roe');
+            const formattedValue = isPercentage ? formatPercent(value) : formatRatio(value);
             const comment = getRatioComment(key, value);
             tableHTML += `<tr>
                 <td>${t_page(key)}</td>
@@ -367,12 +356,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         container.innerHTML = tableHTML + `</tbody></table></div>`;
     };
+
     const renderSidebar = () => {
-        if (Object.keys(state.ratios).length === 0) {
+        // Use state.hasRatioData flag
+        if (!state.hasRatioData) {
             UI.smartSummary.textContent = lang === 'ar' ? 'يرجى إدخال بيانات لحساب الملخص.' : 'Please enter data to calculate summary.';
             UI.alertsArea.innerHTML = `<div>${lang === 'ar' ? 'لا توجد بيانات كافية للتنبيهات.' : 'Insufficient data for alerts.'}</div>`;
             return;
         }
+
         const { netProfitMargin, currentRatio, debtToEquity } = state.ratios;
         UI.smartSummary.textContent = netProfitMargin > 0 && currentRatio > 1.5 ? t_page('summary_ok') : t_page('summary_risk');
 
@@ -382,26 +374,30 @@ document.addEventListener('DOMContentLoaded', () => {
         if (netProfitMargin < 0 && isFinite(netProfitMargin)) alerts.push(t_page('alert_profit_risk'));
         UI.alertsArea.innerHTML = alerts.length > 0 ? alerts.map(alert => `<div>${alert}</div>`).join('') : `<div>${t_page('alert_ok')}</div>`;
     };
+
     const runAnalysis = () => {
+        state.hasRatioData = false; // Reset flag
         if (!calculateFinancials()) {
-             // If calculateFinancials failed (no data), clear ratio displays
+             // Clear displays if financials calculation failed
              renderRatioCategory('liquidityRatios', 'liquidityRatios', []);
              renderRatioCategory('profitabilityRatios', 'profitabilityRatios', []);
              renderRatioCategory('leverageRatios', 'leverageRatios', []);
              renderRatioCategory('efficiencyRatios', 'efficiencyRatios', []);
-             renderSidebar(); // Update sidebar to show no data message
-             return false; // Indicate failure
+             renderSidebar(); 
+             return false; 
         }
         if (!calculateAllRatios()) {
-             // Handle case where ratios couldn't be calculated even if financials exist (e.g., division by zero not caught)
+             // Clear displays if ratio calculation failed
              renderRatioCategory('liquidityRatios', 'liquidityRatios', []);
              renderRatioCategory('profitabilityRatios', 'profitabilityRatios', []);
              renderRatioCategory('leverageRatios', 'leverageRatios', []);
              renderRatioCategory('efficiencyRatios', 'efficiencyRatios', []);
              renderSidebar();
-             return false; // Indicate failure
+             return false; 
         }
-        // Render ratios only if calculations were successful
+
+        // If both succeeded, set flag and render
+        state.hasRatioData = true; 
         renderRatioCategory('liquidityRatios', 'liquidityRatios', ['currentRatio', 'quickRatio']);
         renderRatioCategory('profitabilityRatios', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
         renderRatioCategory('leverageRatios', 'leverageRatios', ['debtToAssets', 'debtToEquity']);
@@ -409,13 +405,16 @@ document.addEventListener('DOMContentLoaded', () => {
         renderSidebar();
         return true; // Indicate success
     };
+
     // ==============================================
     // === BREAKEVEN ANALYSIS FUNCTIONS (NEW) ===
     // ==============================================
+
     const calculateAndDisplayBreakeven = () => {
         const fixed = toNum(UI.fixedCosts.value);
         const variable = toNum(UI.variableCost.value);
         const price = toNum(UI.sellingPrice.value);
+
         if (price <= 0 || variable < 0 || fixed < 0) {
              alert(t_page('errorPositiveValues'));
              return;
@@ -424,29 +423,38 @@ document.addEventListener('DOMContentLoaded', () => {
             alert(t_page('errorPrice'));
             return;
         }
+
         const contributionMargin = price - variable;
         const bepUnits = fixed / contributionMargin;
         const bepValue = bepUnits * price;
+
         UI.bepUnitsResult.textContent = Math.ceil(bepUnits).toLocaleString();
         UI.bepValueResult.textContent = bepValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
         UI.breakevenResults.style.display = 'block';
         renderBreakevenChart(fixed, variable, price, bepUnits);
     };
+
     const renderBreakevenChart = (fixed, variable, price, bepUnits) => {
+        if (!UI.breakevenChartCanvas) return; // Exit if canvas not found
         if (state.breakevenChart) {
             state.breakevenChart.destroy();
         }
         let maxUnits = 100; 
         if (bepUnits > 0 && isFinite(bepUnits)) {
              maxUnits = Math.max(100, Math.ceil(bepUnits * 2 / 10) * 10);
-        } else if (fixed === 0) {
-             maxUnits = 100;
+        } else if (fixed === 0 && price > variable) { // If BEP is 0 because no fixed costs
+            maxUnits = 100; // Show a default range anyway
+        } else if (price <= variable) { // Should not happen due to check, but safety
+            maxUnits = 100; 
         }
+        
         const step = maxUnits / 10;
         const labels = Array.from({ length: 11 }, (_, i) => Math.round(step * i)); 
         const fixedCostsData = labels.map(() => fixed);
         const totalCostsData = labels.map(unit => fixed + (variable * unit));
         const revenueData = labels.map(unit => price * unit);
+
         const ctx = UI.breakevenChartCanvas.getContext('2d');
         state.breakevenChart = new Chart(ctx, {
             type: 'line',
@@ -456,7 +464,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     { label: t_page('revenue'), data: revenueData, borderColor: 'rgba(75, 192, 192, 1)', fill: false, tension: 0.1 },
                     { label: t_page('totalCosts'), data: totalCostsData, borderColor: 'rgba(255, 99, 132, 1)', fill: false, tension: 0.1 },
                     { label: t_page('fixedCosts'), data: fixedCostsData, borderColor: 'rgba(255, 159, 64, 1)', borderDash: [5, 5], fill: false, tension: 0.1 }
-                ].map(ds => ({ ...ds, label: ds.label.replace(' (ar)', '').replace(' (en)', '') })) // Clean up labels for Chart.js
+                ]
             },
             options: {
                 responsive: true, maintainAspectRatio: false, interaction: { intersect: false, mode: 'index', },
@@ -465,108 +473,138 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     };
-        // ==============================================
-    // === DUPONT ANALYSIS FUNCTIONS (NEW) ===
+    
     // ==============================================
-        const calculateAndDisplayDupont = () => {
-         // Ensure ratios are calculated first
-         if (Object.keys(state.ratios).length === 0) {
-             UI.dupontDataWarning.textContent = t_page('dupontDataWarning');
-             UI.dupontDataWarning.style.display = 'block';
-             UI.dupontFormulaDisplay.style.display = 'none';
-             UI.dupontInterpretation.innerHTML = '';
-             // Clear value cards
-             UI.dupontValueNPM.textContent = 'N/A';
-             UI.dupontValueAT.textContent = 'N/A';
-             UI.dupontValueEM.textContent = 'N/A';
-             UI.dupontValueROE.textContent = 'N/A';
-             return;
+    // === DUPONT ANALYSIS FUNCTIONS (NEW + Refined) ===
+    // ==============================================
+    
+    const calculateAndDisplayDupont = () => {
+         // Use state.hasRatioData flag set by runAnalysis
+         if (!state.hasRatioData) {
+             if(UI.dupontDataWarning) {
+                 UI.dupontDataWarning.textContent = t_page('dupontDataWarning');
+                 UI.dupontDataWarning.style.display = 'block';
+             }
+             if(UI.dupontFormulaDisplay) UI.dupontFormulaDisplay.style.display = 'none';
+             if(UI.dupontInterpretation) UI.dupontInterpretation.innerHTML = '';
+             // Ensure cards show N/A
+             if(UI.dupontValueNPM) UI.dupontValueNPM.textContent = 'N/A';
+             if(UI.dupontValueAT) UI.dupontValueAT.textContent = 'N/A';
+             if(UI.dupontValueEM) UI.dupontValueEM.textContent = 'N/A';
+             if(UI.dupontValueROE) UI.dupontValueROE.textContent = 'N/A';
+             return; // Stop execution
          }
-        UI.dupontDataWarning.style.display = 'none';
-        UI.dupontFormulaDisplay.style.display = 'block';
+
+        // --- Data is available ---
+        if(UI.dupontDataWarning) UI.dupontDataWarning.style.display = 'none';
+        if(UI.dupontFormulaDisplay) UI.dupontFormulaDisplay.style.display = 'block';
+
         const npm = state.ratios.netProfitMargin;
         const at = state.ratios.assetTurnover;
-        const em = state.ratios.equityMultiplier; // Assets / Equity
-                // Calculate ROE using DuPont components (should match standard ROE if data is consistent)
-        const dupontROE = npm * at * em;
+        const em = state.ratios.equityMultiplier; 
+        
+        // Calculate ROE using DuPont components 
+        const dupontROE = (isFinite(npm) && isFinite(at) && isFinite(em)) ? npm * at * em : Infinity;
+
         // Display formula components
-        UI.dupontROE.textContent = formatPercent(dupontROE);
-        UI.dupontNPM.textContent = formatPercent(npm);
-        UI.dupontAT.textContent = formatRatio(at);
-        UI.dupontEM.textContent = formatRatio(em);
+        if(UI.dupontROE) UI.dupontROE.textContent = formatPercent(dupontROE);
+        if(UI.dupontNPM) UI.dupontNPM.textContent = formatPercent(npm);
+        if(UI.dupontAT) UI.dupontAT.textContent = formatRatio(at);
+        if(UI.dupontEM) UI.dupontEM.textContent = formatRatio(em);
+
         // Display individual component values in cards
-        UI.dupontValueNPM.textContent = formatPercent(npm);
-        UI.dupontValueAT.textContent = formatRatio(at);
-        UI.dupontValueEM.textContent = formatRatio(em);
-        UI.dupontValueROE.textContent = formatPercent(dupontROE); // Use DuPont calculated ROE for consistency
-        // Basic Interpretation
+        if(UI.dupontValueNPM) UI.dupontValueNPM.textContent = formatPercent(npm);
+        if(UI.dupontValueAT) UI.dupontValueAT.textContent = formatRatio(at);
+        if(UI.dupontValueEM) UI.dupontValueEM.textContent = formatRatio(em);
+        if(UI.dupontValueROE) UI.dupontValueROE.textContent = formatPercent(dupontROE); // Use DuPont calculated ROE
+
+        // Basic Interpretation - only if dupontROE is a valid number
         let interpretation = '';
-        const highROE = dupontROE >= 0.15; // Benchmark for high ROE
-                interpretation += highROE ? `<p>${t_page('dupontInterpretationHighROE')}</p><ul>` : `<p>${t_page('dupontInterpretationLowROE')}</p><ul>`;
-        // Analyze drivers
-        if (npm >= 0.10) interpretation += `<li>${t_page('dupontFactorProfitability')}</li>`;
-        else if (npm < 0.05) interpretation += `<li>${t_page('dupontFactorLowProfitability')}</li>`;
-        if (at >= 1.0) interpretation += `<li>${t_page('dupontFactorEfficiency')}</li>`;
-        else if (at < 0.5) interpretation += `<li>${t_page('dupontFactorLowEfficiency')}</li>`;
-        if (em > 2.5) interpretation += `<li>${t_page('dupontFactorLeverage')}</li>`;
-        else if (em < 1.5) interpretation += `<li>${t_page('dupontFactorLowLeverage')}</li>`;
-                interpretation += `</ul>`;
-        // Handle cases where interpretation might be empty (all factors are average)
-        if (interpretation.endsWith('<ul></ul>')) {
-             interpretation = `<p>${lang === 'ar' ? 'العوامل متوازنة.' : 'Factors appear balanced.'}</p>`;
+        if (isFinite(dupontROE)) {
+            const highROE = dupontROE >= 0.15; 
+            interpretation += highROE ? `<p>${t_page('dupontInterpretationHighROE')}</p><ul>` : `<p>${t_page('dupontInterpretationLowROE')}</p><ul>`;
+            
+            // Check individual factors only if they are valid numbers
+            if (isFinite(npm)) {
+                if (npm >= 0.10) interpretation += `<li>${t_page('dupontFactorProfitability')}</li>`;
+                else if (npm < 0.05) interpretation += `<li>${t_page('dupontFactorLowProfitability')}</li>`;
+            }
+            if (isFinite(at)) {
+                if (at >= 1.0) interpretation += `<li>${t_page('dupontFactorEfficiency')}</li>`;
+                else if (at < 0.5) interpretation += `<li>${t_page('dupontFactorLowEfficiency')}</li>`;
+            }
+             if (isFinite(em)) {
+                if (em > 2.5) interpretation += `<li>${t_page('dupontFactorLeverage')}</li>`;
+                else if (em < 1.5) interpretation += `<li>${t_page('dupontFactorLowLeverage')}</li>`;
+             }
+            
+            interpretation += `</ul>`;
+            if (interpretation.endsWith('<ul></ul>')) { // Handle cases where no specific factor stood out
+                 interpretation = `<p>${lang === 'ar' ? 'العوامل متوازنة أو البيانات غير كافية لتقييم دقيق.' : 'Factors appear balanced or data insufficient for precise assessment.'}</p>`;
+            }
+        } else {
+             interpretation = `<p class="text-danger">${lang === 'ar' ? 'لا يمكن حساب التفسير بسبب قيم غير صالحة (قد يكون بسبب حقوق ملكية صفرية أو سالبة).' : 'Interpretation cannot be calculated due to invalid values (possibly zero or negative equity).'}</p>`;
         }
-        UI.dupontInterpretation.innerHTML = interpretation;
+        
+        if(UI.dupontInterpretation) UI.dupontInterpretation.innerHTML = interpretation;
     };
+
     // ==============================================
     // === INITIALIZATION ===
     // ==============================================
+
     const init = () => {
-        // Run analysis to calculate financials and ratios needed by DuPont
-        const analysisSuccess = runAnalysis();
+        // Run analysis initially to get data for all tabs
+        runAnalysis(); 
+
         // Add event listener for Breakeven calculation
         if (UI.calculateBreakeven) {
              UI.calculateBreakeven.addEventListener('click', calculateAndDisplayBreakeven);
         }
-        // Listen for tab changes
+
+        // --- Tab Change Listeners ---
         const ratiosTab = document.getElementById('ratios-tab');
         const breakevenTab = document.getElementById('breakeven-tab');
         const dupontTab = document.getElementById('dupont-tab');
+
         if (ratiosTab) {
             ratiosTab.addEventListener('shown.bs.tab', () => {
                 console.log("Ratios tab shown");
-                // Optional: Re-run analysis if data might have changed elsewhere
+                // Maybe re-run analysis if data could have been updated elsewhere
                 // runAnalysis(); 
-                // calculateAndDisplayDupont(); // Ensure DuPont is also updated if ratios change
+                // calculateAndDisplayDupont(); // Keep DuPont updated
             });
         }
         if (breakevenTab) {
             breakevenTab.addEventListener('shown.bs.tab', () => {
                 console.log("Breakeven tab shown");
-                 // Re-render chart if it exists and needs resize (usually not needed)
+                 // Re-render chart maybe if needed
                 // if(state.breakevenChart) state.breakevenChart.resize();
             });
         }
          if (dupontTab) {
             dupontTab.addEventListener('shown.bs.tab', () => {
                  console.log("DuPont tab shown");
-                 // Calculate and display DuPont analysis when the tab is shown
-                 // Ensure ratios are calculated first
-                 if (Object.keys(state.ratios).length === 0) runAnalysis(); // Try to calculate ratios if not already done
-                 calculateAndDisplayDupont(); 
+                 // Ensure analysis data is fresh before displaying DuPont
+                 runAnalysis(); // Re-run analysis to get latest financials/ratios
+                 calculateAndDisplayDupont(); // Then display DuPont
             });
          }
          
-         // Initial calculation for DuPont if data is already available
-         if(analysisSuccess) {
-            calculateAndDisplayDupont();
-         } else {
-             // If initial analysis failed, display warning in DuPont tab immediately
-             if (UI.dupontDataWarning) {
-                 UI.dupontDataWarning.textContent = t_page('dupontDataWarning');
-                 UI.dupontDataWarning.style.display = 'block';
-                 UI.dupontFormulaDisplay.style.display = 'none';
-             }
+         // Initial calculation for DuPont (will show warning if runAnalysis failed)
+         calculateAndDisplayDupont(); 
+         
+         // Apply translations after initial content rendering
+         // Assuming applyTranslations is globally available from main.js
+         if (typeof applyTranslations === 'function') {
+            applyTranslations();
          }
     };
-    init();
+
+    // Ensure necessary UI elements exist before running init
+    if (UI.smartSummary && UI.fixedCosts && UI.dupontResultsContainer) {
+        init();
+    } else {
+        console.error("One or more critical UI elements for advanced-app.js were not found. Initialization stopped.");
+    }
 });
