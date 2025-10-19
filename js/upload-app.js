@@ -295,7 +295,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const workbook = XLSX.read(data, { type: 'array' });
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
-                const jsonData = XLSX.utils.sheet_to_json(workskey, { header: 0 });
+                
+                // *** // *** THIS WAS THE LINE WITH THE TYPO. IT IS NOW CORRECTED. ***
+                // ***
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 0 }); 
                 
                 if (jsonData.length === 0) throw new Error("No data found in file.");
 
