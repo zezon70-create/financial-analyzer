@@ -11,7 +11,6 @@ window.pageTranslations = {
         verticalTitle: "التحليل الرأسي...", verticalDesc: "...", verticalDataWarning: "...", verticalBS: "...", verticalIS: "...", verticalAccount: "...", verticalValue: "...", verticalPercent: "...",
         zscoreTitle: "نموذج Altman Z-Score...", zscoreDesc: "...", zscoreDataWarning: "...", zscoreValueLabel: "...", zscoreInterpretation: "...", zscoreZoneSafe: "...", zscoreZoneGrey: "...", zscoreZoneDistress: "...", zscoreComponents: "...", zscoreX1: "...", zscoreX2: "...", zscoreX3: "...", zscoreX4: "...", zscoreX5: "...", zscoreRetainedEarningsNotFound: "...",
         cfTitle: "تحليل التدفقات النقدية...", cfDesc: "...", cfDataWarning: "...", cfStmtTitle: "...", cfNetIncome: "...", cfDepreciationAmortization: "...", cfChangesWC: "...", cfOperating: "...", cfInvesting: "...", cfFinancing: "...", cfNetChange: "...", cfRatiosTitle: "...", cfRatioOCF: "...", cfRatioFCF: "...", cfInterpretationPositiveOCF: "...", cfInterpretationNegativeOCF: "...", cfInterpretationFCF: "...",
-
         // *** NEW Benchmarking Translations ***
         selectIndustryLabel: "اختر قطاع الصناعة للمقارنة",
         selectIndustryDesc: "اختيار قطاع سيضيف مقارنة مع متوسطات الصناعة إلى جداول النسب.",
@@ -305,3 +304,4 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("Critical tab pane elements were not found. Initialization stopped.");
     }
 });
+
