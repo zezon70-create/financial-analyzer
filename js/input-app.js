@@ -79,7 +79,6 @@ window.pageTranslations = {
         savedSuccess: "Current data saved successfully!",
         saveAsSuccess: "Data saved successfully as",
         saveAsError: "Please enter a name to save the dataset.",
-
         // *** NEW TRANSLATIONS ***
         manualEntryTab: "Manual Entry",
         uploadFileTab: "Upload File",
@@ -98,9 +97,7 @@ window.pageTranslations = {
         fileProcessingSuccess: "File processed successfully! The manual entry table has been populated."
     }
 };
-
 document.addEventListener('DOMContentLoaded', () => {
-
     const config = {
         currencies: {
             EGP: { name: 'Egyptian Pound', rate: 1 },
@@ -126,7 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // *** NEW: Required fields for mapping ***
         requiredFields: ['Account', 'MainType', 'SubType', 'Debit', 'Credit']
     };
-
     const state = { 
         trialData: [],
         // *** NEW: State for file data ***
@@ -136,8 +132,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const lang = localStorage.getItem('lang') || 'ar';
     const t_page = (key) => window.pageTranslations[lang]?.[key] || key;
     const t_fields = (key) => window.pageTranslations[lang]?.[`th${key}`] || key;
-
-
     const UI = {
         // Original UI Elements
         currencySelect: document.getElementById('currencySelect'),
@@ -171,7 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
         config.currencies[currentCurrency].rate = toNum(UI.fxRateInput.value) || 1;
         localStorage.setItem('fxRates', JSON.stringify(config.currencies));
     };
-
     const loadData = () => {
         state.trialData = JSON.parse(localStorage.getItem('trialData') || '[]');
         if (state.trialData.length === 0) {
@@ -182,7 +175,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (config.currencies[code]) config.currencies[code].rate = savedRates[code].rate;
         }
     };
-
     const handleSaveAs = () => {
         const name = UI.saveAsNameInput.value.trim();
         if (!name) { alert(t_page('saveAsError')); return; }
@@ -192,14 +184,12 @@ document.addEventListener('DOMContentLoaded', () => {
             UI.saveAsNameInput.value = '';
         } catch (e) { alert("Error saving data."); }
     };
-    
-    const updateFxRate = () => {
+        const updateFxRate = () => {
         const currencyCode = UI.currencySelect.value;
         const currency = config.currencies[currencyCode];
         UI.fxRateInput.value = currency.rate;
         UI.fxRateInput.disabled = currencyCode === 'EGP';
     };
-
     const renderValidation = () => {
         const totals = state.trialData.reduce((acc, row) => {
             acc.debit += toNum(row.Debit);
@@ -215,11 +205,9 @@ document.addEventListener('DOMContentLoaded', () => {
             UI.validationResult.className = 'text-danger fw-bold';
         }
     };
-    
-    const renderTable = () => {
+        const renderTable = () => {
         UI.tbBody.innerHTML = '';
         const currentLangTypes = config.accountTypes[lang];
-
         state.trialData.forEach((row, index) => {
             const tr = document.createElement('tr');
             const mainTypesOptions = Object.keys(currentLangTypes).map(mainType => 
@@ -521,3 +509,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     init();
 });
+
