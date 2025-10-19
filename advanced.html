@@ -95,10 +95,15 @@
 
     <footer class="site-footer"> <div class="container-main"> <p data-translate-key="footerText"></p> </div> </footer>
 
+    {/* *** START: CORRECTED SCRIPT ORDER *** */}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
-        <script src="js/main.js"></script> 
-    <script src="js/advanced-app.js"></script>
-    </body>
+    {/* Global script MUST come FIRST */}
+    <script src="js/main.js"></script> 
+    
+    {/* Page-specific script comes LAST */}
+    <script src="js/advanced-app.js"></script> 
+    {/* *** END: CORRECTED SCRIPT ORDER *** */}
+</body>
 </html>
