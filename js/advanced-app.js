@@ -5,8 +5,7 @@ window.pageTranslations = {
         pageTitle: "التحليلات المتقدمة — المحلل المالي",
         pageHeader: "التحليلات المتقدمة", // تم تعديل النص ليكون عاماً
         pageSubheader: "استخدم أدوات تحليلية متخصصة للحصول على رؤى أعمق حول أداء عملك.", // تم تعديل النص ليكون عاماً
-        
-        // Tab Names
+                // Tab Names
         tabRatios: "النسب المالية",
         tabBreakeven: "تحليل التعادل",
         tabDupont: "تحليل دوبونت",
@@ -491,3 +490,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     init();
 });
+
