@@ -6,7 +6,8 @@ window.pageTranslations = {
         pageHeader: "رفع وإدخال القوائم المالية",
         pageSubheader: "هذه الصفحة مخصصة لغير المتخصصين لرفع القوائم المالية الجاهزة أو إدخالها بسهولة.",
         actionsTitle: "أدوات التحكم",
-        save: "حفظ العمل",
+        // *** تعديل: تغيير نص الزر ليعكس الحفظ التلقائي ***
+        save: "تأكيد الحفظ", 
         clear: "مسح الكل",
         saveForComparison: "حفظ نسخة للمقارنات",
         saveAsPlaceholder: "مثال: بيانات 2025",
@@ -19,7 +20,8 @@ window.pageTranslations = {
         addBS: "إضافة بند للميزانية",
         addIS: "إضافة بند للدخل",
         confirmClear: "هل أنت متأكد من مسح جميع البيانات في كل الجداول؟",
-        savedSuccess: "تم حفظ البيانات بنجاح!",
+        // *** تعديل: رسالة التأكيد توضح الحفظ التلقائي ***
+        savedSuccess: "تم تأكيد الحفظ! (ملاحظة: يتم حفظ بياناتك تلقائياً عند كل تغيير)",
         noDataToSave: "لا توجد بيانات لحفظها.",
         saveAsSuccess: "تم حفظ البيانات بنجاح باسم",
         saveAsError: "الرجاء إدخال اسم لحفظ مجموعة البيانات.",
@@ -48,7 +50,8 @@ window.pageTranslations = {
         pageHeader: "Upload & Enter Financial Statements",
         pageSubheader: "This page is for non-specialists to easily upload ready-made financial statements or enter them manually.",
         actionsTitle: "Controls",
-        save: "Save Work",
+        // *** MODIFIED: Button text reflects auto-save ***
+        save: "Confirm Save",
         clear: "Clear All",
         saveForComparison: "Save a copy for comparisons",
         saveAsPlaceholder: "e.g., Data 2025",
@@ -61,7 +64,8 @@ window.pageTranslations = {
         addBS: "Add Balance Sheet Item",
         addIS: "Add Income Item",
         confirmClear: "Are you sure you want to clear all data in all tables?",
-        savedSuccess: "Data saved successfully!",
+        // *** MODIFIED: Confirmation message explains auto-save ***
+        savedSuccess: "Save Confirmed! (Note: Your data auto-saves on every change)",
         noDataToSave: "No data to save.",
         saveAsSuccess: "Data saved successfully as",
         saveAsError: "Please enter a name to save the dataset.",
@@ -126,7 +130,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
 
-    const saveData = () => localStorage.setItem('statementData', JSON.stringify(state.data));
+    // *** تعديل: هذه الدالة أصبحت هي المسؤولة عن الحفظ التلقائي ***
+    const saveData = () => {
+        localStorage.setItem('statementData', JSON.stringify(state.data));
+        console.log("Auto-save successful!"); // For testing
+    };
 
     const loadData = () => {
         const storedData = JSON.parse(localStorage.getItem('statementData') || '{}');
@@ -177,11 +185,15 @@ document.addEventListener('DOMContentLoaded', () => {
             tr.querySelectorAll('input').forEach(input => {
                 input.addEventListener('input', (e) => {
                     tableData[index][e.target.dataset.field] = e.target.type === 'number' ? toNum(e.target.value) : e.target.value;
+                    // *** تعديل: إضافة الحفظ التلقائي هنا ***
+                    saveData(); 
                 });
             });
 
             tr.querySelector('.btn-delete').addEventListener('click', () => {
                 tableData.splice(index, 1);
+                // *** تعديل: إضافة الحفظ التلقائي هنا ***
+                saveData(); 
                 renderTable(tableKey);
             });
 
@@ -192,7 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderAllTables = () => Object.keys(config.tables).forEach(key => renderTable(key));
 
     // ========================================================
-    // *** NEW FILE UPLOAD FUNCTIONS (START) ***
+    // *** FILE UPLOAD FUNCTIONS (No changes here) ***
     // ========================================================
 
     const guessHeader = (fieldKey, headers) => {
@@ -270,8 +282,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
                 
-                // *** // *** هذا هو السطر الذي تم إصلاحه (worksheet بدلاً من workskey)
-                // ***
                 const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 0 }); 
                 
                 if (jsonData.length === 0) throw new Error("No data found in file.");
@@ -327,6 +337,8 @@ document.addEventListener('DOMContentLoaded', () => {
              state.data[statementKey] = [defaultRow(config.tables[statementKey].fields)];
         }
         
+        // *** تعديل: إضافة الحفظ التلقائي هنا ***
+        saveData(); 
         renderAllTables();
         
         const manualTabTrigger = new bootstrap.Tab(UI.manualTab);
@@ -341,22 +353,38 @@ document.addEventListener('DOMContentLoaded', () => {
         alert(t_page('fileProcessingSuccess'));
     };
     
+    // ========================================================
+    // *** (END) FILE UPLOAD FUNCTIONS ***
+    // ========================================================
+    
     const init = () => {
-        UI.saveBtn.addEventListener('click', () => { saveData(); alert(t_page('savedSuccess')); });
+        // --- Original Init ---
+        // *** تعديل: زر الحفظ أصبح للتأكيد فقط ***
+        UI.saveBtn.addEventListener('click', () => { 
+            saveData(); // Save again just in case
+            alert(t_page('savedSuccess')); 
+        });
+        
         UI.clearBtn.addEventListener('click', () => {
             if (confirm(t_page('confirmClear'))) {
                 localStorage.removeItem('statementData');
                 loadData();
+                // *** تعديل: إضافة الحفظ التلقائي هنا ***
+                saveData(); // Save the new empty state
                 renderAllTables();
             }
         });
+
         UI.saveAsBtn.addEventListener('click', handleSaveAs);
+        
         UI.tabContent.addEventListener('click', (e) => {
             const btn = e.target.closest('[data-table]');
             if (btn) {
                 const tableKey = btn.dataset.table;
                 const newRow = config.tables[tableKey].fields.reduce((acc, field) => ({ ...acc, [field]: '' }), {});
                 state.data[tableKey].push(newRow);
+                // *** تعديل: إضافة الحفظ التلقائي هنا ***
+                saveData(); 
                 renderTable(tableKey);
             }
         });
