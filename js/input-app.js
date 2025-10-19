@@ -31,6 +31,23 @@ window.pageTranslations = {
         savedSuccess: "تم حفظ البيانات الحالية بنجاح!",
         saveAsSuccess: "تم حفظ البيانات بنجاح باسم",
         saveAsError: "الرجاء إدخال اسم لحفظ مجموعة البيانات.",
+
+        // *** NEW TRANSLATIONS ***
+        manualEntryTab: "إدخال يدوي",
+        uploadFileTab: "رفع ملف",
+        uploadFileTitle: "رفع ملف ميزان المراجعة (Excel أو CSV)",
+        uploadDragDrop: "اسحب وأفلت ملفك هنا، أو اضغط للاختيار",
+        uploadSupportedFiles: "الملفات المدعومة: .xlsx, .xls, .csv",
+        uploadBrowseButton: "تصفح الملفات",
+        uploadFileReady: "الملف جاهز للمعالجة",
+        loadingPreview: "جاري تحميل المعاينة...",
+        dataPreview: "معاينة أول 5 صفوف:",
+        columnMappingTitle: "مطابقة الأعمدة",
+        columnMappingSubtitle: "الرجاء مطابقة الأعمدة من ملفك مع الحقول المطلوبة في النظام.",
+        processFileButton: "معالجة الملف وملء الجدول",
+        confirmClearUpload: "سيقوم هذا بمسح أي بيانات موجودة في الجدول. هل تريد المتابعة؟",
+        fileReadError: "حدث خطأ أثناء قراءة الملف. الرجاء التأكد من أنه ملف Excel أو CSV صالح.",
+        fileProcessingSuccess: "تمت معالجة الملف بنجاح! تم ملء جدول الإدخال اليدوي بالبيانات."
     },
     en: {
         pageTitle: "Trial Balance Input — Financial Analyzer",
@@ -62,6 +79,23 @@ window.pageTranslations = {
         savedSuccess: "Current data saved successfully!",
         saveAsSuccess: "Data saved successfully as",
         saveAsError: "Please enter a name to save the dataset.",
+
+        // *** NEW TRANSLATIONS ***
+        manualEntryTab: "Manual Entry",
+        uploadFileTab: "Upload File",
+        uploadFileTitle: "Upload Trial Balance (Excel or CSV)",
+        uploadDragDrop: "Drag & drop your file here, or click to browse",
+        uploadSupportedFiles: "Supported files: .xlsx, .xls, .csv",
+        uploadBrowseButton: "Browse Files",
+        uploadFileReady: "File is ready to be processed",
+        loadingPreview: "Loading preview...",
+        dataPreview: "Preview of first 5 rows:",
+        columnMappingTitle: "Column Mapping",
+        columnMappingSubtitle: "Please match the columns from your file to the required fields in the system.",
+        processFileButton: "Process File and Populate Table",
+        confirmClearUpload: "This will clear any existing data in the table. Do you want to continue?",
+        fileReadError: "An error occurred reading the file. Please ensure it's a valid Excel or CSV file.",
+        fileProcessingSuccess: "File processed successfully! The manual entry table has been populated."
     }
 };
 
@@ -88,14 +122,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Equity': { 'Capital': ['Paid-in Capital'], 'Retained Earnings & Reserves': ['Retained Earnings'] },
                 'Income Statement': { 'Revenue': ['Main Revenue'], 'Cost of Goods Sold (COGS)': ['Cost of Goods Sold'], 'Expenses': ['Operating Expenses', 'Interest Expense', 'Tax Expense'] }
             }
-        }
+        },
+        // *** NEW: Required fields for mapping ***
+        requiredFields: ['Account', 'MainType', 'SubType', 'Debit', 'Credit']
     };
 
-    const state = { trialData: [] };
+    const state = { 
+        trialData: [],
+        // *** NEW: State for file data ***
+        fileData: [],
+        fileHeaders: []
+    };
     const lang = localStorage.getItem('lang') || 'ar';
     const t_page = (key) => window.pageTranslations[lang]?.[key] || key;
+    const t_fields = (key) => window.pageTranslations[lang]?.[`th${key}`] || key;
+
 
     const UI = {
+        // Original UI Elements
         currencySelect: document.getElementById('currencySelect'),
         fxRateInput: document.getElementById('fxRateInput'),
         tbBody: document.getElementById('tbBody'),
@@ -105,6 +149,18 @@ document.addEventListener('DOMContentLoaded', () => {
         clearBtn: document.getElementById('clearBtn'),
         saveAsNameInput: document.getElementById('saveAsName'),
         saveAsBtn: document.getElementById('saveAsBtn'),
+
+        // *** NEW: Upload UI Elements ***
+        fileDropArea: document.getElementById('fileDropArea'),
+        fileUploader: document.getElementById('fileUploader'),
+        browseButton: document.getElementById('browseButton'),
+        fileNameDisplay: document.getElementById('fileNameDisplay'),
+        filePreviewArea: document.getElementById('filePreviewArea'),
+        previewSpinner: document.getElementById('previewSpinner'),
+        filePreviewTable: document.getElementById('filePreviewTable'),
+        columnMapper: document.getElementById('columnMapper'),
+        processFileBtn: document.getElementById('processFileBtn'),
+        manualTab: document.getElementById('manual-tab') // To switch back
     };
     
     const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
@@ -203,7 +259,193 @@ document.addEventListener('DOMContentLoaded', () => {
         renderValidation();
     };
 
+    // ========================================================
+    // *** NEW FILE UPLOAD FUNCTIONS (START) ***
+    // ========================================================
+
+    /**
+     * Tries to guess the correct header from the file
+     */
+    const guessHeader = (fieldKey, headers) => {
+        const fieldName = fieldKey.toLowerCase();
+        const arName = (t_fields(fieldKey) || '').toLowerCase();
+        
+        for (const header of headers) {
+            const lowerHeader = String(header || '').toLowerCase().trim();
+            if (lowerHeader === fieldName || lowerHeader === arName) {
+                return header;
+            }
+        }
+        // Fallback guesses
+        if (fieldName === 'debit' && headers.find(h => String(h).toLowerCase().trim() === 'مدين')) return headers.find(h => String(h).toLowerCase().trim() === 'مدين');
+        if (fieldName === 'credit' && headers.find(h => String(h).toLowerCase().trim() === 'دائن')) return headers.find(h => String(h).toLowerCase().trim() === 'دائن');
+        if (fieldName === 'account' && headers.find(h => String(h).toLowerCase().trim() === 'الحساب')) return headers.find(h => String(h).toLowerCase().trim() === 'الحساب');
+
+        return "";
+    };
+
+    /**
+     * Renders the column mapping UI
+     */
+    const renderColumnMapper = () => {
+        const optionsHTML = state.fileHeaders.map(h => `<option value="${h}">${h}</option>`).join('');
+        
+        UI.columnMapper.innerHTML = config.requiredFields.map(fieldKey => {
+            const guessedHeader = guessHeader(fieldKey, state.fileHeaders);
+            return `
+            <div class="col-md-4 col-sm-6">
+                <label for="map-${fieldKey}" class="form-label fw-bold">${t_fields(fieldKey)}</label>
+                <select id="map-${fieldKey}" class="form-select form-select-sm" data-field-key="${fieldKey}">
+                    <option value="">-- ${lang === 'ar' ? 'تجاهل' : 'Ignore'} --</option>
+                    ${state.fileHeaders.map(h => `<option value="${h}" ${h === guessedHeader ? 'selected' : ''}>${h}</option>`).join('')}
+                </select>
+            </div>`;
+        }).join('');
+    };
+
+    /**
+     * Renders a preview table of the first 5 rows
+     */
+    const renderPreviewTable = () => {
+        if (state.fileData.length === 0) {
+            UI.filePreviewTable.innerHTML = `<p class="text-danger">${lang === 'ar' ? 'الملف فارغ أو لا يمكن قراءته.' : 'File is empty or unreadable.'}</p>`;
+            return;
+        }
+
+        const headers = state.fileHeaders;
+        const rows = state.fileData.slice(0, 5); // Get first 5 data rows
+
+        let table = '<table class="table table-sm table-bordered table-striped small">';
+        // Headers
+        table += '<thead class="table-light">';
+        table += `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+        table += '</thead>';
+        // Body
+        table += '<tbody>';
+        rows.forEach(row => {
+            table += `<tr>${headers.map(h => `<td>${row[h] || ''}</td>`).join('')}</tr>`;
+        });
+        table += '</tbody>';
+        table += '</table>';
+        
+        UI.filePreviewTable.innerHTML = table;
+    };
+
+    /**
+     * Main function to handle the file once selected or dropped
+     */
+    const handleFile = (file) => {
+        if (!file) return;
+
+        UI.fileNameDisplay.textContent = `File: ${file.name} | Size: ${(file.size / 1024).toFixed(2)} KB`;
+        UI.filePreviewArea.classList.remove('d-none');
+        UI.fileDropArea.classList.add('d-none');
+        UI.previewSpinner.classList.remove('d-none');
+        UI.filePreviewTable.innerHTML = '';
+        UI.columnMapper.innerHTML = '';
+
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+            try {
+                const data = e.target.result;
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                
+                // Convert to array of objects
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 0 }); // header: 0 creates objects
+                
+                if (jsonData.length === 0) {
+                    throw new Error("No data found in file.");
+                }
+
+                state.fileData = jsonData;
+                state.fileHeaders = Object.keys(jsonData[0]); // Get headers from the first object
+
+                renderPreviewTable();
+                renderColumnMapper();
+                UI.previewSpinner.classList.add('d-none');
+            } catch (err) {
+                console.error(err);
+                alert(t_page('fileReadError'));
+                resetUploadUI();
+            }
+        };
+
+        reader.onerror = () => {
+            alert(t_page('fileReadError'));
+            resetUploadUI();
+        };
+
+        reader.readAsArrayBuffer(file);
+    };
+
+    /**
+     * Resets the upload UI to its initial state
+     */
+    const resetUploadUI = () => {
+        UI.filePreviewArea.classList.add('d-none');
+        UI.fileDropArea.classList.remove('d-none');
+        UI.fileUploader.value = ''; // Clear the file input
+        state.fileData = [];
+        state.fileHeaders = [];
+    };
+
+    /**
+     * Processes the file data based on user's column mapping
+     */
+    const processFile = () => {
+        if (!confirm(t_page('confirmClearUpload'))) {
+            return;
+        }
+
+        const mapping = {};
+        UI.columnMapper.querySelectorAll('select').forEach(sel => {
+            mapping[sel.dataset.fieldKey] = sel.value; // e.g., mapping['Account'] = 'اسم الحساب'
+        });
+
+        // Clear existing data
+        state.trialData = [];
+
+        // Loop through file data and populate state.trialData
+        state.fileData.forEach(row => {
+            const newRow = {
+                Account:  row[mapping.Account] || '',
+                MainType: row[mapping.MainType] || '',
+                SubType:  row[mapping.SubType] || '',
+                Debit:    toNum(row[mapping.Debit]),
+                Credit:   toNum(row[mapping.Credit])
+            };
+            state.trialData.push(newRow);
+        });
+
+        // If trialData is empty after processing, add a blank row
+        if (state.trialData.length === 0) {
+            state.trialData.push({ Account: '', MainType: '', SubType: '', Debit: 0, Credit: 0 });
+        }
+
+        // CRITICAL: Render the main table with the new data
+        renderTable();
+        
+        // Switch user back to the manual tab to see the result
+        // Use Bootstrap's built-in Tab API
+        const manualTabTrigger = new bootstrap.Tab(UI.manualTab);
+        manualTabTrigger.show();
+
+        // Reset the upload UI
+        resetUploadUI();
+
+        alert(t_page('fileProcessingSuccess'));
+    };
+
+    // ========================================================
+    // *** NEW FILE UPLOAD FUNCTIONS (END) ***
+    // ========================================================
+
+
     const init = () => {
+        // --- Original Init ---
         for (const code in config.currencies) {
             UI.currencySelect.add(new Option(`${config.currencies[code].name} (${code})`, code));
         }
@@ -231,6 +473,50 @@ document.addEventListener('DOMContentLoaded', () => {
         UI.fxRateInput.addEventListener('change', (e) => {
             config.currencies[UI.currencySelect.value].rate = toNum(e.target.value);
         });
+
+        // ========================================================
+        // *** NEW UPLOAD EVENT LISTENERS ***
+        // ========================================================
+        
+        // --- Button Clicks ---
+        UI.browseButton.addEventListener('click', () => UI.fileUploader.click());
+        UI.fileDropArea.addEventListener('click', () => UI.fileUploader.click()); // Make whole area clickable
+        UI.processFileBtn.addEventListener('click', processFile);
+
+        // --- File Input Change ---
+        UI.fileUploader.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        // --- Drag and Drop Events ---
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            UI.fileDropArea.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, false);
+        });
+        ['dragenter', 'dragover'].forEach(eventName => {
+            UI.fileDropArea.addEventListener(eventName, () => {
+                UI.fileDropArea.classList.add('border-success');
+                UI.fileDropArea.classList.remove('border-primary-subtle');
+            }, false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            UI.fileDropArea.addEventListener(eventName, () => {
+                UI.fileDropArea.classList.remove('border-success');
+                UI.fileDropArea.classList.add('border-primary-subtle');
+            }, false);
+        });
+        UI.fileDropArea.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length > 0) {
+                UI.fileUploader.files = files; // Assign to hidden input
+                handleFile(files[0]);
+            }
+        }, false);
     };
 
     init();
