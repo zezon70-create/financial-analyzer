@@ -12,19 +12,16 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-theme="light">
-
     <header class="site-header-global">
         {/* Header content */}
         <div class="container-main nav-container"> <a href="index.html" class="brand"> <img src="assets/logo.png" alt="شعار المحلل المالي"> <span class="title" data-translate-key="brandTitle"></span> </a> <nav class="main-nav"> <a href="index.html" class="nav-link" data-translate-key="navHome"></a> <a href="input.html" class="nav-link" data-translate-key="navInput"></a> <a href="upload.html" class="nav-link" data-translate-key="navUpload"></a> <a href="report.html" class="nav-link" data-translate-key="navReport"></a> <a href="advanced.html" class="nav-link" data-translate-key="navAdvanced"></a> <a href="dashboard.html" class="nav-link" data-translate-key="navDashboard"></a> <a href="comparisons.html" class="nav-link" data-translate-key="navCompare"></a> </nav> <div class="controls d-flex align-items-center gap-3"> <select id="languageSelect" class="form-select form-select-sm" style="width: auto;"></select> <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button> </div> </div>
     </header>
-
     <main class="container-main py-4">
         <section class="page-header mb-4">
             <h1 data-translate-key="pageHeader"></h1>
             <p class="text-muted" data-translate-key="pageSubheader"></p>
         </section>
-        
-        {/* Tabs Navigation */}
+                {/* Tabs Navigation */}
         <ul class="nav nav-pills nav-fill mb-4 nav-justified flex-wrap" id="advancedTabs" role="tablist">
              <li class="nav-item" role="presentation"> <button class="nav-link active" id="ratios-tab" data-bs-toggle="pill" data-bs-target="#ratios-pane" type="button" role="tab"> <i class="bi bi-graph-up-arrow me-2"></i> <span data-translate-key="tabRatios"></span> </button> </li>
              <li class="nav-item" role="presentation"> <button class="nav-link" id="breakeven-tab" data-bs-toggle="pill" data-bs-target="#breakeven-pane" type="button" role="tab"> <i class="bi bi-bullseye me-2"></i> <span data-translate-key="tabBreakeven"></span> </button> </li>
@@ -33,7 +30,6 @@
              <li class="nav-item" role="presentation"> <button class="nav-link" id="zscore-tab" data-bs-toggle="pill" data-bs-target="#zscore-pane" type="button" role="tab"> <i class="bi bi-shield-exclamation me-2"></i> <span data-translate-key="tabZScore"></span> </button> </li>
              <li class="nav-item" role="presentation"> <button class="nav-link" id="cashflow-tab" data-bs-toggle="pill" data-bs-target="#cashflow-pane" type="button" role="tab"> <i class="bi bi-cash-coin me-2"></i> <span data-translate-key="tabCashFlow"></span> </button> </li>
         </ul>
-
         {/* Tabs Content */}
         <div class="tab-content" id="advancedTabsContent">
 
