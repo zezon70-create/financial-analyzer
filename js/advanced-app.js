@@ -9,7 +9,6 @@ window.pageTranslations = {
         tabRatios: "النسب المالية",
         tabBreakeven: "تحليل التعادل",
         tabDupont: "تحليل دوبونت",
-
         // Ratios Pane (Original)
         summaryTitle: "الملخص الذكي",
         alertsTitle: "تنبيهات ومؤشرات خطر",
@@ -490,4 +489,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     init();
 });
+
 
