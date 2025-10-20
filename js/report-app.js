@@ -10,7 +10,6 @@ window.pageTranslations = {
         isTitle: "قائمة الدخل الشامل", isSubheader: "تلخص إيرادات ومصروفات الشركة...", revenue: "الإيرادات", cogs: "تكلفة المبيعات", grossProfit: "مجمل الربح", operatingExpenses: "المصروفات التشغيلية", operatingProfit: "الربح التشغيلي", /* Added if needed */ netProfit: "صافي الربح", is_comment_profit: "أداء قوي: الشركة تحقق صافي ربح...", is_comment_loss: "تحديات في الربحية: الشركة تسجل صافي خسارة...",
         cfTitle: "قائمة التدفقات النقدية (تقديري)", cfSubheader: "توضح حركة النقد...", operatingActivities: "التدفقات النقدية التشغيلية", investingActivities: "التدفقات النقدية الاستثمارية", financingActivities: "التدفقات النقدية التمويلية", netCashFlow: "صافي التغير في النقد", cf_comment_positive: "وضع نقدي جيد...", cf_comment_negative: "مؤشر خطر...",
         eqTitle: "قائمة التغيرات في حقوق الملكية", eqSubheader: "توضح التغيرات التي طرأت...", openingBalance: "الرصيد الافتتاحي", closingBalance: "الرصيد الختامي", eq_comment_growth: "نمو في حقوق المساهمين...", eq_comment_decline: "انخفاض في حقوق المساهمين...",
-
         // *** ADDED Ratios & Benchmarking Translations ***
         ratiosTitle: "النسب المالية الرئيسية والمقارنات المعيارية",
         ratiosSubheader: "تحليل لأهم النسب المالية مقارنة بمتوسطات الصناعة.",
@@ -30,7 +29,6 @@ window.pageTranslations = {
         assetTurnover: "معدل دوران الأصول", assetTurnover_comment_high: "كفاءة ممتازة...", assetTurnover_comment_low: "كفاءة منخفضة...",
         industry_general: "عام / غير محدد", industry_retail: "تجارة التجزئة", industry_manufacturing: "الصناعة التحويلية", industry_services: "الخدمات", industry_construction: "المقاولات",
         comparison_better: "أفضل", comparison_worse: "أسوأ", comparison_similar: "مماثل"
-
     },
     en: { // ... (English translations including Ratios & Benchmarking) ...
         pageTitle: "Detailed Financial Statements — Financial Analyzer", pageHeader: "Detailed Financial Statements", pageSubheader: "Professional IFRS-compliant reports...", commentaryTitle: "Analytical Commentary", exportPdf: "Export PDF", exportExcel: "Export Excel", total: "Total",
@@ -38,7 +36,6 @@ window.pageTranslations = {
         isTitle: "Statement of Comprehensive Income", isSubheader: "Summarizes revenues and expenses...", revenue: "Revenue", cogs: "Cost of Goods Sold", grossProfit: "Gross Profit", operatingExpenses: "Operating Expenses", operatingProfit: "Operating Profit", netProfit: "Net Profit", is_comment_profit: "Strong Performance...", is_comment_loss: "Profitability Challenges...",
         cfTitle: "Statement of Cash Flows (Est.)", cfSubheader: "Shows cash movement...", operatingActivities: "Operating Activities", investingActivities: "Investing Activities", financingActivities: "Financing Activities", netCashFlow: "Net Change in Cash", cf_comment_positive: "Good Cash Position...", cf_comment_negative: "Risk Indicator...",
         eqTitle: "Statement of Changes in Equity", eqSubheader: "Shows the changes in equity...", openingBalance: "Opening Equity", closingBalance: "Closing Equity", eq_comment_growth: "Shareholder Value Growth...", eq_comment_decline: "Shareholder Value Decline...",
-
         // *** ADDED Ratios & Benchmarking Translations ***
         ratiosTitle: "Key Financial Ratios & Benchmarks",
         ratiosSubheader: "Analysis of key financial ratios compared to industry averages.",
@@ -51,7 +48,6 @@ window.pageTranslations = {
         comparison_better: "Better", comparison_worse: "Worse", comparison_similar: "Similar"
     }
 };
-
 document.addEventListener('DOMContentLoaded', () => {
     const state = {
         trialData: [],
@@ -67,11 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Add formatters from advanced-app.js
     const formatPercent = (value, digits = 1) => isFinite(value) && !isNaN(value) ? `${(value * 100).toFixed(digits)}%` : "N/A";
     const formatRatio = (value, digits = 2) => isFinite(value) && !isNaN(value) ? value.toFixed(digits) : "N/A";
-
     // *** ADDED: Industry Benchmark Data ***
     const industryBenchmarks = { /* ... (benchmark data as before) ... */ general: {}, retail: { currentRatio: 1.5, quickRatio: 0.5, netProfitMargin: 0.03, roe: 0.15, debtToEquity: 1.2, assetTurnover: 2.0, grossProfitMargin: 0.30 }, manufacturing: { currentRatio: 1.8, quickRatio: 0.9, netProfitMargin: 0.06, roe: 0.12, debtToEquity: 0.8, assetTurnover: 1.0, grossProfitMargin: 0.35 }, services: { currentRatio: 1.2, quickRatio: 1.0, netProfitMargin: 0.08, roe: 0.18, debtToEquity: 1.0, assetTurnover: 1.2, grossProfitMargin: 0.50 }, construction: { currentRatio: 1.3, quickRatio: 0.8, netProfitMargin: 0.04, roe: 0.14, debtToEquity: 1.5, assetTurnover: 1.5, grossProfitMargin: 0.20 } };
-
-
     // Function to group trial balance data and calculate totals
     const buildStatementsAndFinancials = () => {
         state.statements = {}; state.financials = {}; state.hasValidData = false;
@@ -83,14 +76,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error("Parsed 'trialData' is empty or invalid.");
             }
         } catch (e) { console.error("Error loading/parsing 'trialData':", e); return false; }
-
         try {
             const financials = { /* Aggregated totals */ assets: 0, liabilities: 0, equity: 0, revenue: 0, cogs: 0, expenses: 0, netProfit: 0, grossProfit: 0, currentAssets: 0, inventory: 0, currentLiabilities: 0, retainedEarnings: 0, interestExpense: 0, taxExpense: 0, depreciationAmortization: 0, ppeNet: 0, longTermDebt: 0, shortTermDebt: 0, cashEquivalents: 0, ebit: 0, workingCapital: 0 };
             const statements = { /* Grouped items */ assets: { current: [], nonCurrent: [] }, liabilities: { current: [], nonCurrent: [] }, equity: { capital: [], retainedEarningsItems: [] }, income: { revenue: [], cogs: [], expenses: [] } };
-
             state.trialData.forEach(row => {
                  const value = (toNum(row.Debit)) - (toNum(row.Credit)); const mainType = row.MainType || ''; const subType = row.SubType || ''; const accountName = (row.Account || '').toLowerCase(); const item = { Account: row.Account || 'N/A', value: 0 }; // Simplified item for statements
-
                  if (mainType.includes('الأصول') || mainType.includes('Assets')) {
                      financials.assets += value; item.value = value;
                      if (subType.includes('متداول') || subType.includes('Current')) { financials.currentAssets += value; statements.assets.current.push(item); if (subType.includes('المخزون') || subType.includes('Inventory') || accountName.includes('inventory') || accountName.includes('مخزون')) financials.inventory += value; if (subType.includes('النقد') || subType.includes('Cash') || accountName.includes('cash') || accountName.includes('نقد')) financials.cashEquivalents += value; }
@@ -109,17 +99,14 @@ document.addEventListener('DOMContentLoaded', () => {
                      else { financials.expenses += value; item.value = value; statements.income.expenses.push(item); if (subType.includes('فائدة') || subType.includes('Interest') || accountName.includes('interest')) financials.interestExpense += value; if (subType.includes('ضريبية') || subType.includes('Tax') || accountName.includes('tax')) financials.taxExpense += value; if (subType.includes('إهلاك') || subType.includes('Depreciation') || accountName.includes('depreciation') || accountName.includes('amortization') || accountName.includes('إهلاك') || accountName.includes('استهلاك')) financials.depreciationAmortization += value; }
                  }
              });
-
             Object.keys(financials).forEach(key => financials[key] = financials[key] || 0);
             financials.grossProfit = financials.revenue - financials.cogs;
             financials.netProfit = financials.grossProfit - financials.expenses;
             financials.ebit = financials.netProfit + financials.interestExpense + financials.taxExpense;
             financials.workingCapital = financials.currentAssets - financials.currentLiabilities;
-
             // Simple Balance Sheet check
             const balanceCheck = financials.assets - (financials.liabilities + financials.equity + financials.netProfit);
             if (Math.abs(balanceCheck) > 1) console.warn(`Balance sheet check failed... Diff: ${balanceCheck.toFixed(2)}`);
-
             state.statements = statements;
             state.financials = financials;
             state.hasValidData = true;
@@ -132,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
     };
-
      // *** ADDED: Calculate Ratios Function (from advanced-app.js) ***
      const calculateAllRatios = () => {
         state.ratios = {};
@@ -158,8 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
         } catch(e) { console.error("Error calculating ratios:", e); state.ratios = {}; state.hasValidData = false; return false; }
     };
-
-
     // Function to render a section of a statement (like current assets)
     const renderStatementSection = (items, totalLabel, isSubSection = false) => {
         let total = 0;
@@ -176,14 +160,11 @@ document.addEventListener('DOMContentLoaded', () => {
         html += '</tbody></table>';
         return { html, total };
     };
-
     // --- Rendering functions for each statement ---
     const renderBalanceSheet = () => { /* ... (original logic unchanged) ... */ };
     const renderIncomeStatement = () => { /* ... (original logic unchanged) ... */ };
     const renderCashFlowStatement = () => { /* ... (original logic - simplified CF) ... */ };
     const renderEquityStatement = () => { /* ... (original logic - simplified EQ) ... */ };
-
-
     // *** ADDED: Render Ratio Category Function (from advanced-app.js + Benchmarks) ***
     const getRatioComment = (key, value) => { /* ... (comment logic from advanced-app.js) ... */ };
     const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => {
@@ -192,7 +173,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!state.hasValidData) {
             container.innerHTML = `<h5 class="mb-3">${t_page(categoryTitleKey)}</h5> <p class="text-muted">${t_page('noDataForRatios')}</p>`; return;
         }
-
         const benchmarks = industryBenchmarks[state.selectedIndustry] || {};
         const showBenchmarks = state.selectedIndustry !== 'general';
 
@@ -206,7 +186,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     <th>${t_page('thComment')}</th>
                 </tr></thead>
                 <tbody>`;
-
         ratioKeys.forEach(key => {
             const value = state.ratios && state.ratios.hasOwnProperty(key) ? state.ratios[key] : NaN;
             const benchmarkValue = benchmarks[key];
@@ -233,7 +212,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         container.innerHTML = tableHTML + `</tbody></table></div>`;
     };
-
      // *** ADDED: Populate Industry Select Function ***
      const populateIndustrySelect = () => {
         const industrySelect = document.getElementById('industrySelect'); // Get inside function
@@ -245,34 +223,27 @@ document.addEventListener('DOMContentLoaded', () => {
         state.selectedIndustry = localStorage.getItem('selectedIndustry') || 'general';
         industrySelect.value = state.selectedIndustry;
     };
-
-
     const init = () => {
         const pdfBtn = document.getElementById('exportPdfBtn');
         const excelBtn = document.getElementById('exportExcelBtn');
         // *** ADDED: Get Industry Select Element ***
         const industrySelect = document.getElementById('industrySelect');
-
         if (pdfBtn) { pdfBtn.addEventListener('click', () => { /* ... PDF export logic ... */ }); }
         if (excelBtn) { excelBtn.addEventListener('click', () => { /* ... Excel export logic ... */ }); }
-
         // Build statements and calculate financials first
         if (buildStatementsAndFinancials()) {
             state.hasValidData = true; // Set flag if successful
             calculateAllRatios(); // Calculate ratios if data is valid
-
             renderBalanceSheet();
             renderIncomeStatement();
             renderCashFlowStatement();
             renderEquityStatement();
-
             // *** ADDED: Populate select and render ratio tables ***
             populateIndustrySelect();
             renderRatioCategory('liquidityRatios', 'liquidityRatios', ['currentRatio', 'quickRatio']);
             renderRatioCategory('profitabilityRatios', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
             renderRatioCategory('leverageRatios', 'leverageRatios', ['debtToAssets', 'debtToEquity']);
             renderRatioCategory('efficiencyRatios', 'efficiencyRatios', ['assetTurnover']);
-
             // *** ADDED: Listener for Industry Select change ***
             if (industrySelect) {
                 industrySelect.addEventListener('change', (e) => {
@@ -287,7 +258,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (typeof applyTranslations === 'function') { applyTranslations(); } // Ensure text like "Better/Worse" is updated
                 });
             }
-
         } else {
              // Show warnings if data is invalid
              document.getElementById('balanceSheetComment').textContent = t_page('bs_comment_unbalanced').replace('{diff}', 'N/A');
@@ -304,8 +274,6 @@ document.addEventListener('DOMContentLoaded', () => {
          // Apply translations regardless of data validity
          if (typeof applyTranslations === 'function') { applyTranslations(); }
          else { console.warn("applyTranslations function not found in report-app.js init.");}
-
     };
-
     init();
 });
