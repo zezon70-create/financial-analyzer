@@ -10,13 +10,25 @@ const state = {
 
 const translations = {
     ar: {
-        brandTitle: "المحلل المالي", navHome: "الرئيسية", navInput: "الإدخال", navUpload: "الرفع",
-        navReport: "التقرير", navAdvanced: "تحليلات متقدمة", navDashboard: "لوحة التحكم", navCompare: "المقارنات",
+        brandTitle: "المحلل المالي",
+        navHome: "الرئيسية",
+        navInput: "الإدخال",
+        navUpload: "الرفع",
+        navReport: "التقرير",
+        navAdvanced: "تحليلات متقدمة",
+        navDashboard: "لوحة التحكم",
+        navCompare: "المقارنات",
         footerText: "© 2025 المحلل المالي. جميع الحقوق محفوظة.",
     },
     en: {
-        brandTitle: "Financial Analyzer", navHome: "Home", navInput: "Input", navUpload: "Upload",
-        navReport: "Report", navAdvanced: "Advanced", navDashboard: "Dashboard", navCompare: "Comparisons",
+        brandTitle: "Financial Analyzer",
+        navHome: "Home",
+        navInput: "Input",
+        navUpload: "Upload",
+        navReport: "Report",
+        navAdvanced: "Advanced",
+        navDashboard: "Dashboard",
+        navCompare: "Comparisons",
         footerText: "© 2025 Financial Analyzer. All rights reserved.",
     }
 };
@@ -36,50 +48,67 @@ const applyTheme = (theme) => {
 // *** Define applyTranslations GLOBALLY ***
 function applyTranslations() {
     const lang = state.preferences.lang;
-    console.log(`Applying translations for language: ${lang} (main.js)`);
+    console.log(`Applying translations for language: ${lang} (main.js)`); // For debugging
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     document.querySelectorAll('[data-translate-key]').forEach(el => {
+        // Check for page-specific translations first
         const pageTranslations = (typeof window.pageTranslations === 'object' && window.pageTranslations !== null) ? window.pageTranslations : {};
         const key = el.dataset.translateKey;
-        const translatedText = pageTranslations[lang]?.[key]
-                             || translations[lang]?.[key]
-                             || `[${key}]`;
+        const translatedText = pageTranslations[lang]?.[key]  // 1. Check Page translations
+                             || translations[lang]?.[key]      // 2. Check Global translations
+                             || `[${key}]`;                   // 3. Fallback to key
+        
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-            if (translatedText !== `[${key}]`) { el.placeholder = translatedText; }
+            if (translatedText !== `[${key}]`) { // Only update if translation found
+                 el.placeholder = translatedText;
+            }
         } else {
             el.textContent = translatedText;
         }
     });
+
+    // Highlight active nav link
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     document.querySelectorAll('.main-nav .nav-link').forEach(link => {
         link.classList.toggle('active', link.getAttribute('href') === currentPage);
     });
-    console.log("Translations applied (main.js).");
+    console.log("Translations applied (main.js)."); // For debugging
 };
 
 // --- 3. DOMContentLoaded for Initialization and Event Binding ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded and parsed (main.js)");
-    const UI = { themeToggle: document.getElementById('themeToggle'), languageSelect: document.getElementById('languageSelect') };
+    const UI = { 
+        themeToggle: document.getElementById('themeToggle'), 
+        languageSelect: document.getElementById('languageSelect') 
+    };
 
-    if (UI.themeToggle) { UI.themeToggle.addEventListener('click', () => { const newTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; applyTheme(newTheme); }); }
+    if (UI.themeToggle) { 
+        UI.themeToggle.addEventListener('click', () => { 
+            const newTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; 
+            applyTheme(newTheme); 
+        }); 
+    }
+    
     if (UI.languageSelect) {
         UI.languageSelect.innerHTML = `<option value="ar">العربية</option><option value="en">English</option>`;
         UI.languageSelect.value = state.preferences.lang;
         UI.languageSelect.addEventListener('change', (e) => {
             state.preferences.lang = e.target.value;
             localStorage.setItem('lang', state.preferences.lang);
-            window.location.reload();
+            window.location.reload(); // Reload page to apply language change
         });
     }
+
+    // Initial Load Actions
     applyTheme(state.preferences.theme);
     // Call translation ONCE here after DOM is ready
-    applyTranslations();
+    applyTranslations(); 
     console.log("Initial setup complete (main.js).");
 });
 
 // *** ADD THIS LINE AT THE VERY END (Outside DOMContentLoaded) ***
-// This makes the function available to all other scripts
+// This makes the function explicitly available to other scripts
 window.applyTranslations = applyTranslations;
-console.log("applyTranslations function explicitly attached to window.");
+console.log("applyTranslations function explicitly attached to window."); // For debugging
