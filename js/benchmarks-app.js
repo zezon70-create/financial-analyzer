@@ -1,4 +1,4 @@
-// js/benchmarks-app.js (Self-contained script for benchmarks.html)
+// js/benchmarks-app.js (Self-contained script for benchmarks.html - Dark Mode Fix)
 
 // --- 1. Page-Specific Translations ---
 window.pageTranslations = {
@@ -60,12 +60,12 @@ document.addEventListener('DOMContentLoaded', () => {
         construction: { currentRatio: 1.3, quickRatio: 0.8, netProfitMargin: 0.04, roe: 0.14, debtToEquity: 1.5, assetTurnover: 1.5, grossProfitMargin: 0.20 }
     };
 
-    // Helper Functions
+    // 3. Helper Functions
     const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
     const formatPercent = (value, digits = 1) => isFinite(value) && !isNaN(value) ? `${(value * 100).toFixed(digits)}%` : "N/A";
     const formatRatio = (value, digits = 2) => isFinite(value) && !isNaN(value) ? value.toFixed(digits) : "N/A";
 
-    // Calculation Functions
+    // 4. Calculation Functions (Self-contained)
     const calculateData = () => {
         state.financials = {}; state.ratios = {}; state.hasValidData = false;
         let trialData;
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error("Benchmark Component Error during calculation:", e); return false; }
     };
 
-    // Rendering Function
+    // 5. Rendering Functions
     const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => {
         const container = document.getElementById(divId);
         if (!container) return;
@@ -116,7 +116,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const benchmarks = industryBenchmarks[state.selectedIndustry] || {};
         const showBenchmarks = state.selectedIndustry !== 'general';
+        
+        // *** DARK MODE FIX: Removed "table-light" class from thead ***
         let tableHTML = `<h5 class="mb-3">${t(categoryTitleKey)}</h5> <div class="table-responsive"> <table class="table table-sm table-striped"> <thead><tr> <th>${t('thRatio')}</th> <th class="text-end">${t('thValue')}</th> ${showBenchmarks ? `<th class="text-end">${t('thIndustryAvg')}</th>` : ''} <th>${t('thComment')}</th> </tr></thead> <tbody>`;
+        
         ratioKeys.forEach(key => {
             const value = state.ratios[key]; const benchmarkValue = benchmarks[key]; const isPercentage = key.includes('Margin') || key.includes('roa') || key.includes('roe');
             const formattedValue = isPercentage ? formatPercent(value) : formatRatio(value);
@@ -135,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderRatioCategory('efficiencyRatiosBenchmark', 'efficiencyRatios', ['assetTurnover']);
     };
     
-    // 5. Initialization
+    // 6. Initialization
     const init = () => {
         console.log("[DEBUG] Initializing benchmarks page...");
         if (!UI.industrySelect || !UI.warningDiv) {
@@ -161,14 +164,16 @@ document.addEventListener('DOMContentLoaded', () => {
             UI.warningDiv.style.display = 'block';
         }
 
-        // Apply translations using the global function if it exists (for header/footer)
-        // This script doesn't *depend* on it, so it won't break if main.js fails
-        if (typeof window.applyTranslations === 'function') {
-            console.log("[DEBUG] Calling global applyTranslations for header/footer...");
-            window.applyTranslations();
-        } else {
-            console.warn("[DEBUG] global applyTranslations not found (main.js might be broken), but benchmarks-app.js will still run.");
-        }
+        // Use setTimeout to ensure main.js translation has run first
+        setTimeout(() => {
+            if (typeof window.applyTranslations === 'function') {
+                console.log("[DEBUG] Calling global applyTranslations for header/footer...");
+                window.applyTranslations();
+            } else {
+                console.warn("[DEBUG] global applyTranslations not found, header/footer may not be translated.");
+            }
+        }, 100); // 100ms delay to be safe
+        
         console.log("[DEBUG] Benchmarks page initialization finished.");
     };
     
