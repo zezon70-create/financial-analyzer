@@ -1,4 +1,4 @@
-// js/dashboard-app.js (Corrected and Linked Version)
+// js/dashboard-app.js (Full Version with Gauge Charts)
 
 window.pageTranslations = {
     ar: {
@@ -10,7 +10,7 @@ window.pageTranslations = {
         kpi_currentRatio: "نسبة التداول",
         kpi_roe: "العائد على حقوق الملكية",
         chartProfitTitle: "تحليل الربحية",
-        chartStructureTitle: "الهيكل المالي",
+        chartStructureTitle: "الهيكل المالي (الأصول = الخصوم + حقوق الملكية)",
         summaryTitle: "ملخص الأداء الذكي",
         alertsTitle: "تنبيهات وملاحظات",
         revenue: "الإيرادات",
@@ -19,6 +19,7 @@ window.pageTranslations = {
         assets: "الأصول",
         liabilities: "الخصوم",
         equity: "حقوق الملكية",
+        loadingData: "جاري تحميل البيانات...",
         noData: "لا توجد بيانات كافية لعرض لوحة التحكم. يرجى إدخال البيانات أولاً في صفحة الإدخال.",
         summary_profit: "أداء جيد. الشركة تحقق ربحية ويمكنها تغطية التزاماتها قصيرة الأجل بشكل مريح.",
         summary_loss: "يتطلب الانتباه. الشركة تواجه تحديات في الربحية ويجب مراقبة وضع السيولة.",
@@ -36,7 +37,7 @@ window.pageTranslations = {
         kpi_currentRatio: "Current Ratio",
         kpi_roe: "Return on Equity (ROE)",
         chartProfitTitle: "Profitability Analysis",
-        chartStructureTitle: "Financial Structure",
+        chartStructureTitle: "Financial Structure (Assets = Liabilities + Equity)",
         summaryTitle: "Smart Performance Summary",
         alertsTitle: "Alerts & Notes",
         revenue: "Revenue",
@@ -45,6 +46,7 @@ window.pageTranslations = {
         assets: "Assets",
         liabilities: "Liabilities",
         equity: "Equity",
+        loadingData: "Loading data...",
         noData: "Not enough data to display the dashboard. Please enter data in the Input page first.",
         summary_profit: "Good performance. The company is profitable and can comfortably meet its short-term obligations.",
         summary_loss: "Attention required. The company faces profitability challenges and liquidity should be monitored.",
@@ -57,7 +59,7 @@ window.pageTranslations = {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // *** Use setTimeout to ensure main.js and Chart.js are loaded ***
+    // Use setTimeout to ensure main.js and Chart.js are fully loaded
     setTimeout(() => {
         console.log("[DEBUG] Initializing dashboard-app.js after delay...");
 
@@ -67,16 +69,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const UI = {
             kpiRow: document.getElementById('kpiRow'),
-            // *** Use getContext('2d') for Chart.js ***
+            mainDashboardRow: document.getElementById('mainDashboardRow'),
+            loadingMessage: document.getElementById('loadingMessage'),
+            // Gauge Canvases
+            gaugeCurrentRatio: document.getElementById('gaugeCurrentRatio')?.getContext('2d'),
+            gaugeNetProfitMargin: document.getElementById('gaugeNetProfitMargin')?.getContext('2d'),
+            gaugeROE: document.getElementById('gaugeROE')?.getContext('2d'),
+            // Gauge Value Labels
+            gaugeCurrentRatioValue: document.getElementById('gaugeCurrentRatioValue'),
+            gaugeNetProfitMarginValue: document.getElementById('gaugeNetProfitMarginValue'),
+            gaugeROEValue: document.getElementById('gaugeROEValue'),
+            kpiNetProfitValue: document.getElementById('kpiNetProfitValue'),
+            // Main Chart Canvases
             profitabilityChart: document.getElementById('profitabilityChart')?.getContext('2d'),
             structureChart: document.getElementById('structureChart')?.getContext('2d'),
+            // Summary/Alerts
             performanceSummary: document.getElementById('performanceSummary'),
             alertsArea: document.getElementById('alertsArea'),
-            loadingMessage: document.getElementById('loadingMessage') // Get loading message
         };
 
-        // *** Helper function toNum (was missing) ***
         const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
+        const formatCurrency = (value) => new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value || 0);
 
         const calculateAllFinancials = () => {
             let trialData;
@@ -114,13 +127,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
             
-            Object.keys(f).forEach(key => f[key] = f[key] || 0); // Ensure all are numbers
+            Object.keys(f).forEach(key => f[key] = f[key] || 0);
             f.grossProfit = f.revenue - f.cogs;
             f.netProfit = f.grossProfit - f.expenses;
+            f.equity += f.netProfit; // Add Net Profit to Equity
             
-            // Add Net Profit to Equity for correct BS structure (A = L + E + NP)
-            f.equity += f.netProfit; 
-
             state.financials = f;
 
             state.ratios = {
@@ -134,34 +145,86 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
         };
 
-        const formatCurrency = (value) => new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value || 0);
-        
-        const renderKPIs = () => {
+        // --- NEW GAUGE CHART FUNCTION ---
+        const createGaugeChart = (ctx, value, label, max, colors, valueText) => {
+            const data = {
+                datasets: [{
+                    data: [value, max - value], // Value vs. Remainder
+                    backgroundColor: [colors.value, colors.background],
+                    borderColor: [colors.value, colors.background],
+                    borderWidth: 1
+                }]
+            };
+            
+            return new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    circumference: 180, // Half circle
+                    rotation: 270,       // Start at the bottom
+                    cutout: '75%',       // Thickness of the gauge
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { enabled: false }
+                    }
+                }
+            });
+        };
+
+        // --- NEW: Render Gauge KPIs ---
+        const renderGaugeKPIs = () => {
             const { netProfit } = state.financials;
             const { netProfitMargin, currentRatio, roe } = state.ratios;
-            const kpis = [
-                { key: 'kpi_netProfit', value: formatCurrency(netProfit) },
-                { key: 'kpi_netProfitMargin', value: isFinite(netProfitMargin) ? `${(netProfitMargin * 100).toFixed(1)}%` : "N/A" },
-                { key: 'kpi_currentRatio', value: isFinite(currentRatio) ? currentRatio.toFixed(2) : "N/A" },
-                { key: 'kpi_roe', value: isFinite(roe) ? `${(roe * 100).toFixed(1)}%` : "N/A" },
-            ];
+            
+            // 1. Current Ratio Gauge
+            if (UI.gaugeCurrentRatio) {
+                const crVal = isFinite(currentRatio) ? currentRatio : 0;
+                const crMax = 3; // Max value on gauge
+                const crColor = crVal < 1 ? '#dc3545' : (crVal < 1.8 ? '#ffc107' : '#198754'); // Red, Yellow, Green
+                if (state.charts.gaugeCR) state.charts.gaugeCR.destroy();
+                state.charts.gaugeCR = createGaugeChart(UI.gaugeCurrentRatio, Math.min(crVal, crMax), 'Current Ratio', crMax, 
+                    { value: crColor, background: 'var(--bs-tertiary-bg)' }
+                );
+                UI.gaugeCurrentRatioValue.textContent = isFinite(currentRatio) ? currentRatio.toFixed(2) : "N/A";
+                UI.gaugeCurrentRatioValue.style.color = crColor;
+            }
 
-            if (UI.kpiRow) {
-                 // *** Modify to create cards inside the row ***
-                 UI.kpiRow.innerHTML = kpis.map(kpi => `
-                    <div class="col-lg-3 col-md-6">
-                        <div class="kpi-card">
-                            <div class="label">${t_page(kpi.key)}</div>
-                            <div class="value">${kpi.value}</div>
-                        </div>
-                    </div>
-                `).join('');
-            } else {
-                 console.error("[DEBUG] kpiRow element not found.");
+            // 2. Net Profit Margin Gauge
+            if (UI.gaugeNetProfitMargin) {
+                const npmVal = isFinite(netProfitMargin) ? netProfitMargin : 0;
+                const npmMax = 0.25; // 25% max
+                const npmColor = npmVal < 0 ? '#dc3545' : (npmVal < 0.05 ? '#ffc107' : '#198754');
+                if (state.charts.gaugeNPM) state.charts.gaugeNPM.destroy();
+                state.charts.gaugeNPM = createGaugeChart(UI.gaugeNetProfitMargin, Math.abs(npmVal), npmMax, 
+                    { value: npmColor, background: 'var(--bs-tertiary-bg)' }
+                );
+                UI.gaugeNetProfitMarginValue.textContent = isFinite(netProfitMargin) ? `${(netProfitMargin * 100).toFixed(1)}%` : "N/A";
+                UI.gaugeNetProfitMarginValue.style.color = npmColor;
+            }
+
+            // 3. ROE Gauge
+            if (UI.gaugeROE) {
+                const roeVal = isFinite(roe) ? roe : 0;
+                const roeMax = 0.30; // 30% max
+                const roeColor = roeVal < 0 ? '#dc3545' : (roeVal < 0.10 ? '#ffc107' : '#198754');
+                if (state.charts.gaugeROE) state.charts.gaugeROE.destroy();
+                state.charts.gaugeROE = createGaugeChart(UI.gaugeROE, Math.abs(roeVal), roeMax, 
+                    { value: roeColor, background: 'var(--bs-tertiary-bg)' }
+                );
+                UI.gaugeROEValue.textContent = isFinite(roe) ? `${(roe * 100).toFixed(1)}%` : "N/A";
+                UI.gaugeROEValue.style.color = roeColor;
+            }
+            
+            // 4. Net Profit KPI
+            if (UI.kpiNetProfitValue) {
+                UI.kpiNetProfitValue.textContent = formatCurrency(netProfit);
+                UI.kpiNetProfitValue.style.color = netProfit < 0 ? '#dc3545' : '#198754';
             }
         };
 
-        const renderCharts = () => {
+        const renderMainCharts = () => {
             const { revenue, grossProfit, netProfit, assets, liabilities, equity } = state.financials;
 
             // --- Profitability Chart ---
@@ -171,39 +234,50 @@ document.addEventListener('DOMContentLoaded', () => {
                     type: 'bar',
                     data: {
                         labels: [t_page('revenue'), t_page('grossProfit'), t_page('netProfit')],
-                        datasets: [{ data: [revenue, grossProfit, netProfit], backgroundColor: ['#0d6efd', '#6f42c1', '#198754'] }]
+                        datasets: [{ 
+                            data: [revenue, grossProfit, netProfit], 
+                            backgroundColor: ['#0d6efd', '#6f42c1', netProfit < 0 ? '#dc3545' : '#198754'] 
+                        }]
                     },
                     options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
                 });
-            } else {
-                 console.error("[DEBUG] profitabilityChart canvas context not found.");
-            }
+            } else { console.error("[DEBUG] profitabilityChart canvas context not found."); }
 
             // --- Structure Chart ---
             if (UI.structureChart) {
                 if (state.charts.structure) state.charts.structure.destroy();
-                // Use correct BS equation: A = L + E
+                // Show A = L + E
                 state.charts.structure = new Chart(UI.structureChart, {
                     type: 'doughnut',
                     data: {
-                        labels: [t_page('liabilities'), t_page('equity')], // Show A = L + E structure
+                        labels: [t_page('liabilities'), t_page('equity')],
                         datasets: [{ data: [liabilities, equity], backgroundColor: ['#ffc107', '#20c997'] }]
                     },
-                    options: { responsive: true, maintainAspectRatio: false }
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.label || '';
+                                        let value = context.raw || 0;
+                                        let total = context.chart.getDataVisibility(0) ? context.chart.getDatasetMeta(0).total : 0;
+                                        let percentage = (value / total * 100).toFixed(1) + '%';
+                                        return `${label}: ${formatCurrency(value)} (${percentage})`;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 });
-            } else {
-                 console.error("[DEBUG] structureChart canvas context not found.");
-            }
+            } else { console.error("[DEBUG] structureChart canvas context not found."); }
         };
 
         const renderSummaryAndAlerts = () => {
-            if (!UI.performanceSummary || !UI.alertsArea) {
-                 console.error("[DEBUG] Summary or Alerts elements not found.");
-                 return;
-            }
+            if (!UI.performanceSummary || !UI.alertsArea) { console.error("[DEBUG] Summary or Alerts elements not found."); return; }
             const { netProfitMargin, currentRatio, debtToEquity } = state.ratios;
             UI.performanceSummary.textContent = netProfitMargin > 0 && currentRatio > 1.5 ? t_page('summary_profit') : t_page('summary_loss');
-            
             const alerts = [];
             if (currentRatio < 1 && isFinite(currentRatio)) alerts.push(t_page('alert_liquidity_risk'));
             if (debtToEquity > 2 && isFinite(debtToEquity)) alerts.push(t_page('alert_leverage_risk'));
@@ -219,19 +293,20 @@ document.addEventListener('DOMContentLoaded', () => {
                      UI.loadingMessage.classList.remove('alert-warning');
                      UI.loadingMessage.classList.add('alert-danger');
                 }
-                // Hide chart/summary sections if no data
-                document.querySelector('.dashboard-grid')?.classList.add('d-none'); // Hide if exists
-                document.querySelector('.row.g-4')?.classList.add('d-none'); // Hide charts/summary
+                if (UI.kpiRow) UI.kpiRow.style.display = 'none';
+                if (UI.mainDashboardRow) UI.mainDashboardRow.style.display = 'none';
                 return;
             }
             
-            if (UI.loadingMessage) UI.loadingMessage.parentElement.remove(); // Remove loading message div
+            if (UI.loadingMessage) UI.loadingMessage.style.display = 'none'; // Hide loading message
+            if (UI.kpiRow) UI.kpiRow.style.display = 'flex'; // Show KPI row
+            if (UI.mainDashboardRow) UI.mainDashboardRow.style.display = 'flex'; // Show main row
             
-            renderKPIs();
-            renderCharts();
+            renderGaugeKPIs();
+            renderMainCharts();
             renderSummaryAndAlerts();
 
-            // *** Apply translations ***
+            // Apply translations
             if (typeof window.applyTranslations === 'function') {
                 console.log("[DEBUG] Applying translations (dashboard-app.js)...");
                 window.applyTranslations();
@@ -242,5 +317,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
         updateDashboard();
 
-    }, 100); // 100ms delay to ensure main.js/Chart.js are loaded
+    }, 100); // 100ms delay
 });
