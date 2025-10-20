@@ -101,10 +101,10 @@ document.addEventListener('DOMContentLoaded', () => {
             container.innerHTML = `<h5 class="mb-3">${t_page(categoryTitleKey)}</h5> <p class="text-muted">${t_page('noDataForRatios')}</p>`; return;
         }
 
-        // *** Benchmark Integration Logic (ADDED) ***
+        // *** START Benchmark Integration ***
         const benchmarks = industryBenchmarks[state.selectedIndustry] || {};
         const showBenchmarks = state.selectedIndustry !== 'general';
-        // *** End Benchmark Integration ***
+        // *** END Benchmark Integration ***
 
         // *** MODIFIED Table Header ***
         let tableHTML = `<h5 class="mb-3">${t_page(categoryTitleKey)}</h5>
@@ -215,7 +215,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderRatioCategory('profitabilityRatios', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
                 renderRatioCategory('leverageRatios', 'leverageRatios', ['debtToAssets', 'debtToEquity']);
                 renderRatioCategory('efficiencyRatios', 'efficiencyRatios', ['assetTurnover']);
+                // *** Check if applyTranslations exists before calling ***
                 if (typeof applyTranslations === 'function') { applyTranslations(); }
+                else { console.warn("applyTranslations not found when changing industry"); }
             });
         }
 
@@ -239,7 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
          // Initial display for dependent tabs (Unchanged from YOUR working version)
          calculateAndDisplayDupont(); calculateAndDisplayVerticalAnalysis(); calculateAndDisplayZScore(); calculateAndDisplayCashFlowAnalysis();
 
-         // Apply translations (Unchanged from YOUR working version)
+         // Apply translations (Unchanged from YOUR working version - check added)
          if (typeof applyTranslations === 'function') { console.log("Applying translations..."); applyTranslations(); }
          else { console.warn("applyTranslations function not found."); }
 
