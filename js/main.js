@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
             lang: localStorage.getItem('lang') || 'ar',
         }
     };
-
     const translations = {
         ar: {
             brandTitle: "المحلل المالي",
@@ -33,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
             footerText: "© 2025 Financial Analyzer. All rights reserved.",
         }
     };
-
     // --- 2. UI ELEMENTS ---
     const UI = {
         themeToggle: document.getElementById('themeToggle'),
@@ -50,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         localStorage.setItem('theme', theme);
     };
-
     const applyLanguage = (lang) => {
         state.preferences.lang = lang;
         document.documentElement.lang = lang;
@@ -67,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 el.textContent = translatedText;
             }
         });
-
         // Highlight active nav link
         const currentPage = window.location.pathname.split('/').pop() || 'index.html';
         document.querySelectorAll('.main-nav .nav-link').forEach(link => {
@@ -77,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 link.classList.remove('active');
             }
         });
-
         localStorage.setItem('lang', lang);
     };
 
