@@ -35,10 +35,8 @@ window.pageTranslations = {
         comparison_better: "Better", comparison_worse: "Worse", comparison_similar: "Similar"
     }
 };
-
 // --- 2. Self-Contained Logic ---
 document.addEventListener('DOMContentLoaded', () => {
-
     const state = {
         financials: {}, ratios: {}, hasValidData: false,
         selectedIndustry: 'general'
@@ -46,12 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const lang = localStorage.getItem('lang') || 'ar';
     // Use window.pageTranslations defined above
     const t = (key) => (window.pageTranslations[lang]?.[key] || `[${key}]`);
-
     const UI = {
         industrySelect: document.getElementById('industrySelectBenchmark'),
         warningDiv: document.getElementById('ratiosDataWarningBenchmark')
     };
-
     const industryBenchmarks = {
         general: {},
         retail: { currentRatio: 1.5, quickRatio: 0.5, netProfitMargin: 0.03, roe: 0.15, debtToEquity: 1.2, assetTurnover: 2.0, grossProfitMargin: 0.30 },
@@ -59,12 +55,10 @@ document.addEventListener('DOMContentLoaded', () => {
         services: { currentRatio: 1.2, quickRatio: 1.0, netProfitMargin: 0.08, roe: 0.18, debtToEquity: 1.0, assetTurnover: 1.2, grossProfitMargin: 0.50 },
         construction: { currentRatio: 1.3, quickRatio: 0.8, netProfitMargin: 0.04, roe: 0.14, debtToEquity: 1.5, assetTurnover: 1.5, grossProfitMargin: 0.20 }
     };
-
     // 3. Helper Functions
     const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
     const formatPercent = (value, digits = 1) => isFinite(value) && !isNaN(value) ? `${(value * 100).toFixed(digits)}%` : "N/A";
     const formatRatio = (value, digits = 2) => isFinite(value) && !isNaN(value) ? value.toFixed(digits) : "N/A";
-
     // 4. Calculation Functions (Self-contained)
     const calculateData = () => {
         state.financials = {}; state.ratios = {}; state.hasValidData = false;
@@ -75,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
             trialData = JSON.parse(rawDataString);
             if (!Array.isArray(trialData) || trialData.length === 0) throw new Error("Parsed 'trialData' is empty.");
         } catch (e) { console.error("Benchmark Component Error:", e); return false; }
-
         try {
             const f = { assets: 0, liabilities: 0, equity: 0, revenue: 0, cogs: 0, expenses: 0, netProfit: 0, currentAssets: 0, inventory: 0, currentLiabilities: 0 };
             trialData.forEach(row => {
@@ -89,7 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
             Object.keys(f).forEach(key => f[key] = f[key] || 0);
             f.netProfit = f.revenue - f.cogs - f.expenses;
             state.financials = f; state.hasValidData = true;
-
             const assets = f.assets || 0; const equity = f.equity || 0; const liabilities = f.liabilities || 0; const revenue = f.revenue || 0;
             const roeStandard = (equity !== 0) ? f.netProfit / equity : Infinity;
             state.ratios = {
@@ -106,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
         } catch (e) { console.error("Benchmark Component Error during calculation:", e); return false; }
     };
-
     // 5. Rendering Functions
     const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => {
         const container = document.getElementById(divId);
@@ -119,8 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // *** DARK MODE FIX: Removed "table-light" class from thead ***
         let tableHTML = `<h5 class="mb-3">${t(categoryTitleKey)}</h5> <div class="table-responsive"> <table class="table table-sm table-striped"> <thead><tr> <th>${t('thRatio')}</th> <th class="text-end">${t('thValue')}</th> ${showBenchmarks ? `<th class="text-end">${t('thIndustryAvg')}</th>` : ''} <th>${t('thComment')}</th> </tr></thead> <tbody>`;
-        
-        ratioKeys.forEach(key => {
+             ratioKeys.forEach(key => {
             const value = state.ratios[key]; const benchmarkValue = benchmarks[key]; const isPercentage = key.includes('Margin') || key.includes('roa') || key.includes('roe');
             const formattedValue = isPercentage ? formatPercent(value) : formatRatio(value);
             const formattedBenchmark = (showBenchmarks && typeof benchmarkValue !== 'undefined' && isFinite(benchmarkValue)) ? (isPercentage ? formatPercent(benchmarkValue) : formatRatio(benchmarkValue)) : '-';
@@ -130,32 +120,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         container.innerHTML = tableHTML + `</tbody></table></div>`;
     };
-
     const renderAllRatios = () => {
         renderRatioCategory('liquidityRatiosBenchmark', 'liquidityRatios', ['currentRatio', 'quickRatio']);
         renderRatioCategory('profitabilityRatiosBenchmark', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
         renderRatioCategory('leverageRatiosBenchmark', 'leverageRatios', ['debtToAssets', 'debtToEquity']);
         renderRatioCategory('efficiencyRatiosBenchmark', 'efficiencyRatios', ['assetTurnover']);
     };
-    
-    // 6. Initialization
+        // 6. Initialization
     const init = () => {
         console.log("[DEBUG] Initializing benchmarks page...");
         if (!UI.industrySelect || !UI.warningDiv) {
             console.error("Benchmark component critical elements not found."); return;
         }
-
         const industries = ['general', 'retail', 'manufacturing', 'services', 'construction'];
         UI.industrySelect.innerHTML = industries.map(key => `<option value="${key}">${t(`industry_${key}`)}</option>`).join('');
         state.selectedIndustry = localStorage.getItem('selectedIndustry') || 'general';
         UI.industrySelect.value = state.selectedIndustry;
-
         UI.industrySelect.addEventListener('change', (e) => {
             state.selectedIndustry = e.target.value;
             localStorage.setItem('selectedIndustry', state.selectedIndustry);
             renderAllRatios(); 
         });
-
         if (calculateData()) {
             UI.warningDiv.style.display = 'none';
             renderAllRatios();
@@ -163,7 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
             UI.warningDiv.textContent = t('noDataForRatios');
             UI.warningDiv.style.display = 'block';
         }
-
         // Use setTimeout to ensure main.js translation has run first
         setTimeout(() => {
             if (typeof window.applyTranslations === 'function') {
@@ -173,8 +157,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn("[DEBUG] global applyTranslations not found, header/footer may not be translated.");
             }
         }, 100); // 100ms delay to be safe
-        
-        console.log("[DEBUG] Benchmarks page initialization finished.");
+              console.log("[DEBUG] Benchmarks page initialization finished.");
     };
     
     init();
