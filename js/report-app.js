@@ -1,162 +1,77 @@
-// js/report-app.js (Corrected Version 3: Fixed initialization, added deeper try/catch, delayed translation call)
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title data-translate-key="pageTitle"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-theme="light">
 
-window.pageTranslations = { /* ... (All translations as before) ... */ };
+    <header class="site-header-global no-print">
+        <div class="container-main nav-container">
+            <a href="index.html" class="brand">
+                <img src="assets/logo.png" alt="شعار المحلل المالي">
+                <span class="title" data-translate-key="brandTitle"></span>
+            </a>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link" data-translate-key="navHome"></a>
+                <a href="input.html" class="nav-link" data-translate-key="navInput"></a>
+                <a href="upload.html" class="nav-link" data-translate-key="navUpload"></a>
+                <a href="report.html" class="nav-link" data-translate-key="navReport"></a>
+                <a href="advanced.html" class="nav-link" data-translate-key="navAdvanced"></a>
+                <a href="dashboard.html" class="nav-link" data-translate-key="navDashboard"></a>
+                <a href="comparisons.html" class="nav-link" data-translate-key="navCompare"></a>
+            </nav>
+            <div class="controls d-flex align-items-center gap-3">
+                <select id="languageSelect" class="form-select form-select-sm" style="width: auto;"></select>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+            </div>
+        </div>
+    </header>
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("[DEBUG] DOM Loaded for report-app.js");
+    <main class="container-main py-4">
+        <div id="report-content">
+            <div class="watermark-container"> <img src="assets/logo.png" class="watermark-logo" alt="Watermark"> </div>
+            <section class="page-header d-flex justify-content-between align-items-center mb-4">
+                <div> <h1 data-translate-key="pageHeader"></h1> <p class="text-muted" data-translate-key="pageSubheader"></p> </div>
+                <div class="d-flex gap-2 no-print"> <button id="exportPdfBtn" class="btn btn-danger"><i class="bi bi-file-earmark-pdf"></i> <span data-translate-key="exportPdf"></span></button> <button id="exportExcelBtn" class="btn btn-success"><i class="bi bi-file-earmark-excel"></i> <span data-translate-key="exportExcel"></span></button> </div>
+            </section>
+            <section class="card-surface mb-4"> <h4 data-translate-key="bsTitle"></h4> <p class="text-muted small" data-translate-key="bsSubheader"></p> <div class="row g-4 mt-2"> <div class="col-lg-8"> <div id="balanceSheetTable" class="table-responsive"></div> </div> <div class="col-lg-4"> <h5 data-translate-key="commentaryTitle"></h5> <div id="balanceSheetComment" class="analysis-comment"></div> </div> </div> </section>
+            <section class="card-surface mb-4"> <h4 data-translate-key="isTitle"></h4> <p class="text-muted small" data-translate-key="isSubheader"></p> <div class="row g-4 mt-2"> <div class="col-lg-8"> <div id="incomeStatementTable" class="table-responsive"></div> </div> <div class="col-lg-4"> <h5 data-translate-key="commentaryTitle"></h5> <div id="incomeStatementComment" class="analysis-comment"></div> </div> </div> </section>
+            <section class="card-surface mb-4"> <h4 data-translate-key="cfTitle"></h4> <p class="text-muted small" data-translate-key="cfSubheader"></p> <div class="row g-4 mt-2"> <div class="col-lg-8"> <div id="cashFlowStatementTable" class="table-responsive"></div> </div> <div class="col-lg-4"> <h5 data-translate-key="commentaryTitle"></h5> <div id="cashFlowStatementComment" class="analysis-comment"></div> </div> </div> </section>
+            <section class="card-surface mb-4"> <h4 data-translate-key="eqTitle"></h4> <p class="text-muted small" data-translate-key="eqSubheader"></p> <div class="row g-4 mt-2"> <div class="col-lg-8"> <div id="equityStatementTable" class="table-responsive"></div> </div> <div class="col-lg-4"> <h5 data-translate-key="commentaryTitle"></h5> <div id="equityStatementComment" class="analysis-comment"></div> </div> </div> </section>
+            
+            {/* --- هذا هو القسم الذي كان مفقوداً لديك --- */}
+            <section id="financialRatiosSection" class="card-surface">
+                 <h4 data-translate-key="ratiosTitle"></h4>
+                 <p class="text-muted small" data-translate-key="ratiosSubheader"></p>
+                 <div class="mb-4 p-3 border rounded" style="background-color: var(--bs-tertiary-bg);">
+                      <label for="industrySelect" class="form-label fw-bold" data-translate-key="selectIndustryLabel"></label>
+                      <select class="form-select" id="industrySelect">
+                           {/* Options will be added by JS */}
+                      </select>
+                      <div class="form-text" data-translate-key="selectIndustryDesc"></div>
+                 </div>
+                 <div class="alert alert-warning" id="ratiosDataWarning" style="display: none;"></div>
+                 <div id="liquidityRatios"></div>
+                 <div id="profitabilityRatios" class="mt-4"></div>
+                 <div id="leverageRatios" class="mt-4"></div>
+                 <div id="efficiencyRatios" class="mt-4"></div>
+            </section>
+        </div>
+    </main>
+    <footer class="site-footer no-print"> <div class="container-main"> <p data-translate-key="footerText"></p> </div> </footer>
 
-    const state = {
-        trialData: [],
-        statements: { // Explicit initial structure
-            assets: { current: [], nonCurrent: [] },
-            liabilities: { current: [], nonCurrent: [] },
-            equity: { capital: [], retainedEarningsItems: [] },
-            income: { revenue: [], cogs: [], expenses: [] }
-        },
-        financials: {}, ratios: {}, hasValidData: false, selectedIndustry: 'general'
-    };
-    const lang = localStorage.getItem('lang') || 'ar';
-    const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;
-
-    // Helper functions
-    const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
-    const formatPercent = (value, digits = 1) => isFinite(value) && !isNaN(value) ? `${(value * 100).toFixed(digits)}%` : "N/A";
-    const formatRatio = (value, digits = 2) => isFinite(value) && !isNaN(value) ? value.toFixed(digits) : "N/A";
-    const formatCurrency = (value) => isFinite(value) && !isNaN(value) ? value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : "N/A";
-
-    // Benchmark Data
-    const industryBenchmarks = { /* ... benchmark data ... */ };
-
-    // Function to group trial balance data and calculate totals
-    const buildStatementsAndFinancials = () => {
-        state.statements = { assets: { current: [], nonCurrent: [] }, liabilities: { current: [], nonCurrent: [] }, equity: { capital: [], retainedEarningsItems: [] }, income: { revenue: [], cogs: [], expenses: [] } };
-        state.financials = {}; state.hasValidData = false;
-        console.log("[DEBUG] Attempting to build statements...");
-        let trialData;
-        try {
-            const rawDataString = localStorage.getItem('trialData');
-            if (!rawDataString) throw new Error("localStorage 'trialData' is missing.");
-            trialData = JSON.parse(rawDataString);
-            if (!Array.isArray(trialData) || trialData.length === 0 || (trialData.length === 1 && !trialData[0].Account && !toNum(trialData[0].Debit) && !toNum(trialData[0].Credit))) {
-                throw new Error("Parsed 'trialData' is empty or invalid.");
-            }
-        } catch (e) { console.error("[DEBUG] Error loading/parsing 'trialData':", e); return false; }
-
-        try {
-            const financials = { assets: 0, liabilities: 0, equity: 0, revenue: 0, cogs: 0, expenses: 0, netProfit: 0, grossProfit: 0, currentAssets: 0, inventory: 0, currentLiabilities: 0, retainedEarnings: 0, interestExpense: 0, taxExpense: 0, depreciationAmortization: 0, ppeNet: 0, longTermDebt: 0, shortTermDebt: 0, cashEquivalents: 0, ebit: 0, workingCapital: 0 };
-            const statements = state.statements; 
-             try {
-                trialData.forEach(row => {
-                    const value = (toNum(row.Debit)) - (toNum(row.Credit));
-                    const mainType = row.MainType || ''; const subType = row.SubType || '';
-                    const accountName = (row.Account || '').toLowerCase();
-                    const item = { Account: row.Account || 'N/A', value: 0 };
-                    if (mainType.includes('الأصول') || mainType.includes('Assets')) {
-                        financials.assets += value; item.value = value;
-                        if (subType.includes('متداول') || subType.includes('Current')) { financials.currentAssets += value; statements.assets.current.push(item); if (subType.includes('المخزون') || subType.includes('Inventory') || accountName.includes('inventory') || accountName.includes('مخزون')) financials.inventory += value; if (subType.includes('النقد') || subType.includes('Cash') || accountName.includes('cash') || accountName.includes('نقد')) financials.cashEquivalents += value; }
-                        else { financials.ppeNet += (accountName.includes('ppe') || accountName.includes('fixed asset') || accountName.includes('أصول ثابتة'))? value : 0; statements.assets.nonCurrent.push(item); }
-                    } else if (mainType.includes('الخصوم') || mainType.includes('Liabilities')) {
-                        financials.liabilities -= value; item.value = -value;
-                        if (subType.includes('متداول') || subType.includes('Current')) { financials.currentLiabilities -= value; statements.liabilities.current.push(item); if(subType.includes('قروض قصيرة') || subType.includes('Short-term Loans') || accountName.includes('short term debt') || accountName.includes('قرض قصير')) financials.shortTermDebt -=value; }
-                        else { financials.longTermDebt += (subType.includes('قروض طويلة') || subType.includes('Long-term Loans') || accountName.includes('long term debt') || accountName.includes('قرض طويل'))? -value : 0; statements.liabilities.nonCurrent.push(item); }
-                    } else if (mainType.includes('حقوق الملكية') || mainType.includes('Equity')) {
-                        financials.equity -= value; item.value = -value;
-                        if (subType.includes('رأس المال') || subType.includes('Capital')) statements.equity.capital.push(item);
-                        else { financials.retainedEarnings -= (subType.includes('الأرباح المحتجزة') || subType.includes('Retained Earnings') || accountName.includes('retained earnings') || accountName.includes('أرباح محتجزة'))? value : 0; statements.equity.retainedEarningsItems.push(item); }
-                    } else if (mainType.includes('قائمة الدخل') || mainType.includes('Income Statement')) {
-                        if (subType.includes('الإيرادات') || subType.includes('Revenue')) { financials.revenue -= value; item.value = -value; statements.income.revenue.push(item); }
-                        else if (subType.includes('تكلفة المبيعات') || subType.includes('COGS')) { financials.cogs += value; item.value = value; statements.income.cogs.push(item); }
-                        else { financials.expenses += value; item.value = value; statements.income.expenses.push(item); if (subType.includes('فائدة') || subType.includes('Interest') || accountName.includes('interest')) financials.interestExpense += value; if (subType.includes('ضريبية') || subType.includes('Tax') || accountName.includes('tax')) financials.taxExpense += value; if (subType.includes('إهلاك') || subType.includes('Depreciation') || accountName.includes('depreciation') || accountName.includes('amortization') || accountName.includes('إهلاك') || accountName.includes('استهلاك')) financials.depreciationAmortization += value; }
-                    }
-                });
-             } catch(loopError) { console.error("[DEBUG] Error inside trialData processing loop:", loopError); throw loopError; }
-            Object.keys(financials).forEach(key => financials[key] = financials[key] || 0);
-            financials.grossProfit = financials.revenue - financials.cogs;
-            financials.netProfit = financials.grossProfit - financials.expenses;
-            financials.ebit = financials.netProfit + financials.interestExpense + financials.taxExpense;
-            financials.workingCapital = financials.currentAssets - financials.currentLiabilities;
-            financials.ocf_estimated = financials.netProfit + financials.depreciationAmortization;
-            financials.capex_estimated = financials.depreciationAmortization;
-            financials.icf_estimated = -financials.capex_estimated;
-            financials.fcf_estimated = 0;
-            financials.netCashChange_estimated = financials.ocf_estimated + financials.icf_estimated + financials.fcf_estimated;
-            financials.freeCashFlow_estimated = financials.ocf_estimated - financials.capex_estimated;
-            const balanceCheck = financials.assets - (financials.liabilities + financials.equity + financials.netProfit);
-            if (Math.abs(balanceCheck) > 1) console.warn(`Balance sheet check failed... Diff: ${balanceCheck.toFixed(2)}`);
-            state.financials = financials; state.statements = statements; state.hasValidData = true;
-            console.log("[DEBUG] Successfully built statements and financials.");
-            return true;
-        } catch (e) { console.error("[DEBUG] Error during statement building main try/catch:", e); state.hasValidData = false; return false; }
-    };
-
-     // Calculate Ratios Function
-     const calculateAllRatios = () => { /* ... (Function as before) ... */ };
-    // Render Statement Section Function
-    const renderStatementSection = (items, totalLabel, isSubSection = false) => { /* ... (Function as before, with array check) ... */ };
-    // Rendering functions for each statement
-    const renderBalanceSheet = () => { /* ... (Function as before, with data checks) ... */ };
-    const renderIncomeStatement = () => { /* ... (Function as before, with data checks) ... */ };
-    const renderCashFlowStatement = () => { /* ... (Function as before, with data checks) ... */ };
-    const renderEquityStatement = () => { /* ... (Function as before, with data checks) ... */ };
-    // Render Ratio Category Function
-    const getRatioComment = (key, value) => { /* ... (Function as before) ... */ };
-    const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => { /* ... (Function as before, with benchmarks) ... */ };
-     // Populate Industry Select Function
-     const populateIndustrySelect = () => { /* ... (Function as before) ... */ };
-
-    const init = () => {
-        console.log("[DEBUG] Initializing report page...");
-        const pdfBtn = document.getElementById('exportPdfBtn');
-        const excelBtn = document.getElementById('exportExcelBtn');
-        const industrySelect = document.getElementById('industrySelect');
-
-        if (pdfBtn) { /* ... (PDF export logic) ... */ }
-        if (excelBtn) { /* ... (Excel export logic) ... */ }
-
-        if (buildStatementsAndFinancials()) {
-            console.log("[DEBUG] Data is valid, calculating ratios and rendering...");
-            calculateAllRatios();
-            renderBalanceSheet(); renderIncomeStatement(); renderCashFlowStatement(); renderEquityStatement();
-            populateIndustrySelect();
-            renderRatioCategory('liquidityRatios', 'liquidityRatios', ['currentRatio', 'quickRatio']);
-            renderRatioCategory('profitabilityRatios', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
-            renderRatioCategory('leverageRatios', 'leverageRatios', ['debtToAssets', 'debtToEquity']);
-            renderRatioCategory('efficiencyRatios', 'efficiencyRatios', ['assetTurnover']);
-            if (industrySelect) {
-                industrySelect.addEventListener('change', (e) => {
-                    state.selectedIndustry = e.target.value; localStorage.setItem('selectedIndustry', state.selectedIndustry);
-                    console.log(`[DEBUG] Industry changed to: ${state.selectedIndustry}`);
-                    renderRatioCategory('liquidityRatios', 'liquidityRatios', ['currentRatio', 'quickRatio']);
-                    renderRatioCategory('profitabilityRatios', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
-                    renderRatioCategory('leverageRatios', 'leverageRatios', ['debtToAssets', 'debtToEquity']);
-                    renderRatioCategory('efficiencyRatios', 'efficiencyRatios', ['assetTurnover']);
-                    if (typeof window.applyTranslations === 'function') { window.applyTranslations(); }
-                    else { console.warn("[DEBUG] applyTranslations not found on industry change"); }
-                });
-            }
-        } else {
-             console.warn("[DEBUG] Data is invalid, showing warnings only.");
-             const bsCommentEl = document.getElementById('balanceSheetComment');
-             const isCommentEl = document.getElementById('incomeStatementComment');
-             // ... (rest of warning display logic as before) ...
-        }
-
-         setTimeout(() => {
-             if (typeof window.applyTranslations === 'function') {
-                 console.log("[DEBUG] Applying translations (report-app.js) via setTimeout...");
-                 window.applyTranslations();
-             } else {
-                 console.error("[!!! DEBUG !!!] applyTranslations function is NOT DEFINED. Check main.js and script order in report.html!");
-             }
-         }, 100); // Increased delay slightly
-
-         console.log("[DEBUG] Report page initialization finished.");
-    };
-
-    // Critical elements check
-    if (document.getElementById('balanceSheetTable') && document.getElementById('financialRatiosSection')) {
-        init();
-    } else {
-        console.error("[DEBUG] Critical elements 'balanceSheetTable' or 'financialRatiosSection' were not found. Initialization stopped.");
-    }
-});
+    {/* --- تأكد من أن ترتيب الـ scripts هكذا بالضبط --- */}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/report-app.js"></script>
+</body>
+</html>
