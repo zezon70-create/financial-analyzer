@@ -1,344 +1,427 @@
-// js/advanced-app.js (Full Version + Benchmarks + setTimeout Delay)
+// js/report-app.js (Corrected Version 4: Renamed formatCurrency to formatNumber)
 
 window.pageTranslations = {
     ar: {
-        pageTitle: "التحليلات المتقدمة — المحلل المالي", pageHeader: "التحليلات المتقدمة", pageSubheader: "استخدم أدوات تحليلية متخصصة للحصول على رؤى أعمق حول أداء عملك.",
-        tabRatios: "النسب المالية", tabBreakeven: "تحليل التعادل", tabDupont: "تحليل دوبونت", tabVertical: "التحليل الرأسي", tabZScore: "نموذج Z-Score", tabCashFlow: "تحليل التدفقات النقدية",
-        summaryTitle: "الملخص الذكي", alertsTitle: "تنبيهات ومؤشرات خطر", thRatio: "النسبة", thValue: "القيمة", thComment: "تعليق تحليلي", liquidityRatios: "نسب السيولة", profitabilityRatios: "نسب الربحية", leverageRatios: "نسب الرفع المالي", efficiencyRatios: "نسب الكفاءة", currentRatio: "نسبة التداول", currentRatio_comment_high: "سيولة ممتازة...", currentRatio_comment_good: "سيولة جيدة...", currentRatio_comment_low: "مؤشر خطر...", quickRatio: "نسبة السيولة السريعة", quickRatio_comment_good: "قدرة جيدة...", quickRatio_comment_low: "مؤشر خطر...", netProfitMargin: "هامش صافي الربح", netProfitMargin_comment_high: "ربحية ممتازة...", netProfitMargin_comment_avg: "ربحية مقبولة...", netProfitMargin_comment_low: "خسائر...", grossProfitMargin: "هامش الربح الإجمالي", grossProfitMargin_comment_high: "هامش قوي...", grossProfitMargin_comment_low: "هامش ضعيف...", roa: "العائد على الأصول (ROA)", roa_comment_high: "كفاءة عالية...", roa_comment_low: "كفاءة منخفضة...", roe: "العائد على حقوق الملكية (ROE)", roe_comment_high: "عائد ممتاز...", roe_comment_low: "عائد ضعيف...", debtToEquity: "نسبة الدين إلى حقوق الملكية", debtToEquity_comment_low: "دين منخفض...", debtToEquity_comment_good: "دين معتدل...", debtToEquity_comment_high: "دين مرتفع...", debtToAssets: "نسبة الدين إلى الأصول", debtToAssets_comment_low: "وضع آمن...", debtToAssets_comment_high: "مخاطر مرتفعة...", assetTurnover: "معدل دوران الأصول", assetTurnover_comment_high: "كفاءة ممتازة...", assetTurnover_comment_low: "كفاءة منخفضة...", summary_ok: "الوضع المالي يبدو مستقرًا...", summary_risk: "توجد بعض مؤشرات الخطر...", alert_liquidity_risk: "🔴 خطر سيولة...", alert_leverage_risk: "🟡 تنبيه دين مرتفع...", alert_profit_risk: "🔴 خطر ربحية...", alert_ok: "🟢 لا توجد مؤشرات خطر حرجة...", noDataForRatios: "لا توجد بيانات كافية لحساب النسب. يرجى إدخال ميزان المراجعة أولاً.",
-        beInputTitle: "مدخلات الحساب", labelFixedCosts: "إجمالي التكاليف الثابتة", labelVariableCost: "التكلفة المتغيرة للوحدة", labelSellingPrice: "سعر بيع الوحدة", btnCalculate: "احسب", beResultsTitle: "النتائج", bepUnits: "نقطة التعادل (بالوحدات)", bepValue: "نقطة التعادل (بالقيمة)", beChartTitle: "رسم بياني لنقطة التعادل", errorPrice: "سعر البيع يجب أن يكون أعلى من التكلفة المتغيرة.", errorPositiveValues: "الرجاء إدخال قيم موجبة.", revenue: 'الإيرادات', totalCosts: 'إجمالي التكاليف', fixedCosts: 'التكاليف الثابتة', unitsSold: 'الوحدات المباعة', value: 'القيمة',
-        dupontTitle: "تحليل دوبونت للعائد على حقوق الملكية", dupontDesc: "يساعد هذا التحليل على تفكيك العائد على حقوق الملكية (ROE)...", dupontEquation: "معادلة دوبونت:", dupontCompNPM: "هامش صافي الربح", dupontCompAT: "دوران الأصول", dupontCompEM: "مضاعف حقوق الملكية", dupontCompROE: "العائد على حقوق الملكية", dupontDataWarning: "لا توجد بيانات كافية (من ميزان المراجعة) لإجراء تحليل دوبونت.", dupontInterpretationHighROE: "🟢 العائد المرتفع...", dupontInterpretationLowROE: "🟡 العائد المنخفض...", dupontFactorProfitability: "ربحية تشغيلية قوية...", dupontFactorEfficiency: "كفاءة أصول عالية...", dupontFactorLeverage: "استخدام الرفع المالي...", dupontFactorLowProfitability: "ربحية تشغيلية ضعيفة...", dupontFactorLowEfficiency: "كفاءة أصول منخفضة...", dupontFactorLowLeverage: "اعتماد منخفض على الديون...",
-        verticalTitle: "التحليل الرأسي (القوائم ذات الحجم الموحد)", verticalDesc: "يعرض كل بند في القوائم المالية كنسبة مئوية...", verticalDataWarning: "لا توجد بيانات كافية (من ميزان المراجعة) لإجراء التحليل الرأسي.", verticalBS: "الميزانية العمومية (% من إجمالي الأصول)", verticalIS: "قائمة الدخل (% من صافي الإيرادات)", verticalAccount: "الحساب", verticalValue: "القيمة", verticalPercent: "النسبة %",
-        zscoreTitle: "نموذج Altman Z-Score (للتنبؤ بالإفلاس)", zscoreDesc: "نموذج إحصائي يستخدم مجموعة من النسب المالية...", zscoreDataWarning: "لا توجد بيانات كافية لحساب نموذج Z-Score...", zscoreValueLabel: "قيمة Z-Score:", zscoreInterpretation: "التفسير:", zscoreZoneSafe: "🟢 منطقة آمنة", zscoreZoneGrey: "🟡 منطقة رمادية", zscoreZoneDistress: "🔴 منطقة الخطر", zscoreComponents: "مكونات النموذج:", zscoreX1: "X1 (رأس المال العامل / الأصول):", zscoreX2: "X2 (الأرباح المحتجزة / الأصول):", zscoreX3: "X3 (الأرباح قبل الفوائد والضرائب / الأصول):", zscoreX4: "X4 (حقوق الملكية / الخصوم):", zscoreX5: "X5 (الإيرادات / الأصول):", zscoreRetainedEarningsNotFound: "(لم يتم العثور على أرباح محتجزة)",
-        cfTitle: "تحليل التدفقات النقدية (تقديري)", cfDesc: "يقدم هذا القسم تقديرًا لقائمة التدفقات النقدية...", cfDataWarning: "لا توجد بيانات كافية لتقدير التدفقات النقدية.", cfStmtTitle: "قائمة التدفقات النقدية المقدرة", cfNetIncome: "صافي الدخل", cfDepreciationAmortization: "الإهلاك والاستهلاك (مقدر)", cfChangesWC: "التغيرات في رأس المال العامل (مقدر)", cfOperating: "التدفق النقدي التشغيلي", cfInvesting: "التدفق النقدي الاستثماري (مقدر)", cfFinancing: "التدفق النقدي التمويلي (مقدر)", cfNetChange: "صافي التغير في النقدية", cfRatiosTitle: "نسب التدفقات النقدية", cfRatioOCF: "نسبة التدفق النقدي التشغيلي", cfRatioFCF: "التدفق النقدي الحر (مقدر)", cfInterpretationPositiveOCF: "🟢 عمليات الشركة تولد نقدًا.", cfInterpretationNegativeOCF: "🔴 عمليات الشركة تستهلك نقدًا.", cfInterpretationFCF: "التدفق النقدي الحر...",
+        pageTitle: "التقارير المالية المفصلة — المحلل المالي",
+        pageHeader: "القوائم المالية المفصلة",
+        pageSubheader: "تقارير احترافية طبقًا للمعايير الدولية مع تعليقات تحليلية ذكية.",
+        commentaryTitle: "تعليق تحليلي", exportPdf: "تصدير PDF", exportExcel: "تصدير Excel", total: "الإجمالي",
+        bsTitle: "قائمة المركز المالي", bsSubheader: "تعرض أصول الشركة وخصومها وحقوق ملكيتها...", assets: "الأصول", currentAssets: "الأصول المتداولة", nonCurrentAssets: "الأصول غير المتداولة", totalAssets: "إجمالي الأصول", liabilities: "الخصوم", currentLiabilities: "الخصوم المتداولة", nonCurrentLiabilities: "الخصوم غير المتداولة", totalLiabilities: "إجمالي الخصوم", equity: "حقوق الملكية", totalEquity: "إجمالي حقوق الملكية", totalLiabilitiesAndEquity: "إجمالي الخصوم وحقوق الملكية", bs_comment_balanced: "تحليل إيجابي: قائمة المركز المالي متوازنة...", bs_comment_unbalanced: "تحليل يتطلب الانتباه: القائمة غير متوازنة بفارق {diff}...",
+        isTitle: "قائمة الدخل الشامل", isSubheader: "تلخص إيرادات ومصروفات الشركة...", revenue: "الإيرادات", cogs: "تكلفة المبيعات", grossProfit: "مجمل الربح", operatingExpenses: "المصروفات التشغيلية", operatingProfit: "الربح التشغيلي", netProfit: "صافي الربح", is_comment_profit: "أداء قوي: الشركة تحقق صافي ربح...", is_comment_loss: "تحديات في الربحية: الشركة تسجل صافي خسارة...",
+        cfTitle: "قائمة التدفقات النقدية (تقديري)", cfSubheader: "توضح حركة النقد...", operatingActivities: "التدفقات النقدية التشغيلية", investingActivities: "التدفقات النقدية الاستثمارية", financingActivities: "التدفقات النقدية التمويلية", netCashFlow: "صافي التغير في النقد", cf_comment_positive: "وضع نقدي جيد...", cf_comment_negative: "مؤشر خطر...",
+        eqTitle: "قائمة التغيرات في حقوق الملكية", eqSubheader: "توضح التغيرات التي طرأت...", openingBalance: "الرصيد الافتتاحي", closingBalance: "الرصيد الختامي", eq_comment_growth: "نمو في حقوق المساهمين...", eq_comment_decline: "انخفاض في حقوق المساهمين...",
+        ratiosTitle: "النسب المالية الرئيسية والمقارنات المعيارية",
+        ratiosSubheader: "تحليل لأهم النسب المالية مقارنة بمتوسطات الصناعة.",
         selectIndustryLabel: "اختر قطاع الصناعة للمقارنة",
         selectIndustryDesc: "اختيار قطاع سيضيف مقارنة مع متوسطات الصناعة إلى جداول النسب.",
-        thIndustryAvg: "متوسط الصناعة",
-        industry_general: "عام / غير محدد",
-        industry_retail: "تجارة التجزئة",
-        industry_manufacturing: "الصناعة التحويلية",
-        industry_services: "الخدمات",
-        industry_construction: "المقاولات",
-        comparison_better: "أفضل",
-        comparison_worse: "أسوأ",
-        comparison_similar: "مماثل"
+        thRatio: "النسبة", thValue: "القيمة", thIndustryAvg: "متوسط الصناعة", thComment: "تعليق تحليلي",
+        noDataForRatios: "لا توجد بيانات كافية لحساب النسب. يرجى إدخال ميزان المراجعة أولاً.",
+        liquidityRatios: "نسب السيولة", profitabilityRatios: "نسب الربحية", leverageRatios: "نسب الرفع المالي", efficiencyRatios: "نسب الكفاءة",
+        currentRatio: "نسبة التداول", currentRatio_comment_high: "سيولة ممتازة...", currentRatio_comment_good: "سيولة جيدة...", currentRatio_comment_low: "مؤشر خطر...",
+        quickRatio: "نسبة السيولة السريعة", quickRatio_comment_good: "قدرة جيدة...", quickRatio_comment_low: "مؤشر خطر...",
+        netProfitMargin: "هامش صافي الربح", netProfitMargin_comment_high: "ربحية ممتازة...", netProfitMargin_comment_avg: "ربحية مقبولة...", netProfitMargin_comment_low: "خسائر...",
+        grossProfitMargin: "هامش الربح الإجمالي", grossProfitMargin_comment_high: "هامش قوي...", grossProfitMargin_comment_low: "هامش ضعيف...",
+        roa: "العائد على الأصول (ROA)", roa_comment_high: "كفاءة عالية...", roa_comment_low: "كفاءة منخفضة...",
+        roe: "العائد على حقوق الملكية (ROE)", roe_comment_high: "عائد ممتاز...", roe_comment_low: "عائد ضعيف...",
+        debtToEquity: "نسبة الدين إلى حقوق الملكية", debtToEquity_comment_low: "دين منخفض...", debtToEquity_comment_good: "دين معتدل...", debtToEquity_comment_high: "دين مرتفع...",
+        debtToAssets: "نسبة الدين إلى الأصول", debtToAssets_comment_low: "وضع آمن...", debtToAssets_comment_high: "مخاطر مرتفعة...",
+        assetTurnover: "معدل دوران الأصول", assetTurnover_comment_high: "كفاءة ممتازة...", assetTurnover_comment_low: "كفاءة منخفضة...",
+        industry_general: "عام / غير محدد", industry_retail: "تجارة التجزئة", industry_manufacturing: "الصناعة التحويلية", industry_services: "الخدمات", industry_construction: "المقاولات",
+        comparison_better: "أفضل", comparison_worse: "أسوأ", comparison_similar: "مماثل"
     },
-    en: { // ... (All English translations as before) ...
-        pageTitle: "Advanced Analytics — Financial Analyzer", pageHeader: "Advanced Analytics", pageSubheader: "Use specialized analytical tools...", 
-        tabRatios: "Financial Ratios", tabBreakeven: "Break-even Analysis", tabDupont: "DuPont Analysis", tabVertical: "Vertical Analysis", tabZScore: "Altman Z-Score", tabCashFlow: "Cash Flow Analysis", 
-        noDataForRatios: "Insufficient data...", dupontDataWarning: "Insufficient data...", verticalDataWarning: "Insufficient data...", zscoreDataWarning: "Insufficient data...", cfDataWarning: "Insufficient data...",
-        selectIndustryLabel: "Select Industry for Benchmarking", selectIndustryDesc: "Choosing an industry will add benchmark averages to the ratio tables.",
-        thIndustryAvg: "Industry Avg.", industry_general: "General / Unspecified", industry_retail: "Retail Trade", industry_manufacturing: "Manufacturing", industry_services: "Services", industry_construction: "Construction",
-        comparison_better: "Better", comparison_worse: "Worse", comparison_similar: "Similar"
-    }
+    en: { /* ... (English translations as before) ... */ }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("[DEBUG] DOM Loaded for report-app.js");
 
-    // *** MODIFICATION: Wrap entire logic in a setTimeout to delay execution ***
-    setTimeout(() => {
-        console.log("[DEBUG] Starting advanced-app.js initialization after delay...");
+    const state = {
+        trialData: [],
+        statements: { // *** Initialize structure explicitly ***
+            assets: { current: [], nonCurrent: [] },
+            liabilities: { current: [], nonCurrent: [] },
+            equity: { capital: [], retainedEarningsItems: [] },
+            income: { revenue: [], cogs: [], expenses: [] }
+        },
+        financials: {},
+        ratios: {},
+        hasValidData: false,
+        selectedIndustry: 'general'
+    };
+    const lang = localStorage.getItem('lang') || 'ar';
+    const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;
 
-        const state = {
-            financials: {}, ratios: {}, breakevenChart: null, hasValidData: false,
-            rawData: { bsItems: [], isItems: [] },
-            selectedIndustry: 'general'
-        };
-        const lang = localStorage.getItem('lang') || 'ar';
-        const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;
+    // *** HELPER FUNCTIONS ***
+    const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
+    const formatPercent = (value, digits = 1) => isFinite(value) && !isNaN(value) ? `${(value * 100).toFixed(digits)}%` : "N/A";
+    const formatRatio = (value, digits = 2) => isFinite(value) && !isNaN(value) ? value.toFixed(digits) : "N/A";
+    const formatNumber = (value, digits = 0) => isFinite(value) && !isNaN(value) ? value.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }) : "N/A";
 
-        const UI = {
-            smartSummary: document.getElementById('smartSummary'), alertsArea: document.getElementById('alertsArea'),
-            fixedCosts: document.getElementById('fixedCosts'), variableCost: document.getElementById('variableCost'), sellingPrice: document.getElementById('sellingPrice'), calculateBreakeven: document.getElementById('calculateBreakeven'), breakevenResults: document.getElementById('breakevenResults'), bepUnitsResult: document.getElementById('bepUnitsResult'), bepValueResult: document.getElementById('bepValueResult'), breakevenChartCanvas: document.getElementById('breakevenChart'),
-            dupontResultsContainer: document.getElementById('dupontResultsContainer'), dupontDataWarning: document.getElementById('dupontDataWarning'), dupontFormulaDisplay: document.getElementById('dupontFormulaDisplay'), dupontROE: document.getElementById('dupontROE'), dupontNPM: document.getElementById('dupontNPM'), dupontAT: document.getElementById('dupontAT'), dupontEM: document.getElementById('dupontEM'), dupontValueNPM: document.getElementById('dupontValueNPM'), dupontValueAT: document.getElementById('dupontValueAT'), dupontValueEM: document.getElementById('dupontValueEM'), dupontValueROE: document.getElementById('dupontValueROE'), dupontInterpretation: document.getElementById('dupontInterpretation'),
-            verticalDataWarning: document.getElementById('verticalDataWarning'), verticalResultsContainer: document.getElementById('verticalResultsContainer'), verticalBSTable: document.getElementById('verticalBSTable'), verticalISTable: document.getElementById('verticalISTable'),
-            zscoreDataWarning: document.getElementById('zscoreDataWarning'), zscoreResultsContainer: document.getElementById('zscoreResultsContainer'), zscoreValue: document.getElementById('zscoreValue'), zscoreInterpretation: document.getElementById('zscoreInterpretation'), zscoreFactorsList: document.getElementById('zscoreFactorsList'),
-            cfDataWarning: document.getElementById('cfDataWarning'), cfResultsContainer: document.getElementById('cfResultsContainer'), cfStatementTableBody: document.getElementById('cfStatementTableBody'), cfValueOCFRatio: document.getElementById('cfValueOCFRatio'), cfValueFCF: document.getElementById('cfValueFCF'), cfInterpretation: document.getElementById('cfInterpretation'),
-            industrySelect: document.getElementById('industrySelect')
-        };
+    // Benchmark Data
+    const industryBenchmarks = {
+        general: {},
+        retail: { currentRatio: 1.5, quickRatio: 0.5, netProfitMargin: 0.03, roe: 0.15, debtToEquity: 1.2, assetTurnover: 2.0, grossProfitMargin: 0.30 },
+        manufacturing: { currentRatio: 1.8, quickRatio: 0.9, netProfitMargin: 0.06, roe: 0.12, debtToEquity: 0.8, assetTurnover: 1.0, grossProfitMargin: 0.35 },
+        services: { currentRatio: 1.2, quickRatio: 1.0, netProfitMargin: 0.08, roe: 0.18, debtToEquity: 1.0, assetTurnover: 1.2, grossProfitMargin: 0.50 },
+        construction: { currentRatio: 1.3, quickRatio: 0.8, netProfitMargin: 0.04, roe: 0.14, debtToEquity: 1.5, assetTurnover: 1.5, grossProfitMargin: 0.20 }
+    };
 
-        const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
-        const formatPercent = (value, digits = 1) => isFinite(value) && !isNaN(value) ? `${(value * 100).toFixed(digits)}%` : "N/A";
-        const formatRatio = (value, digits = 2) => isFinite(value) && !isNaN(value) ? value.toFixed(digits) : "N/A";
-        const formatNumber = (value, digits = 0) => isFinite(value) && !isNaN(value) ? value.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }) : "N/A";
-
-        const industryBenchmarks = {
-            general: {},
-            retail: { currentRatio: 1.5, quickRatio: 0.5, netProfitMargin: 0.03, roe: 0.15, debtToEquity: 1.2, assetTurnover: 2.0, grossProfitMargin: 0.30 },
-            manufacturing: { currentRatio: 1.8, quickRatio: 0.9, netProfitMargin: 0.06, roe: 0.12, debtToEquity: 0.8, assetTurnover: 1.0, grossProfitMargin: 0.35 },
-            services: { currentRatio: 1.2, quickRatio: 1.0, netProfitMargin: 0.08, roe: 0.18, debtToEquity: 1.0, assetTurnover: 1.2, grossProfitMargin: 0.50 },
-            construction: { currentRatio: 1.3, quickRatio: 0.8, netProfitMargin: 0.04, roe: 0.14, debtToEquity: 1.5, assetTurnover: 1.5, grossProfitMargin: 0.20 }
-        };
-
-        // ==============================================
-        // === FINANCIAL CALCULATIONS (Full version) ===
-        // ==============================================
-        const calculateFinancials = () => {
-            state.financials = {}; state.rawData = { bsItems: [], isItems: [] }; state.hasValidData = false;
-            let trialData;
-            try {
-                const rawDataString = localStorage.getItem('trialData');
-                if (!rawDataString) { console.warn("localStorage 'trialData' is missing."); return false; }
-                trialData = JSON.parse(rawDataString);
-                if (!Array.isArray(trialData) || trialData.length === 0 || (trialData.length === 1 && !trialData[0].Account && !toNum(trialData[0].Debit) && !toNum(trialData[0].Credit))) {
-                    console.warn("Parsed 'trialData' is empty or invalid."); return false;
-                }
-            } catch (e) { console.error("Error parsing 'trialData':", e); return false; }
-
-            try {
-                const f = { assets: 0, liabilities: 0, equity: 0, revenue: 0, cogs: 0, expenses: 0, netProfit: 0, grossProfit: 0, currentAssets: 0, inventory: 0, currentLiabilities: 0, retainedEarnings: 0, interestExpense: 0, taxExpense: 0, depreciationAmortization: 0, ppeNet: 0, longTermDebt: 0, shortTermDebt: 0, cashEquivalents: 0, ebit: 0, workingCapital: 0, ocf_estimated: 0, capex_estimated: 0, icf_estimated: 0, fcf_estimated: 0, netCashChange_estimated: 0, freeCashFlow_estimated: 0 };
-                trialData.forEach(row => {
-                    const value = (toNum(row.Debit)) - (toNum(row.Credit));
-                    const mainType = row.MainType || '';
-                    const subType = row.SubType || '';
-                    const accountName = (row.Account || '').toLowerCase();
-                    const rawItem = { account: row.Account || 'N/A', value: 0, mainType: mainType, subType: subType };
-
-                    if (mainType.includes('الأصول') || mainType.includes('Assets')) {
-                        f.assets += value; rawItem.value = value; state.rawData.bsItems.push(rawItem);
-                        if (subType.includes('متداول') || subType.includes('Current')) {
-                            f.currentAssets += value;
-                            if (subType.includes('المخزون') || subType.includes('Inventory') || accountName.includes('inventory') || accountName.includes('مخزون')) { f.inventory += value; }
-                            if (subType.includes('النقد') || subType.includes('Cash') || accountName.includes('cash') || accountName.includes('نقد')) { f.cashEquivalents += value; }
-                        } else if (subType.includes('غير متداول') || subType.includes('Non-current') || subType.includes('ثابتة') || subType.includes('fixed')) {
-                            if (accountName.includes('ppe') || accountName.includes('fixed asset') || accountName.includes('أصول ثابتة')) f.ppeNet += value;
-                        }
-                    } else if (mainType.includes('الخصوم') || mainType.includes('Liabilities')) {
-                        f.liabilities -= value; rawItem.value = -value; state.rawData.bsItems.push(rawItem);
-                        if (subType.includes('متداول') || subType.includes('Current')) {
-                            f.currentLiabilities -= value;
-                            if (subType.includes('قروض قصيرة') || subType.includes('Short-term Loans') || accountName.includes('short term debt') || accountName.includes('قرض قصير')) f.shortTermDebt -= value;
-                        } else if (subType.includes('غير متداول') || subType.includes('Non-current')) {
-                            if (subType.includes('قروض طويلة') || subType.includes('Long-term Loans') || accountName.includes('long term debt') || accountName.includes('قرض طويل')) f.longTermDebt -= value;
-                        }
-                    } else if (mainType.includes('حقوق الملكية') || mainType.includes('Equity')) {
-                        f.equity -= value; rawItem.value = -value; state.rawData.bsItems.push(rawItem);
-                        if (subType.includes('الأرباح المحتجزة') || subType.includes('Retained Earnings') || accountName.includes('retained earnings') || accountName.includes('أرباح محتجزة')) f.retainedEarnings -= value;
-                    } else if (mainType.includes('قائمة الدخل') || mainType.includes('Income Statement')) {
-                        rawItem.mainType = 'Income Statement';
-                        if (subType.includes('الإيرادات') || subType.includes('Revenue')) { f.revenue -= value; rawItem.value = -value; state.rawData.isItems.push(rawItem); }
-                        else if (subType.includes('تكلفة المبيعات') || subType.includes('COGS')) { f.cogs += value; rawItem.value = value; state.rawData.isItems.push(rawItem); }
-                        else {
-                            f.expenses += value; rawItem.value = value; state.rawData.isItems.push(rawItem);
-                            if (subType.includes('فائدة') || subType.includes('Interest') || accountName.includes('interest')) f.interestExpense += value;
-                            if (subType.includes('ضريبية') || subType.includes('Tax') || accountName.includes('tax')) f.taxExpense += value;
-                            if (subType.includes('إهلاك') || subType.includes('Depreciation') || accountName.includes('depreciation') || accountName.includes('amortization') || accountName.includes('إهلاك') || accountName.includes('استهلاك')) f.depreciationAmortization += value;
-                        }
-                    }
-                });
-                Object.keys(f).forEach(key => f[key] = f[key] || 0);
-                f.grossProfit = f.revenue - f.cogs;
-                f.netProfit = f.grossProfit - f.expenses;
-                f.ebit = f.netProfit + f.interestExpense + f.taxExpense;
-                f.workingCapital = f.currentAssets - f.currentLiabilities;
-                f.ocf_estimated = f.netProfit + f.depreciationAmortization;
-                f.capex_estimated = f.depreciationAmortization;
-                f.icf_estimated = -f.capex_estimated;
-                f.fcf_estimated = 0;
-                f.netCashChange_estimated = f.ocf_estimated + f.icf_estimated + f.fcf_estimated;
-                f.freeCashFlow_estimated = f.ocf_estimated - f.capex_estimated;
-                const balanceCheck = f.assets - (f.liabilities + f.equity + f.netProfit);
-                if (Math.abs(balanceCheck) > 1) console.warn(`Balance sheet check failed... Diff: ${balanceCheck.toFixed(2)}`);
-                state.financials = f; state.hasValidData = true; console.log("Calculated Financials:", f); return true;
-            } catch (e) { console.error("Error during financial calculations:", e); state.financials = {}; state.hasValidData = false; return false; }
-        };
-        
-        const calculateAllRatios = () => {
-            state.ratios = {}; if (!state.hasValidData) { console.warn("Financials invalid..."); return false; } const f = state.financials; try { const assets = f.assets || 0; const equity = f.equity || 0; const liabilities = f.liabilities || 0; const revenue = f.revenue || 0; const equityMultiplier = (equity !== 0 && assets !== 0) ? assets / equity : Infinity; const roeStandard = (equity !== 0) ? f.netProfit / equity : Infinity; const x1 = assets !== 0 ? f.workingCapital / assets : Infinity; const x2 = assets !== 0 ? f.retainedEarnings / assets : Infinity; const x3 = assets !== 0 ? f.ebit / assets : Infinity; const x4 = liabilities !== 0 ? equity / liabilities : Infinity; const x5 = assets !== 0 ? revenue / assets : 0; const zScore = (isFinite(x1) && isFinite(x2) && isFinite(x3) && isFinite(x4) && isFinite(x5)) ? (0.717 * x1) + (0.847 * x2) + (3.107 * x3) + (0.420 * x4) + (0.998 * x5) : NaN; state.ratios = { currentRatio: f.currentLiabilities !== 0 ? f.currentAssets / f.currentLiabilities : Infinity, quickRatio: f.currentLiabilities !== 0 ? (f.currentAssets - f.inventory) / f.currentLiabilities : Infinity, grossProfitMargin: revenue !== 0 ? f.grossProfit / revenue : 0, netProfitMargin: revenue !== 0 ? f.netProfit / revenue : 0, roa: assets !== 0 ? f.netProfit / assets : 0, roe: roeStandard, debtToAssets: assets !== 0 ? liabilities / assets : Infinity, debtToEquity: equity !== 0 ? liabilities / equity : Infinity, assetTurnover: x5, equityMultiplier: equityMultiplier, zScoreX1: x1, zScoreX2: x2, zScoreX3: x3, zScoreX4: x4, zScoreX5: x5, zScore: zScore, operatingCashFlowRatio: f.currentLiabilities !== 0 ? f.ocf_estimated / f.currentLiabilities : Infinity, freeCashFlow: f.freeCashFlow_estimated }; console.log("Calculated Ratios & Z-Score & CF:", state.ratios); return true; } catch(e) { console.error("Error calculating ratios:", e); state.ratios = {}; state.hasValidData = false; return false; }
-        };
-
-        // ==============================================
-        // === RENDERING FUNCTIONS (All 6 tabs + Benchmarks) ===
-        // ==============================================
-
-        const getRatioComment = (key, value) => {
-            if (!isFinite(value) || isNaN(value)) return "N/A";
-            if (key === 'currentRatio') { if (value >= 2) return t_page('currentRatio_comment_high'); if (value >= 1) return t_page('currentRatio_comment_good'); return t_page('currentRatio_comment_low'); }
-            if (key === 'quickRatio') { if (value >= 1) return t_page('quickRatio_comment_good'); return t_page('quickRatio_comment_low'); }
-            if (key === 'netProfitMargin') { if (value >= 0.15) return t_page('netProfitMargin_comment_high'); if (value > 0) return t_page('netProfitMargin_comment_avg'); return t_page('netProfitMargin_comment_low'); }
-            if (key === 'grossProfitMargin') { return value >= 0.4 ? t_page('grossProfitMargin_comment_high') : t_page('grossProfitMargin_comment_low'); }
-            if (key === 'roa') { return value >= 0.05 ? t_page('roa_comment_high') : t_page('roa_comment_low'); }
-            if (key === 'roe') { return value >= 0.15 ? t_page('roe_comment_high') : t_page('roe_comment_low'); }
-            if (key === 'debtToEquity') { if (value < 0.5) return t_page('debtToEquity_comment_low'); if (value <= 1.5) return t_page('debtToEquity_comment_good'); return t_page('debtToEquity_comment_high'); }
-            if (key === 'debtToAssets') { return value < 0.4 ? t_page('debtToAssets_comment_low') : t_page('debtToAssets_comment_high'); }
-            if (key === 'assetTurnover') { return value >= 1 ? t_page('assetTurnover_comment_high') : t_page('assetTurnover_comment_low'); }
-            return "";
-        };
-        
-        const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => {
-            console.log(`[DEBUG] Attempting to render ratio category: ${categoryTitleKey} into div: ${divId}`);
-            const container = document.getElementById(divId);
-            if (!container) { console.error(`[DEBUG] Element not found: ${divId}`); return; }
-            if (!state.hasValidData) {
-                console.warn(`[DEBUG] No valid data for ${categoryTitleKey}, showing warning.`);
-                container.innerHTML = `<h5 class="mb-3">${t_page(categoryTitleKey)}</h5> <p class="text-muted">${t_page('noDataForRatios')}</p>`; return;
+    // Function to group trial balance data and calculate totals
+    const buildStatementsAndFinancials = () => {
+        state.statements = { assets: { current: [], nonCurrent: [] }, liabilities: { current: [], nonCurrent: [] }, equity: { capital: [], retainedEarningsItems: [] }, income: { revenue: [], cogs: [], expenses: [] } };
+        state.financials = {}; state.hasValidData = false;
+        console.log("[DEBUG] Attempting to build statements...");
+        let trialData;
+        try {
+            const rawDataString = localStorage.getItem('trialData');
+            if (!rawDataString) throw new Error("localStorage 'trialData' is missing.");
+            trialData = JSON.parse(rawDataString);
+            if (!Array.isArray(trialData) || trialData.length === 0 || (trialData.length === 1 && !trialData[0].Account && !toNum(trialData[0].Debit) && !toNum(trialData[0].Credit))) {
+                throw new Error("Parsed 'trialData' is empty or invalid.");
             }
-            console.log(`[DEBUG] Rendering ${categoryTitleKey} with data...`);
-            
-            const benchmarks = industryBenchmarks[state.selectedIndustry] || {};
-            const showBenchmarks = state.selectedIndustry !== 'general';
+        } catch (e) { console.error("[DEBUG] Error loading/parsing 'trialData':", e); return false; }
 
-            let tableHTML = `<h5 class="mb-3">${t_page(categoryTitleKey)}</h5>
-                <div class="table-responsive">
-                <table class="table table-sm table-striped">
-                    <thead><tr>
-                        <th>${t_page('thRatio')}</th>
-                        <th class="text-end">${t_page('thValue')}</th>
-                        ${showBenchmarks ? `<th class="text-end">${t_page('thIndustryAvg')}</th>` : ''}
-                        <th>${t_page('thComment')}</th>
-                    </tr></thead>
-                    <tbody>`;
+        try {
+            const financials = { assets: 0, liabilities: 0, equity: 0, revenue: 0, cogs: 0, expenses: 0, netProfit: 0, grossProfit: 0, currentAssets: 0, inventory: 0, currentLiabilities: 0, retainedEarnings: 0, interestExpense: 0, taxExpense: 0, depreciationAmortization: 0, ppeNet: 0, longTermDebt: 0, shortTermDebt: 0, cashEquivalents: 0, ebit: 0, workingCapital: 0 };
+            const statements = state.statements;
+             try {
+                trialData.forEach(row => {
+                    const value = (toNum(row.Debit)) - (toNum(row.Credit)); const mainType = row.MainType || ''; const subType = row.SubType || ''; const accountName = (row.Account || '').toLowerCase(); const item = { Account: row.Account || 'N/A', value: 0 };
+                    if (mainType.includes('الأصول') || mainType.includes('Assets')) { financials.assets += value; item.value = value; if (subType.includes('متداول') || subType.includes('Current')) { financials.currentAssets += value; statements.assets.current.push(item); if (subType.includes('المخزون') || subType.includes('Inventory') || accountName.includes('inventory') || accountName.includes('مخزون')) financials.inventory += value; if (subType.includes('النقد') || subType.includes('Cash') || accountName.includes('cash') || accountName.includes('نقد')) financials.cashEquivalents += value; } else { financials.ppeNet += (accountName.includes('ppe') || accountName.includes('fixed asset') || accountName.includes('أصول ثابتة'))? value : 0; statements.assets.nonCurrent.push(item); } } else if (mainType.includes('الخصوم') || mainType.includes('Liabilities')) { financials.liabilities -= value; item.value = -value; if (subType.includes('متداول') || subType.includes('Current')) { financials.currentLiabilities -= value; statements.liabilities.current.push(item); if(subType.includes('قروض قصيرة') || subType.includes('Short-term Loans') || accountName.includes('short term debt') || accountName.includes('قرض قصير')) financials.shortTermDebt -=value; } else { financials.longTermDebt += (subType.includes('قروض طويلة') || subType.includes('Long-term Loans') || accountName.includes('long term debt') || accountName.includes('قرض طويل'))? -value : 0; statements.liabilities.nonCurrent.push(item); } } else if (mainType.includes('حقوق الملكية') || mainType.includes('Equity')) { financials.equity -= value; item.value = -value; if (subType.includes('رأس المال') || subType.includes('Capital')) statements.equity.capital.push(item); else { financials.retainedEarnings -= (subType.includes('الأرباح المحتجزة') || subType.includes('Retained Earnings') || accountName.includes('retained earnings') || accountName.includes('أرباح محتجزة'))? value : 0; statements.equity.retainedEarningsItems.push(item); } } else if (mainType.includes('قائمة الدخل') || mainType.includes('Income Statement')) { if (subType.includes('الإيرادات') || subType.includes('Revenue')) { financials.revenue -= value; item.value = -value; statements.income.revenue.push(item); } else if (subType.includes('تكلفة المبيعات') || subType.includes('COGS')) { financials.cogs += value; item.value = value; statements.income.cogs.push(item); } else { financials.expenses += value; item.value = value; statements.income.expenses.push(item); if (subType.includes('فائدة') || subType.includes('Interest') || accountName.includes('interest')) financials.interestExpense += value; if (subType.includes('ضريبية') || subType.includes('Tax') || accountName.includes('tax')) financials.taxExpense += value; if (subType.includes('إهلاك') || subType.includes('Depreciation') || accountName.includes('depreciation') || accountName.includes('amortization') || accountName.includes('إهلاك') || accountName.includes('استهلاك')) financials.depreciationAmortization += value; } }
+                });
+             } catch(loopError) { console.error("[DEBUG] Error inside trialData processing loop:", loopError); throw loopError; }
+            Object.keys(financials).forEach(key => financials[key] = financials[key] || 0);
+            financials.grossProfit = financials.revenue - financials.cogs;
+            financials.netProfit = financials.grossProfit - financials.expenses;
+            financials.ebit = financials.netProfit + financials.interestExpense + financials.taxExpense;
+            financials.workingCapital = financials.currentAssets - financials.currentLiabilities;
+            financials.ocf_estimated = financials.netProfit + financials.depreciationAmortization;
+            financials.capex_estimated = financials.depreciationAmortization;
+            financials.icf_estimated = -financials.capex_estimated;
+            financials.fcf_estimated = 0;
+            financials.netCashChange_estimated = financials.ocf_estimated + financials.icf_estimated + financials.fcf_estimated;
+            financials.freeCashFlow_estimated = financials.ocf_estimated - financials.capex_estimated;
+            const balanceCheck = financials.assets - (financials.liabilities + financials.equity + financials.netProfit);
+            if (Math.abs(balanceCheck) > 1) console.warn(`Balance sheet check failed... Diff: ${balanceCheck.toFixed(2)}`);
+            state.financials = financials; state.statements = statements; state.hasValidData = true;
+            console.log("[DEBUG] Successfully built statements and financials.");
+            return true;
+        } catch (e) { console.error("[DEBUG] Error during statement building main try/catch:", e); state.hasValidData = false; return false; }
+    };
 
-            ratioKeys.forEach(key => {
-                const value = state.ratios && state.ratios.hasOwnProperty(key) ? state.ratios[key] : NaN;
-                const benchmarkValue = benchmarks[key];
-                const isPercentage = key.includes('Margin') || key.includes('roa') || key.includes('roe');
-                const formattedValue = isPercentage ? formatPercent(value) : formatRatio(value);
-                const formattedBenchmark = (showBenchmarks && typeof benchmarkValue !== 'undefined' && isFinite(benchmarkValue))
-                    ? (isPercentage ? formatPercent(benchmarkValue) : formatRatio(benchmarkValue)) : '-';
-                const comment = getRatioComment(key, value);
-                let comparisonIndicator = ''; let comparisonText = '';
-                if (showBenchmarks && typeof benchmarkValue !== 'undefined' && isFinite(value) && isFinite(benchmarkValue)) {
-                    const tolerance = 0.1 * Math.abs(benchmarkValue);
-                    const isDebtRatio = key === 'debtToEquity' || key === 'debtToAssets';
-                    const isBetter = isDebtRatio ? value < benchmarkValue - tolerance : value > benchmarkValue + tolerance;
-                    const isWorse = isDebtRatio ? value > benchmarkValue + tolerance : value < benchmarkValue - tolerance;
-                    if (isBetter) { comparisonIndicator = '<i class="bi bi-arrow-up-circle-fill text-success ms-1"></i>'; comparisonText = `(${t_page('comparison_better')})`; }
-                    else if (isWorse) { comparisonIndicator = '<i class="bi bi-arrow-down-circle-fill text-danger ms-1"></i>'; comparisonText = `(${t_page('comparison_worse')})`; }
-                    else { comparisonIndicator = '<i class="bi bi-arrow-left-right text-warning ms-1"></i>'; comparisonText = `(${t_page('comparison_similar')})`; }
-                }
-                tableHTML += `<tr>
-                    <td>${t_page(key)}</td>
-                    <td class="text-end"><strong>${formattedValue}</strong> ${comparisonIndicator} <small class="text-muted">${comparisonText}</small></td>
-                    ${showBenchmarks ? `<td class="text-end">${formattedBenchmark}</td>` : ''}
-                    <td class="text-muted small">${comment}</td>
-                </tr>`;
-            });
-            container.innerHTML = tableHTML + `</tbody></table></div>`;
-            console.log(`[DEBUG] Finished rendering ${categoryTitleKey}.`);
-        };
-        
-        const renderSidebar = () => { if (!state.hasValidData) { UI.smartSummary.textContent = lang === 'ar' ? '...' : '...'; UI.alertsArea.innerHTML = `<div>${lang === 'ar' ? '...' : '...'}</div>`; return; } const { netProfitMargin, currentRatio, debtToEquity } = state.ratios; UI.smartSummary.textContent = netProfitMargin > 0 && currentRatio > 1.5 ? t_page('summary_ok') : t_page('summary_risk'); const alerts = []; if (currentRatio < 1 && isFinite(currentRatio)) alerts.push(t_page('alert_liquidity_risk')); if (debtToEquity > 2 && isFinite(debtToEquity)) alerts.push(t_page('alert_leverage_risk')); if (netProfitMargin < 0 && isFinite(netProfitMargin)) alerts.push(t_page('alert_profit_risk')); UI.alertsArea.innerHTML = alerts.length > 0 ? alerts.map(alert => `<div>${alert}</div>`).join('') : `<div>${t_page('alert_ok')}</div>`; };
-        const calculateAndDisplayBreakeven = () => { const fixed = toNum(UI.fixedCosts.value); const variable = toNum(UI.variableCost.value); const price = toNum(UI.sellingPrice.value); if (price <= 0 || variable < 0 || fixed < 0) { alert(t_page('errorPositiveValues')); return; } if (price <= variable) { alert(t_page('errorPrice')); return; } const contributionMargin = price - variable; const bepUnits = fixed / contributionMargin; const bepValue = bepUnits * price; UI.bepUnitsResult.textContent = Math.ceil(bepUnits).toLocaleString(); UI.bepValueResult.textContent = formatNumber(bepValue, 2); UI.breakevenResults.style.display = 'block'; renderBreakevenChart(fixed, variable, price, bepUnits); };
-        const renderBreakevenChart = (fixed, variable, price, bepUnits) => { if (!UI.breakevenChartCanvas) return; if (state.breakevenChart) { state.breakevenChart.destroy(); } let maxUnits = 100; if (bepUnits > 0 && isFinite(bepUnits)) { maxUnits = Math.max(100, Math.ceil(bepUnits * 2 / 10) * 10); } else if (fixed === 0 && price > variable) { maxUnits = 100; } else if (price <= variable) { maxUnits = 100; } const step = maxUnits / 10; const labels = Array.from({ length: 11 }, (_, i) => Math.round(step * i)); const fixedCostsData = labels.map(() => fixed); const totalCostsData = labels.map(unit => fixed + (variable * unit)); const revenueData = labels.map(unit => price * unit); const ctx = UI.breakevenChartCanvas.getContext('2d'); state.breakevenChart = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [ { label: t_page('revenue'), data: revenueData, borderColor: 'rgba(75, 192, 192, 1)', fill: false, tension: 0.1 }, { label: t_page('totalCosts'), data: totalCostsData, borderColor: 'rgba(255, 99, 132, 1)', fill: false, tension: 0.1 }, { label: t_page('fixedCosts'), data: fixedCostsData, borderColor: 'rgba(255, 159, 64, 1)', borderDash: [5, 5], fill: false, tension: 0.1 } ] }, options: { responsive: true, maintainAspectRatio: false, interaction: { intersect: false, mode: 'index', }, scales: { x: { title: { display: true, text: t_page('unitsSold') } }, y: { title: { display: true, text: t_page('value') }, beginAtZero: true } }, plugins: { tooltip: { callbacks: { label: function(context) { return `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`; } } } } } }); };
-        const calculateAndDisplayDupont = () => { console.log("[DEBUG] Attempting to calculate and display DuPont..."); if (!state.hasValidData) { console.warn("[DEBUG] No valid data for DuPont, showing warning."); if(UI.dupontDataWarning) { UI.dupontDataWarning.textContent = t_page('dupontDataWarning'); UI.dupontDataWarning.style.display = 'block'; } if(UI.dupontFormulaDisplay) UI.dupontFormulaDisplay.style.display = 'none'; if(UI.dupontInterpretation) UI.dupontInterpretation.innerHTML = ''; if(UI.dupontValueNPM) UI.dupontValueNPM.textContent = 'N/A'; if(UI.dupontValueAT) UI.dupontValueAT.textContent = 'N/A'; if(UI.dupontValueEM) UI.dupontValueEM.textContent = 'N/A'; if(UI.dupontValueROE) UI.dupontValueROE.textContent = 'N/A'; return; } console.log("[DEBUG] Rendering DuPont with data..."); if(UI.dupontDataWarning) UI.dupontDataWarning.style.display = 'none'; if(UI.dupontFormulaDisplay) UI.dupontFormulaDisplay.style.display = 'block'; const npm = state.ratios.netProfitMargin; const at = state.ratios.assetTurnover; const em = state.ratios.equityMultiplier; const dupontROE = (isFinite(npm) && isFinite(at) && isFinite(em)) ? npm * at * em : Infinity; if(UI.dupontROE) UI.dupontROE.textContent = formatPercent(dupontROE); if(UI.dupontNPM) UI.dupontNPM.textContent = formatPercent(npm); if(UI.dupontAT) UI.dupontAT.textContent = formatRatio(at); if(UI.dupontEM) UI.dupontEM.textContent = formatRatio(em); if(UI.dupontValueNPM) UI.dupontValueNPM.textContent = formatPercent(npm); if(UI.dupontValueAT) UI.dupontValueAT.textContent = formatRatio(at); if(UI.dupontValueEM) UI.dupontValueEM.textContent = formatRatio(em); if(UI.dupontValueROE) UI.dupontValueROE.textContent = formatPercent(dupontROE); let interpretation = ''; if (isFinite(dupontROE)) { const highROE = dupontROE >= 0.15; interpretation += highROE ? `<p>${t_page('dupontInterpretationHighROE')}</p><ul>` : `<p>${t_page('dupontInterpretationLowROE')}</p><ul>`; if (isFinite(npm)) { if (npm >= 0.10) interpretation += `<li>${t_page('dupontFactorProfitability')}</li>`; else if (npm < 0.05) interpretation += `<li>${t_page('dupontFactorLowProfitability')}</li>`; } if (isFinite(at)) { if (at >= 1.0) interpretation += `<li>${t_page('dupontFactorEfficiency')}</li>`; else if (at < 0.5) interpretation += `<li>${t_page('dupontFactorLowEfficiency')}</li>`; } if (isFinite(em)) { if (em > 2.5) interpretation += `<li>${t_page('dupontFactorLeverage')}</li>`; else if (em < 1.5) interpretation += `<li>${t_page('dupontFactorLowLeverage')}</li>`; } interpretation += `</ul>`; if (interpretation.endsWith('<ul></ul>')) { interpretation = `<p>${lang === 'ar' ? '...' : '...'}</p>`; } } else { interpretation = `<p class="text-danger">${lang === 'ar' ? '...' : '...'}</p>`; } if(UI.dupontInterpretation) UI.dupontInterpretation.innerHTML = interpretation; console.log("[DEBUG] Finished displaying DuPont."); };
-        const calculateAndDisplayVerticalAnalysis = () => { console.log("[DEBUG] Attempting to display Vertical Analysis..."); if (!state.hasValidData || !state.rawData || (!state.rawData.bsItems.length && !state.rawData.isItems.length)) { console.warn("[DEBUG] No valid data for Vertical Analysis, showing warning."); if(UI.verticalDataWarning) { UI.verticalDataWarning.textContent = t_page('verticalDataWarning'); UI.verticalDataWarning.style.display = 'block'; } if(UI.verticalResultsContainer) UI.verticalResultsContainer.style.display = 'none'; return; } console.log("[DEBUG] Rendering Vertical Analysis..."); if(UI.verticalDataWarning) UI.verticalDataWarning.style.display = 'none'; if(UI.verticalResultsContainer) UI.verticalResultsContainer.style.display = 'block'; const totalAssets = state.financials.assets || 0; const totalRevenue = state.financials.revenue || 0; let bsTableHTML = `<table class="table table-sm table-striped"><thead><tr><th>${t_page('verticalAccount')}</th><th class="text-end">${t_page('verticalValue')}</th><th class="text-end">${t_page('verticalPercent')}</th></tr></thead><tbody>`; state.rawData.bsItems.sort((a,b) => b.value - a.value).forEach(item => { const percentage = totalAssets !== 0 ? (item.value / totalAssets) : 0; bsTableHTML += `<tr><td>${item.account}</td><td class="text-end">${formatNumber(item.value)}</td><td class="text-end">${formatPercent(percentage)}</td></tr>`; }); bsTableHTML += `<tr class="table-light fw-bold"><td>${lang === 'ar' ? 'الإجمالي' : 'Total'}</td><td class="text-end">${formatNumber(totalAssets)}</td><td class="text-end">100.0%</td></tr>`; bsTableHTML += `</tbody></table>`; if(UI.verticalBSTable) UI.verticalBSTable.innerHTML = bsTableHTML; let isTableHTML = `<table class="table table-sm table-striped"><thead><tr><th>${t_page('verticalAccount')}</th><th class="text-end">${t_page('verticalValue')}</th><th class="text-end">${t_page('verticalPercent')}</th></tr></thead><tbody>`; state.rawData.isItems.sort((a,b) => b.value - a.value).forEach(item => { const percentage = totalRevenue !== 0 ? (item.value / totalRevenue) : 0; const displayValue = item.value; isTableHTML += `<tr><td>${item.account}</td><td class="text-end">${formatNumber(displayValue)}</td><td class="text-end">${formatPercent(percentage)}</td></tr>`; }); isTableHTML += `<tr class="table-light fw-bold"><td>${lang === 'ar' ? 'صافي الإيرادات' : 'Net Revenue'}</td><td class="text-end">${formatNumber(totalRevenue)}</td><td class="text-end">100.0%</td></tr>`; isTableHTML += `</tbody></table>`; if(UI.verticalISTable) UI.verticalISTable.innerHTML = isTableHTML; console.log("[DEBUG] Finished displaying Vertical Analysis."); };
-        const calculateAndDisplayZScore = () => { console.log("[DEBUG] Attempting to display Z-Score..."); if (!state.hasValidData || !isFinite(state.ratios.zScore)) { console.warn("[DEBUG] No valid data for Z-Score, showing warning."); if(UI.zscoreDataWarning) { UI.zscoreDataWarning.textContent = t_page('zscoreDataWarning'); UI.zscoreDataWarning.style.display = 'block'; } if(UI.zscoreResultsContainer) UI.zscoreResultsContainer.style.display = 'none'; return; } console.log("[DEBUG] Rendering Z-Score..."); if(UI.zscoreDataWarning) UI.zscoreDataWarning.style.display = 'none'; if(UI.zscoreResultsContainer) UI.zscoreResultsContainer.style.display = 'block'; const z = state.ratios.zScore; let interpretation = ''; let interpretationClass = ''; if (z > 2.9) { interpretation = t_page('zscoreZoneSafe'); interpretationClass = 'text-success'; } else if (z > 1.23) { interpretation = t_page('zscoreZoneGrey'); interpretationClass = 'text-warning'; } else { interpretation = t_page('zscoreZoneDistress'); interpretationClass = 'text-danger'; } if(UI.zscoreValue) UI.zscoreValue.textContent = formatRatio(z, 3); if(UI.zscoreInterpretation) { UI.zscoreInterpretation.textContent = interpretation; UI.zscoreInterpretation.className = `h5 fw-bold ${interpretationClass}`; } let factorsHTML = ''; const factors = ['zScoreX1', 'zScoreX2', 'zScoreX3', 'zScoreX4', 'zScoreX5']; factors.forEach(key => { const value = state.ratios[key]; let label = t_page(key.replace('zScore', 'zscore')); if (key === 'zScoreX2' && state.financials.retainedEarnings === 0 && !isFinite(value)) { label += ` <small class="text-muted">${t_page('zscoreRetainedEarningsNotFound')}</small>`; } factorsHTML += `<li class="list-group-item d-flex justify-content-between align-items-center">${label} <span class="badge bg-secondary rounded-pill">${formatRatio(value)}</span></li>`; }); if(UI.zscoreFactorsList) UI.zscoreFactorsList.innerHTML = factorsHTML; console.log("[DEBUG] Finished displaying Z-Score."); };
-        const calculateAndDisplayCashFlowAnalysis = () => { console.log("[DEBUG] Attempting to display Cash Flow Analysis..."); if (!state.hasValidData) { console.warn("[DEBUG] No valid data for Cash Flow, showing warning."); if(UI.cfDataWarning) { UI.cfDataWarning.textContent = t_page('cfDataWarning'); UI.cfDataWarning.style.display = 'block'; } if(UI.cfResultsContainer) UI.cfResultsContainer.style.display = 'none'; return; } console.log("[DEBUG] Rendering Cash Flow Analysis..."); if(UI.cfDataWarning) UI.cfDataWarning.style.display = 'none'; if(UI.cfResultsContainer) UI.cfResultsContainer.style.display = 'block'; const f = state.financials; const r = state.ratios; let stmtHTML = `<tr><td>${t_page('cfNetIncome')}</td><td class="text-end">${formatNumber(f.netProfit)}</td></tr> <tr><td class="ps-3">${t_page('cfDepreciationAmortization')}</td><td class="text-end">${formatNumber(f.depreciationAmortization)}</td></tr> <tr><td class="text-muted ps-3">${t_page('cfChangesWC')}</td><td class="text-end text-muted">(N/A)</td></tr> <tr class="table-light fw-bold"><td>${t_page('cfOperating')}</td><td class="text-end">${formatNumber(f.ocf_estimated)}</td></tr> <tr><td>${t_page('cfInvesting')}</td><td class="text-end">${formatNumber(f.icf_estimated)}</td></tr> <tr><td>${t_page('cfFinancing')}</td><td class="text-end">${formatNumber(f.fcf_estimated)}</td></tr> <tr class="table-light fw-bold border-top"><td>${t_page('cfNetChange')}</td><td class="text-end">${formatNumber(f.netCashChange_estimated)}</td></tr> `; if(UI.cfStatementTableBody) UI.cfStatementTableBody.innerHTML = stmtHTML; if(UI.cfValueOCFRatio) UI.cfValueOCFRatio.textContent = formatRatio(r.operatingCashFlowRatio); if(UI.cfValueFCF) UI.cfValueFCF.textContent = formatNumber(r.freeCashFlow); let interpretation = ''; if (isFinite(f.ocf_estimated)) { interpretation += f.ocf_estimated > 0 ? `<p>${t_page('cfInterpretationPositiveOCF')}</p>` : `<p>${t_page('cfInterpretationNegativeOCF')}</p>`; } if (isFinite(r.freeCashFlow)) { interpretation += `<p>${t_page('cfInterpretationFCF')}</p>`; } if(UI.cfInterpretation) UI.cfInterpretation.innerHTML = interpretation || `<p class="text-muted">${lang==='ar'?'...':'...'}</p>`; console.log("[DEBUG] Finished displaying Cash Flow Analysis."); };
+     // Calculate Ratios Function
+     const calculateAllRatios = () => {
+        state.ratios = {};
+        if (!state.hasValidData) { console.warn("Financials invalid, skipping ratio calculation."); return false; }
+        const f = state.financials;
+        try {
+            const assets = f.assets || 0; const equity = f.equity || 0; const liabilities = f.liabilities || 0; const revenue = f.revenue || 0;
+            const equityMultiplier = (equity !== 0 && assets !== 0) ? assets / equity : Infinity;
+            const roeStandard = (equity !== 0) ? f.netProfit / equity : Infinity;
+            state.ratios = {
+                currentRatio: f.currentLiabilities !== 0 ? f.currentAssets / f.currentLiabilities : Infinity,
+                quickRatio: f.currentLiabilities !== 0 ? (f.currentAssets - f.inventory) / f.currentLiabilities : Infinity,
+                grossProfitMargin: revenue !== 0 ? f.grossProfit / revenue : 0,
+                netProfitMargin: revenue !== 0 ? f.netProfit / revenue : 0,
+                roa: assets !== 0 ? f.netProfit / assets : 0,
+                roe: roeStandard,
+                debtToAssets: assets !== 0 ? liabilities / assets : Infinity,
+                debtToEquity: equity !== 0 ? liabilities / equity : Infinity,
+                assetTurnover: assets !== 0 ? revenue / assets : 0,
+                equityMultiplier: equityMultiplier,
+                operatingCashFlowRatio: f.currentLiabilities !== 0 ? f.ocf_estimated / f.currentLiabilities : Infinity,
+                freeCashFlow: f.freeCashFlow_estimated
+            };
+            console.log("Calculated Ratios:", state.ratios);
+            return true;
+        } catch(e) { console.error("Error calculating ratios:", e); state.ratios = {}; state.hasValidData = false; return false; }
+    };
 
-        // ==============================================
-        // === RUN ANALYSIS & INITIALIZATION ===
-        // ==============================================
-        
-        const runAnalysis = (renderOnlyRatios = false) => {
-            console.log("[DEBUG] Running full analysis...");
-            state.hasValidData = calculateFinancials() && calculateAllRatios();
-            console.log(`[DEBUG] Analysis complete. hasValidData: ${state.hasValidData}`);
-            
+    // Render Statement Section Function
+    const renderStatementSection = (items, totalLabel, isSubSection = false) => {
+        let total = 0;
+        let html = `<table class="table table-sm report-table ${isSubSection ? 'mb-0' : ''}"><tbody>`;
+        if (!Array.isArray(items)) {
+            console.error(`[DEBUG] renderStatementSection received non-array for items with label: ${totalLabel}`, items);
+            items = []; 
+        }
+        items.forEach(item => {
+            const itemValue = typeof item.value === 'number' ? item.value : 0;
+            html += `<tr><td>${item.Account}</td><td class="text-end">${formatNumber(itemValue)}</td></tr>`;
+            total += itemValue;
+        });
+        if (totalLabel) {
+            html += `<tr class="subtotal-row"><td>${totalLabel}</td><td class="text-end">${formatNumber(total)}</td></tr>`;
+        }
+        html += '</tbody></table>';
+        return { html, total };
+    };
+
+    // --- Rendering functions for each statement ---
+    const renderBalanceSheet = () => {
+        const container = document.getElementById('balanceSheetTable');
+        const commentContainer = document.getElementById('balanceSheetComment');
+        if (!container || !commentContainer) { console.error("[DEBUG] Balance Sheet container or comment element not found."); return; }
+        if (!state.hasValidData || !state.statements || !state.statements.assets || !state.statements.liabilities || !state.statements.equity) {
+             console.warn("[DEBUG] No valid data for Balance Sheet rendering.");
+             container.innerHTML = `<p class="text-danger">${t_page('noDataForRatios')}</p>`;
+             commentContainer.textContent = t_page('bs_comment_unbalanced').replace('{diff}', 'N/A');
+             return;
+        }
+        console.log("[DEBUG] Rendering Balance Sheet...");
+        const { assets, liabilities, equity } = state.statements;
+        let html = `<h6>${t_page('assets')}</h6>`;
+        const currentAssetsResult = renderStatementSection(assets.current, `${t_page('total')} ${t_page('currentAssets')}`, true);
+        const nonCurrentAssetsResult = renderStatementSection(assets.nonCurrent, `${t_page('total')} ${t_page('nonCurrentAssets')}`, true);
+        const totalAssets = (currentAssetsResult?.total || 0) + (nonCurrentAssetsResult?.total || 0);
+        html += (currentAssetsResult?.html || '') + (nonCurrentAssetsResult?.html || '');
+        html += `<table class="table report-table"><tbody class="total-row"><tr><td>${t_page('totalAssets')}</td><td class="text-end">${formatNumber(totalAssets)}</td></tr></tbody></table>`;
+        html += `<h6 class="mt-4">${t_page('liabilities')} & ${t_page('equity')}</h6>`;
+        const currentLiabsResult = renderStatementSection(liabilities.current, `${t_page('total')} ${t_page('currentLiabilities')}`, true);
+        const nonCurrentLiabsResult = renderStatementSection(liabilities.nonCurrent, `${t_page('total')} ${t_page('nonCurrentLiabilities')}`, true);
+        const totalLiabs = (currentLiabsResult?.total || 0) + (nonCurrentLiabsResult?.total || 0);
+        html += (currentLiabsResult?.html || '') + (nonCurrentLiabsResult?.html || '');
+        html += `<table class="table report-table"><tbody class="subtotal-row"><tr><td>${t_page('totalLiabilities')}</td><td class="text-end">${formatNumber(totalLiabs)}</td></tr></tbody></table>`;
+        const equityItems = (equity.capital || []).concat(equity.retainedEarningsItems || []);
+        const totalEquityResult = renderStatementSection(equityItems, t_page('totalEquity'), true);
+        const totalEquityValue = totalEquityResult?.total || 0;
+        html += (totalEquityResult?.html || '');
+        const netProfitForBalance = state.financials.netProfit || 0;
+        html += `<table class="table report-table"><tbody><tr><td>${t_page('netProfit')}</td><td class="text-end">${formatNumber(netProfitForBalance)}</td></tr></tbody></table>`;
+        const totalLiabsAndEquity = totalLiabs + totalEquityValue + netProfitForBalance;
+        html += `<table class="table report-table"><tbody class="total-row"><tr><td>${t_page('totalLiabilitiesAndEquity')}</td><td class="text-end">${formatNumber(totalLiabsAndEquity)}</td></tr></tbody></table>`;
+        container.innerHTML = html;
+        const diff = totalAssets - totalLiabsAndEquity;
+        const comment = Math.abs(diff) < 1 ? t_page('bs_comment_balanced') : t_page('bs_comment_unbalanced').replace('{diff}', formatNumber(diff));
+        commentContainer.textContent = comment;
+        console.log("[DEBUG] Finished rendering Balance Sheet.");
+    };
+    const renderIncomeStatement = () => {
+        const container = document.getElementById('incomeStatementTable');
+        const commentContainer = document.getElementById('incomeStatementComment');
+        if (!container || !commentContainer) { console.error("[DEBUG] Income Statement elements not found."); return; }
+        if (!state.hasValidData || !state.statements || !state.statements.income) {
+             console.warn("[DEBUG] No valid data for Income Statement rendering.");
+             container.innerHTML = `<p class="text-danger">${t_page('noDataForRatios')}</p>`;
+             commentContainer.textContent = t_page('is_comment_loss').replace('{profit}', 'N/A');
+             return;
+        }
+        console.log("[DEBUG] Rendering Income Statement...");
+        const { revenue, cogs, expenses } = state.statements.income;
+        let html = '<table class="table table-sm report-table"><tbody>';
+        const totalRevenue = renderStatementSection(revenue, t_page('revenue'), true);
+        const totalCogs = renderStatementSection(cogs, `(-) ${t_page('cogs')}`, true);
+        const grossProfit = totalRevenue.total - totalCogs.total;
+        html += totalRevenue.html + totalCogs.html + `<tr class="subtotal-row"><td>${t_page('grossProfit')}</td><td class="text-end">${formatNumber(grossProfit)}</td></tr>`;
+        const totalExpenses = renderStatementSection(expenses, `(-) ${t_page('operatingExpenses')}`, true);
+        const netProfit = grossProfit - totalExpenses.total;
+        html += totalExpenses.html + `</tbody></table><table class="table report-table"><tbody class="total-row"><tr><td>${t_page('netProfit')}</td><td class="text-end">${formatNumber(netProfit)}</td></tr></tbody></table>`;
+        container.innerHTML = html;
+        const margin = totalRevenue.total !== 0 ? (netProfit / totalRevenue.total) * 100 : 0;
+        const comment = netProfit > 0 
+            ? t_page('is_comment_profit').replace('{profit}', formatNumber(netProfit)).replace('{margin}', margin.toFixed(1))
+            : t_page('is_comment_loss').replace('{profit}', formatNumber(netProfit));
+        commentContainer.textContent = comment;
+        console.log("[DEBUG] Finished rendering Income Statement.");
+    };
+    const renderCashFlowStatement = () => {
+        const container = document.getElementById('cashFlowStatementTable');
+        const commentContainer = document.getElementById('cashFlowStatementComment');
+        if (!container || !commentContainer) { console.error("[DEBUG] Cash Flow elements not found."); return; }
+        if (!state.hasValidData || !state.financials) {
+            console.warn("[DEBUG] No valid data for Cash Flow rendering.");
+            container.innerHTML = `<p class="text-danger">${t_page('noDataForRatios')}</p>`;
+            commentContainer.textContent = t_page('cf_comment_negative');
+            return;
+        }
+        console.log("[DEBUG] Rendering Cash Flow Statement...");
+        const f = state.financials;
+        let html = `<table class="table table-sm report-table"><tbody>
+            <tr><td>${t_page('cfNetIncome')}</td><td class="text-end">${formatNumber(f.netProfit)}</td></tr>
+            <tr><td class="ps-3">${t_page('cfDepreciationAmortization')}</td><td class="text-end">${formatNumber(f.depreciationAmortization)}</td></tr>
+            <tr><td class="text-muted ps-3">${t_page('cfChangesWC')}</td><td class="text-end text-muted">(N/A)</td></tr>
+            <tr class="table-light fw-bold"><td>${t_page('cfOperating')}</td><td class="text-end">${formatNumber(f.ocf_estimated)}</td></tr>
+            <tr><td>${t_page('cfInvesting')}</td><td class="text-end">${formatNumber(f.icf_estimated)}</td></tr>
+            <tr><td>${t_page('cfFinancing')}</td><td class="text-end">${formatNumber(f.fcf_estimated)}</td></tr>
+            </tbody></table><table class="table report-table"><tbody class="total-row"><tr><td>${t_page('netCashFlow')}</td><td class="text-end">${formatNumber(f.netCashChange_estimated)}</td></tr></tbody></table>`;
+        container.innerHTML = html;
+        commentContainer.textContent = (f.ocf_estimated || 0) > 0 ? t_page('cf_comment_positive') : t_page('cf_comment_negative');
+        console.log("[DEBUG] Finished rendering Cash Flow Statement.");
+    };
+    const renderEquityStatement = () => {
+        const container = document.getElementById('equityStatementTable');
+        const commentContainer = document.getElementById('equityStatementComment');
+        if (!container || !commentContainer) { console.error("[DEBUG] Equity Statement elements not found."); return; }
+        if (!state.hasValidData || !state.statements || !state.statements.equity || !state.financials) {
+             console.warn("[DEBUG] No valid data for Equity Statement rendering.");
+             container.innerHTML = `<p class="text-danger">${t_page('noDataForRatios')}</p>`;
+             commentContainer.textContent = t_page('eq_comment_decline');
+             return;
+        }
+        console.log("[DEBUG] Rendering Equity Statement...");
+        const openingEquity = state.financials.equity || 0;
+        const netProfit = state.financials.netProfit || 0;
+        const closingEquity = openingEquity + netProfit;
+        let html = `<table class="table table-sm report-table"><tbody>`;
+        html += `<tr><td>${t_page('openingBalance')}</td><td class="text-end">${formatNumber(openingEquity)}</td></tr>`;
+        html += `<tr><td>(+) ${t_page('netProfit')}</td><td class="text-end">${formatNumber(netProfit)}</td></tr>`;
+        html += `<tr class="total-row"><td>${t_page('closingBalance')}</td><td class="text-end">${formatNumber(closingEquity)}</td></tr>`;
+        html += `</tbody></table>`;
+        container.innerHTML = html;
+        commentContainer.textContent = netProfit > 0 ? t_page('eq_comment_growth') : t_page('eq_comment_decline');
+        console.log("[DEBUG] Finished rendering Equity Statement.");
+    };
+
+    // --- Render Ratio Category Function ---
+    const getRatioComment = (key, value) => {
+        if (!isFinite(value) || isNaN(value)) return "N/A";
+        if (key === 'currentRatio') { if (value >= 2) return t_page('currentRatio_comment_high'); if (value >= 1) return t_page('currentRatio_comment_good'); return t_page('currentRatio_comment_low'); }
+        if (key === 'quickRatio') { if (value >= 1) return t_page('quickRatio_comment_good'); return t_page('quickRatio_comment_low'); }
+        if (key === 'netProfitMargin') { if (value >= 0.15) return t_page('netProfitMargin_comment_high'); if (value > 0) return t_page('netProfitMargin_comment_avg'); return t_page('netProfitMargin_comment_low'); }
+        if (key === 'grossProfitMargin') { return value >= 0.4 ? t_page('grossProfitMargin_comment_high') : t_page('grossProfitMargin_comment_low'); }
+        if (key === 'roa') { return value >= 0.05 ? t_page('roa_comment_high') : t_page('roa_comment_low'); }
+        if (key === 'roe') { return value >= 0.15 ? t_page('roe_comment_high') : t_page('roe_comment_low'); }
+        if (key === 'debtToEquity') { if (value < 0.5) return t_page('debtToEquity_comment_low'); if (value <= 1.5) return t_page('debtToEquity_comment_good'); return t_page('debtToEquity_comment_high'); }
+        if (key === 'debtToAssets') { return value < 0.4 ? t_page('debtToAssets_comment_low') : t_page('debtToAssets_comment_high'); }
+        if (key === 'assetTurnover') { return value >= 1 ? t_page('assetTurnover_comment_high') : t_page('assetTurnover_comment_low'); }
+        return "";
+    };
+    const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => {
+        const container = document.getElementById(divId);
+        if (!container) { console.error(`[DEBUG] Ratio container not found: ${divId}`); return; }
+        if (!state.hasValidData) {
+            container.innerHTML = `<h5 class="mb-3">${t_page(categoryTitleKey)}</h5> <p class="text-muted">${t_page('noDataForRatios')}</p>`; return;
+        }
+        console.log(`[DEBUG] Rendering ratio category: ${categoryTitleKey}`);
+        const benchmarks = industryBenchmarks[state.selectedIndustry] || {};
+        const showBenchmarks = state.selectedIndustry !== 'general';
+        let tableHTML = `<h5 class="mb-3">${t_page(categoryTitleKey)}</h5>
+            <div class="table-responsive">
+            <table class="table table-sm table-striped">
+                <thead><tr>
+                    <th>${t_page('thRatio')}</th>
+                    <th class="text-end">${t_page('thValue')}</th>
+                    ${showBenchmarks ? `<th class="text-end">${t_page('thIndustryAvg')}</th>` : ''}
+                    <th>${t_page('thComment')}</th>
+                </tr></thead>
+                <tbody>`;
+        ratioKeys.forEach(key => {
+            const value = state.ratios && state.ratios.hasOwnProperty(key) ? state.ratios[key] : NaN;
+            const benchmarkValue = benchmarks[key];
+            const isPercentage = key.includes('Margin') || key.includes('roa') || key.includes('roe');
+            const formattedValue = isPercentage ? formatPercent(value) : formatRatio(value);
+            const formattedBenchmark = (showBenchmarks && typeof benchmarkValue !== 'undefined' && isFinite(benchmarkValue)) ? (isPercentage ? formatPercent(benchmarkValue) : formatRatio(benchmarkValue)) : '-';
+            const comment = getRatioComment(key, value);
+            let comparisonIndicator = ''; let comparisonText = '';
+            if (showBenchmarks && typeof benchmarkValue !== 'undefined' && isFinite(value) && isFinite(benchmarkValue)) { const tolerance = 0.1 * Math.abs(benchmarkValue); const isDebtRatio = key === 'debtToEquity' || key === 'debtToAssets'; const isBetter = isDebtRatio ? value < benchmarkValue - tolerance : value > benchmarkValue + tolerance; const isWorse = isDebtRatio ? value > benchmarkValue + tolerance : value < benchmarkValue - tolerance; if (isBetter) { comparisonIndicator = '<i class="bi bi-arrow-up-circle-fill text-success ms-1"></i>'; comparisonText = `(${t_page('comparison_better')})`; } else if (isWorse) { comparisonIndicator = '<i class="bi bi-arrow-down-circle-fill text-danger ms-1"></i>'; comparisonText = `(${t_page('comparison_worse')})`; } else { comparisonIndicator = '<i class="bi bi-arrow-left-right text-warning ms-1"></i>'; comparisonText = `(${t_page('comparison_similar')})`; } }
+            tableHTML += `<tr>
+                <td>${t_page(key)}</td>
+                <td class="text-end"><strong>${formattedValue}</strong> ${comparisonIndicator} <small class="text-muted">${comparisonText}</small></td>
+                ${showBenchmarks ? `<td class="text-end">${formattedBenchmark}</td>` : ''}
+                <td class="text-muted small">${comment}</td>
+            </tr>`;
+        });
+        container.innerHTML = tableHTML + `</tbody></table></div>`;
+        console.log(`[DEBUG] Finished rendering ratio category: ${categoryTitleKey}`);
+    };
+
+     // --- Populate Industry Select Function ---
+     const populateIndustrySelect = () => {
+        const industrySelect = document.getElementById('industrySelect');
+        if (!industrySelect) { console.warn("[DEBUG] Industry select dropdown not found in report page."); return; }
+        const industries = ['general', 'retail', 'manufacturing', 'services', 'construction'];
+        industrySelect.innerHTML = industries.map(key =>
+            `<option value="${key}">${t_page(`industry_${key}`)}</option>`
+        ).join('');
+        state.selectedIndustry = localStorage.getItem('selectedIndustry') || 'general';
+        industrySelect.value = state.selectedIndustry;
+        console.log("[DEBUG] Industry select populated.");
+    };
+
+
+    const init = () => {
+        console.log("[DEBUG] Initializing report page...");
+        const pdfBtn = document.getElementById('exportPdfBtn');
+        const excelBtn = document.getElementById('exportExcelBtn');
+        const industrySelect = document.getElementById('industrySelect');
+
+        if (pdfBtn) { pdfBtn.addEventListener('click', () => { /* ... PDF export logic ... */ }); }
+        if (excelBtn) { excelBtn.addEventListener('click', () => { /* ... Excel export logic ... */ }); }
+
+        // Build statements and calculate financials first
+        buildStatementsAndFinancials(); // Sets state.hasValidData
+
+        if (state.hasValidData) {
+            console.log("[DEBUG] Data is valid, calculating ratios and rendering...");
+            calculateAllRatios(); 
+
+            renderBalanceSheet();
+            renderIncomeStatement();
+            renderCashFlowStatement();
+            renderEquityStatement();
+
+            populateIndustrySelect();
             renderRatioCategory('liquidityRatios', 'liquidityRatios', ['currentRatio', 'quickRatio']);
             renderRatioCategory('profitabilityRatios', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
             renderRatioCategory('leverageRatios', 'leverageRatios', ['debtToAssets', 'debtToEquity']);
             renderRatioCategory('efficiencyRatios', 'efficiencyRatios', ['assetTurnover']);
-            renderSidebar();
-            
-            if (!renderOnlyRatios) {
-                 console.log("[DEBUG] Triggering render for all dependent tabs...");
-                 if (state.hasValidData) {
-                    calculateAndDisplayDupont();
-                    calculateAndDisplayVerticalAnalysis();
-                    calculateAndDisplayZScore();
-                    calculateAndDisplayCashFlowAnalysis();
-                 } else {
-                    calculateAndDisplayDupont();
-                    calculateAndDisplayVerticalAnalysis();
-                    calculateAndDisplayZScore();
-                    calculateAndDisplayCashFlowAnalysis();
-                 }
-            }
-            return state.hasValidData;
-        };
 
-        const populateIndustrySelect = () => {
-            if (!UI.industrySelect) { console.warn("[DEBUG] Industry select dropdown not found."); return; }
-            const industries = ['general', 'retail', 'manufacturing', 'services', 'construction'];
-            UI.industrySelect.innerHTML = industries.map(key =>
-                `<option value="${key}">${t_page(`industry_${key}`)}</option>`
-            ).join('');
-            state.selectedIndustry = localStorage.getItem('selectedIndustry') || 'general';
-            UI.industrySelect.value = state.selectedIndustry;
-            console.log("[DEBUG] Industry select populated.");
-        };
-
-        const init = () => {
-            console.log("[DEBUG] Initializing advanced page...");
-            populateIndustrySelect();
-
-            // *** MODIFIED: Use setTimeout to delay the first analysis run ***
-            setTimeout(() => {
-                console.log("[DEBUG] Running initial analysis after delay...");
-                runAnalysis(); // Run full analysis *after* main.js should be ready
-                
-                // Apply translations *after* initial run
-                if (typeof window.applyTranslations === 'function') {
-                    console.log("[DEBUG] Applying translations during init (after delay)...");
-                    window.applyTranslations();
-                } else {
-                    console.error("[!!! DEBUG !!!] applyTranslations function is NOT DEFINED. Check main.js and script order.");
-                }
-
-                // Add event listeners AFTER initial run
-                if (UI.calculateBreakeven) { UI.calculateBreakeven.addEventListener('click', calculateAndDisplayBreakeven); }
-                else { console.warn("[DEBUG] Breakeven calculate button not found"); }
-
-                if (UI.industrySelect) {
-                    UI.industrySelect.addEventListener('change', (e) => {
-                        state.selectedIndustry = e.target.value;
-                        localStorage.setItem('selectedIndustry', state.selectedIndustry);
-                        console.log(`[DEBUG] Industry changed to: ${state.selectedIndustry}`);
-                        // Re-render only the ratio tables
-                        renderRatioCategory('liquidityRatios', 'liquidityRatios', ['currentRatio', 'quickRatio']);
-                        renderRatioCategory('profitabilityRatios', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
-                        renderRatioCategory('leverageRatios', 'leverageRatios', ['debtToAssets', 'debtToEquity']);
-                        renderRatioCategory('efficiencyRatios', 'efficiencyRatios', ['assetTurnover']);
-                        if (typeof window.applyTranslations === 'function') { window.applyTranslations(); }
-                        else { console.warn("[DEBUG] applyTranslations not found on industry change"); }
-                    });
-                }
-
-                // Tab Change Listeners
-                const tabs = ['ratios', 'breakeven', 'dupont', 'vertical', 'zscore', 'cashflow'];
-                tabs.forEach(tabId => {
-                    const tabElement = document.getElementById(`${tabId}-tab`);
-                    if (tabElement) {
-                        tabElement.addEventListener('shown.bs.tab', () => {
-                             console.log(`[DEBUG] ${tabId} tab shown`);
-                             if (!state.hasValidData) { runAnalysis(); } // Re-run analysis if no valid data
-                             // Trigger display functions for specific tabs
-                             if (state.hasValidData) {
-                                 if (tabId === 'dupont') calculateAndDisplayDupont();
-                                 if (tabId === 'vertical') calculateAndDisplayVerticalAnalysis();
-                                 if (tabId === 'zscore') calculateAndDisplayZScore();
-                                 if (tabId === 'cashflow') calculateAndDisplayCashFlowAnalysis();
-                             } else {
-                                  if (tabId === 'dupont') calculateAndDisplayDupont();
-                                  if (tabId === 'vertical') calculateAndDisplayVerticalAnalysis();
-                                  if (tabId === 'zscore') calculateAndDisplayZScore();
-                                  if (tabId === 'cashflow') calculateAndDisplayCashFlowAnalysis();
-                             }
-                             if (tabId === 'breakeven' && state.breakevenChart) { state.breakevenChart.resize(); } // Resize chart on tab show
-                        });
-                    } else { console.warn(`[DEBUG] Tab button not found for ID: ${tabId}-tab`); }
+            if (industrySelect) {
+                industrySelect.addEventListener('change', (e) => {
+                    state.selectedIndustry = e.target.value; localStorage.setItem('selectedIndustry', state.selectedIndustry);
+                    console.log(`[DEBUG] Industry changed to: ${state.selectedIndustry}`);
+                    renderRatioCategory('liquidityRatios', 'liquidityRatios', ['currentRatio', 'quickRatio']);
+                    renderRatioCategory('profitabilityRatios', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
+                    renderRatioCategory('leverageRatios', 'leverageRatios', ['debtToAssets', 'debtToEquity']);
+                    renderRatioCategory('efficiencyRatios', 'efficiencyRatios', ['assetTurnover']);
+                    if (typeof window.applyTranslations === 'function') { window.applyTranslations(); }
+                    else { console.warn("[DEBUG] applyTranslations not found on industry change"); }
                 });
-                
-                console.log("[DEBUG] Advanced page initialization finished.");
-            }, 100); // Delay execution by 100ms
-        };
+            }
 
-        // Run init
-        if (document.getElementById('ratios-pane') && document.getElementById('cashflow-pane')) {
-            init();
         } else {
-            console.error("[DEBUG] Critical tab pane elements were not found. Initialization stopped.");
+             console.warn("[DEBUG] Data is invalid or missing, showing warnings only.");
+             const bsCommentEl = document.getElementById('balanceSheetComment');
+             const isCommentEl = document.getElementById('incomeStatementComment');
+             const cfCommentEl = document.getElementById('cashFlowStatementComment');
+             const eqCommentEl = document.getElementById('equityStatementComment');
+             const ratiosWarningEl = document.getElementById('ratiosDataWarning');
+             const bsTableEl = document.getElementById('balanceSheetTable');
+             const isTableEl = document.getElementById('incomeStatementTable');
+             const cfTableEl = document.getElementById('cashFlowStatementTable');
+             const eqTableEl = document.getElementById('equityStatementTable');
+             
+             if(bsTableEl) bsTableEl.innerHTML = `<p class="text-danger">${t_page('noDataForRatios')}</p>`; else console.error("[DEBUG] bsTableEl not found");
+             if(isTableEl) isTableEl.innerHTML = `<p class="text-danger">${t_page('noDataForRatios')}</p>`; else console.error("[DEBUG] isTableEl not found");
+             if(cfTableEl) cfTableEl.innerHTML = `<p class="text-danger">${t_page('noDataForRatios')}</p>`; else console.error("[DEBUG] cfTableEl not found");
+             if(eqTableEl) eqTableEl.innerHTML = `<p class="text-danger">${t_page('noDataForRatios')}</p>`; else console.error("[DEBUG] eqTableEl not found");
+             
+             if(bsCommentEl) bsCommentEl.textContent = t_page('bs_comment_unbalanced').replace('{diff}', 'N/A');
+             if(isCommentEl) isCommentEl.textContent = t_page('is_comment_loss').replace('{profit}', 'N/A');
+             if(cfCommentEl) cfCommentEl.textContent = t_page('cf_comment_negative');
+             if(eqCommentEl) eqCommentEl.textContent = t_page('eq_comment_decline');
+             
+             if(ratiosWarningEl) { ratiosWarningEl.textContent = t_page('noDataForRatios'); ratiosWarningEl.style.display = 'block'; }
+             ['liquidityRatios', 'profitabilityRatios', 'leverageRatios', 'efficiencyRatios'].forEach(id => { const el = document.getElementById(id); if(el) el.innerHTML = ''; });
         }
-        
-    }, 0); // *** End of main setTimeout wrapper ***
+
+         // *** MODIFIED: Use setTimeout to delay translation call ***
+         setTimeout(() => {
+             if (typeof window.applyTranslations === 'function') {
+                 console.log("[DEBUG] Applying translations (report-app.js) via setTimeout...");
+                 window.applyTranslations();
+             } else {
+                 console.error("[!!! DEBUG !!!] applyTranslations function is NOT DEFINED. Check main.js and script order in report.html!");
+             }
+         }, 100); // Delay of 100ms
+
+         console.log("[DEBUG] Report page initialization finished.");
+    };
+
+    // Critical elements check
+    if (document.getElementById('balanceSheetTable') && document.getElementById('financialRatiosSection')) {
+        init();
+    } else {
+        console.error("[DEBUG] Critical elements 'balanceSheetTable' or 'financialRatiosSection' were not found. Initialization stopped.");
+    }
 });
