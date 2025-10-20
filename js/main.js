@@ -47,7 +47,9 @@ function applyTranslations() {
                              || `[${key}]`;
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
             if (translatedText !== `[${key}]`) { el.placeholder = translatedText; }
-        } else { el.textContent = translatedText; }
+        } else {
+            el.textContent = translatedText;
+        }
     });
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     document.querySelectorAll('.main-nav .nav-link').forEach(link => {
@@ -78,5 +80,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // *** ADD THIS LINE AT THE VERY END (Outside DOMContentLoaded) ***
+// This makes the function available to all other scripts
 window.applyTranslations = applyTranslations;
 console.log("applyTranslations function explicitly attached to window.");
