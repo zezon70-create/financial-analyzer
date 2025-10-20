@@ -19,7 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
             navAdvanced: "تحليلات متقدمة",
             navDashboard: "لوحة التحكم",
             navCompare: "المقارنات",
-            footerText: "© 2025 المحلل المالي. جميع الحقوق محفوظة.",
+            navBenchmarks: "المقارنات المعيارية", 
+            footerText: "© 2025 معتز مدكور. جميع الحقوق محفوظة.",
         },
         en: {
             brandTitle: "Financial Analyzer",
@@ -30,7 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
             navAdvanced: "Advanced",
             navDashboard: "Dashboard",
             navCompare: "Comparisons",
-            footerText: "© 2025 Financial Analyzer. All rights reserved.",
+            navBenchmarks: "Benchmarks",
+            footerText: "© 2025 Moataz Madkour. All rights reserved.",
         }
     };
 
