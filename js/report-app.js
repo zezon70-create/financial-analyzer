@@ -1,77 +1,68 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title data-translate-key="pageTitle"></title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body data-theme="light">
+// js/report-app.js (Corrected Version 3)
+window.pageTranslations = { /* ... (All translations as before) ... */ };
 
-    <header class="site-header-global no-print">
-        <div class="container-main nav-container">
-            <a href="index.html" class="brand">
-                <img src="assets/logo.png" alt="شعار المحلل المالي">
-                <span class="title" data-translate-key="brandTitle"></span>
-            </a>
-            <nav class="main-nav">
-                <a href="index.html" class="nav-link" data-translate-key="navHome"></a>
-                <a href="input.html" class="nav-link" data-translate-key="navInput"></a>
-                <a href="upload.html" class="nav-link" data-translate-key="navUpload"></a>
-                <a href="report.html" class="nav-link" data-translate-key="navReport"></a>
-                <a href="advanced.html" class="nav-link" data-translate-key="navAdvanced"></a>
-                <a href="dashboard.html" class="nav-link" data-translate-key="navDashboard"></a>
-                <a href="comparisons.html" class="nav-link" data-translate-key="navCompare"></a>
-            </nav>
-            <div class="controls d-flex align-items-center gap-3">
-                <select id="languageSelect" class="form-select form-select-sm" style="width: auto;"></select>
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
-            </div>
-        </div>
-    </header>
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("[DEBUG] DOM Loaded for report-app.js");
+    const state = {
+        trialData: [],
+        statements: { assets: { current: [], nonCurrent: [] }, liabilities: { current: [], nonCurrent: [] }, equity: { capital: [], retainedEarningsItems: [] }, income: { revenue: [], cogs: [], expenses: [] } },
+        financials: {}, ratios: {}, hasValidData: false, selectedIndustry: 'general'
+    };
+    const lang = localStorage.getItem('lang') || 'ar';
+    const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;
+    const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
+    const formatPercent = (value, digits = 1) => isFinite(value) && !isNaN(value) ? `${(value * 100).toFixed(digits)}%` : "N/A";
+    const formatRatio = (value, digits = 2) => isFinite(value) && !isNaN(value) ? value.toFixed(digits) : "N/A";
+    const formatCurrency = (value) => isFinite(value) && !isNaN(value) ? value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : "N/A";
+    const industryBenchmarks = { /* ... (benchmark data) ... */ };
+    const buildStatementsAndFinancials = () => { /* ... (function as before) ... */ };
+    const calculateAllRatios = () => { /* ... (function as before) ... */ };
+    const renderStatementSection = (items, totalLabel, isSubSection = false) => { /* ... (function as before) ... */ };
+    const renderBalanceSheet = () => { /* ... (function as before) ... */ };
+    const renderIncomeStatement = () => { /* ... (function as before) ... */ };
+    const renderCashFlowStatement = () => { /* ... (function as before) ... */ };
+    const renderEquityStatement = () => { /* ... (function as before) ... */ };
+    const getRatioComment = (key, value) => { /* ... (function as before) ... */ };
+    const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => { /* ... (function as before) ... */ };
+    const populateIndustrySelect = () => { /* ... (function as before) ... */ };
+    
+    const init = () => {
+        console.log("[DEBUG] Initializing report page...");
+        // ... (pdfBtn, excelBtn, industrySelect setup as before) ...
+        
+        buildStatementsAndFinancials(); // Sets state.hasValidData
 
-    <main class="container-main py-4">
-        <div id="report-content">
-            <div class="watermark-container"> <img src="assets/logo.png" class="watermark-logo" alt="Watermark"> </div>
-            <section class="page-header d-flex justify-content-between align-items-center mb-4">
-                <div> <h1 data-translate-key="pageHeader"></h1> <p class="text-muted" data-translate-key="pageSubheader"></p> </div>
-                <div class="d-flex gap-2 no-print"> <button id="exportPdfBtn" class="btn btn-danger"><i class="bi bi-file-earmark-pdf"></i> <span data-translate-key="exportPdf"></span></button> <button id="exportExcelBtn" class="btn btn-success"><i class="bi bi-file-earmark-excel"></i> <span data-translate-key="exportExcel"></span></button> </div>
-            </section>
-            <section class="card-surface mb-4"> <h4 data-translate-key="bsTitle"></h4> <p class="text-muted small" data-translate-key="bsSubheader"></p> <div class="row g-4 mt-2"> <div class="col-lg-8"> <div id="balanceSheetTable" class="table-responsive"></div> </div> <div class="col-lg-4"> <h5 data-translate-key="commentaryTitle"></h5> <div id="balanceSheetComment" class="analysis-comment"></div> </div> </div> </section>
-            <section class="card-surface mb-4"> <h4 data-translate-key="isTitle"></h4> <p class="text-muted small" data-translate-key="isSubheader"></p> <div class="row g-4 mt-2"> <div class="col-lg-8"> <div id="incomeStatementTable" class="table-responsive"></div> </div> <div class="col-lg-4"> <h5 data-translate-key="commentaryTitle"></h5> <div id="incomeStatementComment" class="analysis-comment"></div> </div> </div> </section>
-            <section class="card-surface mb-4"> <h4 data-translate-key="cfTitle"></h4> <p class="text-muted small" data-translate-key="cfSubheader"></p> <div class="row g-4 mt-2"> <div class="col-lg-8"> <div id="cashFlowStatementTable" class="table-responsive"></div> </div> <div class="col-lg-4"> <h5 data-translate-key="commentaryTitle"></h5> <div id="cashFlowStatementComment" class="analysis-comment"></div> </div> </div> </section>
-            <section class="card-surface mb-4"> <h4 data-translate-key="eqTitle"></h4> <p class="text-muted small" data-translate-key="eqSubheader"></p> <div class="row g-4 mt-2"> <div class="col-lg-8"> <div id="equityStatementTable" class="table-responsive"></div> </div> <div class="col-lg-4"> <h5 data-translate-key="commentaryTitle"></h5> <div id="equityStatementComment" class="analysis-comment"></div> </div> </div> </section>
-            
-            {/* --- هذا هو القسم الذي كان مفقوداً لديك --- */}
-            <section id="financialRatiosSection" class="card-surface">
-                 <h4 data-translate-key="ratiosTitle"></h4>
-                 <p class="text-muted small" data-translate-key="ratiosSubheader"></p>
-                 <div class="mb-4 p-3 border rounded" style="background-color: var(--bs-tertiary-bg);">
-                      <label for="industrySelect" class="form-label fw-bold" data-translate-key="selectIndustryLabel"></label>
-                      <select class="form-select" id="industrySelect">
-                           {/* Options will be added by JS */}
-                      </select>
-                      <div class="form-text" data-translate-key="selectIndustryDesc"></div>
-                 </div>
-                 <div class="alert alert-warning" id="ratiosDataWarning" style="display: none;"></div>
-                 <div id="liquidityRatios"></div>
-                 <div id="profitabilityRatios" class="mt-4"></div>
-                 <div id="leverageRatios" class="mt-4"></div>
-                 <div id="efficiencyRatios" class="mt-4"></div>
-            </section>
-        </div>
-    </main>
-    <footer class="site-footer no-print"> <div class="container-main"> <p data-translate-key="footerText"></p> </div> </footer>
+        if (state.hasValidData) {
+            console.log("[DEBUG] Data is valid, calculating ratios and rendering...");
+            calculateAllRatios();
+            renderBalanceSheet(); renderIncomeStatement(); renderCashFlowStatement(); renderEquityStatement();
+            populateIndustrySelect();
+            renderRatioCategory('liquidityRatios', 'liquidityRatios', ['currentRatio', 'quickRatio']);
+            renderRatioCategory('profitabilityRatios', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
+            renderRatioCategory('leverageRatios', 'leverageRatios', ['debtToAssets', 'debtToEquity']);
+            renderRatioCategory('efficiencyRatios', 'efficiencyRatios', ['assetTurnover']);
+            // ... (industrySelect listener as before) ...
+        } else {
+             console.warn("[DEBUG] Data is invalid or missing, showing warnings only.");
+             // ... (warning display logic as before) ...
+        }
 
-    {/* --- تأكد من أن ترتيب الـ scripts هكذا بالضبط --- */}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/report-app.js"></script>
-</body>
-</html>
+         setTimeout(() => {
+             if (typeof window.applyTranslations === 'function') {
+                 console.log("[DEBUG] Applying translations (report-app.js) via setTimeout...");
+                 window.applyTranslations();
+             } else {
+                 console.error("[!!! DEBUG !!!] applyTranslations function is NOT DEFINED. Check main.js and script order in report.html!");
+             }
+         }, 100); 
+
+         console.log("[DEBUG] Report page initialization finished.");
+    };
+
+    // *** CRITICAL: Check if ALL required elements exist ***
+    if (document.getElementById('balanceSheetTable') && document.getElementById('financialRatiosSection')) {
+        init();
+    } else {
+        console.error("[DEBUG] Critical elements 'balanceSheetTable' or 'financialRatiosSection' were not found. Initialization stopped.");
+    }
+});
