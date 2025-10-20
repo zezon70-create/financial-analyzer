@@ -11,24 +11,28 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-theme="light">
-
     <header class="site-header-global no-print">
-        {/* ... (Header content as before) ... */}
+        {/* ... (Header code as before) ... */}
     </header>
-
     <main class="container-main py-4">
         <div id="report-content">
-            {/* ... (All report sections: Header, BS, IS, CF, EQ as before) ... */}
+            <div class="watermark-container"> <img src="assets/logo.png" class="watermark-logo" alt="Watermark"> </div>
+            <section class="page-header d-flex justify-content-between align-items-center mb-4">
+                <div> <h1 data-translate-key="pageHeader"></h1> <p class="text-muted" data-translate-key="pageSubheader"></p> </div>
+                <div class="d-flex gap-2 no-print"> <button id="exportPdfBtn" class="btn btn-danger"><i class="bi bi-file-earmark-pdf"></i> <span data-translate-key="exportPdf"></span></button> <button id="exportExcelBtn" class="btn btn-success"><i class="bi bi-file-earmark-excel"></i> <span data-translate-key="exportExcel"></span></button> </div>
+            </section>
+            <section class="card-surface mb-4"> <h4 data-translate-key="bsTitle"></h4> <p class="text-muted small" data-translate-key="bsSubheader"></p> <div class="row g-4 mt-2"> <div class="col-lg-8"> <div id="balanceSheetTable" class="table-responsive"></div> </div> <div class="col-lg-4"> <h5 data-translate-key="commentaryTitle"></h5> <div id="balanceSheetComment" class="analysis-comment"></div> </div> </div> </section>
+            <section class="card-surface mb-4"> <h4 data-translate-key="isTitle"></h4> <p class="text-muted small" data-translate-key="isSubheader"></p> <div class="row g-4 mt-2"> <div class="col-lg-8"> <div id="incomeStatementTable" class="table-responsive"></div> </div> <div class="col-lg-4"> <h5 data-translate-key="commentaryTitle"></h5> <div id="incomeStatementComment" class="analysis-comment"></div> </div> </div> </section>
+            <section class="card-surface mb-4"> <h4 data-translate-key="cfTitle"></h4> <p class="text-muted small" data-translate-key="cfSubheader"></p> <div class="row g-4 mt-2"> <div class="col-lg-8"> <div id="cashFlowStatementTable" class="table-responsive"></div> </div> <div class="col-lg-4"> <h5 data-translate-key="commentaryTitle"></h5> <div id="cashFlowStatementComment" class="analysis-comment"></div> </div> </div> </section>
+            <section class="card-surface mb-4"> <h4 data-translate-key="eqTitle"></h4> <p class="text-muted small" data-translate-key="eqSubheader"></p> <div class="row g-4 mt-2"> <div class="col-lg-8"> <div id="equityStatementTable" class="table-responsive"></div> </div> <div class="col-lg-4"> <h5 data-translate-key="commentaryTitle"></h5> <div id="equityStatementComment" class="analysis-comment"></div> </div> </div> </section>
             
-            {/* --- START: Financial Ratios Section Added --- */}
+            {/* --- THIS IS THE CRITICAL SECTION --- */}
             <section id="financialRatiosSection" class="card-surface">
                  <h4 data-translate-key="ratiosTitle"></h4>
                  <p class="text-muted small" data-translate-key="ratiosSubheader"></p>
                  <div class="mb-4 p-3 border rounded" style="background-color: var(--bs-tertiary-bg);">
                       <label for="industrySelect" class="form-label fw-bold" data-translate-key="selectIndustryLabel"></label>
-                      <select class="form-select" id="industrySelect">
-                           {/* Options will be added by JS */}
-                      </select>
+                      <select class="form-select" id="industrySelect"> </select>
                       <div class="form-text" data-translate-key="selectIndustryDesc"></div>
                  </div>
                  <div class="alert alert-warning" id="ratiosDataWarning" style="display: none;"></div>
@@ -37,26 +41,15 @@
                  <div id="leverageRatios" class="mt-4"></div>
                  <div id="efficiencyRatios" class="mt-4"></div>
             </section>
-            {/* --- END: Financial Ratios Section Added --- */}
         </div>
     </main>
+    <footer class="site-footer no-print"> <div class="container-main"> <p data-translate-key="footerText"></p> </div> </footer>
 
-    <footer class="site-footer no-print">
-        <div class="container-main">
-            <p data-translate-key="footerText"></p>
-        </div>
-    </footer>
-
-    {/* *** START: CORRECTED SCRIPT ORDER *** */}
+    {/* --- THIS IS THE CRITICAL SCRIPT ORDER --- */}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-    
-    {/* Global script MUST come FIRST */}
-    <script src="js/main.js"></script> 
-    
-    {/* Page-specific script comes LAST */}
+    <script src="js/main.js"></script>
     <script src="js/report-app.js"></script>
-    {/* *** END: CORRECTED SCRIPT ORDER *** */}
 </body>
 </html>
