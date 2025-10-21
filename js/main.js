@@ -1,4 +1,4 @@
-// js/main.js (Corrected Version + UPGRADED Global PDF Export Function)
+// js/main.js (Corrected Version + Added Global PDF Export Function)
 
 // --- 1. STATE & CONFIG (Global Scope) ---
 const state = {
@@ -14,14 +14,14 @@ const translations = {
         navReport: "التقرير", navAdvanced: "تحليلات متقدمة", navDashboard: "لوحة التحكم", navCompare: "المقارنات",
         navBenchmarks: "المقارنات المعيارية",
         footerText: "© 2025 المحلل المالي. جميع الحقوق محفوظة.",
-        exportPdf: "تصدير PDF", 
+        exportPdf: "تصدير PDF", // *** ADDED ***
     },
     en: {
         brandTitle: "Financial Analyzer", navHome: "Home", navInput: "Input", navUpload: "Upload",
         navReport: "Report", navAdvanced: "Advanced", navDashboard: "Dashboard", navCompare: "Comparisons",
         navBenchmarks: "Benchmarks",
         footerText: "© 2025 Financial Analyzer. All rights reserved.",
-        exportPdf: "Export PDF", 
+        exportPdf: "Export PDF", // *** ADDED ***
     }
 };
 
@@ -56,7 +56,7 @@ function applyTranslations() {
     });
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     document.querySelectorAll('.main-nav .nav-link').forEach(link => {
-        const linkHref = link.getAttribute('href').split('/').pop(); 
+        const linkHref = link.getAttribute('href').split('/').pop(); // Handle relative paths
         link.classList.toggle('active', linkHref === currentPage);
     });
     console.log("Translations applied (main.js).");
@@ -86,7 +86,7 @@ window.applyTranslations = applyTranslations;
 console.log("applyTranslations function explicitly attached to window.");
 
 
-// *** START: UPGRADED PDF EXPORT FUNCTION ***
+// *** START: ADDED PDF EXPORT FUNCTION ***
 /**
  * Exports a specific element to PDF with watermark.
  * @param {string} elementId The ID of the element to export (e.g., 'advancedTabsContent')
@@ -116,6 +116,7 @@ window.exportPageToPDF = (elementId, reportTitle = 'Financial_Report') => {
     clone.style.padding = '1rem'; 
     clone.style.position = 'relative'; 
     clone.style.zIndex = '1';
+    clone.classList.add('pdf-export-content'); // Add class for specific PDF styles
 
     // --- FIX 2: Restore original tab display after cloning ---
     originalDisplays.forEach(item => {
@@ -124,7 +125,6 @@ window.exportPageToPDF = (elementId, reportTitle = 'Financial_Report') => {
     console.log("[PDF Export] Tab display restored.");
 
     // --- FIX 3: Use Absolute URL for Logo ---
-    // (Assuming this is the correct path from your GitHub pages root)
     const logoUrl = 'https://zezon70-create.github.io/financial-analyzer/assets/logo.png';
 
     const watermarkContainer = document.createElement('div');
@@ -140,6 +140,8 @@ window.exportPageToPDF = (elementId, reportTitle = 'Financial_Report') => {
     const printWrapper = document.createElement('div');
     printWrapper.style.position = 'relative'; 
     printWrapper.style.overflow = 'hidden'; 
+    // Ensure print wrapper uses the correct font by pulling from body
+    printWrapper.style.fontFamily = getComputedStyle(document.body).fontFamily;
 
     printWrapper.appendChild(watermarkContainer);
     printWrapper.appendChild(clone); 
@@ -158,6 +160,7 @@ window.exportPageToPDF = (elementId, reportTitle = 'Financial_Report') => {
         jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
 
+    // Temporarily append to body to ensure styles are computed
     document.body.appendChild(printWrapper);
     
     html2pdf().from(printWrapper).set(opt).save().then(() => {
@@ -168,4 +171,4 @@ window.exportPageToPDF = (elementId, reportTitle = 'Financial_Report') => {
         document.body.removeChild(printWrapper); // Clean up on error
     });
 };
-// *** END: UPGRADED PDF EXPORT FUNCTION ***
+// *** END: ADDED PDF EXPORT FUNCTION ***
