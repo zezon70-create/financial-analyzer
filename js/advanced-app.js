@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const lang = localStorage.getItem('lang') || 'ar';
     const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`; 
-
     const UI = { 
         smartSummary: document.getElementById('smartSummary'), alertsArea: document.getElementById('alertsArea'),
         fixedCosts: document.getElementById('fixedCosts'), variableCost: document.getElementById('variableCost'), sellingPrice: document.getElementById('sellingPrice'),
@@ -47,8 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // *** ADDED: PDF Button ***
         exportPdfBtn: document.getElementById('exportAdvancedPdfBtn') 
     };
-    
-    // Helper functions (Unchanged)
+        // Helper functions (Unchanged)
     const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
     const formatPercent = (value, digits = 1) => isFinite(value) ? `${(value * 100).toFixed(digits)}%` : "N/A";
     const formatRatio = (value, digits = 2) => isFinite(value) ? value.toFixed(digits) : "N/A";
@@ -70,12 +68,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const calculateAndDisplayVerticalAnalysis = () => { /* ... (Your full working function) ... */ };
     const calculateAndDisplayZScore = () => { /* ... (Your full working function) ... */ };
     const calculateAndDisplayCashFlowAnalysis = () => { /* ... (Your full working function) ... */ };
-
     // ==============================================
     // === RUN ANALYSIS & INITIALIZATION ===
     // ==============================================
-    
-    // --- Main analysis function ---
+        // --- Main analysis function ---
     const runAnalysis = () => {
         console.log("Running full analysis...");
         if (!calculateFinancials()) {
@@ -90,7 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderSidebar();
         return state.hasValidData; 
     };
-
     // --- Initialize Page ---
     const init = () => {
         console.log("Initializing advanced page...");
@@ -100,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (UI.calculateBreakeven) {
             UI.calculateBreakeven.addEventListener('click', calculateAndDisplayBreakeven);
         } else { console.warn("Breakeven calculate button not found"); }
-
         // Tab Change Listeners
         const tabs = ['ratios', 'breakeven', 'dupont', 'vertical', 'zscore', 'cashflow']; 
         tabs.forEach(tabId => {
@@ -117,14 +111,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             } else { console.warn(`Tab button not found for ID: ${tabId}-tab`); }
         });
-        
-        // Initial calculations/display for all tabs
+               // Initial calculations/display for all tabs
         calculateAndDisplayDupont(); 
         calculateAndDisplayVerticalAnalysis();
         calculateAndDisplayZScore();
         calculateAndDisplayCashFlowAnalysis(); 
-        
-        // *** START: ADDED PDF Button Listener ***
+                // *** START: ADDED PDF Button Listener ***
         if (UI.exportPdfBtn) {
             UI.exportPdfBtn.addEventListener('click', () => {
                 console.log("PDF Export clicked...");
@@ -148,10 +140,8 @@ document.addEventListener('DOMContentLoaded', () => {
             window.applyTranslations(); // Use window.applyTranslations
         } 
         else { console.warn("applyTranslations function not found."); }
-        
-        console.log("Advanced page initialized.");
+                console.log("Advanced page initialized.");
     };
-
     // Run init only if critical elements exist
     if (document.getElementById('ratios-pane') && document.getElementById('breakeven-pane') && document.getElementById('dupont-pane') && document.getElementById('vertical-pane') && document.getElementById('zscore-pane') && document.getElementById('cashflow-pane')) {
         init();
@@ -159,5 +149,3 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("One or more critical tab pane elements were not found. Initialization stopped.");
     }
 });
-
-
