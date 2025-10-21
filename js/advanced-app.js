@@ -23,7 +23,6 @@ window.pageTranslations = {
         // ... (rest of English translations) ...
     }
 };
-
 document.addEventListener('DOMContentLoaded', () => {
 
     const state = { 
@@ -324,3 +323,4 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("One or more critical tab pane elements were not found. Initialization stopped.");
     }
 });
+
