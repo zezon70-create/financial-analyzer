@@ -15,6 +15,7 @@ window.pageTranslations = {
     en: { /* ... (English translations as before) ... */ }
 };
 document.addEventListener('DOMContentLoaded', () => {
+
     const state = { 
         financials: {}, 
         ratios: {},
@@ -24,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const lang = localStorage.getItem('lang') || 'ar';
     const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`; 
+
     const UI = { 
         smartSummary: document.getElementById('smartSummary'), alertsArea: document.getElementById('alertsArea'),
         fixedCosts: document.getElementById('fixedCosts'), variableCost: document.getElementById('variableCost'), sellingPrice: document.getElementById('sellingPrice'),
@@ -46,14 +48,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // *** ADDED: PDF Button ***
         exportPdfBtn: document.getElementById('exportAdvancedPdfBtn') 
     };
-       // Helper functions (Unchanged)
+    
+    // Helper functions (Unchanged)
     const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
     const formatPercent = (value, digits = 1) => isFinite(value) && !isNaN(value) ? `${(value * 100).toFixed(digits)}%` : "N/A";
     const formatRatio = (value, digits = 2) => isFinite(value) && !isNaN(value) ? value.toFixed(digits) : "N/A";
     const formatNumber = (value, digits = 0) => isFinite(value) && !isNaN(value) ? value.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }) : "N/A";
+
+
     // ==============================================
     // === FINANCIAL CALCULATIONS (Full working version) ===
     // ==============================================
+
     const calculateFinancials = () => {
         state.financials = {}; 
         state.rawData = { bsItems: [], isItems: [] };
@@ -70,11 +76,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try { 
             const f = { assets: 0, liabilities: 0, equity: 0, revenue: 0, cogs: 0, expenses: 0, netProfit: 0, grossProfit: 0, currentAssets: 0, inventory: 0, currentLiabilities: 0, retainedEarnings: 0, interestExpense: 0, taxExpense: 0, depreciationAmortization: 0, ppeNet: 0, longTermDebt: 0, shortTermDebt: 0, cashEquivalents: 0, ebit: 0, workingCapital: 0, ocf_estimated: 0, capex_estimated: 0, icf_estimated: 0, fcf_estimated: 0, netCashChange_estimated: 0, freeCashFlow_estimated: 0 };
-          
+            
             trialData.forEach(row => { 
                 const value = (toNum(row.Debit)) - (toNum(row.Credit)); const mainType = row.MainType || ''; const subType = row.SubType || ''; const accountName = (row.Account || '').toLowerCase(); const rawItem = { account: row.Account || 'N/A', value: 0, mainType: mainType, subType: subType }; if (mainType.includes('الأصول') || mainType.includes('Assets')) { f.assets += value; rawItem.value = value; state.rawData.bsItems.push(rawItem); if (subType.includes('متداول') || subType.includes('Current')) { f.currentAssets += value; if (subType.includes('المخزون') || subType.includes('Inventory') || accountName.includes('inventory') || accountName.includes('مخزون')) { f.inventory += value; } if (subType.includes('النقد') || subType.includes('Cash') || accountName.includes('cash') || accountName.includes('نقد')) f.cashEquivalents += value; } else if (subType.includes('غير متداول') || subType.includes('Non-current') || subType.includes('ثابتة') || subType.includes('fixed')) { if(accountName.includes('ppe') || accountName.includes('fixed asset') || accountName.includes('أصول ثابتة')) f.ppeNet += value; } } else if (mainType.includes('الخصوم') || mainType.includes('Liabilities')) { f.liabilities -= value; rawItem.value = -value; state.rawData.bsItems.push(rawItem); if (subType.includes('متداول') || subType.includes('Current')) { f.currentLiabilities -= value; if(subType.includes('قروض قصيرة') || subType.includes('Short-term Loans') || accountName.includes('short term debt') || accountName.includes('قرض قصير')) f.shortTermDebt -=value; } else if (subType.includes('غير متداول') || subType.includes('Non-current')) { if(subType.includes('قروض طويلة') || subType.includes('Long-term Loans') || accountName.includes('long term debt') || accountName.includes('قرض طويل')) f.longTermDebt -=value; } } else if (mainType.includes('حقوق الملكية') || mainType.includes('Equity')) { f.equity -= value; rawItem.value = -value; state.rawData.bsItems.push(rawItem); if (subType.includes('الأرباح المحتجزة') || subType.includes('Retained Earnings') || accountName.includes('retained earnings') || accountName.includes('أرباح محتجزة')) f.retainedEarnings -= value; } else if (mainType.includes('قائمة الدخل') || mainType.includes('Income Statement')) { rawItem.mainType = 'Income Statement'; if (subType.includes('الإيرادات') || subType.includes('Revenue')) { f.revenue -= value; rawItem.value = -value; state.rawData.isItems.push(rawItem); } else if (subType.includes('تكلفة المبيعات') || subType.includes('COGS')) { f.cogs += value; rawItem.value = value; state.rawData.isItems.push(rawItem); } else { f.expenses += value; rawItem.value = value; state.rawData.isItems.push(rawItem); if (subType.includes('فائدة') || subType.includes('Interest') || accountName.includes('interest')) f.interestExpense += value; if (subType.includes('ضريبية') || subType.includes('Tax') || accountName.includes('tax')) f.taxExpense += value; if (subType.includes('إهلاك') || subType.includes('Depreciation') || accountName.includes('depreciation') || accountName.includes('amortization') || accountName.includes('إهلاك') || accountName.includes('استهلاك')) f.depreciationAmortization += value; } }
             });
-                        Object.keys(f).forEach(key => f[key] = f[key] || 0); 
+            
+            Object.keys(f).forEach(key => f[key] = f[key] || 0); 
             f.grossProfit = f.revenue - f.cogs;
             f.netProfit = f.grossProfit - f.expenses;
             f.ebit = f.netProfit + f.interestExpense + f.taxExpense; 
@@ -84,11 +91,14 @@ document.addEventListener('DOMContentLoaded', () => {
             f.icf_estimated = -f.capex_estimated; 
             f.fcf_estimated = 0; 
             f.netCashChange_estimated = f.ocf_estimated + f.icf_estimated + f.fcf_estimated;
-                        // *** THIS LINE IS NOW CORRECTED (removed stray 's') ***
+            
+            // *** THIS LINE IS NOW CORRECTED (removed stray 's') ***
             f.freeCashFlow_estimated = f.ocf_estimated - f.capex_estimated;
+
             const balanceCheck = f.assets - (f.liabilities + f.equity + f.netProfit);
             if (Math.abs(balanceCheck) > 1) console.warn(`Balance sheet check failed... Diff: ${balanceCheck.toFixed(2)}`);
-                        state.financials = f;
+            
+            state.financials = f;
             state.hasValidData = true; 
             console.log("Calculated Financials:", f);
             return true; 
@@ -99,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return false; 
         }
     };
+
     const calculateAllRatios = () => {
         state.ratios = {}; 
         if (!state.hasValidData) { console.warn("Financials not calculated..."); return false; }
@@ -118,55 +129,71 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
         } catch(e) { console.error("Error calculating ratios:", e); state.ratios = {}; state.hasValidData = false; return false; }
     };
+
     // ==============================================
     // === RENDERING FUNCTIONS (Full working versions) ===
     // ==============================================
-    const getRatioComment = (key, value) => { /* ... (Your full working function) ... */ if (!isFinite(value)) return "N/A"; if (key === 'currentRatio') { if (value >= 2) return t_page('currentRatio_comment_high'); if (value >= 1) return t_page('currentRatio_comment_good'); return t_page('currentRatio_comment_low'); } if (key === 'quickRatio') { if (value >= 1) return t_page('quickRatio_comment_good'); return t_page('quickRatio_comment_low'); } if (key === 'netProfitMargin') { if (value >= 0.15) return t_page('netProfitMargin_comment_high'); if (value > 0) return t_page('netProfitMargin_comment_avg'); return t_page('netProfitMargin_comment_low'); } if (key === 'grossProfitMargin') { return value >= 0.4 ? t_page('grossProfitMargin_comment_high') : t_page('grossProfitMargin_comment_low'); } if (key === 'roa') { return value >= 0.05 ? t_page('roa_comment_high') : t_page('roa_comment_low'); } if (key === 'roe') { return value >= 0.15 ? t_page('roe_comment_high') : t_page('roe_comment_low'); } if (key === 'debtToEquity') { if (value < 0.5) return t_page('debtToEquity_comment_low'); if (value <= 1.5) return t_page('debtToEquity_comment_good'); return t_page('debtToEquity_comment_high'); } if (key === 'debtToAssets') { return value < 0.4 ? t_page('debtToAssets_comment_low') : t_page('debtToAssets_comment_high'); } if (key === 'assetTurnover') { return value >= 1 ? t_page('assetTurnover_comment_high') : t_page('assetTurnover_comment_low'); } return ""; };
-    const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => { /* ... (Your full working function) ... */ const container = document.getElementById(divId); if (!container) { console.error(`Element not found: ${divId}`); return; } if (!state.hasValidData) { container.innerHTML = `<h5 class="mb-3">${t_page(categoryTitleKey)}</h5> <p class="text-muted">${t_page('noDataForRatios')}</p>`; return; } let tableHTML = `<h5 class="mb-3">${t_page(categoryTitleKey)}</h5> <div class="table-responsive"> <table class="table table-sm table-striped"> <thead><tr><th>${t_page('thRatio')}</th><th class="text-end">${t_page('thValue')}</th><th>${t_page('thComment')}</th></tr></thead> <tbody>`; ratioKeys.forEach(key => { const value = state.ratios[key]; const isPercentage = key.includes('Margin') || key.includes('roa') || key.includes('roe'); const formattedValue = isPercentage ? formatPercent(value) : formatRatio(value); const comment = getRatioComment(key, value); tableHTML += `<tr> <td>${t_page(key)}</td> <td class="text-end"><strong>${formattedValue}</strong></td> <td class="text-muted small">${comment}</td> </tr>`; }); container.innerHTML = tableHTML + `</tbody></table></div>`; };
-    const renderSidebar = () => { /* ... (Your full working function) ... */ if (!state.hasValidData) { UI.smartSummary.textContent = lang === 'ar' ? '...' : '...'; UI.alertsArea.innerHTML = `<div>${lang === 'ar' ? '...' : '...'}</div>`; return; } const { netProfitMargin, currentRatio, debtToEquity } = state.ratios; UI.smartSummary.textContent = netProfitMargin > 0 && currentRatio > 1.5 ? t_page('summary_ok') : t_page('summary_risk'); const alerts = []; if (currentRatio < 1 && isFinite(currentRatio)) alerts.push(t_page('alert_liquidity_risk')); if (debtToEquity > 2 && isFinite(debtToEquity)) alerts.push(t_page('alert_leverage_risk')); if (netProfitMargin < 0 && isFinite(netProfitMargin)) alerts.push(t_page('alert_profit_risk')); UI.alertsArea.innerHTML = alerts.length > 0 ? alerts.map(alert => `<div>${alert}</div>`).join('') : `<div>${t_page('alert_ok')}</div>`; };
-    const calculateAndDisplayBreakeven = () => { /* ... (Your full working function) ... */ };
-    const renderBreakevenChart = (fixed, variable, price, bepUnits) => { /* ... (Your full working function) ... */ };
-    const calculateAndDisplayDupont = () => { /* ... (Your full working function) ... */ };
-    const calculateAndDisplayVerticalAnalysis = () => { /* ... (Your full working function) ... */ };
-    const calculateAndDisplayZScore = () => { /* ... (Your full working function) ... */ };
-    const calculateAndDisplayCashFlowAnalysis = () => { /* ... (Your full working function) ... */ };
+    const getRatioComment = (key, value) => { if (!isFinite(value)) return "N/A"; if (key === 'currentRatio') { if (value >= 2) return t_page('currentRatio_comment_high'); if (value >= 1) return t_page('currentRatio_comment_good'); return t_page('currentRatio_comment_low'); } if (key === 'quickRatio') { if (value >= 1) return t_page('quickRatio_comment_good'); return t_page('quickRatio_comment_low'); } if (key === 'netProfitMargin') { if (value >= 0.15) return t_page('netProfitMargin_comment_high'); if (value > 0) return t_page('netProfitMargin_comment_avg'); return t_page('netProfitMargin_comment_low'); } if (key === 'grossProfitMargin') { return value >= 0.4 ? t_page('grossProfitMargin_comment_high') : t_page('grossProfitMargin_comment_low'); } if (key === 'roa') { return value >= 0.05 ? t_page('roa_comment_high') : t_page('roa_comment_low'); } if (key === 'roe') { return value >= 0.15 ? t_page('roe_comment_high') : t_page('roe_comment_low'); } if (key === 'debtToEquity') { if (value < 0.5) return t_page('debtToEquity_comment_low'); if (value <= 1.5) return t_page('debtToEquity_comment_good'); return t_page('debtToEquity_comment_high'); } if (key === 'debtToAssets') { return value < 0.4 ? t_page('debtToAssets_comment_low') : t_page('debtToAssets_comment_high'); } if (key === 'assetTurnover') { return value >= 1 ? t_page('assetTurnover_comment_high') : t_page('assetTurnover_comment_low'); } return ""; };
+    const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => { const container = document.getElementById(divId); if (!container) { console.error(`Element not found: ${divId}`); return; } if (!state.hasValidData) { container.innerHTML = `<h5 class="mb-3">${t_page(categoryTitleKey)}</h5> <p class="text-muted">${t_page('noDataForRatios')}</p>`; return; } let tableHTML = `<h5 class="mb-3">${t_page(categoryTitleKey)}</h5> <div class="table-responsive"> <table class="table table-sm table-striped"> <thead><tr><th>${t_page('thRatio')}</th><th class="text-end">${t_page('thValue')}</th><th>${t_page('thComment')}</th></tr></thead> <tbody>`; ratioKeys.forEach(key => { const value = state.ratios[key]; const isPercentage = key.includes('Margin') || key.includes('roa') || key.includes('roe'); const formattedValue = isPercentage ? formatPercent(value) : formatRatio(value); const comment = getRatioComment(key, value); tableHTML += `<tr> <td>${t_page(key)}</td> <td class="text-end"><strong>${formattedValue}</strong></td> <td class="text-muted small">${comment}</td> </tr>`; }); container.innerHTML = tableHTML + `</tbody></table></div>`; };
+    const renderSidebar = () => { if (!state.hasValidData) { UI.smartSummary.textContent = lang === 'ar' ? '...' : '...'; UI.alertsArea.innerHTML = `<div>${lang === 'ar' ? '...' : '...'}</div>`; return; } const { netProfitMargin, currentRatio, debtToEquity } = state.ratios; UI.smartSummary.textContent = netProfitMargin > 0 && currentRatio > 1.5 ? t_page('summary_ok') : t_page('summary_risk'); const alerts = []; if (currentRatio < 1 && isFinite(currentRatio)) alerts.push(t_page('alert_liquidity_risk')); if (debtToEquity > 2 && isFinite(debtToEquity)) alerts.push(t_page('alert_leverage_risk')); if (netProfitMargin < 0 && isFinite(netProfitMargin)) alerts.push(t_page('alert_profit_risk')); UI.alertsArea.innerHTML = alerts.length > 0 ? alerts.map(alert => `<div>${alert}</div>`).join('') : `<div>${t_page('alert_ok')}</div>`; };
+    const calculateAndDisplayBreakeven = () => { const fixed = toNum(UI.fixedCosts.value); const variable = toNum(UI.variableCost.value); const price = toNum(UI.sellingPrice.value); if (price <= 0 || variable < 0 || fixed < 0) { alert(t_page('errorPositiveValues')); return; } if (price <= variable) { alert(t_page('errorPrice')); return; } const contributionMargin = price - variable; const bepUnits = fixed / contributionMargin; const bepValue = bepUnits * price; UI.bepUnitsResult.textContent = Math.ceil(bepUnits).toLocaleString(); UI.bepValueResult.textContent = formatNumber(bepValue, 2); UI.breakevenResults.style.display = 'block'; renderBreakevenChart(fixed, variable, price, bepUnits); };
+    const renderBreakevenChart = (fixed, variable, price, bepUnits) => { if (!UI.breakevenChartCanvas) return; if (state.breakevenChart) { state.breakevenChart.destroy(); } let maxUnits = 100; if (bepUnits > 0 && isFinite(bepUnits)) { maxUnits = Math.max(100, Math.ceil(bepUnits * 2 / 10) * 10); } else if (fixed === 0 && price > variable) { maxUnits = 100; } else if (price <= variable) { maxUnits = 100; } const step = maxUnits / 10; const labels = Array.from({ length: 11 }, (_, i) => Math.round(step * i)); const fixedCostsData = labels.map(() => fixed); const totalCostsData = labels.map(unit => fixed + (variable * unit)); const revenueData = labels.map(unit => price * unit); const ctx = UI.breakevenChartCanvas.getContext('2d'); state.breakevenChart = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [ { label: t_page('revenue'), data: revenueData, borderColor: 'rgba(75, 192, 192, 1)', fill: false, tension: 0.1 }, { label: t_page('totalCosts'), data: totalCostsData, borderColor: 'rgba(255, 99, 132, 1)', fill: false, tension: 0.1 }, { label: t_page('fixedCosts'), data: fixedCostsData, borderColor: 'rgba(255, 159, 64, 1)', borderDash: [5, 5], fill: false, tension: 0.1 } ] }, options: { responsive: true, maintainAspectRatio: false, interaction: { intersect: false, mode: 'index', }, scales: { x: { title: { display: true, text: t_page('unitsSold') } }, y: { title: { display: true, text: t_page('value') }, beginAtZero: true } }, plugins: { tooltip: { callbacks: { label: function(context) { return `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`; } } } } } }); };
+    const calculateAndDisplayDupont = () => { if (!state.hasValidData) { if(UI.dupontDataWarning) { UI.dupontDataWarning.textContent = t_page('dupontDataWarning'); UI.dupontDataWarning.style.display = 'block'; } if(UI.dupontFormulaDisplay) UI.dupontFormulaDisplay.style.display = 'none'; if(UI.dupontInterpretation) UI.dupontInterpretation.innerHTML = ''; if(UI.dupontValueNPM) UI.dupontValueNPM.textContent = 'N/A'; if(UI.dupontValueAT) UI.dupontValueAT.textContent = 'N/A'; if(UI.dupontValueEM) UI.dupontValueEM.textContent = 'N/A'; if(UI.dupontValueROE) UI.dupontValueROE.textContent = 'N/A'; return; } if(UI.dupontDataWarning) UI.dupontDataWarning.style.display = 'none'; if(UI.dupontFormulaDisplay) UI.dupontFormulaDisplay.style.display = 'block'; const npm = state.ratios.netProfitMargin; const at = state.ratios.assetTurnover; const em = state.ratios.equityMultiplier; const dupontROE = (isFinite(npm) && isFinite(at) && isFinite(em)) ? npm * at * em : Infinity; if(UI.dupontROE) UI.dupontROE.textContent = formatPercent(dupontROE); if(UI.dupontNPM) UI.dupontNPM.textContent = formatPercent(npm); if(UI.dupontAT) UI.dupontAT.textContent = formatRatio(at); if(UI.dupontEM) UI.dupontEM.textContent = formatRatio(em); if(UI.dupontValueNPM) UI.dupontValueNPM.textContent = formatPercent(npm); if(UI.dupontValueAT) UI.dupontValueAT.textContent = formatRatio(at); if(UI.dupontValueEM) UI.dupontValueEM.textContent = formatRatio(em); if(UI.dupontValueROE) UI.dupontValueROE.textContent = formatPercent(dupontROE); let interpretation = ''; if (isFinite(dupontROE)) { const highROE = dupontROE >= 0.15; interpretation += highROE ? `<p>${t_page('dupontInterpretationHighROE')}</p><ul>` : `<p>${t_page('dupontInterpretationLowROE')}</p><ul>`; if (isFinite(npm)) { if (npm >= 0.10) interpretation += `<li>${t_page('dupontFactorProfitability')}</li>`; else if (npm < 0.05) interpretation += `<li>${t_page('dupontFactorLowProfitability')}</li>`; } if (isFinite(at)) { if (at >= 1.0) interpretation += `<li>${t_page('dupontFactorEfficiency')}</li>`; else if (at < 0.5) interpretation += `<li>${t_page('dupontFactorLowEfficiency')}</li>`; } if (isFinite(em)) { if (em > 2.5) interpretation += `<li>${t_page('dupontFactorLeverage')}</li>`; else if (em < 1.5) interpretation += `<li>${t_page('dupontFactorLowLeverage')}</li>`; } interpretation += `</ul>`; if (interpretation.endsWith('<ul></ul>')) { interpretation = `<p>${lang === 'ar' ? '...' : '...'}</p>`; } } else { interpretation = `<p class="text-danger">${lang === 'ar' ? '...' : '...'}</p>`; } if(UI.dupontInterpretation) UI.dupontInterpretation.innerHTML = interpretation; };
+    const calculateAndDisplayVerticalAnalysis = () => { if (!state.hasValidData || !state.rawData || (!state.rawData.bsItems.length && !state.rawData.isItems.length)) { if(UI.verticalDataWarning) { UI.verticalDataWarning.textContent = t_page('verticalDataWarning'); UI.verticalDataWarning.style.display = 'block'; } if(UI.verticalResultsContainer) UI.verticalResultsContainer.style.display = 'none'; return; } if(UI.verticalDataWarning) UI.verticalDataWarning.style.display = 'none'; if(UI.verticalResultsContainer) UI.verticalResultsContainer.style.display = 'block'; const totalAssets = state.financials.assets || 0; const totalRevenue = state.financials.revenue || 0; let bsTableHTML = `<table class="table table-sm table-striped"><thead>...</thead><tbody>`; state.rawData.bsItems.sort((a,b) => b.value - a.value).forEach(item => { const percentage = totalAssets !== 0 ? (item.value / totalAssets) : 0; bsTableHTML += `<tr><td>${item.account}</td><td class="text-end">${formatNumber(item.value)}</td><td class="text-end">${formatPercent(percentage)}</td></tr>`; }); bsTableHTML += `<tr class="table-light fw-bold"><td>${lang === 'ar' ? 'الإجمالي' : 'Total'}</td><td class="text-end">${formatNumber(totalAssets)}</td><td class="text-end">100.0%</td></tr>`; bsTableHTML += `</tbody></table>`; if(UI.verticalBSTable) UI.verticalBSTable.innerHTML = bsTableHTML; let isTableHTML = `<table class="table table-sm table-striped"><thead>...</thead><tbody>`; state.rawData.isItems.sort((a,b) => b.value - a.value).forEach(item => { const percentage = totalRevenue !== 0 ? (item.value / totalRevenue) : 0; const displayValue = item.value; isTableHTML += `<tr><td>${item.account}</td><td class="text-end">${formatNumber(displayValue)}</td><td class="text-end">${formatPercent(percentage)}</td></tr>`; }); isTableHTML += `<tr class="table-light fw-bold"><td>${lang === 'ar' ? 'صافي الإيرادات' : 'Net Revenue'}</td><td class="text-end">${formatNumber(totalRevenue)}</td><td class="text-end">100.0%</td></tr>`; isTableHTML += `</tbody></table>`; if(UI.verticalISTable) UI.verticalISTable.innerHTML = isTableHTML; };
+    const calculateAndDisplayZScore = () => { if (!state.hasValidData || !isFinite(state.ratios.zScore)) { if(UI.zscoreDataWarning) { UI.zscoreDataWarning.textContent = t_page('zscoreDataWarning'); UI.zscoreDataWarning.style.display = 'block'; } if(UI.zscoreResultsContainer) UI.zscoreResultsContainer.style.display = 'none'; return; } if(UI.zscoreDataWarning) UI.zscoreDataWarning.style.display = 'none'; if(UI.zscoreResultsContainer) UI.zscoreResultsContainer.style.display = 'block'; const z = state.ratios.zScore; let interpretation = ''; let interpretationClass = ''; if (z > 2.9) { interpretation = t_page('zscoreZoneSafe'); interpretationClass = 'text-success'; } else if (z > 1.23) { interpretation = t_page('zscoreZoneGrey'); interpretationClass = 'text-warning'; } else { interpretation = t_page('zscoreZoneDistress'); interpretationClass = 'text-danger'; } if(UI.zscoreValue) UI.zscoreValue.textContent = formatRatio(z, 3); if(UI.zscoreInterpretation) { UI.zscoreInterpretation.textContent = interpretation; UI.zscoreInterpretation.className = `h5 fw-bold ${interpretationClass}`; } let factorsHTML = ''; const factors = ['zScoreX1', 'zScoreX2', 'zScoreX3', 'zScoreX4', 'zScoreX5']; factors.forEach(key => { const value = state.ratios[key]; let label = t_page(key.replace('zScore', 'zscore')); if (key === 'zScoreX2' && state.financials.retainedEarnings === 0 && !isFinite(value)) { label += ` <small class="text-muted">${t_page('zscoreRetainedEarningsNotFound')}</small>`; } factorsHTML += `<li class="list-group-item d-flex justify-content-between align-items-center">${label} <span class="badge bg-secondary rounded-pill">${formatRatio(value)}</span></li>`; }); if(UI.zscoreFactorsList) UI.zscoreFactorsList.innerHTML = factorsHTML; };
+    const calculateAndDisplayCashFlowAnalysis = () => { if (!state.hasValidData) { if(UI.cfDataWarning) { UI.cfDataWarning.textContent = t_page('cfDataWarning'); UI.cfDataWarning.style.display = 'block'; } if(UI.cfResultsContainer) UI.cfResultsContainer.style.display = 'none'; return; } if(UI.cfDataWarning) UI.cfDataWarning.style.display = 'none'; if(UI.cfResultsContainer) UI.cfResultsContainer.style.display = 'block'; const f = state.financials; const r = state.ratios; let stmtHTML = ` <tr><td>${t_page('cfNetIncome')}</td><td class="text-end">${formatNumber(f.netProfit)}</td></tr> <tr><td class="ps-3">${t_page('cfDepreciationAmortization')}</td><td class="text-end">${formatNumber(f.depreciationAmortization)}</td></tr> <tr><td class="text-muted ps-3">${t_page('cfChangesWC')}</td><td class="text-end text-muted">(N/A)</td></tr> <tr class="table-light fw-bold"><td>${t_page('cfOperating')}</td><td class="text-end">${formatNumber(f.ocf_estimated)}</td></tr> <tr><td>${t_page('cfInvesting')}</td><td class="text-end">${formatNumber(f.icf_estimated)}</td></tr> <tr><td>${t_page('cfFinancing')}</td><td class="text-end">${formatNumber(f.fcf_estimated)}</td></tr> <tr class="table-light fw-bold border-top"><td>${t_page('cfNetChange')}</td><td class="text-end">${formatNumber(f.netCashChange_estimated)}</td></tr> `; if(UI.cfStatementTableBody) UI.cfStatementTableBody.innerHTML = stmtHTML; if(UI.cfValueOCFRatio) UI.cfValueOCFRatio.textContent = formatRatio(r.operatingCashFlowRatio); if(UI.cfValueFCF) UI.cfValueFCF.textContent = formatNumber(r.freeCashFlow); let interpretation = ''; if (isFinite(f.ocf_estimated)) { interpretation += f.ocf_estimated > 0 ? `<p>${t_page('cfInterpretationPositiveOCF')}</p>` : `<p>${t_page('cfInterpretationNegativeOCF')}</p>`; } if (isFinite(r.freeCashFlow)) { interpretation += `<p>${t_page('cfInterpretationFCF')}</p>`; } if(UI.cfInterpretation) UI.cfInterpretation.innerHTML = interpretation || `<p class="text-muted">${lang==='ar'?'...':'...'}</p>`; };
+
     // ==============================================
     // === RUN ANALYSIS & INITIALIZATION ===
     // ==============================================
-        const runAnalysis = () => {
+    
+    const runAnalysis = (renderOnlyRatios = false) => {
         console.log("Running full analysis...");
         if (!calculateFinancials()) { state.hasValidData = false; } 
         else { state.hasValidData = calculateAllRatios(); }
+        
+        // Always render ratio category, but use the correct ID
         renderRatioCategory('liquidityRatios', 'liquidityRatios', ['currentRatio', 'quickRatio']);
         renderRatioCategory('profitabilityRatios', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
         renderRatioCategory('leverageRatios', 'leverageRatios', ['debtToAssets', 'debtToEquity']);
         renderRatioCategory('efficiencyRatios', 'efficiencyRatios', ['assetTurnover']);
         renderSidebar();
-        return state.hasValidData; 
+        
+        if (!renderOnlyRatios) {
+             console.log("[DEBUG] Triggering render for all dependent tabs...");
+             calculateAndDisplayDupont();
+             calculateAndDisplayVerticalAnalysis();
+             calculateAndDisplayZScore();
+             calculateAndDisplayCashFlowAnalysis();
+        }
+        return state.hasValidData;
     };
+    
+    // *** No populateIndustrySelect needed here anymore ***
+
     const init = () => {
         console.log("Initializing advanced page...");
-                // *** ADDED: Use setTimeout to delay analysis ***
+        
         setTimeout(() => {
             console.log("[DEBUG] Running initial analysis after delay...");
-            runAnalysis(); // Run once on load after delay
-                       // Initial calculations/display for all tabs
-            calculateAndDisplayDupont(); 
-            calculateAndDisplayVerticalAnalysis();
-            calculateAndDisplayZScore();
-            calculateAndDisplayCashFlowAnalysis(); 
-                        // Apply translations *after* initial run
+            runAnalysis(); 
+            
+            // Apply translations *after* initial run
             if (typeof window.applyTranslations === 'function') { 
                 console.log("Applying translations...");
                 window.applyTranslations(); 
             } 
             else { console.warn("applyTranslations function not found."); }
-                        console.log("Advanced page initialized.");
-        }, 100); // 100ms delay to ensure main.js is ready
+            
+            console.log("Advanced page initialized.");
+
+        }, 100); 
+
         // Breakeven Listener
         if (UI.calculateBreakeven) {
             UI.calculateBreakeven.addEventListener('click', calculateAndDisplayBreakeven);
         } else { console.warn("Breakeven calculate button not found"); }
+
         // Tab Change Listeners
         const tabs = ['ratios', 'breakeven', 'dupont', 'vertical', 'zscore', 'cashflow']; 
         tabs.forEach(tabId => {
@@ -182,7 +209,9 @@ document.addEventListener('DOMContentLoaded', () => {
                      if (tabId === 'breakeven' && state.breakevenChart) { state.breakevenChart.resize(); }
                 });
             } else { console.warn(`Tab button not found for ID: ${tabId}-tab`); }
-        });      
+        });
+        
+        
         // *** START: ADDED PDF Button Listener ***
         if (UI.exportPdfBtn) {
             UI.exportPdfBtn.addEventListener('click', () => {
@@ -200,6 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         // *** END: ADDED PDF Button Listener ***
     };
+
     // Run init
     if (document.getElementById('ratios-pane') && document.getElementById('cashflow-pane')) {
         init();
