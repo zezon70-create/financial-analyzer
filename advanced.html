@@ -14,7 +14,7 @@
 <body data-theme="light">
 
     <header class="site-header-global">
-        <div class="container-main nav-container"> <a href="index.html" class="brand"> <img src="assets/logo.png" alt="شعار المحلل المالي"> <span class="title" data-translate-key="brandTitle"></span> </a> <nav class="main-nav"> <a href="index.html" class="nav-link" data-translate-key="navHome"></a> <a href="input.html" class="nav-link" data-translate-key="navInput"></a> <a href="upload.html" class="nav-link" data-translate-key="navUpload"></a> <a href="report.html" class="nav-link" data-translate-key="navReport"></a> <a href="advanced.html" class="nav-link" data-translate-key="navAdvanced"></a> <a href="dashboard.html" class="nav-link" data-translate-key="navDashboard"></a> <a href="comparisons.html" class="nav-link" data-translate-key="navCompare"></a><a href="benchmarks.html" class="nav-link" data-translate-key="navBenchmarks"></a> </nav> <div class="controls d-flex align-items-center gap-3"> <select id="languageSelect" class="form-select form-select-sm" style="width: auto;"></select> <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button> </div> </div>
+        <div class="container-main nav-container"> <a href="index.html" class="brand"> <img src="assets/logo.png" alt="شعار المحلل المالي"> <span class="title" data-translate-key="brandTitle"></span> </a> <nav class="main-nav"> <a href="index.html" class="nav-link" data-translate-key="navHome"></a> <a href="input.html" class="nav-link" data-translate-key="navInput"></a> <a href="upload.html" class="nav-link" data-translate-key="navUpload"></a> <a href="report.html" class="nav-link" data-translate-key="navReport"></a> <a href="advanced.html" class="nav-link active" data-translate-key="navAdvanced"></a> <a href="dashboard.html" class="nav-link" data-translate-key="navDashboard"></a> <a href="comparisons.html" class="nav-link" data-translate-key="navCompare"></a><a href="benchmarks.html" class="nav-link" data-translate-key="navBenchmarks"></a> </nav> <div class="controls d-flex align-items-center gap-3"> <select id="languageSelect" class="form-select form-select-sm" style="width: auto;"></select> <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button> </div> </div>
     </header>
 
     <main class="container-main py-4">
@@ -31,6 +31,7 @@
              <li class="nav-item" role="presentation"> <button class="nav-link" id="vertical-tab" data-bs-toggle="pill" data-bs-target="#vertical-pane" type="button" role="tab"> <i class="bi bi-pie-chart me-2"></i> <span data-translate-key="tabVertical"></span> </button> </li>
              <li class="nav-item" role="presentation"> <button class="nav-link" id="zscore-tab" data-bs-toggle="pill" data-bs-target="#zscore-pane" type="button" role="tab"> <i class="bi bi-shield-exclamation me-2"></i> <span data-translate-key="tabZScore"></span> </button> </li>
              <li class="nav-item" role="presentation"> <button class="nav-link" id="cashflow-tab" data-bs-toggle="pill" data-bs-target="#cashflow-pane" type="button" role="tab"> <i class="bi bi-cash-coin me-2"></i> <span data-translate-key="tabCashFlow"></span> </button> </li> 
+             <li class="nav-item" role="presentation"> <button class="nav-link" id="eva-tab" data-bs-toggle="pill" data-bs-target="#eva-pane" type="button" role="tab"> <i class="bi bi-gem me-2"></i> <span data-translate-key="tabEVA"></span> </button> </li> 
         </ul>
 
         <div class="tab-content" id="advancedTabsContent">
@@ -64,6 +65,62 @@
                            </div>
                            <div class="mt-4 analysis-comment" id="cfInterpretation"></div>
                      </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="eva-pane" role="tabpanel">
+                <div class="row g-4">
+                    <div class="col-lg-4">
+                        <div class="card-surface">
+                            <h5 data-translate-key="evaInputTitle"></h5>
+                            <p class="text-muted small" data-translate-key="evaInputDesc"></p>
+                            <div class="mb-3">
+                                <label for="waccInput" class="form-label" data-translate-key="labelWACC"></label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="waccInput" placeholder="e.g., 12" value="12">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="taxRateInput" class="form-label" data-translate-key="labelTaxRate"></label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="taxRateInput" placeholder="e.g., 20" value="20">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                            <button id="calculateEVA" class="btn btn-primary w-100" data-translate-key="btnCalculate"></button>
+                        </div>
+                    </div>
+                    <div class="col-lg-8">
+                        <div class="card-surface">
+                            <h5 data-translate-key="evaResultsTitle"></h5>
+                            <div class="alert alert-warning" id="evaDataWarning" style="display: none;"></div>
+                            
+                            <div id="evaResultsContainer" style="display: none;">
+                                <div class="text-center my-4">
+                                    <p class="text-muted mb-1" data-translate-key="evaValueLabel"></p>
+                                    <p class="display-4 fw-bold" id="evaValue"></p>
+                                    <p class="h5 fw-bold" id="evaInterpretation"></p>
+                                </div>
+                                <hr>
+                                <h6 data-translate-key="evaComponents"></h6>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span data-translate-key="evaNOPAT"></span>
+                                        <span class="badge bg-success rounded-pill fs-6" id="evaValueNOPAT"></span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span data-translate-key="evaInvestedCapital"></span>
+                                        <span class="badge bg-info rounded-pill fs-6" id="evaValueInvestedCapital"></span>
+                                    </li>
+                                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                                        <span data-translate-key="evaCapitalCharge"></span>
+                                        <span class="badge bg-warning text-dark rounded-pill fs-6" id="evaValueCapitalCharge"></span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
