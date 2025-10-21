@@ -1,5 +1,4 @@
 // js/advanced-app.js (Version with enhanced error checking and logging - PDF Button Added)
-
 window.pageTranslations = {
     ar: { 
         // ... (كل الترجمات كما هي، سيتم استخدام 'exportPdf' من main.js) ...
@@ -90,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const init = () => {
         console.log("Initializing advanced page...");
         runAnalysis(); // Run once on load
-
         // Breakeven Listener
         if (UI.calculateBreakeven) {
             UI.calculateBreakeven.addEventListener('click', calculateAndDisplayBreakeven);
@@ -133,8 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn("Export PDF button 'exportAdvancedPdfBtn' not found.");
         }
         // *** END: ADDED PDF Button Listener ***
-        
-        // Apply translations
+               // Apply translations
         if (typeof window.applyTranslations === 'function') { 
             console.log("Applying translations...");
             window.applyTranslations(); // Use window.applyTranslations
