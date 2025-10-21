@@ -53,14 +53,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const formatPercent = (value, digits = 1) => isFinite(value) ? `${(value * 100).toFixed(digits)}%` : "N/A";
     const formatRatio = (value, digits = 2) => isFinite(value) ? value.toFixed(digits) : "N/A";
     const formatNumber = (value, digits = 0) => isFinite(value) ? value.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }) : "N/A";
-
-
     // ==============================================
     // === FINANCIAL CALCULATIONS (Full working version) ===
     // ==============================================
     const calculateFinancials = () => { /* ... (Your full working function) ... */ };
     const calculateAllRatios = () => { /* ... (Your full working function) ... */ };
-
     // ==============================================
     // === RENDERING FUNCTIONS (Full working versions) ===
     // ==============================================
@@ -162,4 +159,5 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("One or more critical tab pane elements were not found. Initialization stopped.");
     }
 });
+
 
