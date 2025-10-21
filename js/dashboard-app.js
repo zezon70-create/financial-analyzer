@@ -1,4 +1,4 @@
-// js/dashboard-app.js (Upgraded Version with Dynamic View Router and Trend Analysis)
+// js/dashboard-app.js (Corrected Version 3: ADDED MISSING HELPER FUNCTIONS)
 
 window.pageTranslations = {
     ar: {
@@ -31,7 +31,6 @@ window.pageTranslations = {
         zscore_safe: "منطقة آمنة",
         zscore_grey: "منطقة رمادية",
         zscore_distress: "منطقة الخطر",
-        // --- NEW Trend Translations ---
         trend_kpi_netProfit: "صافي الربح (آخر فترة)",
         trend_kpi_revenue: "الإيرادات (آخر فترة)",
         trend_kpi_currentRatio: "نسبة التداول (آخر فترة)",
@@ -43,8 +42,7 @@ window.pageTranslations = {
         trend_netProfitMargin: "هامش صافي الربح",
         trend_zscore: "مؤشر Z-Score"
     },
-    en: { // ... (English translations as before, add new trend keys) ...
-    }
+    en: { /* ... (English translations) ... */ }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -52,16 +50,12 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         console.log("[DEBUG] Initializing dashboard-app.js after delay...");
 
-        const state = { 
-            snapshots: [], // Array to hold all calculated snapshot data
-            charts: {} 
-        };
+        const state = { snapshots: [], charts: {} };
         const lang = localStorage.getItem('lang') || 'ar';
         const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;
 
         const UI = {
             loadingMessage: document.getElementById('loadingMessage'),
-            // Single Period View
             singlePeriodView: document.getElementById('singlePeriodView'),
             gaugeCurrentRatio: document.getElementById('gaugeCurrentRatio')?.getContext('2d'),
             gaugeNetProfitMargin: document.getElementById('gaugeNetProfitMargin')?.getContext('2d'),
@@ -74,7 +68,6 @@ document.addEventListener('DOMContentLoaded', () => {
             structureChart: document.getElementById('structureChart')?.getContext('2d'),
             performanceSummary: document.getElementById('performanceSummary'),
             alertsArea: document.getElementById('alertsArea'),
-            // Trend Analysis View
             trendAnalysisView: document.getElementById('trendAnalysisView'),
             trendNetProfit: document.getElementById('trendNetProfit'),
             trendRevenue: document.getElementById('trendRevenue'),
@@ -83,28 +76,36 @@ document.addEventListener('DOMContentLoaded', () => {
             ratiosTrendChart: document.getElementById('ratiosTrendChart')?.getContext('2d'),
         };
 
+        // *** START: ADDED MISSING HELPER FUNCTIONS ***
         const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
-        const formatCurrency = (value) => new Intl.NumberFormat('en-US', { style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value || 0);
+        const formatPercent = (value, digits = 1) => isFinite(value) && !isNaN(value) ? `${(value * 100).toFixed(digits)}%` : "N/A";
+        const formatRatio = (value, digits = 2) => isFinite(value) && !isNaN(value) ? value.toFixed(digits) : "N/A";
+        const formatCurrency = (value) => isFinite(value) && !isNaN(value) ? value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : "N/A";
+        // *** END: ADDED MISSING HELPER FUNCTIONS ***
 
         // --- Core Calculation Engine ---
-        // This function now takes data as an argument
         const calculateMetrics = (trialData) => {
-            if (!Array.isArray(trialData) || trialData.length === 0) {
-                 return null; // Return null if data is invalid
-            }
+            if (!Array.isArray(trialData) || trialData.length === 0) { return null; }
+            
             const f = { assets: 0, liabilities: 0, equity: 0, revenue: 0, cogs: 0, expenses: 0, netProfit: 0, grossProfit: 0, currentAssets: 0, inventory: 0, currentLiabilities: 0, retainedEarnings: 0, interestExpense: 0, taxExpense: 0, ebit: 0, workingCapital: 0 };
-            trialData.forEach(row => {
-                const value = (toNum(row.Debit)) - (toNum(row.Credit));
-                const mainType = row.MainType || ''; const subType = row.SubType || ''; const accountName = (row.Account || '').toLowerCase();
-                if (mainType.includes('الأصول') || mainType.includes('Assets')) { f.assets += value; if (subType.includes('متداول') || subType.includes('Current')) { f.currentAssets += value; if (subType.includes('المخزون') || subType.includes('Inventory') || accountName.includes('inventory') || accountName.includes('مخزون')) f.inventory += value; } } 
-                else if (mainType.includes('الخصوم') || mainType.includes('Liabilities')) { f.liabilities -= value; if (subType.includes('متداول') || subType.includes('Current')) f.currentLiabilities -= value; } 
-                else if (mainType.includes('حقوق الملكية') || mainType.includes('Equity')) { f.equity -= value; if (subType.includes('الأرباح المحتجزة') || subType.includes('Retained Earnings') || accountName.includes('retained earnings') || accountName.includes('أرباح محتجزة')) f.retainedEarnings -= value; } 
-                else if (mainType.includes('قائمة الدخل') || mainType.includes('Income Statement')) { if (subType.includes('الإيرادات') || subType.includes('Revenue')) { f.revenue -= value; } else if (subType.includes('تكلفة المبيعات') || subType.includes('COGS')) { f.cogs += value; } else { f.expenses += value; if (subType.includes('فائدة') || subType.includes('Interest') || accountName.includes('interest')) f.interestExpense += value; if (subType.includes('ضريبية') || subType.includes('Tax') || accountName.includes('tax')) f.taxExpense += value; } }
-            });
+            
+            try {
+                trialData.forEach(row => {
+                    const value = (toNum(row.Debit)) - (toNum(row.Credit));
+                    const mainType = row.MainType || ''; const subType = row.SubType || ''; const accountName = (row.Account || '').toLowerCase();
+                    if (mainType.includes('الأصول') || mainType.includes('Assets')) { f.assets += value; if (subType.includes('متداول') || subType.includes('Current')) { f.currentAssets += value; if (subType.includes('المخزون') || subType.includes('Inventory') || accountName.includes('inventory') || accountName.includes('مخزون')) f.inventory += value; } } 
+                    else if (mainType.includes('الخصوم') || mainType.includes('Liabilities')) { f.liabilities -= value; if (subType.includes('متداول') || subType.includes('Current')) f.currentLiabilities -= value; } 
+                    else if (mainType.includes('حقوق الملكية') || mainType.includes('Equity')) { f.equity -= value; if (subType.includes('الأرباح المحتجزة') || subType.includes('Retained Earnings') || accountName.includes('retained earnings') || accountName.includes('أرباح محتجزة')) f.retainedEarnings -= value; } 
+                    else if (mainType.includes('قائمة الدخل') || mainType.includes('Income Statement')) { if (subType.includes('الإيرادات') || subType.includes('Revenue')) { f.revenue -= value; } else if (subType.includes('تكلفة المبيعات') || subType.includes('COGS')) { f.cogs += value; } else { f.expenses += value; if (subType.includes('فائدة') || subType.includes('Interest') || accountName.includes('interest')) f.interestExpense += value; if (subType.includes('ضريبية') || subType.includes('Tax') || accountName.includes('tax')) f.taxExpense += value; } }
+                });
+            } catch (e) {
+                console.error("[DEBUG] Error during trialData processing loop:", e);
+                return null; // Stop calculation if loop fails
+            }
+
             Object.keys(f).forEach(key => f[key] = f[key] || 0);
             f.grossProfit = f.revenue - f.cogs; f.netProfit = f.grossProfit - f.expenses; f.ebit = f.netProfit + f.interestExpense + f.taxExpense; f.workingCapital = f.currentAssets - f.currentLiabilities; f.equity += f.netProfit;
             
-            // Calculate Ratios
             const assets = f.assets || 0; const equity = f.equity || 0; const liabilities = f.liabilities || 0; const revenue = f.revenue || 0;
             const x1 = assets !== 0 ? f.workingCapital / assets : Infinity; const x2 = assets !== 0 ? f.retainedEarnings / assets : Infinity; const x3 = assets !== 0 ? f.ebit / assets : Infinity; const x4 = liabilities !== 0 ? equity / liabilities : Infinity; const x5 = assets !== 0 ? revenue / assets : 0;
             const zScore = (isFinite(x1) && isFinite(x2) && isFinite(x3) && isFinite(x4) && isFinite(x5)) ? (0.717 * x1) + (0.847 * x2) + (3.107 * x3) + (0.420 * x4) + (0.998 * x5) : NaN;
@@ -115,11 +116,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 roe: f.equity > 0 ? f.netProfit / f.equity : 0,
                 zScore: zScore
             };
+            
+            console.log("[DEBUG] Dashboard financials calculated (Full):", f);
+            console.log("[DEBUG] Dashboard ratios calculated (Full):", ratios);
             return { financials: f, ratios: ratios };
         };
         
         // --- Gauge Chart Function ---
-        const createGaugeChart = (ctx, value, max, colors) => { /* ... (Gauge function as before) ... */ };
+        const createGaugeChart = (ctx, value, max, colors) => {
+            const data = { datasets: [{ data: [value, max - value], backgroundColor: [colors.value, colors.background], borderColor: [colors.value, colors.background], borderWidth: 1 }] };
+            return new Chart(ctx, { type: 'doughnut', data: data, options: { responsive: true, maintainAspectRatio: false, circumference: 180, rotation: 270, cutout: '75%', plugins: { legend: { display: false }, tooltip: { enabled: false } } } });
+        };
 
         // --- Single Period Render Functions ---
         const renderGaugeKPIs = (financials, ratios) => {
@@ -127,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const { netProfitMargin, currentRatio, roe, zScore } = ratios;
             if (UI.gaugeCurrentRatio) { const crVal = isFinite(currentRatio) ? currentRatio : 0; const crMax = 3; const crColor = crVal < 1 ? '#dc3545' : (crVal < 1.8 ? '#ffc107' : '#198754'); if (state.charts.gaugeCR) state.charts.gaugeCR.destroy(); state.charts.gaugeCR = createGaugeChart(UI.gaugeCurrentRatio, Math.min(crVal, crMax), crMax, { value: crColor, background: 'var(--bs-tertiary-bg)' }); UI.gaugeCurrentRatioValue.textContent = isFinite(currentRatio) ? currentRatio.toFixed(2) : "N/A"; UI.gaugeCurrentRatioValue.style.color = crColor; }
             if (UI.gaugeNetProfitMargin) { const npmVal = isFinite(netProfitMargin) ? netProfitMargin : 0; const npmMax = 0.25; const npmColor = npmVal < 0 ? '#dc3545' : (npmVal < 0.05 ? '#ffc107' : '#198754'); if (state.charts.gaugeNPM) state.charts.gaugeNPM.destroy(); state.charts.gaugeNPM = createGaugeChart(UI.gaugeNetProfitMargin, Math.abs(npmVal), npmMax, { value: npmColor, background: 'var(--bs-tertiary-bg)' }); UI.gaugeNetProfitMarginValue.textContent = isFinite(netProfitMargin) ? `${(netProfitMargin * 100).toFixed(1)}%` : "N/A"; UI.gaugeNetProfitMarginValue.style.color = npmColor; }
-            if (UI.gaugeZScore) { const zVal = isFinite(zScore) ? zScore : 0; const zMax = 4; const zColor = zVal < 1.23 ? '#dc3545' : (zVal < 2.9 ? '#ffc107' : '#198754'); if (state.charts.gaugeZ) state.charts.gaugeZ.destroy(); state.charts.gaugeZ = createGaugeChart(UI.gaugeZScore, Math.min(zVal, zMax), zMax, { value: zColor, background: 'var(--bs-tertiary-bg)' }); UI.gaugeZScoreValue.textContent = isFinite(zScore) ? zScore.toFixed(3) : "N/A"; UI.gaugeZScoreValue.style.color = zColor; }
+            if (UI.gaugeZScore) { const zVal = isFinite(zScore) ? zScore : 0; const zMax = 4; const zColor = zVal < 1.23 ? '#dc3545' : (zVal < 2.9 ? '#ffc107' : '#198754'); if (state.charts.gaugeZ) state.charts.gaugeZ.destroy(); state.charts.gaugeZ = createGaugeChart(UI.gaugeZScore, Math.min(Math.max(zVal, 0), zMax), zMax, { value: zColor, background: 'var(--bs-tertiary-bg)' }); UI.gaugeZScoreValue.textContent = isFinite(zScore) ? zScore.toFixed(3) : "N/A"; UI.gaugeZScoreValue.style.color = zColor; }
             if (UI.kpiNetProfitValue) { UI.kpiNetProfitValue.textContent = formatCurrency(netProfit); UI.kpiNetProfitValue.style.color = netProfit < 0 ? '#dc3545' : '#198754'; }
         };
         const renderMainCharts = (financials) => {
@@ -148,82 +155,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- NEW: Trend Analysis Render Functions ---
         const renderTrendKPIs = (snapshots) => {
-            const latest = snapshots[snapshots.length - 1]; // Get the most recent data
+            const latest = snapshots[snapshots.length - 1];
             const previous = snapshots.length > 1 ? snapshots[snapshots.length - 2] : null;
-
-            // Helper to render KPI with trend arrow
             const renderTrend = (currentVal, prevVal) => {
-                if (!prevVal || !isFinite(currentVal) || !isFinite(prevVal) || prevVal === 0) {
-                    return ''; // No previous data or cannot calculate change
-                }
+                if (!previous || !isFinite(currentVal) || !isFinite(prevVal) || prevVal === 0) return '';
                 const change = (currentVal - prevVal) / Math.abs(prevVal);
                 if (Math.abs(change) < 0.001) return `<span class="ms-2 text-muted small">(0%)</span>`;
                 const color = change > 0 ? 'text-success' : 'text-danger';
                 const icon = change > 0 ? 'bi-arrow-up' : 'bi-arrow-down';
                 return `<span class="ms-2 ${color} small"><i class="bi ${icon}"></i> ${(change * 100).toFixed(1)}%</span>`;
             };
-
-            // Net Profit
-            UI.trendNetProfit.innerHTML = `${formatCurrency(latest.financials.netProfit)} ${renderTrend(latest.financials.netProfit, previous?.financials.netProfit)}`;
-            UI.trendNetProfit.style.color = latest.financials.netProfit < 0 ? '#dc3545' : '#198754';
-            
-            // Revenue
-            UI.trendRevenue.innerHTML = `${formatCurrency(latest.financials.revenue)} ${renderTrend(latest.financials.revenue, previous?.financials.revenue)}`;
-            
-            // Current Ratio
-            UI.trendCurrentRatio.innerHTML = `${latest.ratios.currentRatio.toFixed(2)} ${renderTrend(latest.ratios.currentRatio, previous?.ratios.currentRatio)}`;
-            UI.trendCurrentRatio.style.color = latest.ratios.currentRatio < 1 ? '#dc3545' : 'var(--bs-primary-text-emphasis)';
+            if(UI.trendNetProfit) { UI.trendNetProfit.innerHTML = `${formatCurrency(latest.financials.netProfit)} ${renderTrend(latest.financials.netProfit, previous?.financials.netProfit)}`; UI.trendNetProfit.style.color = latest.financials.netProfit < 0 ? '#dc3545' : '#198754'; }
+            if(UI.trendRevenue) UI.trendRevenue.innerHTML = `${formatCurrency(latest.financials.revenue)} ${renderTrend(latest.financials.revenue, previous?.financials.revenue)}`;
+            if(UI.trendCurrentRatio) { UI.trendCurrentRatio.innerHTML = `${latest.ratios.currentRatio.toFixed(2)} ${renderTrend(latest.ratios.currentRatio, previous?.ratios.currentRatio)}`; UI.trendCurrentRatio.style.color = latest.ratios.currentRatio < 1 ? '#dc3545' : 'var(--bs-primary-text-emphasis)'; }
         };
-
         const renderTrendCharts = (snapshots) => {
             const labels = snapshots.map(s => s.name);
-            
-            // Profitability Trend Chart
             if (UI.profitTrendChart) {
                 if (state.charts.profitTrend) state.charts.profitTrend.destroy();
                 state.charts.profitTrend = new Chart(UI.profitTrendChart, {
                     type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            { label: t_page('trend_revenue'), data: snapshots.map(s => s.financials.revenue), borderColor: '#0d6efd', tension: 0.1 },
-                            { label: t_page('trend_netProfit'), data: snapshots.map(s => s.financials.netProfit), borderColor: '#198754', tension: 0.1 }
-                        ]
-                    },
+                    data: { labels: labels, datasets: [ { label: t_page('trend_revenue'), data: snapshots.map(s => s.financials.revenue), borderColor: '#0d6efd', tension: 0.1 }, { label: t_page('trend_netProfit'), data: snapshots.map(s => s.financials.netProfit), borderColor: '#198754', tension: 0.1 } ] },
                     options: { responsive: true, maintainAspectRatio: false }
                 });
             }
-
-            // Ratios Trend Chart
             if (UI.ratiosTrendChart) {
                 if (state.charts.ratiosTrend) state.charts.ratiosTrend.destroy();
                 state.charts.ratiosTrend = new Chart(UI.ratiosTrendChart, {
                     type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [
-                            { label: t_page('trend_currentRatio'), data: snapshots.map(s => s.ratios.currentRatio), borderColor: '#ffc107', tension: 0.1, yAxisID: 'y' },
-                            { label: t_page('trend_netProfitMargin'), data: snapshots.map(s => s.ratios.netProfitMargin), borderColor: '#6f42c1', tension: 0.1, yAxisID: 'yPercent' },
-                            { label: t_page('trend_zscore'), data: snapshots.map(s => s.ratios.zScore), borderColor: '#dc3545', tension: 0.1, yAxisID: 'y' }
-                        ]
-                    },
-                    options: { 
-                        responsive: true, 
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Ratio Value' } },
-                            yPercent: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'Percentage %' }, 
-                                ticks: { callback: (value) => (value * 100).toFixed(0) + '%' } 
-                            }
-                        }
-                    }
+                    data: { labels: labels, datasets: [ { label: t_page('trend_currentRatio'), data: snapshots.map(s => s.ratios.currentRatio), borderColor: '#ffc107', tension: 0.1, yAxisID: 'y' }, { label: t_page('trend_netProfitMargin'), data: snapshots.map(s => s.ratios.netProfitMargin), borderColor: '#6f42c1', tension: 0.1, yAxisID: 'yPercent' }, { label: t_page('trend_zscore'), data: snapshots.map(s => s.ratios.zScore), borderColor: '#dc3545', tension: 0.1, yAxisID: 'y' } ] },
+                    options: { responsive: true, maintainAspectRatio: false, scales: { y: { type: 'linear', display: true, position: 'left', title: { display: true, text: 'Ratio Value' } }, yPercent: { type: 'linear', display: true, position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'Percentage %' }, ticks: { callback: (value) => (value * 100).toFixed(0) + '%' } } } }
                 });
             }
         };
 
         // --- Main Initialization Function ---
         const loadAndRouteDashboard = () => {
-            // 1. Load all snapshot data
             state.snapshots = [];
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
@@ -232,68 +199,50 @@ document.addEventListener('DOMContentLoaded', () => {
                         const name = key.replace('FA_DATASET_', '');
                         const data = JSON.parse(localStorage.getItem(key));
                         const metrics = calculateMetrics(data);
-                        if (metrics) {
-                            state.snapshots.push({ name, ...metrics });
-                        }
-                    } catch (e) {
-                        console.warn(`Could not parse dataset ${key}:`, e);
-                    }
+                        if (metrics) { state.snapshots.push({ name, ...metrics }); }
+                    } catch (e) { console.warn(`Could not parse dataset ${key}:`, e); }
                 }
             }
-            // Sort snapshots by name (e.g., "2023", "2024")
             state.snapshots.sort((a, b) => a.name.localeCompare(b.name));
-            
             console.log(`[DEBUG] Found ${state.snapshots.length} snapshots.`);
 
-            // 2. Decide which view to show
             if (state.snapshots.length > 1) {
-                // --- Show Trend Analysis View ---
                 console.log("[DEBUG] More than 1 snapshot found. Showing Trend Analysis View.");
                 if (UI.loadingMessage) UI.loadingMessage.style.display = 'none';
                 if (UI.singlePeriodView) UI.singlePeriodView.style.display = 'none';
                 if (UI.trendAnalysisView) UI.trendAnalysisView.style.display = 'block';
-
                 renderTrendKPIs(state.snapshots);
                 renderTrendCharts(state.snapshots);
-
             } else {
-                // --- Show Single Period View (Gauges) ---
                 console.log("[DEBUG] 1 or 0 snapshots found. Showing Single Period View.");
                 if (UI.trendAnalysisView) UI.trendAnalysisView.style.display = 'none';
-
                 let dataToAnalyze = null;
                 if (state.snapshots.length === 1) {
                     console.log("[DEBUG] Using the 1 saved snapshot.");
-                    // Use the single snapshot's data
                     dataToAnalyze = state.snapshots[0]; 
                 } else {
-                    // No snapshots, try to find 'trialData'
                     console.log("[DEBUG] No snapshots. Trying to load 'trialData'.");
                     const trialData = JSON.parse(localStorage.getItem('trialData') || '[]');
                     if (trialData.length > 0) {
                         dataToAnalyze = calculateMetrics(trialData);
                     }
                 }
-
                 if (dataToAnalyze && dataToAnalyze.financials && dataToAnalyze.ratios) {
                     if (UI.loadingMessage) UI.loadingMessage.style.display = 'none';
-                    if (UI.singlePeriodView) UI.singlePeriodView.style.display = 'flex'; // Use flex for row
-                    
+                    if (UI.singlePeriodView) UI.singlePeriodView.style.display = 'flex';
                     renderGaugeKPIs(dataToAnalyze.financials, dataToAnalyze.ratios);
                     renderMainCharts(dataToAnalyze.financials);
                     renderSummaryAndAlerts(dataToAnalyze.ratios);
                 } else {
-                    // No data found at all
                     console.log("[DEBUG] No data found at all.");
                     if (UI.loadingMessage) {
-                        UI.loadingMessage.textContent = t_page('noData');
-                        UI.loadingMessage.classList.remove('alert-warning');
-                        UI.loadingMessage.classList.add('alert-danger');
+                         UI.loadingMessage.textContent = t_page('noData');
+                         UI.loadingMessage.classList.remove('alert-warning');
+                         UI.loadingMessage.classList.add('alert-danger');
                     }
                 }
             }
             
-            // 3. Apply Translations
             if (typeof window.applyTranslations === 'function') {
                 console.log("[DEBUG] Applying translations (dashboard-app.js)...");
                 window.applyTranslations();
