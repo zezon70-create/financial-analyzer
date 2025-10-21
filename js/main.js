@@ -74,8 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     applyTheme(state.preferences.theme);
     applyTranslations();
-    console.log("Initial setup complete (main.js).");
-});
+    console.log("Initial setup complete (main.js).");});
 window.applyTranslations = applyTranslations;
 console.log("applyTranslations function explicitly attached to window.");
 // *** START: ADDED PDF EXPORT FUNCTION ***
