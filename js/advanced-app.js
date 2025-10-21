@@ -15,7 +15,6 @@ window.pageTranslations = {
     en: { /* ... (English translations as before) ... */ }
 };
 document.addEventListener('DOMContentLoaded', () => {
-
     const state = { 
         financials: {}, 
         ratios: {},
@@ -163,3 +162,4 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("One or more critical tab pane elements were not found. Initialization stopped.");
     }
 });
+
