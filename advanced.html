@@ -8,6 +8,93 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-theme="light">
+
+    <header class="site-header-global no-print"> <div class="container-main nav-container"> <a href="index.html" class="brand"> <img src="assets/logo.png" alt="شعار المحلل المالي"> <span class="title" data-translate-key="brandTitle"></span> </a> <nav class="main-nav"> <a href="index.html" class="nav-link" data-translate-key="navHome"></a> <a href="input.html" class="nav-link" data-translate-key="navInput"></a> <a href="upload.html" class="nav-link" data-translate-key="navUpload"></a> <a href="report.html" class="nav-link" data-translate-key="navReport"></a> <a href="advanced.html" class="nav-link" data-translate-key="navAdvanced"></a> <a href="dashboard.html" class="nav-link" data-translate-key="navDashboard"></a> <a href="comparisons.html" class="nav-link" data-translate-key="navCompare"></a><a href="benchmarks.html" class="nav-link" data-translate-key="navBenchmarks"></a> </nav> <div class="controls d-flex align-items-center gap-3"> <select id="languageSelect" class="form-select form-select-sm" style="width: auto;"></select> <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button> D</div> </div>
+    </header>
+
+    <main class="container-main py-4">
+        
+        <section class="page-header d-flex justify-content-between align-items-center mb-4">
+             <div>
+                <h1 data-translate-key="pageHeader"></h1>
+                <p class="text-muted" data-translate-key="pageSubheader"></p>
+             </div>
+             <div class="d-flex gap-2 no-print">
+                 <button id="exportAdvancedPdfBtn" class="btn btn-danger"><i class="bi bi-file-earmark-pdf"></i> <span data-translate-key="exportPdf"></span></button>
+             </div>
+        </section>
+        
+        <div id="pdfExportArea">
+            <ul class="nav nav-pills nav-fill mb-4 nav-justified flex-wrap" id="advancedTabs" role="tablist">
+                 <li class="nav-item" role="presentation"> <button class="nav-link active" id="ratios-tab" data-bs-toggle="pill" data-bs-target="#ratios-pane" type="button" role="tab"> <i class="bi bi-graph-up-arrow me-2"></i> <span data-translate-key="tabRatios"></span> </button> </li>
+                 <li class="nav-item" role="presentation"> <button class="nav-link" id="breakeven-tab" data-bs-toggle="pill" data-bs-target="#breakeven-pane" type="button" role="tab"> <i class="bi bi-bullseye me-2"></i> <span data-translate-key="tabBreakeven"></span> </button> </li>
+                 <li class="nav-item" role="presentation"> <button class="nav-link" id="dupont-tab" data-bs-toggle="pill" data-bs-target="#dupont-pane" type="button" role="tab"> <i class="bi bi-diagram-3 me-2"></i> <span data-translate-key="tabDupont"></span> </button> </li>
+                 <li class="nav-item" role="presentation"> <button class="nav-link" id="vertical-tab" data-bs-toggle="pill" data-bs-target="#vertical-pane" type="button" role="tab"> <i class="bi bi-pie-chart me-2"></i> <span data-translate-key="tabVertical"></span> </button> </li>
+                 <li class="nav-item" role="presentation"> <button class="nav-link" id="zscore-tab" data-bs-toggle="pill" data-bs-target="#zscore-pane" type="button" role="tab"> <i class="bi bi-shield-exclamation me-2"></i> <span data-translate-key="tabZScore"></span> </button> </li>
+                 <li class="nav-item" role="presentation"> <button class="nav-link" id="cashflow-tab" data-bs-toggle="pill" data-bs-target="#cashflow-pane" type="button" role="tab"> <i class="bi bi-cash-coin me-2"></i> <span data-translate-key="tabCashFlow"></span> </button> </li> 
+            </ul>
+
+            <div class="tab-content" id="advancedTabsContent">
+
+                <div class="tab-pane fade show active" id="ratios-pane" role="tabpanel"> <div class="row g-4"> <div class="col-lg-8"> <div id="liquidityRatios" class="card-surface mb-4"></div> <div id="profitabilityRatios" class="card-surface mb-4"></div> <div id="leverageRatios" class="card-surface mb-4"></div> <div id="efficiencyRatios" class="card-surface mb-4"></div> </div> <aside class="col-lg-4"> <div class="analysis-sidebar"> <div class="card-surface"> <h5 data-translate-key="summaryTitle"></h5> <div id="smartSummary" class="analysis-comment"></div> </div> <div class="card-surface"> <h5 data-translate-key="alertsTitle"></h5> <div id="alertsArea" class="small text-muted"></div> </div> </div> </aside> </div> </div>
+                
+                <div class="tab-pane fade" id="breakeven-pane" role="tabpanel"> <div class="row g-4"> <div class="col-lg-4"> <div class="card-surface"> <h5 data-translate-key="beInputTitle"></h5> <div class="mb-3"> <label for="fixedCosts" class="form-label" data-translate-key="labelFixedCosts"></label> <input type="number" class="form-control" id="fixedCosts" placeholder="e.g., 10000"> </div> <div class="mb-3"> <label for="variableCost" class="form-label" data-translate-key="labelVariableCost"></label> <input type="number" class="form-control" id="variableCost" placeholder="e.g., 30"> </div> <div class="mb-3"> <label for="sellingPrice" class="form-label" data-translate-key="labelSellingPrice"></label> <input type="number" class="form-control" id="sellingPrice" placeholder="e.g., 50"> </div> <button id="calculateBreakeven" class="btn btn-primary w-100" data-translate-key="btnCalculate"></button> </div> <div id="breakevenResults" class="card-surface mt-4" style="display: none;"> <h5 data-translate-key="beResultsTitle"></h5> <div class="text-center"> <p class="text-muted mb-1" data-translate-key="bepUnits"></p> <p class="h3 text-primary fw-bold" id="bepUnitsResult"></p> <hr> <p class="text-muted mb-1" data-translate-key="bepValue"></p> <p class="h3 text-success fw-bold" id="bepValueResult"></p> </div> </div> </div> <div class="col-lg-8"> <div class="card-surface"> <h5 data-translate-key="beChartTitle"></h5> <div class="chart-wrap" style="height: 400px;"> <canvas id="breakevenChart"></canvas> </div> </div> </div> </div> </div>
+                
+                <div class="tab-pane fade" id="dupont-pane" role="tabpanel"> <div class="card-surface"> <h5 data-translate-key="dupontTitle"></h5> <p class="text-muted" data-translate-key="dupontDesc"></p> <div id="dupontResultsContainer"> <div class="alert alert-warning" id="dupontDataWarning" style="display: none;"></div> <div id="dupontFormulaDisplay" class="text-center my-4 p-3 border rounded bg-light" style="display: none;"> <h6 class="text-muted mb-3" data-translate-key="dupontEquation"></h6> <div class="d-flex justify-content-center align-items-center flex-wrap"> <span class="h4 mx-2 fw-bold" id="dupontROE"></span> <span class="h4 mx-2">=</span> <span class="h5 mx-2" id="dupontNPM"></span> <span class="h5 mx-2">×</span> <span class="h5 mx-2" id="dupontAT"></span> <span class="h5 mx-2">×</span> <span class="h5 mx-2" id="dupontEM"></span> </div> </div> <div class="row g-3"> <div class="col-md-3"> <div class="card h-100"> <div class="card-body text-center"> <h6 class="card-subtitle mb-2 text-muted" data-translate-key="dupontCompNPM"></h6> <p class="card-text h4 fw-bold text-primary" id="dupontValueNPM"></p> </div> </div> </div> <div class="col-md-3"> <div class="card h-100"> <div class="card-body text-center"> <h6 class="card-subtitle mb-2 text-muted" data-translate-key="dupontCompAT"></h6> <p class="card-text h4 fw-bold text-info" id="dupontValueAT"></p> </div> </div> </div> <div class="col-md-3"> <div class="card h-100"> <div class="card-body text-center"> <h6 class="card-subtitle mb-2 text-muted" data-translate-key="dupontCompEM"></h6> <p class="card-text h4 fw-bold text-warning" id="dupontValueEM"></p> </div> </div> </div> <div class="col-md-3"> <div class="card h-100 bg-success text-white"> <div class="card-body text-center"> <h6 class="card-subtitle mb-2" data-translate-key="dupontCompROE"></h6> <p class="card-text h4 fw-bold" id="dupontValueROE"></p> </div> </div> </div> </div> <div class="mt-4 analysis-comment" id="dupontInterpretation"></div> </div> </div> </div>
+                
+                <div class="tab-pane fade" id="vertical-pane" role="tabpanel"> <div class="card-surface"> <h5 data-translate-key="verticalTitle"></h5> <p class="text-muted" data-translate-key="verticalDesc"></p> <div class="alert alert-warning" id="verticalDataWarning" style="display: none;"></div> <div class="row g-4" id="verticalResultsContainer" style="display: none;"> <div class="col-lg-6"> <h6 data-translate-key="verticalBS"></h6> <div id="verticalBSTable" class="table-responsive small"></div> </div> <div class="col-lg-6"> <h6 data-translate-key="verticalIS"></h6> <div id="verticalISTable" class="table-responsive small"></div> </div> </div> </div> </div>
+                
+                <div class="tab-pane fade" id="zscore-pane" role="tabpanel"> <div class="card-surface"> <h5 data-translate-key="zscoreTitle"></h5> <p class="text-muted" data-translate-key="zscoreDesc"></p> <div class="alert alert-warning" id="zscoreDataWarning" style="display: none;"></div> <div id="zscoreResultsContainer" style="display: none;"> <div class="text-center my-4"> <p class="text-muted mb-1" data-translate-key="zscoreValueLabel"></p> <p class="display-4 fw-bold" id="zscoreValue"></p> <p class="h5 fw-bold" id="zscoreInterpretation"></p> </div> <hr> <h6 data-translate-key="zscoreComponents"></h6> <ul class="list-group list-group-flush small" id="zscoreFactorsList"> </ul> </div> </div> </div>
+                
+                <div class="tab-pane fade" id="cashflow-pane" role="tabpanel">
+                    <div class="card-surface">
+                         <h5 data-translate-key="cfTitle"></h5>
+                         <p class="text-muted" data-translate-key="cfDesc"></p>
+                         <div class="alert alert-warning" id="cfDataWarning" style="display: none;"></div>
+                         <div id="cfResultsContainer" style="display: none;">
+                              <h6 data-translate-key="cfStmtTitle"></h6>
+                               <table class="table table-sm table-striped">
+                                    <tbody id="cfStatementTableBody">
+                                    </tbody>
+                               </table>
+                               <hr>
+                               <h6 data-translate-key="cfRatiosTitle"></h6>
+                                <div class="row g-3">
+                                     <div class="col-md-4"> <div class="card h-100"> <div class="card-body text-center"> <h6 class="card-subtitle mb-2 text-muted" data-translate-key="cfRatioOCF"></h6> <p class="card-text h4 fw-bold text-primary" id="cfValueOCFRatio"></p> </div> </div> </div>
+                                     <div class="col-md-4"> <div class="card h-100"> <div class="card-body text-center"> <h6 class="card-subtitle mb-2 text-muted" data-translate-key="cfRatioFCF"></h6> <p class="card-text h4 fw-bold text-success" id="cfValueFCF"></p> </div> </div> </div>
+                               </div>
+                               <div class="mt-4 analysis-comment" id="cfInterpretation"></div>
+                         </div>
+                    </div>
+                </div>
+
+            </div> 
+        </div> </main>
+    
+    <footer class="site-footer no-print"> {/* Added no-print class */}
+        <div class="container-main"> <p data-translate-key="footerText"></p> </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/advanced-app.js"></script>
+</body>
+</html><!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title data-translate-key="pageTitle">التحليلات المتقدمة — المحلل المالي</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
         <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-theme="light">
