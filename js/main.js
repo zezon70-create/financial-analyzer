@@ -1,4 +1,4 @@
-// js/main.js (Corrected Version + Added Global PDF Export Function)
+// js/main.js (Corrected Version + UPGRADED Global PDF Export Function)
 // --- 1. STATE & CONFIG (Global Scope) ---
 const state = {
     preferences: {
@@ -12,14 +12,14 @@ const translations = {
         navReport: "التقرير", navAdvanced: "تحليلات متقدمة", navDashboard: "لوحة التحكم", navCompare: "المقارنات",
         navBenchmarks: "المقارنات المعيارية",
         footerText: "© 2025 المحلل المالي. جميع الحقوق محفوظة.",
-        exportPdf: "تصدير PDF", // *** ADDED ***
+        exportPdf: "تصدير PDF", 
     },
     en: {
         brandTitle: "Financial Analyzer", navHome: "Home", navInput: "Input", navUpload: "Upload",
         navReport: "Report", navAdvanced: "Advanced", navDashboard: "Dashboard", navCompare: "Comparisons",
         navBenchmarks: "Benchmarks",
         footerText: "© 2025 Financial Analyzer. All rights reserved.",
-        exportPdf: "Export PDF", // *** ADDED ***
+        exportPdf: "Export PDF", 
     }
 };
 // --- 2. GLOBAL FUNCTIONS ---
@@ -51,7 +51,7 @@ function applyTranslations() {
     });
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     document.querySelectorAll('.main-nav .nav-link').forEach(link => {
-        const linkHref = link.getAttribute('href').split('/').pop(); // Handle relative paths
+        const linkHref = link.getAttribute('href').split('/').pop(); 
         link.classList.toggle('active', linkHref === currentPage);
     });
     console.log("Translations applied (main.js).");
@@ -60,6 +60,7 @@ function applyTranslations() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded and parsed (main.js)");
     const UI = { themeToggle: document.getElementById('themeToggle'), languageSelect: document.getElementById('languageSelect') };
+
     if (UI.themeToggle) { UI.themeToggle.addEventListener('click', () => { const newTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; applyTheme(newTheme); }); }
     if (UI.languageSelect) {
         UI.languageSelect.innerHTML = `<option value="ar">العربية</option><option value="en">English</option>`;
@@ -76,7 +77,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 window.applyTranslations = applyTranslations;
 console.log("applyTranslations function explicitly attached to window.");
-// *** START: ADDED PDF EXPORT FUNCTION ***
+// *** START: UPGRADED PDF EXPORT FUNCTION ***
+/**
+ * Exports a specific element to PDF with watermark.
+ * @param {string} elementId The ID of the element to export (e.g., 'advancedTabsContent')
+ * @param {string} reportTitle The title for the generated PDF file (e.g., 'Advanced_Analysis')
+ */
 window.exportPageToPDF = (elementId, reportTitle = 'Financial_Report') => {
     const element = document.getElementById(elementId);
     if (!element) {
@@ -84,38 +90,42 @@ window.exportPageToPDF = (elementId, reportTitle = 'Financial_Report') => {
         return;
     }
     console.log(`[PDF Export] Exporting element #${elementId}...`);
-    
+       // --- FIX 1: Show all hidden tab-panes before cloning ---
     const originalDisplays = [];
     const tabsToPrint = element.querySelectorAll('.tab-pane');
     if (tabsToPrint.length > 0) {
         console.log(`[PDF Export] Found ${tabsToPrint.length} tab-panes. Forcing display: block...`);
         tabsToPrint.forEach(tab => {
-            originalDisplays.push({ el: tab, display: tab.style.display });
-            tab.style.display = 'block'; 
+            originalDisplays.push({ el: tab, display: tab.style.display }); // Save original style
+            tab.style.display = 'block'; // Force show
         });
     }
-       const clone = element.cloneNode(true);
+      const clone = element.cloneNode(true);
     clone.style.padding = '1rem'; 
     clone.style.position = 'relative'; 
     clone.style.zIndex = '1';
-    clone.classList.add('pdf-export-content'); 
+    clone.classList.add('pdf-export-content'); // Add class for specific PDF styles
+    // --- FIX 2: Restore original tab display after cloning ---
     originalDisplays.forEach(item => {
-        item.el.style.display = item.display; 
+        item.el.style.display = item.display; // Restore original state
     });
     console.log("[PDF Export] Tab display restored.");
+    // --- FIX 3: Use Absolute URL for Logo ---
+    // (Assuming this is the correct path from your GitHub pages root)
     const logoUrl = 'https://zezon70-create.github.io/financial-analyzer/assets/logo.png';
     const watermarkContainer = document.createElement('div');
     watermarkContainer.style.position = 'absolute';
     watermarkContainer.style.top = '50%';
     watermarkContainer.style.left = '50%';
     watermarkContainer.style.transform = 'translate(-50%, -50%)';
-    watermarkContainer.style.zIndex = '-1'; 
+    watermarkContainer.style.zIndex = '-1'; // Place watermark *behind* the clone
     watermarkContainer.style.opacity = '0.08';
     watermarkContainer.style.pointerEvents = 'none';
     watermarkContainer.innerHTML = `<img src="${logoUrl}" style="width: 500px; max-width: 100%;">`;
        const printWrapper = document.createElement('div');
     printWrapper.style.position = 'relative'; 
     printWrapper.style.overflow = 'hidden'; 
+    // Ensure print wrapper uses the correct font by pulling from body
     printWrapper.style.fontFamily = getComputedStyle(document.body).fontFamily;
     printWrapper.appendChild(watermarkContainer);
     printWrapper.appendChild(clone); 
@@ -123,16 +133,23 @@ window.exportPageToPDF = (elementId, reportTitle = 'Financial_Report') => {
         margin:       0.5,
         filename:     `${reportTitle}_${new Date().toISOString().split('T')[0]}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, logging: false, foreignObjectRendering: true },
+        html2canvas:  { 
+            scale: 2, 
+            useCORS: true, // Needed for loading the logo from the full URL
+            logging: false,
+            // --- FIX 4: Fix Arabic Font Rendering ---
+            foreignObjectRendering: true 
+        },
         jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
+    // Temporarily append to body to ensure styles are computed
     document.body.appendChild(printWrapper);
-     html2pdf().from(printWrapper).set(opt).save().then(() => {
+        html2pdf().from(printWrapper).set(opt).save().then(() => {
         console.log("[PDF Export] Export complete.");
-        document.body.removeChild(printWrapper); 
+        document.body.removeChild(printWrapper); // Clean up
     }).catch(err => {
         console.error("[PDF Export] Error:", err);
-        document.body.removeChild(printWrapper); 
+        document.body.removeChild(printWrapper); // Clean up on error
     });
 };
-// *** END: ADDED PDF EXPORT FUNCTION ***
+// *** END: UPGRADED PDF EXPORT FUNCTION ***
