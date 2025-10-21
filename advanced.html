@@ -14,7 +14,23 @@
 <body data-theme="light">
 
     <header class="site-header-global no-print">
-        <div class="container-main nav-container"> <a href="index.html" class="brand"> <img src="assets/logo.png" alt="شعار المحلل المالي"> <span class="title" data-translate-key="brandTitle"></span> </a> <nav class="main-nav"> <a href="index.html" class="nav-link" data-translate-key="navHome"></a> <a href="input.html" class="nav-link" data-translate-key="navInput"></a> <a href="upload.html" class="nav-link" data-translate-key="navUpload"></a> <a href="report.html" class="nav-link" data-translate-key="navReport"></a> <a href="advanced.html" class="nav-link active" data-translate-key="navAdvanced"></a> <a href="dashboard.html" class="nav-link" data-translate-key="navDashboard"></a> <a href="comparisons.html" class="nav-link" data-translate-key="navCompare"></a><a href="benchmarks.html" class="nav-link" data-translate-key="navBenchmarks"></a> </nav> <div class="controls d-flex align-items-center gap-3"> <select id="languageSelect" class="form-select form-select-sm" style="width: auto;"></select> <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button> </div> </div>
+        <div class="container-main nav-container"> 
+            <a href="index.html" class="brand"> <img src="assets/logo.png" alt="شعار المحلل المالي"> <span class="title" data-translate-key="brandTitle"></span> </a> 
+            <nav class="main-nav"> 
+                <a href="index.html" class="nav-link" data-translate-key="navHome"></a> 
+                <a href="input.html" class="nav-link" data-translate-key="navInput"></a> 
+                <a href="upload.html" class="nav-link" data-translate-key="navUpload"></a> 
+                <a href="report.html" class="nav-link" data-translate-key="navReport"></a> 
+                <a href="advanced.html" class="nav-link active" data-translate-key="navAdvanced"></a> 
+                <a href="dashboard.html" class="nav-link" data-translate-key="navDashboard"></a> 
+                <a href="comparisons.html" class="nav-link" data-translate-key="navCompare"></a>
+                <a href="benchmarks.html" class="nav-link" data-translate-key="navBenchmarks"></a> 
+            </nav> 
+            <div class="controls d-flex align-items-center gap-3"> 
+                <select id="languageSelect" class="form-select form-select-sm" style="width: auto;"></select> 
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button> 
+            </div> 
+        </div>
     </header>
 
     <main class="container-main py-4">
@@ -30,7 +46,8 @@
         </section>
         
         <div id="pdfExportArea">
-            <ul class="nav nav-pills nav-fill mb-4 nav-justified flex-wrap no-print" id="advancedTabs" role="tablist"> <li class="nav-item" role="presentation"> <button class="nav-link active" id="ratios-tab" data-bs-toggle="pill" data-bs-target="#ratios-pane" type="button" role="tab"> <i class="bi bi-graph-up-arrow me-2"></i> <span data-translate-key="tabRatios"></span> </button> </li>
+            <ul class="nav nav-pills nav-fill mb-4 nav-justified flex-wrap no-print" id="advancedTabs" role="tablist">
+                 <li class="nav-item" role="presentation"> <button class="nav-link active" id="ratios-tab" data-bs-toggle="pill" data-bs-target="#ratios-pane" type="button" role="tab"> <i class="bi bi-graph-up-arrow me-2"></i> <span data-translate-key="tabRatios"></span> </button> </li>
                  <li class="nav-item" role="presentation"> <button class="nav-link" id="breakeven-tab" data-bs-toggle="pill" data-bs-target="#breakeven-pane" type="button" role="tab"> <i class="bi bi-bullseye me-2"></i> <span data-translate-key="tabBreakeven"></span> </button> </li>
                  <li class="nav-item" role="presentation"> <button class="nav-link" id="dupont-tab" data-bs-toggle="pill" data-bs-target="#dupont-pane" type="button" role="tab"> <i class="bi bi-diagram-3 me-2"></i> <span data-translate-key="tabDupont"></span> </button> </li>
                  <li class="nav-item" role="presentation"> <button class="nav-link" id="vertical-tab" data-bs-toggle="pill" data-bs-target="#vertical-pane" type="button" role="tab"> <i class="bi bi-pie-chart me-2"></i> <span data-translate-key="tabVertical"></span> </button> </li>
@@ -68,7 +85,7 @@
             </div> 
         </div> </main>
     
-    <footer class="site-footer no-print"> {/* Added no-print class */}
+    <footer class="site-footer no-print">
         <div class="container-main"> <p data-translate-key="footerText"></p> </div>
     </footer>
 
