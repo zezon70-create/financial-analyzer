@@ -31,12 +31,10 @@ window.pageTranslations = {
         savedSuccess: "تم تأكيد الحفظ! (ملاحظة: يتم حفظ بياناتك تلقائياً عند كل تغيير)", 
         saveAsSuccess: "تم حفظ البيانات بنجاح باسم",
         saveAsError: "الرجاء إدخال اسم لحفظ مجموعة البيانات.",
-
         // --- File Upload Translations ---
         manualEntryTab: "إدخال يدوي",
         uploadFileTab: "رفع ملف",
         // ... (all other upload translations as before) ...
-
         // *** ADDED: Market Data Translations ***
         marketDataTitle: "بيانات السوق (اختياري)",
         marketDataSubheader: "أدخل هذه البيانات لحساب مؤشرات التقييم وربحية السهم.",
@@ -48,8 +46,7 @@ window.pageTranslations = {
         pageTitle: "Trial Balance Input — Financial Analyzer",
         pageHeader: "Trial Balance Data Entry",
         pageSubheader: "This page is for accountants to enter precise data classified according to international standards.",
-        // ... (all other English translations as before) ...
-        
+        // ... (all other English translations as before) ...      
         // *** ADDED: Market Data Translations ***
         marketDataTitle: "Market Data (Optional)",
         marketDataSubheader: "Enter this data to calculate valuation ratios and EPS.",
@@ -63,8 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currencies: { /* ... (as before) ... */ },
         accountTypes: { /* ... (as before) ... */ },
         requiredFields: ['Account', 'MainType', 'SubType', 'Debit', 'Credit']
-    };
-    
+    };    
     const state = { 
         trialData: [],
         fileData: [],
@@ -75,12 +71,10 @@ document.addEventListener('DOMContentLoaded', () => {
             outstandingShares: 0,
             dividendsPaid: 0
         }
-    };
-    
+    };    
     const lang = localStorage.getItem('lang') || 'ar';
     const t_page = (key) => window.pageTranslations[lang]?.[key] || key;
-    const t_fields = (key) => window.pageTranslations[lang]?.[`th${key}`] || key;
-    
+    const t_fields = (key) => window.pageTranslations[lang]?.[`th${key}`] || key;   
     const UI = {
         currencySelect: document.getElementById('currencySelect'),
         fxRateInput: document.getElementById('fxRateInput'),
@@ -106,108 +100,88 @@ document.addEventListener('DOMContentLoaded', () => {
         columnMapper: document.getElementById('columnMapper'),
         processFileBtn: document.getElementById('processFileBtn'),
         manualTab: document.getElementById('manual-tab')
-    };
-    
+    };   
     const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
-
     // *** UPDATED: saveData to include marketData ***
     const saveData = () => {
         // 1. Save Trial Data
         localStorage.setItem('trialData', JSON.stringify(state.trialData));
-        
         // 2. Save Market Data
         state.marketData.marketPrice = toNum(UI.marketPrice.value);
         state.marketData.outstandingShares = toNum(UI.outstandingShares.value);
         state.marketData.dividendsPaid = toNum(UI.dividendsPaid.value);
         localStorage.setItem('marketData', JSON.stringify(state.marketData));
-        
         // 3. Save FX Rates
         const currentCurrency = UI.currencySelect.value;
         config.currencies[currentCurrency].rate = toNum(UI.fxRateInput.value) || 1;
-        localStorage.setItem('fxRates', JSON.stringify(config.currencies));
-        
+        localStorage.setItem('fxRates', JSON.stringify(config.currencies));       
         console.log("Auto-save successful! (Trial Data + Market Data)");
     };
-
     // *** UPDATED: loadData to include marketData ***
     const loadData = () => {
         // 1. Load Trial Data
         state.trialData = JSON.parse(localStorage.getItem('trialData') || '[]');
         if (state.trialData.length === 0) {
             state.trialData.push({ Account: '', MainType: '', SubType: '', Debit: 0, Credit: 0 });
-        }
-        
+        }   
         // 2. Load Market Data
         state.marketData = JSON.parse(localStorage.getItem('marketData') || '{"marketPrice":0, "outstandingShares":0, "dividendsPaid":0}');
         UI.marketPrice.value = state.marketData.marketPrice || '';
         UI.outstandingShares.value = state.marketData.outstandingShares || '';
-        UI.dividendsPaid.value = state.marketData.dividendsPaid || '';
-        
+        UI.dividendsPaid.value = state.marketData.dividendsPaid || '';        
         // 3. Load FX Rates
         const savedRates = JSON.parse(localStorage.getItem('fxRates') || '{}');
         for (const code in savedRates) {
             if (config.currencies[code]) config.currencies[code].rate = savedRates[code].rate;
         }
     };
-
     // *** UPDATED: handleSaveAs to include marketData ***
     const handleSaveAs = () => {
         const name = UI.saveAsNameInput.value.trim();
-        if (!name) { alert(t_page('saveAsError')); return; }
-        
+        if (!name) { alert(t_page('saveAsError')); return; }        
         // Save current data (including market data) before creating snapshot
-        saveData(); 
-        
+        saveData();         
         // Create a combined object for the snapshot
         const snapshotData = {
             trialData: state.trialData,
             marketData: state.marketData
-        };
-        
+        };        
         try {
             localStorage.setItem(`FA_DATASET_${name}`, JSON.stringify(snapshotData));
             alert(`${t_page('saveAsSuccess')} "${name}"!`);
             UI.saveAsNameInput.value = '';
         } catch (e) { alert("Error saving data."); }
     };
-
     const updateFxRate = () => { /* ... (Function as before) ... */ };
     const renderValidation = () => { /* ... (Function as before, auto-save is still triggered) ... */ };
-    const renderTable = () => { /* ... (Function as before) ... */ };
-    
+    const renderTable = () => { /* ... (Function as before) ... */ };    
     // --- File Upload Functions ---
     const guessHeader = (fieldKey, headers) => { /* ... (Function as before) ... */ };
     const renderColumnMapper = () => { /* ... (Function as before) ... */ };
     const renderPreviewTable = () => { /* ... (Function as before) ... */ };
     const handleFile = (file) => { /* ... (Function as before) ... */ };
     const resetUploadUI = () => { /* ... (Function as before) ... */ };
-    const processFile = () => { /* ... (Function as before) ... */ };
-    
+    const processFile = () => { /* ... (Function as before) ... */ };    
     // ========================================================
     // *** INITIALIZATION ***
     // ========================================================
-
     const init = () => {
         // --- Original Init ---
         for (const code in config.currencies) {
             UI.currencySelect.add(new Option(`${config.currencies[code].name} (${code})`, code));
-        }
-        
+        }        
         loadData(); // This now loads trialData AND marketData
         UI.currencySelect.value = localStorage.getItem('currency') || 'EGP';
         updateFxRate();
-        renderTable();
-        
+        renderTable();        
         UI.addRowBtn.addEventListener('click', () => {
             state.trialData.push({ Account: '', MainType: '', SubType: '', Debit: 0, Credit: 0 });
             renderTable();
         });
-
         UI.saveBtn.addEventListener('click', () => { 
             saveData(); 
             alert(t_page('savedSuccess')); 
-        });
-        
+        });        
         UI.clearBtn.addEventListener('click', () => {
             if (confirm(t_page('confirmClear'))) {
                 state.trialData = [];
@@ -226,12 +200,10 @@ document.addEventListener('DOMContentLoaded', () => {
             config.currencies[UI.currencySelect.value].rate = toNum(e.target.value);
             saveData(); // Auto-save
         });
-
         // *** ADDED: Event listeners for new Market Data inputs ***
         UI.marketPrice.addEventListener('change', () => saveData());
         UI.outstandingShares.addEventListener('change', () => saveData());
         UI.dividendsPaid.addEventListener('change', () => saveData());
-
         // --- NEW UPLOAD EVENT LISTENERS (as before) ---
         UI.browseButton.addEventListener('click', () => UI.fileUploader.click());
         UI.fileDropArea.addEventListener('click', () => UI.fileUploader.click()); 
@@ -242,6 +214,5 @@ document.addEventListener('DOMContentLoaded', () => {
         ['dragleave', 'drop'].forEach(eventName => { /* ... (as before) ... */ });
         UI.fileDropArea.addEventListener('drop', (e) => { /* ... (as before) ... */ });
     };
-
     init();
 });
