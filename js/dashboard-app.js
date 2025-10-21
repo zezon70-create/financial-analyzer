@@ -1,4 +1,4 @@
-// js/dashboard-app.js (Full Version with Gauge Charts)
+// js/dashboard-app.js (Corrected Version 2: Fixed Gauge Chart function call)
 
 window.pageTranslations = {
     ar: {
@@ -59,7 +59,6 @@ window.pageTranslations = {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Use setTimeout to ensure main.js and Chart.js are fully loaded
     setTimeout(() => {
         console.log("[DEBUG] Initializing dashboard-app.js after delay...");
 
@@ -71,19 +70,15 @@ document.addEventListener('DOMContentLoaded', () => {
             kpiRow: document.getElementById('kpiRow'),
             mainDashboardRow: document.getElementById('mainDashboardRow'),
             loadingMessage: document.getElementById('loadingMessage'),
-            // Gauge Canvases
             gaugeCurrentRatio: document.getElementById('gaugeCurrentRatio')?.getContext('2d'),
             gaugeNetProfitMargin: document.getElementById('gaugeNetProfitMargin')?.getContext('2d'),
             gaugeROE: document.getElementById('gaugeROE')?.getContext('2d'),
-            // Gauge Value Labels
             gaugeCurrentRatioValue: document.getElementById('gaugeCurrentRatioValue'),
             gaugeNetProfitMarginValue: document.getElementById('gaugeNetProfitMarginValue'),
             gaugeROEValue: document.getElementById('gaugeROEValue'),
             kpiNetProfitValue: document.getElementById('kpiNetProfitValue'),
-            // Main Chart Canvases
             profitabilityChart: document.getElementById('profitabilityChart')?.getContext('2d'),
             structureChart: document.getElementById('structureChart')?.getContext('2d'),
-            // Summary/Alerts
             performanceSummary: document.getElementById('performanceSummary'),
             alertsArea: document.getElementById('alertsArea'),
         };
@@ -130,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
             Object.keys(f).forEach(key => f[key] = f[key] || 0);
             f.grossProfit = f.revenue - f.cogs;
             f.netProfit = f.grossProfit - f.expenses;
-            f.equity += f.netProfit; // Add Net Profit to Equity
+            f.equity += f.netProfit; 
             
             state.financials = f;
 
@@ -145,8 +140,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return true;
         };
 
-        // --- NEW GAUGE CHART FUNCTION ---
-        const createGaugeChart = (ctx, value, label, max, colors, valueText) => {
+        // --- *** FIXED GAUGE CHART FUNCTION *** ---
+        // Removed 'label' and 'valueText' arguments which were causing the error
+        const createGaugeChart = (ctx, value, max, colors) => {
             const data = {
                 datasets: [{
                     data: [value, max - value], // Value vs. Remainder
@@ -173,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
 
-        // --- NEW: Render Gauge KPIs ---
+        // --- *** FIXED: Render Gauge KPIs (calls fixed function) *** ---
         const renderGaugeKPIs = () => {
             const { netProfit } = state.financials;
             const { netProfitMargin, currentRatio, roe } = state.ratios;
@@ -181,10 +177,11 @@ document.addEventListener('DOMContentLoaded', () => {
             // 1. Current Ratio Gauge
             if (UI.gaugeCurrentRatio) {
                 const crVal = isFinite(currentRatio) ? currentRatio : 0;
-                const crMax = 3; // Max value on gauge
-                const crColor = crVal < 1 ? '#dc3545' : (crVal < 1.8 ? '#ffc107' : '#198754'); // Red, Yellow, Green
+                const crMax = 3; 
+                const crColor = crVal < 1 ? '#dc3545' : (crVal < 1.8 ? '#ffc107' : '#198754');
                 if (state.charts.gaugeCR) state.charts.gaugeCR.destroy();
-                state.charts.gaugeCR = createGaugeChart(UI.gaugeCurrentRatio, Math.min(crVal, crMax), 'Current Ratio', crMax, 
+                // *** Call with 4 arguments ***
+                state.charts.gaugeCR = createGaugeChart(UI.gaugeCurrentRatio, Math.min(crVal, crMax), crMax, 
                     { value: crColor, background: 'var(--bs-tertiary-bg)' }
                 );
                 UI.gaugeCurrentRatioValue.textContent = isFinite(currentRatio) ? currentRatio.toFixed(2) : "N/A";
@@ -197,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const npmMax = 0.25; // 25% max
                 const npmColor = npmVal < 0 ? '#dc3545' : (npmVal < 0.05 ? '#ffc107' : '#198754');
                 if (state.charts.gaugeNPM) state.charts.gaugeNPM.destroy();
+                // *** Call with 4 arguments ***
                 state.charts.gaugeNPM = createGaugeChart(UI.gaugeNetProfitMargin, Math.abs(npmVal), npmMax, 
                     { value: npmColor, background: 'var(--bs-tertiary-bg)' }
                 );
@@ -210,6 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const roeMax = 0.30; // 30% max
                 const roeColor = roeVal < 0 ? '#dc3545' : (roeVal < 0.10 ? '#ffc107' : '#198754');
                 if (state.charts.gaugeROE) state.charts.gaugeROE.destroy();
+                // *** Call with 4 arguments ***
                 state.charts.gaugeROE = createGaugeChart(UI.gaugeROE, Math.abs(roeVal), roeMax, 
                     { value: roeColor, background: 'var(--bs-tertiary-bg)' }
                 );
@@ -246,7 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
             // --- Structure Chart ---
             if (UI.structureChart) {
                 if (state.charts.structure) state.charts.structure.destroy();
-                // Show A = L + E
                 state.charts.structure = new Chart(UI.structureChart, {
                     type: 'doughnut',
                     data: {
@@ -254,8 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         datasets: [{ data: [liabilities, equity], backgroundColor: ['#ffc107', '#20c997'] }]
                     },
                     options: { 
-                        responsive: true, 
-                        maintainAspectRatio: false,
+                        responsive: true, maintainAspectRatio: false,
                         plugins: {
                             tooltip: {
                                 callbacks: {
@@ -298,15 +295,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             
-            if (UI.loadingMessage) UI.loadingMessage.style.display = 'none'; // Hide loading message
-            if (UI.kpiRow) UI.kpiRow.style.display = 'flex'; // Show KPI row
-            if (UI.mainDashboardRow) UI.mainDashboardRow.style.display = 'flex'; // Show main row
+            if (UI.loadingMessage) UI.loadingMessage.style.display = 'none'; 
+            if (UI.kpiRow) UI.kpiRow.style.display = 'flex'; 
+            if (UI.mainDashboardRow) UI.mainDashboardRow.style.display = 'flex'; 
             
             renderGaugeKPIs();
             renderMainCharts();
             renderSummaryAndAlerts();
 
-            // Apply translations
             if (typeof window.applyTranslations === 'function') {
                 console.log("[DEBUG] Applying translations (dashboard-app.js)...");
                 window.applyTranslations();
