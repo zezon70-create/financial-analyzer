@@ -1,0 +1,85 @@
+/* css/print.css - ملف مخصص للطباعة وتصدير PDF */
+
+/* هذا @media يطبق التنسيقات فقط عند الطباعة */
+@media print {
+
+    /* 1. إخفاء كل شيء لا نريده */
+    .no-print,
+    .site-header-global,
+    .site-footer,
+    .nav-pills,
+    .analysis-sidebar,
+    .page-header button,
+    #calculateBreakeven,
+    #breakevenResults .btn,
+    .controls {
+        display: none !important; /* إخفاء تام */
+    }
+
+    /* 2. إظهار كل شيء نريده (التبويبات المخفية) */
+    .tab-pane {
+        display: block !important; /* إظهار كل التبويبات */
+        opacity: 1 !important;
+        visibility: visible !important;
+        page-break-before: always; /* ابدأ كل تبويب في صفحة جديدة */
+    }
+
+    /* إظهار التبويب الأول في صفحته الخاصة (بدون فاصل قبله) */
+    .tab-pane:first-child {
+        page-break-before: auto; 
+    }
+
+    /* 3. تنسيق عام لصفحة الطباعة */
+    body {
+        font-family: 'Cairo', sans-serif !important; /* ضمان استخدام الخط العربي */
+        background-color: #ffffff !important; /* خلفية بيضاء دائماً */
+        color: #000000 !important; /* نص أسود واضح */
+    }
+
+    .container-main {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .card-surface {
+        box-shadow: none !important; /* إزالة الظلال */
+        border: 1px solid #dee2e6 !important; /* إضافة حدود خفيفة */
+        background-color: #ffffff !important;
+        page-break-inside: avoid; /* محاولة عدم كسر البطاقة بين صفحتين */
+    }
+    
+    .row {
+        --bs-gutter-x: 0; /* إزالة الهوامش الجانبية للـ row */
+    }
+    
+    /* ضمان ظهور الرسوم البيانية (Chart.js) */
+    canvas {
+        max-width: 100% !important;
+        height: auto !important;
+        print-color-adjust: exact; /* ضمان طباعة الألوان */
+    }
+    
+    /* ضمان ظهور ألوان الخلفية (مثل البطاقات الخضراء) */
+    .bg-success, .bg-light {
+        print-color-adjust: exact;
+    }
+    
+    /* 4. إضافة العلامة المائية (اللوجو) */
+    #pdfExportArea::after {
+        content: "";
+        background-image: url('../assets/logo.png'); /* تأكد أن هذا المسار صحيح */
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 80%; /* حجم العلامة المائية */
+        opacity: 0.08; /* شفافية عالية جداً */
+        position: fixed; /* تثبيت في وسط كل صفحة مطبوعة */
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+        height: 100%;
+        z-index: -1; /* خلف المحتوى */
+        pointer-events: none;
+    }
+}
