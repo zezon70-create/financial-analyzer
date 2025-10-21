@@ -14,12 +14,14 @@ const translations = {
         navReport: "التقرير", navAdvanced: "تحليلات متقدمة", navDashboard: "لوحة التحكم", navCompare: "المقارنات",
         footerText: "© 2025 المحلل المالي. جميع الحقوق محفوظة.",
         navBenchmarks: "المقارنات المعيارية", // تمت إضافته
+        exportPdf: "تصدير PDF",
     },
     en: {
         brandTitle: "Financial Analyzer", navHome: "Home", navInput: "Input", navUpload: "Upload",
         navReport: "Report", navAdvanced: "Advanced", navDashboard: "Dashboard", navCompare: "Comparisons",
         footerText: "© 2025 Financial Analyzer. All rights reserved.",
         navBenchmarks: "Benchmarks", // تمت إضافته
+        exportPdf: "Export PDF",
     }
 };
 
