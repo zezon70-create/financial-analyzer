@@ -1,4 +1,4 @@
-// js/dashboard-app.js (Corrected Version 3: ADDED MISSING HELPER FUNCTIONS)
+// js/dashboard-app.js (Upgraded Version with Z-Score Gauge and UI Enhancements)
 
 window.pageTranslations = {
     ar: {
@@ -8,7 +8,7 @@ window.pageTranslations = {
         kpi_netProfit: "صافي الربح (آخر فترة)",
         kpi_netProfitMargin: "هامش صافي الربح",
         kpi_currentRatio: "نسبة التداول",
-        kpi_roe: "العائد على حقوق الملكية",
+        kpi_roe: "العائد على حقوق الملكية", // We are not using this gauge, but translation is here
         kpi_zscore: "مؤشر Z-Score (خطر الإفلاس)",
         chartProfitTitle: "تحليل الربحية (آخر فترة)",
         chartStructureTitle: "الهيكل المالي (آخر فترة)",
@@ -42,7 +42,7 @@ window.pageTranslations = {
         trend_netProfitMargin: "هامش صافي الربح",
         trend_zscore: "مؤشر Z-Score"
     },
-    en: { /* ... (English translations) ... */ }
+    en: { /* ... (English translations as before) ... */ }
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -76,19 +76,15 @@ document.addEventListener('DOMContentLoaded', () => {
             ratiosTrendChart: document.getElementById('ratiosTrendChart')?.getContext('2d'),
         };
 
-        // *** START: ADDED MISSING HELPER FUNCTIONS ***
         const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
         const formatPercent = (value, digits = 1) => isFinite(value) && !isNaN(value) ? `${(value * 100).toFixed(digits)}%` : "N/A";
         const formatRatio = (value, digits = 2) => isFinite(value) && !isNaN(value) ? value.toFixed(digits) : "N/A";
         const formatCurrency = (value) => isFinite(value) && !isNaN(value) ? value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : "N/A";
-        // *** END: ADDED MISSING HELPER FUNCTIONS ***
 
-        // --- Core Calculation Engine ---
+        // --- Core Calculation Engine (Upgraded) ---
         const calculateMetrics = (trialData) => {
             if (!Array.isArray(trialData) || trialData.length === 0) { return null; }
-            
             const f = { assets: 0, liabilities: 0, equity: 0, revenue: 0, cogs: 0, expenses: 0, netProfit: 0, grossProfit: 0, currentAssets: 0, inventory: 0, currentLiabilities: 0, retainedEarnings: 0, interestExpense: 0, taxExpense: 0, ebit: 0, workingCapital: 0 };
-            
             try {
                 trialData.forEach(row => {
                     const value = (toNum(row.Debit)) - (toNum(row.Credit));
@@ -98,14 +94,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     else if (mainType.includes('حقوق الملكية') || mainType.includes('Equity')) { f.equity -= value; if (subType.includes('الأرباح المحتجزة') || subType.includes('Retained Earnings') || accountName.includes('retained earnings') || accountName.includes('أرباح محتجزة')) f.retainedEarnings -= value; } 
                     else if (mainType.includes('قائمة الدخل') || mainType.includes('Income Statement')) { if (subType.includes('الإيرادات') || subType.includes('Revenue')) { f.revenue -= value; } else if (subType.includes('تكلفة المبيعات') || subType.includes('COGS')) { f.cogs += value; } else { f.expenses += value; if (subType.includes('فائدة') || subType.includes('Interest') || accountName.includes('interest')) f.interestExpense += value; if (subType.includes('ضريبية') || subType.includes('Tax') || accountName.includes('tax')) f.taxExpense += value; } }
                 });
-            } catch (e) {
-                console.error("[DEBUG] Error during trialData processing loop:", e);
-                return null; // Stop calculation if loop fails
-            }
-
+            } catch (e) { console.error("[DEBUG] Error during trialData processing loop:", e); return null; }
             Object.keys(f).forEach(key => f[key] = f[key] || 0);
             f.grossProfit = f.revenue - f.cogs; f.netProfit = f.grossProfit - f.expenses; f.ebit = f.netProfit + f.interestExpense + f.taxExpense; f.workingCapital = f.currentAssets - f.currentLiabilities; f.equity += f.netProfit;
-            
             const assets = f.assets || 0; const equity = f.equity || 0; const liabilities = f.liabilities || 0; const revenue = f.revenue || 0;
             const x1 = assets !== 0 ? f.workingCapital / assets : Infinity; const x2 = assets !== 0 ? f.retainedEarnings / assets : Infinity; const x3 = assets !== 0 ? f.ebit / assets : Infinity; const x4 = liabilities !== 0 ? equity / liabilities : Infinity; const x5 = assets !== 0 ? revenue / assets : 0;
             const zScore = (isFinite(x1) && isFinite(x2) && isFinite(x3) && isFinite(x4) && isFinite(x5)) ? (0.717 * x1) + (0.847 * x2) + (3.107 * x3) + (0.420 * x4) + (0.998 * x5) : NaN;
@@ -116,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 roe: f.equity > 0 ? f.netProfit / f.equity : 0,
                 zScore: zScore
             };
-            
             console.log("[DEBUG] Dashboard financials calculated (Full):", f);
             console.log("[DEBUG] Dashboard ratios calculated (Full):", ratios);
             return { financials: f, ratios: ratios };
@@ -142,15 +132,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (UI.profitabilityChart) { if (state.charts.profitability) state.charts.profitability.destroy(); state.charts.profitability = new Chart(UI.profitabilityChart, { type: 'bar', data: { labels: [t_page('revenue'), t_page('grossProfit'), t_page('netProfit')], datasets: [{ data: [revenue, grossProfit, netProfit], backgroundColor: ['#0d6efd', '#6f42c1', netProfit < 0 ? '#dc3545' : '#198754'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } }); } else { console.error("[DEBUG] profitabilityChart canvas context not found."); }
             if (UI.structureChart) { if (state.charts.structure) state.charts.structure.destroy(); state.charts.structure = new Chart(UI.structureChart, { type: 'doughnut', data: { labels: [t_page('liabilities'), t_page('equity')], datasets: [{ data: [liabilities, equity], backgroundColor: ['#ffc107', '#20c997'] }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { tooltip: { callbacks: { label: function(context) { let label = context.label || ''; let value = context.raw || 0; let total = context.chart.getDataVisibility(0) ? context.chart.getDatasetMeta(0).total : 0; let percentage = (value / total * 100).toFixed(1) + '%'; return `${label}: ${formatCurrency(value)} (${percentage})`; } } } } } }); } else { console.error("[DEBUG] structureChart canvas context not found."); }
         };
+        
+        // *** MODIFIED: renderSummaryAndAlerts to use list-group ***
         const renderSummaryAndAlerts = (ratios) => {
             if (!UI.performanceSummary || !UI.alertsArea) { console.error("[DEBUG] Summary or Alerts elements not found."); return; }
             const { netProfitMargin, currentRatio, debtToEquity } = ratios;
             UI.performanceSummary.textContent = netProfitMargin > 0 && currentRatio > 1.5 ? t_page('summary_profit') : t_page('summary_loss');
             const alerts = [];
-            if (currentRatio < 1 && isFinite(currentRatio)) alerts.push(t_page('alert_liquidity_risk'));
-            if (debtToEquity > 2 && isFinite(debtToEquity)) alerts.push(t_page('alert_leverage_risk'));
-            if (netProfitMargin < 0 && isFinite(netProfitMargin)) alerts.push(t_page('alert_profit_risk'));
-            UI.alertsArea.innerHTML = alerts.length > 0 ? alerts.map(alert => `<div>${alert}</div>`).join('') : `<div>${t_page('alert_ok')}</div>`;
+            if (currentRatio < 1 && isFinite(currentRatio)) alerts.push({text: t_page('alert_liquidity_risk'), class: 'list-group-item-danger'});
+            if (debtToEquity > 2 && isFinite(debtToEquity)) alerts.push({text: t_page('alert_leverage_risk'), class: 'list-group-item-warning'});
+            if (netProfitMargin < 0 && isFinite(netProfitMargin)) alerts.push({text: t_page('alert_profit_risk'), class: 'list-group-item-danger'});
+            
+            if (alerts.length > 0) {
+                 UI.alertsArea.innerHTML = alerts.map(alert => `<li class="list-group-item ${alert.class}">${alert.text}</li>`).join('');
+            } else {
+                 UI.alertsArea.innerHTML = `<li class="list-group-item list-group-item-success">${t_page('alert_ok')}</li>`;
+            }
         };
 
         // --- NEW: Trend Analysis Render Functions ---
@@ -207,13 +204,15 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(`[DEBUG] Found ${state.snapshots.length} snapshots.`);
 
             if (state.snapshots.length > 1) {
+                // --- Show Trend Analysis View ---
                 console.log("[DEBUG] More than 1 snapshot found. Showing Trend Analysis View.");
                 if (UI.loadingMessage) UI.loadingMessage.style.display = 'none';
                 if (UI.singlePeriodView) UI.singlePeriodView.style.display = 'none';
-                if (UI.trendAnalysisView) UI.trendAnalysisView.style.display = 'block';
+                if (UI.trendAnalysisView) UI.trendAnalysisView.style.display = 'flex'; // Use flex for row
                 renderTrendKPIs(state.snapshots);
                 renderTrendCharts(state.snapshots);
             } else {
+                // --- Show Single Period View (Gauges) ---
                 console.log("[DEBUG] 1 or 0 snapshots found. Showing Single Period View.");
                 if (UI.trendAnalysisView) UI.trendAnalysisView.style.display = 'none';
                 let dataToAnalyze = null;
@@ -223,13 +222,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     console.log("[DEBUG] No snapshots. Trying to load 'trialData'.");
                     const trialData = JSON.parse(localStorage.getItem('trialData') || '[]');
-                    if (trialData.length > 0) {
-                        dataToAnalyze = calculateMetrics(trialData);
-                    }
+                    if (trialData.length > 0) { dataToAnalyze = calculateMetrics(trialData); }
                 }
                 if (dataToAnalyze && dataToAnalyze.financials && dataToAnalyze.ratios) {
                     if (UI.loadingMessage) UI.loadingMessage.style.display = 'none';
-                    if (UI.singlePeriodView) UI.singlePeriodView.style.display = 'flex';
+                    if (UI.singlePeriodView) UI.singlePeriodView.style.display = 'block'; // Use block for this view
+                    if (UI.mainDashboardRow) UI.mainDashboardRow.style.display = 'flex'; // Use flex for this row
                     renderGaugeKPIs(dataToAnalyze.financials, dataToAnalyze.ratios);
                     renderMainCharts(dataToAnalyze.financials);
                     renderSummaryAndAlerts(dataToAnalyze.ratios);
