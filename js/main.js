@@ -1,4 +1,4 @@
-// js/main.js (Corrected Version + Explicit Global Export)
+// js/main.js (Corrected Version + Added Global PDF Export Function)
 
 // --- 1. STATE & CONFIG (Global Scope) ---
 const state = {
@@ -12,14 +12,16 @@ const translations = {
     ar: {
         brandTitle: "المحلل المالي", navHome: "الرئيسية", navInput: "الإدخال", navUpload: "الرفع",
         navReport: "التقرير", navAdvanced: "تحليلات متقدمة", navDashboard: "لوحة التحكم", navCompare: "المقارنات",
+        navBenchmarks: "المقارنات المعيارية",
         footerText: "© 2025 المحلل المالي. جميع الحقوق محفوظة.",
-        navBenchmarks: "المقارنات المعيارية", // تمت إضافته
+        exportPdf: "تصدير PDF", // *** ADDED ***
     },
     en: {
         brandTitle: "Financial Analyzer", navHome: "Home", navInput: "Input", navUpload: "Upload",
         navReport: "Report", navAdvanced: "Advanced", navDashboard: "Dashboard", navCompare: "Comparisons",
+        navBenchmarks: "Benchmarks",
         footerText: "© 2025 Financial Analyzer. All rights reserved.",
-        navBenchmarks: "Benchmarks", // تمت إضافته
+        exportPdf: "Export PDF", // *** ADDED ***
     }
 };
 
@@ -35,7 +37,6 @@ const applyTheme = (theme) => {
     localStorage.setItem('theme', theme);
 };
 
-// *** Define applyTranslations GLOBALLY ***
 function applyTranslations() {
     const lang = state.preferences.lang;
     console.log(`Applying translations for language: ${lang} (main.js)`);
@@ -55,7 +56,8 @@ function applyTranslations() {
     });
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
     document.querySelectorAll('.main-nav .nav-link').forEach(link => {
-        link.classList.toggle('active', link.getAttribute('href') === currentPage);
+        const linkHref = link.getAttribute('href').split('/').pop(); // Handle relative paths
+        link.classList.toggle('active', linkHref === currentPage);
     });
     console.log("Translations applied (main.js).");
 };
@@ -76,11 +78,62 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     applyTheme(state.preferences.theme);
-    // Call translation ONCE here after DOM is ready
     applyTranslations();
     console.log("Initial setup complete (main.js).");
 });
 
-// *** ADD THIS LINE AT THE VERY END (Outside DOMContentLoaded) ***
 window.applyTranslations = applyTranslations;
 console.log("applyTranslations function explicitly attached to window.");
+
+
+// *** START: ADDED PDF EXPORT FUNCTION ***
+/**
+ * Exports a specific element to PDF with watermark.
+ * @param {string} elementId The ID of the element to export (e.g., 'advancedTabsContent')
+ * @param {string} reportTitle The title for the generated PDF file (e.g., 'Advanced_Analysis')
+ */
+window.exportPageToPDF = (elementId, reportTitle = 'Financial_Report') => {
+    const element = document.getElementById(elementId);
+    if (!element) {
+        console.error(`PDF Export Error: Element with ID '${elementId}' not found.`);
+        return;
+    }
+
+    // 1. Create a clone to add watermark safely
+    const clone = element.cloneNode(true);
+    clone.style.padding = '1rem'; // Add padding for printing
+    
+    // 2. Create and add watermark
+    // (Ensure you have 'assets/logo.png' accessible)
+    const watermarkContainer = document.createElement('div');
+    watermarkContainer.style.position = 'absolute';
+    watermarkContainer.style.top = '50%';
+    watermarkContainer.style.left = '50%';
+    watermarkContainer.style.transform = 'translate(-50%, -50%)';
+    watermarkContainer.style.zIndex = '1000';
+    watermarkContainer.style.opacity = '0.08';
+    watermarkContainer.style.pointerEvents = 'none';
+    watermarkContainer.innerHTML = `<img src="assets/logo.png" style="width: 500px; max-width: 100%;">`;
+    
+    // We need a wrapper to position the watermark correctly
+    const printWrapper = document.createElement('div');
+    printWrapper.style.position = 'relative';
+    printWrapper.style.zIndex = '1';
+    
+    printWrapper.appendChild(watermarkContainer);
+    printWrapper.appendChild(clone);
+
+    // 3. Set options for html2pdf
+    const opt = {
+        margin:       0.5,
+        filename:     `${reportTitle}_${new Date().toISOString().split('T')[0]}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, logging: false },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+
+    // 4. Run export
+    console.log(`Exporting element '${elementId}' to PDF...`);
+    html2pdf().from(printWrapper).set(opt).save();
+};
+// *** END: ADDED PDF EXPORT FUNCTION ***
