@@ -76,7 +76,6 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTranslations();
     console.log("Initial setup complete (main.js).");
 });
-
 window.applyTranslations = applyTranslations;
 console.log("applyTranslations function explicitly attached to window.");
 // *** START: ADDED PDF EXPORT FUNCTION ***
