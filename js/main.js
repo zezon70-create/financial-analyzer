@@ -5,8 +5,7 @@ const state = {
     preferences: {
         theme: localStorage.getItem('theme') || 'light',
         lang: localStorage.getItem('lang') || 'ar',
-    }
-};
+    }};
 const translations = {
     ar: {
         brandTitle: "المحلل المالي", navHome: "الرئيسية", navInput: "الإدخال", navUpload: "الرفع",
