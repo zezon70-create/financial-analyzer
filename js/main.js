@@ -23,7 +23,6 @@ const translations = {
         exportPdf: "Export PDF", // *** ADDED ***
     }
 };
-
 // --- 2. GLOBAL FUNCTIONS ---
 const t = (key) => (translations[state.preferences.lang] && translations[state.preferences.lang][key]) || key;
 
@@ -59,12 +58,10 @@ function applyTranslations() {
     });
     console.log("Translations applied (main.js).");
 };
-
 // --- 3. DOMContentLoaded for Initialization and Event Binding ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded and parsed (main.js)");
     const UI = { themeToggle: document.getElementById('themeToggle'), languageSelect: document.getElementById('languageSelect') };
-
     if (UI.themeToggle) { UI.themeToggle.addEventListener('click', () => { const newTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; applyTheme(newTheme); }); }
     if (UI.languageSelect) {
         UI.languageSelect.innerHTML = `<option value="ar">العربية</option><option value="en">English</option>`;
@@ -82,8 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 window.applyTranslations = applyTranslations;
 console.log("applyTranslations function explicitly attached to window.");
-
-
 // *** START: ADDED PDF EXPORT FUNCTION ***
 /**
  * Exports a specific element to PDF with watermark.
@@ -96,12 +91,10 @@ window.exportPageToPDF = (elementId, reportTitle = 'Financial_Report') => {
         console.error(`PDF Export Error: Element with ID '${elementId}' not found.`);
         return;
     }
-
     // 1. Create a clone to add watermark safely
     const clone = element.cloneNode(true);
     clone.style.padding = '1rem'; // Add padding for printing
-    
-    // 2. Create and add watermark
+        // 2. Create and add watermark
     // (Ensure you have 'assets/logo.png' accessible)
     const watermarkContainer = document.createElement('div');
     watermarkContainer.style.position = 'absolute';
@@ -112,15 +105,12 @@ window.exportPageToPDF = (elementId, reportTitle = 'Financial_Report') => {
     watermarkContainer.style.opacity = '0.08';
     watermarkContainer.style.pointerEvents = 'none';
     watermarkContainer.innerHTML = `<img src="assets/logo.png" style="width: 500px; max-width: 100%;">`;
-    
-    // We need a wrapper to position the watermark correctly
+       // We need a wrapper to position the watermark correctly
     const printWrapper = document.createElement('div');
     printWrapper.style.position = 'relative';
     printWrapper.style.zIndex = '1';
-    
-    printWrapper.appendChild(watermarkContainer);
+        printWrapper.appendChild(watermarkContainer);
     printWrapper.appendChild(clone);
-
     // 3. Set options for html2pdf
     const opt = {
         margin:       0.5,
@@ -129,7 +119,6 @@ window.exportPageToPDF = (elementId, reportTitle = 'Financial_Report') => {
         html2canvas:  { scale: 2, useCORS: true, logging: false },
         jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
-
     // 4. Run export
     console.log(`Exporting element '${elementId}' to PDF...`);
     html2pdf().from(printWrapper).set(opt).save();
