@@ -1,5 +1,4 @@
 // js/main.js (Corrected Version + UPGRADED Global PDF Export Function)
-
 // --- 1. STATE & CONFIG (Global Scope) ---
 const state = {
     preferences: {
@@ -7,7 +6,6 @@ const state = {
         lang: localStorage.getItem('lang') || 'ar',
     }
 };
-
 const translations = {
     ar: {
         brandTitle: "المحلل المالي", navHome: "الرئيسية", navInput: "الإدخال", navUpload: "الرفع",
@@ -24,10 +22,8 @@ const translations = {
         exportPdf: "Export PDF", 
     }
 };
-
 // --- 2. GLOBAL FUNCTIONS ---
 const t = (key) => (translations[state.preferences.lang] && translations[state.preferences.lang][key]) || key;
-
 const applyTheme = (theme) => {
     document.body.setAttribute('data-theme', theme);
     const themeToggle = document.getElementById('themeToggle');
@@ -36,7 +32,6 @@ const applyTheme = (theme) => {
     }
     localStorage.setItem('theme', theme);
 };
-
 function applyTranslations() {
     const lang = state.preferences.lang;
     console.log(`Applying translations for language: ${lang} (main.js)`);
@@ -61,12 +56,10 @@ function applyTranslations() {
     });
     console.log("Translations applied (main.js).");
 };
-
 // --- 3. DOMContentLoaded for Initialization and Event Binding ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded and parsed (main.js)");
     const UI = { themeToggle: document.getElementById('themeToggle'), languageSelect: document.getElementById('languageSelect') };
-
     if (UI.themeToggle) { UI.themeToggle.addEventListener('click', () => { const newTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; applyTheme(newTheme); }); }
     if (UI.languageSelect) {
         UI.languageSelect.innerHTML = `<option value="ar">العربية</option><option value="en">English</option>`;
@@ -81,11 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTranslations();
     console.log("Initial setup complete (main.js).");
 });
-
 window.applyTranslations = applyTranslations;
 console.log("applyTranslations function explicitly attached to window.");
-
-
 // *** START: UPGRADED PDF EXPORT FUNCTION ***
 /**
  * Exports a specific element to PDF with watermark.
@@ -98,10 +88,8 @@ window.exportPageToPDF = (elementId, reportTitle = 'Financial_Report') => {
         console.error(`PDF Export Error: Element with ID '${elementId}' not found.`);
         return;
     }
-
     console.log(`[PDF Export] Exporting element #${elementId}...`);
-    
-    // --- FIX 1: Show all hidden tab-panes before cloning ---
+      // --- FIX 1: Show all hidden tab-panes before cloning ---
     const originalDisplays = [];
     const tabsToPrint = element.querySelectorAll('.tab-pane');
     if (tabsToPrint.length > 0) {
@@ -111,8 +99,7 @@ window.exportPageToPDF = (elementId, reportTitle = 'Financial_Report') => {
             tab.style.display = 'block'; // Force show
         });
     }
-    
-    const clone = element.cloneNode(true);
+        const clone = element.cloneNode(true);
     clone.style.padding = '1rem'; 
     clone.style.position = 'relative'; 
     clone.style.zIndex = '1';
@@ -122,11 +109,9 @@ window.exportPageToPDF = (elementId, reportTitle = 'Financial_Report') => {
         item.el.style.display = item.display; // Restore original state
     });
     console.log("[PDF Export] Tab display restored.");
-
     // --- FIX 3: Use Absolute URL for Logo ---
     // (Assuming this is the correct path from your GitHub pages root)
     const logoUrl = 'https://zezon70-create.github.io/financial-analyzer/assets/logo.png';
-
     const watermarkContainer = document.createElement('div');
     watermarkContainer.style.position = 'absolute';
     watermarkContainer.style.top = '50%';
@@ -136,14 +121,11 @@ window.exportPageToPDF = (elementId, reportTitle = 'Financial_Report') => {
     watermarkContainer.style.opacity = '0.08';
     watermarkContainer.style.pointerEvents = 'none';
     watermarkContainer.innerHTML = `<img src="${logoUrl}" style="width: 500px; max-width: 100%;">`;
-    
-    const printWrapper = document.createElement('div');
+      const printWrapper = document.createElement('div');
     printWrapper.style.position = 'relative'; 
     printWrapper.style.overflow = 'hidden'; 
-
     printWrapper.appendChild(watermarkContainer);
     printWrapper.appendChild(clone); 
-
     const opt = {
         margin:       0.5,
         filename:     `${reportTitle}_${new Date().toISOString().split('T')[0]}.pdf`,
@@ -157,10 +139,8 @@ window.exportPageToPDF = (elementId, reportTitle = 'Financial_Report') => {
         },
         jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
     };
-
     document.body.appendChild(printWrapper);
-    
-    html2pdf().from(printWrapper).set(opt).save().then(() => {
+      html2pdf().from(printWrapper).set(opt).save().then(() => {
         console.log("[PDF Export] Export complete.");
         document.body.removeChild(printWrapper); // Clean up
     }).catch(err => {
