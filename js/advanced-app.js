@@ -1,6 +1,5 @@
 // js/advanced-app.js (Version with enhanced error checking and logging - PDF Button Added)
-window.pageTranslations = {
-    ar: { 
+window.pageTranslations = { ar: { 
         // ... (كل الترجمات كما هي، سيتم استخدام 'exportPdf' من main.js) ...
         pageTitle: "التحليلات المتقدمة — المحلل المالي", pageHeader: "التحليلات المتقدمة", pageSubheader: "استخدم أدوات تحليلية متخصصة للحصول على رؤى أعمق حول أداء عملك.",
         tabRatios: "النسب المالية", tabBreakeven: "تحليل التعادل", tabDupont: "تحليل دوبونت", tabVertical: "التحليل الرأسي", tabZScore: "نموذج Z-Score", tabCashFlow: "تحليل التدفقات النقدية",
@@ -19,8 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ratios: {},
         breakevenChart: null,
         hasValidData: false, 
-        rawData: { bsItems: [], isItems: [] } 
-    };
+        rawData: { bsItems: [], isItems: [] }     };
     const lang = localStorage.getItem('lang') || 'ar';
     const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`; 
     const UI = { 
@@ -43,8 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         cfValueOCFRatio: document.getElementById('cfValueOCFRatio'), cfValueFCF: document.getElementById('cfValueFCF'),
         cfInterpretation: document.getElementById('cfInterpretation'),
         // *** ADDED: PDF Button ***
-        exportPdfBtn: document.getElementById('exportAdvancedPdfBtn') 
-    };
+        exportPdfBtn: document.getElementById('exportAdvancedPdfBtn')     };
         // Helper functions (Unchanged)
     const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
     const formatPercent = (value, digits = 1) => isFinite(value) ? `${(value * 100).toFixed(digits)}%` : "N/A";
@@ -76,8 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!calculateFinancials()) {
             state.hasValidData = false;
         } else {
-            state.hasValidData = calculateAllRatios(); 
-        }
+            state.hasValidData = calculateAllRatios();         }
         renderRatioCategory('liquidityRatios', 'liquidityRatios', ['currentRatio', 'quickRatio']);
         renderRatioCategory('profitabilityRatios', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
         renderRatioCategory('leverageRatios', 'leverageRatios', ['debtToAssets', 'debtToEquity']);
@@ -124,21 +120,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.exportPageToPDF('pdfExportArea', 'Advanced_Analytics_Report');
                 } else {
                     console.error("PDF Export Error: 'exportPageToPDF' function not found on window object. Check main.js");
-                    alert("PDF export functionality is unavailable. Please check console.");
-                }
-            });
+                    alert("PDF export functionality is unavailable. Please check console.");                }    });
         } else {
-            console.warn("Export PDF button 'exportAdvancedPdfBtn' not found.");
-        }
+            console.warn("Export PDF button 'exportAdvancedPdfBtn' not found.");        }
         // *** END: ADDED PDF Button Listener ***
                // Apply translations
-        if (typeof window.applyTranslations === 'function') { 
-            console.log("Applying translations...");
-            window.applyTranslations(); // Use window.applyTranslations
-        } 
+        if (typeof window.applyTranslations === 'function') {             console.log("Applying translations...");
+            window.applyTranslations(); // Use window.applyTranslations        } 
         else { console.warn("applyTranslations function not found."); }
-                console.log("Advanced page initialized.");
-    };
+                console.log("Advanced page initialized.");    };
     // Run init only if critical elements exist
     if (document.getElementById('ratios-pane') && document.getElementById('breakeven-pane') && document.getElementById('dupont-pane') && document.getElementById('vertical-pane') && document.getElementById('zscore-pane') && document.getElementById('cashflow-pane')) {
         init();
@@ -146,3 +136,4 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("One or more critical tab pane elements were not found. Initialization stopped.");
     }
 });
+
