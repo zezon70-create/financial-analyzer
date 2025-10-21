@@ -35,7 +35,6 @@ const applyTheme = (theme) => {
     }
     localStorage.setItem('theme', theme);
 };
-
 function applyTranslations() {
     const lang = state.preferences.lang;
     console.log(`Applying translations for language: ${lang} (main.js)`);
