@@ -1,4 +1,4 @@
-// js/report-app.js (Enhanced processing + Dual Source Input Logic + Source Selector + Simplified Init)
+// js/report-app.js (Enhanced processing + Dual Source + Source Selector + Simplified Init - FIX 1)
 
 window.pageTranslations = {
     ar: {
@@ -127,17 +127,17 @@ window.pageTranslations = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("[DEBUG] report-app.js script started execution."); // Log start
+    console.log("[DEBUG] report-app.js script started execution."); 
 
     const state = {
         trialData: [],
         uploadedData: null,
-        statements: { /* Initial structure */ }, // Will be populated
+        statements: { /* Initial structure */ }, 
         hasData: false
     };
     const lang = localStorage.getItem('lang') || 'ar';
     const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;
-    const formatCurrency = (value, decimals = 0) => { /* ... (same as before) ... */
+    const formatCurrency = (value, decimals = 0) => { 
         if (!isFinite(value)) return "N/A";
          const roundedValue = parseFloat(value.toFixed(decimals));
          if (Math.abs(roundedValue) < Math.pow(10, -decimals) && roundedValue < 0) {
@@ -148,18 +148,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Data Loading and Processing Logic ---
 
-    const processUploadedData = () => { /* ... (Placeholder - Needs implementation based on upload.html) ... */
+    const processUploadedData = () => { 
         try {
             console.log("Processing data from upload.html (Placeholder Logic)...");
             // *** This section NEEDS to be adapted based on the ACTUAL structure saved by upload.html ***
             const bsData = state.uploadedData.balanceSheet || {};
             const isData = state.uploadedData.incomeStatement || {};
-            const totals = {};
-            state.statements = { // Reset before filling
+            
+            // *** FIX: Reset state.statements here ***
+            state.statements = { 
                 bs: { currentAssets: [], nonCurrentAssets: [], currentLiabilities: [], nonCurrentLiabilities: [], equityCapital: [], equityRetainedEarnings: 0 },
                 is: { revenue: [], cogs: [], genAdminExpenses: [], sellingMarketingExpenses: [], depreciationAmortization: [], otherOperatingExpenses: [], interestExpense: [], taxExpense: [] },
                 totals: {}
             };
+            const totals = state.statements.totals; // Get shortcut *after* reset
 
             // Map Balance Sheet items
             state.statements.bs.currentAssets = bsData.currentAssets || [];
@@ -204,7 +206,17 @@ document.addEventListener('DOMContentLoaded', () => {
             totals.totalLiabilitiesAndEquity = totals.totalLiabilities + totals.totalEquity;
             const cashItem = state.statements.bs.currentAssets.find(item => item.account.toLowerCase().includes('cash') || item.account.includes('نقد') || item.account.includes('bank') || item.account.includes('بنك'));
             totals.cashEquivalents = cashItem ? cashItem.value : 0;
-
+            
+            // *** Add missing totals for advanced-app ***
+            totals.accountsReceivable = sumValues(state.statements.bs.currentAssets.filter(item => item.account.toLowerCase().includes('receivable') || item.account.includes('عملاء')));
+            totals.inventory = sumValues(state.statements.bs.currentAssets.filter(item => item.account.toLowerCase().includes('inventory') || item.account.includes('مخزون')));
+            totals.accountsPayable = sumValues(state.statements.bs.currentLiabilities.filter(item => item.account.toLowerCase().includes('payable') || item.account.includes('مورد')));
+            totals.shortTermDebt = sumValues(state.statements.bs.currentLiabilities.filter(item => item.account.toLowerCase().includes('loan') || item.account.includes('قرض قصير')));
+            totals.workingCapital = totals.totalCurrentAssets - totals.totalCurrentLiabilities;
+            totals.ebit = totals.operatingProfit; 
+            totals.purchases = totals.totalCogs; // Simplified proxy
+            totals.retainedEarnings = state.statements.bs.equityRetainedEarnings; // Closing RE
+            
             state.statements.totals = totals;
             state.hasData = true;
             console.log("Successfully processed data from upload.html");
@@ -218,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Builds statements from Trial Balance
     const buildStatementsFromTrialData = () => {
-        // *** مُعدل: التأكد من إعادة تعيين state.statements عند البدء ***
+        // *** FIX: Reset state.statements *before* accessing state.statements.totals ***
         state.statements = {
             bs: { currentAssets: [], nonCurrentAssets: [], currentLiabilities: [], nonCurrentLiabilities: [], equityCapital: [], equityRetainedEarnings: 0 },
             is: { revenue: [], cogs: [], genAdminExpenses: [], sellingMarketingExpenses: [], depreciationAmortization: [], otherOperatingExpenses: [], interestExpense: [], taxExpense: [] },
@@ -238,83 +250,84 @@ document.addEventListener('DOMContentLoaded', () => {
             purchases: 0, depreciationTotal: 0, totalInterest: 0, ebit: 0, workingCapital: 0, retainedEarnings: 0
         });
 
-        // *** مُعدل: التأكد من أننا نقرأ من state.trialData الذي تم تحميله ***
         if (!state.trialData || state.trialData.length === 0) {
             console.error("buildStatementsFromTrialData called but state.trialData is empty.");
-            return false; // Safety check
+            return false; 
         }
 
-        try { // Add try/catch around processing loop
+        try {
             state.trialData.forEach(row => {
                 const value = (parseFloat(row.Debit) || 0) - (parseFloat(row.Credit) || 0);
                 const mainType = row.MainType || '';
                 const subType = row.SubType || '';
                 const accountName = (row.Account || '').toLowerCase();
                 const account = row.Account || 'Unknown';
-                const item = { account, value }; // Use positive value for Assets/Expenses
+                const item = { account, value }; 
 
+                // *** FIX: Use state.statements, not statements ***
                 if (mainType.includes('الأصول') || mainType.includes('Assets')) {
                     if (subType.includes('متداول') || subType.includes('Current')) {
-                        state.statements.bs.currentAssets.push(item);
+                        state.statements.bs.currentAssets.push(item); // FIX
                         totals.totalCurrentAssets += value;
                         if (accountName.includes('cash') || accountName.includes('نقد') || accountName.includes('bank') || accountName.includes('بنك')) { totals.cashEquivalents += value; }
                         if (accountName.includes('receivable') || accountName.includes('عملاء')) { totals.accountsReceivable += value; }
                         if (accountName.includes('inventory') || accountName.includes('مخزون')) { totals.inventory += value; }
                     } else {
-                        state.statements.bs.nonCurrentAssets.push(item);
+                        state.statements.bs.nonCurrentAssets.push(item); // FIX
                         totals.totalNonCurrentAssets += value;
                     }
                 } else if (mainType.includes('الخصوم') || mainType.includes('Liabilities')) {
-                     item.value = -value; // Store liabilities as positive balances
+                     item.value = -value; 
                      if (subType.includes('متداول') || subType.includes('Current')) {
-                         state.statements.bs.currentLiabilities.push(item);
+                         state.statements.bs.currentLiabilities.push(item); // FIX
                          totals.totalCurrentLiabilities += item.value;
                          if (accountName.includes('payable') || accountName.includes('مورد')) { totals.accountsPayable += item.value; }
                          if (accountName.includes('loan') || accountName.includes('قرض قصير')) { totals.shortTermDebt += item.value; }
                      } else {
-                         state.statements.bs.nonCurrentLiabilities.push(item);
+                         state.statements.bs.nonCurrentLiabilities.push(item); // FIX
                          totals.totalNonCurrentLiabilities += item.value;
                      }
                 } else if (mainType.includes('حقوق الملكية') || mainType.includes('Equity')) {
-                     item.value = -value; // Store equity as positive balances
+                     item.value = -value; 
                      if (subType.includes('رأس المال') || subType.includes('Capital') || accountName.includes('capital') || accountName.includes('رأس المال')) {
-                        state.statements.bs.equityCapital.push(item);
+                        state.statements.bs.equityCapital.push(item); // FIX
                         totals.totalEquityCapital += item.value;
                      } else if (subType.includes('الأرباح المحتجزة') || subType.includes('Retained Earnings') || accountName.includes('retained')) {
-                         state.statements.bs.equityRetainedEarnings = item.value; // This is OPENING RE
+                         state.statements.bs.equityRetainedEarnings = item.value; // OPENING RE
                      } else {
-                          state.statements.bs.equityCapital.push(item); // Add other equity to capital
+                          state.statements.bs.equityCapital.push(item); // FIX
                           totals.totalEquityCapital += item.value;
                      }
                 }
                 else if (mainType.includes('قائمة الدخل') || mainType.includes('Income Statement')) {
                      if (subType.includes('الإيرادات') || subType.includes('Revenue')) {
-                         item.value = -value; // Store revenue as positive
-                         state.statements.is.revenue.push(item);
+                         item.value = -value; 
+                         state.statements.is.revenue.push(item); // FIX
                          totals.totalRevenue += item.value;
                      } else if (subType.includes('تكلفة المبيعات') || subType.includes('COGS')) {
-                         state.statements.is.cogs.push(item);
+                         state.statements.is.cogs.push(item); // FIX
                          totals.totalCogs += value;
                      } else if (subType.includes('مشتريات') || subType.includes('Purchases') || accountName.includes('purchase')) {
-                         // Don't add to OpEx, just track total
-                         totals.purchases += value;
+                         totals.purchases += value; // Track purchases
+                         // Don't add to OpEx if it's part of COGS calculation, else add it:
+                         // state.statements.is.otherOperatingExpenses.push(item); 
+                         // totals.totalOperatingExpenses += value;
                      } else {
-                          // Classify Expenses
                           if (subType.includes('إهلاك') || subType.includes('Depreciation') || accountName.includes('depreciation') || accountName.includes('amortization')) {
-                              state.statements.is.depreciationAmortization.push(item);
+                              state.statements.is.depreciationAmortization.push(item); // FIX
                               totals.depreciationTotal += value;
                           } else if (subType.includes('فائدة') || subType.includes('Interest') || accountName.includes('interest')) {
-                              state.statements.is.interestExpense.push(item);
+                              state.statements.is.interestExpense.push(item); // FIX
                               totals.totalInterest += value;
                           } else if (subType.includes('ضريب') || subType.includes('Tax') || accountName.includes('tax')) {
-                               state.statements.is.taxExpense.push(item);
+                               state.statements.is.taxExpense.push(item); // FIX
                                totals.totalTax += value;
                           } else if (subType.includes('بيع') || subType.includes('Selling') || subType.includes('Marketing') || accountName.includes('selling') || accountName.includes('marketing')) {
-                              state.statements.is.sellingMarketingExpenses.push(item);
+                              state.statements.is.sellingMarketingExpenses.push(item); // FIX
                           } else if (subType.includes('إداري') || subType.includes('General') || subType.includes('Admin') || accountName.includes('general') || accountName.includes('admin')) {
-                              state.statements.is.genAdminExpenses.push(item);
+                              state.statements.is.genAdminExpenses.push(item); // FIX
                           } else {
-                              state.statements.is.otherOperatingExpenses.push(item);
+                              state.statements.is.otherOperatingExpenses.push(item); // FIX
                           }
                      }
                 }
@@ -335,31 +348,32 @@ document.addEventListener('DOMContentLoaded', () => {
             totals.profitBeforeTax = totals.operatingProfit - totals.totalInterest;
             totals.netProfit = totals.profitBeforeTax - totals.totalTax;
             
-            statements.bs.equityRetainedEarnings += totals.netProfit; // Closing RE = Opening RE + Net Profit
-            totals.retainedEarnings = statements.bs.equityRetainedEarnings; // Save closing RE
-            totals.totalEquity = totals.totalEquityCapital + statements.bs.equityRetainedEarnings;
+            state.statements.bs.equityRetainedEarnings += totals.netProfit; // Closing RE = Opening RE + Net Profit
+            totals.retainedEarnings = state.statements.bs.equityRetainedEarnings; // Save closing RE
+            totals.totalEquity = totals.totalEquityCapital + state.statements.bs.equityRetainedEarnings;
             totals.totalLiabilitiesAndEquity = totals.totalLiabilities + totals.totalEquity;
 
             totals.workingCapital = totals.totalCurrentAssets - totals.totalCurrentLiabilities;
             totals.ebit = totals.operatingProfit;
-            if (totals.purchases === 0) totals.purchases = totals.totalCogs; // Proxy if purchases not found
+            if (totals.purchases === 0 && totals.totalCogs > 0) totals.purchases = totals.totalCogs; // Proxy if purchases not found
 
             state.statements.totals = totals;
             state.hasData = true;
             console.log("Processed Statements Data from Trial Balance:", state.statements);
             console.log("Calculated Totals from Trial Balance:", totals);
-            return true; // Indicate success
+            return true; 
         } catch (e) {
             console.error("Error during trial data processing loop:", e);
             state.hasData = false;
-            return false; // Indicate failure
+            return false; 
         }
     };
 
     // Main function to load data based on selected source
     const loadDataAndPrepareStatements = () => {
-        state.hasData = false; // Reset flag each time
-        state.statements = { // Reset statements object
+        state.hasData = false;
+        // Reset statements *before* loading
+        state.statements = {
             bs: { currentAssets: [], nonCurrentAssets: [], currentLiabilities: [], nonCurrentLiabilities: [], equityCapital: [], equityRetainedEarnings: 0 },
             is: { revenue: [], cogs: [], genAdminExpenses: [], sellingMarketingExpenses: [], depreciationAmortization: [], otherOperatingExpenses: [], interestExpense: [], taxExpense: [] },
             totals: {}
@@ -415,7 +429,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 
-    // --- Rendering Functions ---
+    // --- Rendering Functions --- (No changes needed)
     const renderStatementSection = (items = [], sectionTitle, totalLabel, cssClass = '', decimals = 0) => { /* ... (Code from previous working version) ... */
         let sectionTotal = 0;
         let html = '';
@@ -593,9 +607,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Initialization ---
     const init = () => {
-        console.log("[DEBUG] Initializing report page...");
+        console.log("[DEBUG] Initializing report page (Simplified)...");
         
-        // Simplified init: Run main logic directly
+        // Directly call the main logic
         console.log("[DEBUG] Bypassing library load wait. Proceeding with data loading...");
         reloadAndRenderData(); // Initial load and render based on default selection
 
