@@ -1,4 +1,4 @@
-// js/advanced-app.js (Full Version + EVA Tab + 20 Comprehensive Ratios Added)
+// js/advanced-app.js (Full Version + EVA Tab + 20 Comprehensive Ratios Added - CLEANED SYNTAX)
 
 window.pageTranslations = {
     ar: { 
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
             verticalBSTable: document.getElementById('verticalBSTable'), verticalISTable: document.getElementById('verticalISTable'),
             zscoreDataWarning: document.getElementById('zscoreDataWarning'), zscoreResultsContainer: document.getElementById('zscoreResultsContainer'),
             zscoreValue: document.getElementById('zscoreValue'), zscoreInterpretation: document.getElementById('zscoreInterpretation'),
-            zscoreFactorsList: document.getElementById('zscoreFactorsList'),
+_           zscoreFactorsList: document.getElementById('zscoreFactorsList'),
             cfDataWarning: document.getElementById('cfDataWarning'), cfResultsContainer: document.getElementById('cfResultsContainer'),
             cfStatementTableBody: document.getElementById('cfStatementTableBody'), 
             cfValueOCFRatio: document.getElementById('cfValueOCFRatio'), cfValueFCF: document.getElementById('cfValueFCF'),
@@ -313,7 +313,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 f.capex_estimated = f.depreciationAmortization; // Simple proxy
                 f.icf_estimated = -f.capex_estimated;
                 f.fcf_estimated = 0; // Financing flow estimate is complex, leave 0
-                f.netCashChange_estimated = f.ocf_estimated + f.icf_estimated + f.fcf_estimated;
+A               f.netCashChange_estimated = f.ocf_estimated + f.icf_estimated + f.fcf_estimated;
                 f.freeCashFlow_estimated = f.ocf_estimated - f.capex_estimated;
                 const balanceCheck = f.assets - (f.liabilities + f.equity + f.netProfit);
                 if (Math.abs(balanceCheck) > 1) console.warn(`Balance sheet check failed... Diff: ${balanceCheck.toFixed(2)}`);
@@ -418,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     payoutRatio: payoutRatio,
 
                     // نسب داخلية أخرى (Z-Score, CF)
-                    zScoreX1: x1, zScoreX2: x2, zScoreX3: x3, zScoreX4: x4, zScoreX5: x5, zScore: zScore, 
+TA                 zScoreX1: x1, zScoreX2: x2, zScoreX3: x3, zScoreX4: x4, zScoreX5: x5, zScore: zScore, 
                     equityMultiplier: financialLeverage, // (من الكود الأصلي، نستخدمه لـ Dupont)
                     operatingCashFlowRatio: f.currentLiabilities !== 0 ? f.ocf_estimated / f.currentLiabilities : Infinity, 
                     freeCashFlow: f.freeCashFlow_estimated 
@@ -578,13 +578,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             if(UI.evaDataWarning) UI.evaDataWarning.style.display = 'none';
-            if(UI.evaResultsContainer) UI.evaResultsContainer.style.display = 'block';
+Â           if(UI.evaResultsContainer) UI.evaResultsContainer.style.display = 'block';
             const f = state.financials;
             const wacc = toNum(UI.waccInput.value) / 100.0;
             const taxRate = toNum(UI.taxRateInput.value) / 100.0;
             if (wacc <= 0 || taxRate < 0) {
                 alert(t_page('errorPositiveValues'));
-                return;
+Â               return;
             }
             const nopat = f.ebit * (1 - taxRate);
             const nonInterestBearingCL = f.currentLiabilities - f.shortTermDebt;
@@ -604,7 +604,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     UI.evaInterpretation.textContent = t_page('evaInterpretationNegative');
                     UI.evaInterpretation.className = 'h5 fw-bold text-danger';
                     UI.evaValue.className = 'display-4 fw-bold text-danger';
-
                 }
             }
             console.log("[DEBUG] Finished displaying EVA.");
@@ -629,7 +628,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe', 'eps']);
             
             // 3. عرض مؤشرات الروافع
-            renderRatioCategory('leverageRatios', 'leverageRatios', 
+CH           renderRatioCategory('leverageRatios', 'leverageRatios', 
                 ['debtToAssets', 'debtToEquity', 'interestCoverageRatio', 'financialLeverage']);
             
             // 4. عرض مؤشرات النشاط (في حاوية 'efficiencyRatios' الموجودة)
@@ -644,6 +643,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return state.hasValidData; 
         };
 
+        // *** هذا هو الجزء الذي تم تنظيفه من الأحرف الزائدة ***
         const init = () => {
             console.log("Initializing advanced page...");
             
@@ -652,14 +652,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 runAnalysis(); // Run once on load after delay
                 
                 // Initial calculations/display for all tabs
-                calculateAndDisplayDupont(); 
+Read              calculateAndDisplayDupont(); 
                 calculateAndDisplayVerticalAnalysis();
                 calculateAndDisplayZScore();
--               calculateAndDisplayCashFlowAnalysis(); 
-+               calculateAndDisplayCashFlowAnalysis();
+                calculateAndDisplayCashFlowAnalysis(); 
                 calculateAndDisplayEVA(); 
                 
-                if (typeof window.applyTranslations === 'function') { 
+                if (typeof window.applyTranslations === 'function') {D 
                     console.log("Applying translations...");
                     window.applyTranslations(); 
                 } 
@@ -685,20 +684,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     tabElement.addEventListener('shown.bs.tab', () => {
                          console.log(`${tabId} tab shown`);
                          if (!state.hasValidData) { console.log("No valid data..."); runAnalysis(); }
-                         
-                        m if (tabId === 'dupont') calculateAndDisplayDupont();
+section                        
+                         if (tabId === 'dupont') calculateAndDisplayDupont();
                          if (tabId === 'vertical') calculateAndDisplayVerticalAnalysis();
                          if (tabId === 'zscore') calculateAndDisplayZScore();
                          if (tabId === 'cashflow') calculateAndDisplayCashFlowAnalysis(); 
                          if (tabId === 'eva') calculateAndDisplayEVA(); 
-                         if (tabId === 'breakeven' && state.breakevenChart) { state.breakevenChart.resize(); }
+s                         if (tabId === 'breakeven' && state.breakevenChart) { state.breakevenChart.resize(); }
                     });
                 } else { console.warn(`Tab button not found for ID: ${tabId}-tab`); }
             });
         };
 
         if (document.getElementById('ratios-pane') && document.getElementById('cashflow-pane')) {
-            init();
+Code          init();
         } else {
             console.error("One or more critical tab pane elements were not found. Initialization stopped.");
         }
