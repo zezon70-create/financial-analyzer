@@ -118,30 +118,21 @@ window.pageTranslations = {
     }
 };
 document.addEventListener('DOMContentLoaded', () => {
+    // *** Added console.log at the very beginning ***
+    console.log("[DEBUG] report-app.js script started execution.");
+
     const state = {
         trialData: [],
-        uploadedData: null, // To store data from upload.html if found
-        // Structure to hold processed statement data, regardless of source
+        uploadedData: null,
         statements: {
-            bs: {
-                currentAssets: [], nonCurrentAssets: [],
-                currentLiabilities: [], nonCurrentLiabilities: [],
-                equityCapital: [], equityRetainedEarnings: 0
-            },
-            is: {
-                revenue: [], cogs: [],
-                genAdminExpenses: [], sellingMarketingExpenses: [],
-                depreciationAmortization: [],
-                otherOperatingExpenses: [],
-                interestExpense: [],
-                taxExpense: []
-            },
-            totals: {} // Calculated totals will be stored here
+            bs: { currentAssets: [], nonCurrentAssets: [], currentLiabilities: [], nonCurrentLiabilities: [], equityCapital: [], equityRetainedEarnings: 0 },
+            is: { revenue: [], cogs: [], genAdminExpenses: [], sellingMarketingExpenses: [], depreciationAmortization: [], otherOperatingExpenses: [], interestExpense: [], taxExpense: [] },
+            totals: {}
         },
-        hasData: false // Flag to indicate if any valid data was loaded
+        hasData: false
     };
     const lang = localStorage.getItem('lang') || 'ar';
-    const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;
+    const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`; // Use brackets for missing keys
     const formatCurrency = (value, decimals = 0) => {
          if (!isFinite(value)) return "N/A";
          const roundedValue = parseFloat(value.toFixed(decimals));
@@ -153,53 +144,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Data Loading and Processing Logic ---
 
-    // Function to process data directly uploaded as statements (from upload.html)
     const processUploadedData = () => {
         try {
-            // *** افتراض: uploadedData هو كائن يحتوي على مصفوفات للحسابات والقيم لكل قسم ***
-            // *** مثال للهيكل المفترض (يجب تعديله ليطابق هيكل upload.html الفعلي): ***
-            /*
-            state.uploadedData = {
-                balanceSheet: {
-                    currentAssets: [ { account: 'النقد', value: 10000 }, ... ],
-                    nonCurrentAssets: [ { account: 'أصول ثابتة', value: 50000 }, ... ],
-                    currentLiabilities: [ { account: 'موردون', value: 5000 }, ... ],
-                    nonCurrentLiabilities: [ { account: 'قرض طويل', value: 20000 }, ... ],
-                    equity: [ { account: 'رأس المال', value: 30000 }, { account: 'أرباح مرحلة', value: 5000 } ] // Assume RE here is *opening* RE
-                },
-                incomeStatement: {
-                    revenue: [ { account: 'إيراد المبيعات', value: 100000 } ],
-                    cogs: [ { account: 'تكلفة البضاعة', value: 40000 } ],
-                    expenses: [
-                        { account: 'مصروف إيجار', value: 5000, type: 'genAdmin' }, // Added 'type' for classification
-                        { account: 'مصروف تسويق', value: 3000, type: 'sellingMarketing' },
-                        { account: 'إهلاك', value: 2000, type: 'depreciation' },
-                        { account: 'فائدة', value: 1000, type: 'interest' },
-                        { account: 'ضريبة', value: 4000, type: 'tax' }
-                    ]
-                }
-            }
-            */
-
-            console.log("Processing data from upload.html...");
+            // *** This section NEEDS to be adapted based on the ACTUAL structure saved by upload.html ***
+            console.log("Processing data from upload.html (Placeholder Logic)...");
             const bsData = state.uploadedData.balanceSheet || {};
             const isData = state.uploadedData.incomeStatement || {};
-            const totals = {}; // Calculate totals based on uploaded data
+            const totals = {};
 
-            // Map Balance Sheet items
+            // Example mapping (replace with actual logic)
             state.statements.bs.currentAssets = bsData.currentAssets || [];
-            state.statements.bs.nonCurrentAssets = bsData.nonCurrentAssets || [];
+            // ... (map other BS sections) ...
+             state.statements.bs.nonCurrentAssets = bsData.nonCurrentAssets || [];
             state.statements.bs.currentLiabilities = bsData.currentLiabilities || [];
             state.statements.bs.nonCurrentLiabilities = bsData.nonCurrentLiabilities || [];
-            // Separate capital and opening RE if possible from uploaded equity structure
             state.statements.bs.equityCapital = bsData.equity?.filter(item => item.account.toLowerCase().includes('capital') || item.account.includes('رأس المال')) || [];
             const openingREItem = bsData.equity?.find(item => item.account.toLowerCase().includes('retained') || item.account.includes('أرباح'));
-            state.statements.bs.equityRetainedEarnings = openingREItem ? openingREItem.value : 0; // Assume 0 if not found
+            state.statements.bs.equityRetainedEarnings = openingREItem ? openingREItem.value : 0;
 
-            // Map Income Statement items
             state.statements.is.revenue = isData.revenue || [];
             state.statements.is.cogs = isData.cogs || [];
-            // Classify expenses based on a 'type' property (assuming upload.html provides it)
+            // ... (map expenses based on assumed 'type' property or other classification logic) ...
             state.statements.is.genAdminExpenses = isData.expenses?.filter(e => e.type === 'genAdmin') || [];
             state.statements.is.sellingMarketingExpenses = isData.expenses?.filter(e => e.type === 'sellingMarketing') || [];
             state.statements.is.depreciationAmortization = isData.expenses?.filter(e => e.type === 'depreciation') || [];
@@ -207,70 +172,58 @@ document.addEventListener('DOMContentLoaded', () => {
             state.statements.is.taxExpense = isData.expenses?.filter(e => e.type === 'tax') || [];
             state.statements.is.otherOperatingExpenses = isData.expenses?.filter(e => !e.type || !['genAdmin', 'sellingMarketing', 'depreciation', 'interest', 'tax'].includes(e.type)) || [];
 
-            // --- Calculate Totals from Uploaded Data ---
-            // Sum function
-            const sumValues = (arr) => arr.reduce((sum, item) => sum + (item.value || 0), 0);
 
+            // Calculate Totals from Uploaded Data
+            const sumValues = (arr) => arr.reduce((sum, item) => sum + (item.value || 0), 0);
             totals.totalCurrentAssets = sumValues(state.statements.bs.currentAssets);
             totals.totalNonCurrentAssets = sumValues(state.statements.bs.nonCurrentAssets);
             totals.totalAssets = totals.totalCurrentAssets + totals.totalNonCurrentAssets;
-
+            // ... (calculate all other totals similarly) ...
             totals.totalCurrentLiabilities = sumValues(state.statements.bs.currentLiabilities);
             totals.totalNonCurrentLiabilities = sumValues(state.statements.bs.nonCurrentLiabilities);
             totals.totalLiabilities = totals.totalCurrentLiabilities + totals.totalNonCurrentLiabilities;
-
             totals.totalRevenue = sumValues(state.statements.is.revenue);
             totals.totalCogs = sumValues(state.statements.is.cogs);
             totals.grossProfit = totals.totalRevenue - totals.totalCogs;
-
             totals.depreciationTotal = sumValues(state.statements.is.depreciationAmortization);
             totals.totalOperatingExpenses = sumValues(state.statements.is.genAdminExpenses) +
                                             sumValues(state.statements.is.sellingMarketingExpenses) +
                                             totals.depreciationTotal +
                                             sumValues(state.statements.is.otherOperatingExpenses);
             totals.operatingProfit = totals.grossProfit - totals.totalOperatingExpenses;
-
             const totalInterest = sumValues(state.statements.is.interestExpense);
             totals.profitBeforeTax = totals.operatingProfit - totalInterest;
             totals.totalTax = sumValues(state.statements.is.taxExpense);
             totals.netProfit = totals.profitBeforeTax - totals.totalTax;
-
             totals.totalEquityCapital = sumValues(state.statements.bs.equityCapital);
-            // Closing Retained Earnings = Opening RE (from uploaded data) + Net Profit
             state.statements.bs.equityRetainedEarnings += totals.netProfit;
             totals.totalEquity = totals.totalEquityCapital + state.statements.bs.equityRetainedEarnings;
             totals.totalLiabilitiesAndEquity = totals.totalLiabilities + totals.totalEquity;
-
-            // Find cash balance if available
-             const cashItem = state.statements.bs.currentAssets.find(item => item.account.toLowerCase().includes('cash') || item.account.includes('نقد') || item.account.includes('bank') || item.account.includes('بنك'));
-             totals.cashEquivalents = cashItem ? cashItem.value : 0;
+            const cashItem = state.statements.bs.currentAssets.find(item => item.account.toLowerCase().includes('cash') || item.account.includes('نقد') || item.account.includes('bank') || item.account.includes('بنك'));
+            totals.cashEquivalents = cashItem ? cashItem.value : 0;
 
 
-            state.statements.totals = totals; // Store calculated totals
-            state.hasData = true;
+            state.statements.totals = totals;
+            state.hasData = true; // Mark that data is now processed
             console.log("Successfully processed data from upload.html");
             return true;
 
         } catch (error) {
             console.error("Error processing uploaded data:", error);
-            // Ensure statements are reset if processing fails
-            state.statements = { bs: { currentAssets: [], nonCurrentAssets: [], currentLiabilities: [], nonCurrentLiabilities: [], equityCapital: [], equityRetainedEarnings: 0 }, is: { revenue: [], cogs: [], genAdminExpenses: [], sellingMarketingExpenses: [], depreciationAmortization: [], otherOperatingExpenses: [], interestExpense: [], taxExpense: [] }, totals: {} };
-            state.hasData = false;
+            state.hasData = false; // Mark failure
             return false;
         }
     };
 
-
-    // Function to build statements from Trial Balance data (original logic, renamed)
+    // Builds statements from Trial Balance (original logic)
     const buildStatementsFromTrialData = () => {
-        // ... (الكود الكامل للدالة buildStatements الأصلية من الرد السابق - لا تغيير هنا) ...
-        // Reset statement data first
+        // ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ...
         state.statements = {
             bs: { currentAssets: [], nonCurrentAssets: [], currentLiabilities: [], nonCurrentLiabilities: [], equityCapital: [], equityRetainedEarnings: 0 },
             is: { revenue: [], cogs: [], genAdminExpenses: [], sellingMarketingExpenses: [], depreciationAmortization: [], otherOperatingExpenses: [], interestExpense: [], taxExpense: [] },
             totals: {}
         };
-        const totals = state.statements.totals; // Shortcut
+        const totals = state.statements.totals;
 
         state.trialData.forEach(row => {
             const value = (parseFloat(row.Debit) || 0) - (parseFloat(row.Credit) || 0);
@@ -280,7 +233,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const account = row.Account || 'Unknown';
 
             if (mainType.includes('الأصول') || mainType.includes('Assets')) {
-                const item = { account, value };
+                const item = { account, value }; // Store calculated balance value
                 if (subType.includes('متداول') || subType.includes('Current')) {
                     state.statements.bs.currentAssets.push(item);
                     if (accountName.includes('cash') || accountName.includes('نقد') || accountName.includes('bank') || accountName.includes('بنك')) {
@@ -355,15 +308,17 @@ document.addEventListener('DOMContentLoaded', () => {
         totals.totalEquity = totals.totalEquityCapital + state.statements.bs.equityRetainedEarnings;
         totals.totalLiabilitiesAndEquity = totals.totalLiabilities + totals.totalEquity;
 
-        state.statements.totals = totals; // Store calculated totals
+        state.statements.totals = totals;
+        state.hasData = true; // Mark data as processed
         console.log("Processed Statements Data from Trial Balance:", state.statements);
         console.log("Calculated Totals from Trial Balance:", totals);
     };
 
     // Main function to load data from either source
     const loadDataAndPrepareStatements = () => {
-        const uploadedDataString = localStorage.getItem('uploadedFinancialData'); // Try uploaded data first
+        const uploadedDataString = localStorage.getItem('uploadedFinancialData');
         const trialDataString = localStorage.getItem('trialData');
+        state.hasData = false; // Reset flag
 
         if (uploadedDataString) {
             try {
@@ -372,24 +327,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (processUploadedData()) { // Try processing it
                      return true; // Success using uploaded data
                 } else {
-                     state.uploadedData = null; // Processing failed, clear it
+                     state.uploadedData = null;
                      console.warn("Processing uploadedFinancialData failed, falling back to trialData.");
                 }
             } catch (e) {
                 console.error("Error parsing uploadedFinancialData:", e);
-                state.uploadedData = null; // Parsing failed
+                state.uploadedData = null;
             }
         }
         
-        // If uploaded data not found, failed parsing, or failed processing, try trialData
         if (trialDataString) {
              try {
                 state.trialData = JSON.parse(trialDataString);
-                 if (state.trialData.length > 0 && !(state.trialData.length === 1 && !state.trialData[0].Account && !toNum(state.trialData[0].Debit) && !toNum(state.trialData[0].Credit))) { // Check if not empty/invalid
+                 // More robust check for empty/invalid trialData
+                 if (Array.isArray(state.trialData) && state.trialData.length > 0 && !(state.trialData.length === 1 && !state.trialData[0].Account && !toNum(state.trialData[0].Debit) && !toNum(state.trialData[0].Credit))) {
                     console.log("Found trialData from input.html, building statements...");
                     buildStatementsFromTrialData(); // Build from trial data
-                    state.hasData = true; // Set flag
-                     return true; // Success using trial data
+                    return true; // Success using trial data (hasData is set inside buildStatementsFromTrialData)
                  } else {
                      console.warn("trialData found but is empty or invalid.");
                  }
@@ -399,21 +353,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         console.warn("No valid data found from input.html or upload.html");
-        state.hasData = false; // Ensure flag is false
         return false; // No data found
     };
 
 
     // --- Rendering Functions --- (No changes needed in these)
-    const renderStatementSection = (items, sectionTitle, totalLabel, cssClass = '', decimals = 0) => {
+    const renderStatementSection = (items = [], sectionTitle, totalLabel, cssClass = '', decimals = 0) => { // Added default empty array
         // ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ...
         let sectionTotal = 0;
         let html = '';
+        // Ensure items is an array before trying to iterate or check length
+        if (!Array.isArray(items)) items = []; 
         if (items.length > 0 || sectionTitle) { 
             html += `<tr class="section-header ${cssClass}"><td colspan="2"><strong>${sectionTitle || ''}</strong></td></tr>`;
         }
         items.forEach(item => {
-            // Ensure item.value exists and is a number before formatting
             const valueToFormat = typeof item.value === 'number' ? item.value : 0;
             html += `<tr><td class="ps-3">${item.account}</td><td class="text-end">${formatCurrency(valueToFormat, decimals)}</td></tr>`;
             sectionTotal += valueToFormat;
@@ -425,6 +379,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const renderBalanceSheet = () => { /* ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ... */ 
         const { bs, totals } = state.statements;
+        // Check if totals object exists before trying to access its properties
+        if (!totals) { console.error("Totals not calculated for Balance Sheet."); return; }
         let html = '<table class="table table-sm report-table"><tbody>';
         const currentAssetsHtml = renderStatementSection(bs.currentAssets, t_page('currentAssets'), t_page('totalCurrentAssets'), 'assets-section');
         const nonCurrentAssetsHtml = renderStatementSection(bs.nonCurrentAssets, t_page('nonCurrentAssets'), t_page('totalNonCurrentAssets'), 'assets-section');
@@ -443,13 +399,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const bsTableElement = document.getElementById('balanceSheetTable');
         if (bsTableElement) bsTableElement.innerHTML = html;
 
-        const diff = totals.totalAssets - totals.totalLiabilitiesAndEquity;
+        const diff = (totals.totalAssets || 0) - (totals.totalLiabilitiesAndEquity || 0); // Add fallback for undefined totals
         const comment = Math.abs(diff) < 1 ? t_page('bs_comment_balanced') : t_page('bs_comment_unbalanced').replace('{diff}', formatCurrency(diff));
         const bsCommentElement = document.getElementById('balanceSheetComment');
         if(bsCommentElement) bsCommentElement.textContent = comment;
     };
     const renderIncomeStatement = () => { /* ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ... */
         const { is: income, totals } = state.statements;
+        if (!totals) { console.error("Totals not calculated for Income Statement."); return; }
         let html = '<table class="table table-sm report-table"><tbody>';
         const revenueHtml = renderStatementSection(income.revenue, null, t_page('revenue'), '', 2);
         const cogsHtml = renderStatementSection(income.cogs, null, `(-) ${t_page('cogs')}`, '', 2);
@@ -482,7 +439,8 @@ document.addEventListener('DOMContentLoaded', () => {
      };
     const renderCashFlowStatement = () => { /* ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ... */ 
         const { totals } = state.statements;
-        const netProfit = totals.netProfit;
+        if (!totals) { console.error("Totals not calculated for Cash Flow Statement."); return; }
+        const netProfit = totals.netProfit || 0;
         const depreciation = totals.depreciationTotal || 0; 
         const cashFromOps = netProfit + depreciation; 
         const cashFromInvesting = -depreciation; 
@@ -520,13 +478,17 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const renderEquityStatement = () => { /* ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ... */
         const { bs, totals } = state.statements;
-        const openingCapital = totals.totalEquityCapital; 
-        const openingRE = bs.equityRetainedEarnings - totals.netProfit; 
+        if (!totals) { console.error("Totals not calculated for Equity Statement."); return; }
+        const openingCapital = totals.totalEquityCapital || 0; 
+        const netProfit = totals.netProfit || 0;
+        // Calculate opening RE if possible
+        const openingRE = (typeof bs.equityRetainedEarnings === 'number' && typeof netProfit === 'number') 
+                          ? bs.equityRetainedEarnings - netProfit 
+                          : 0; // Default to 0 if calculation isn't possible
         const openingTotalEquity = openingCapital + openingRE;
-        const netProfit = totals.netProfit;
         const closingCapital = openingCapital; 
         const closingRE = bs.equityRetainedEarnings; 
-        const closingTotalEquity = totals.totalEquity; 
+        const closingTotalEquity = totals.totalEquity || 0; 
 
         let html = `<table class="table table-sm report-table">`;
         html += `<tbody>`;
@@ -542,13 +504,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Initialization ---
     const init = () => {
+        console.log("[DEBUG] Initializing report page..."); // Added log
+        const noDataWarningElement = document.getElementById('noDataWarning');
+
         // Load libraries first
         loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js", () => {
-            loadScript("https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js", () => {
-                const noDataWarningElement = document.getElementById('noDataWarning');
+            loadScript("https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js", () => {
+                console.log("[DEBUG] External libraries loaded."); // Added log
                 
                 // Try loading data and preparing statements
                 if (loadDataAndPrepareStatements()) {
+                    console.log("[DEBUG] Data loaded successfully. Rendering statements..."); // Added log
                     // If successful, render the statements
                     renderBalanceSheet();
                     renderIncomeStatement();
@@ -556,13 +522,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     renderEquityStatement();
                     // Hide the no-data warning if it exists
                     if(noDataWarningElement) noDataWarningElement.style.display = 'none';
+                    // Show statement sections (in case they were hidden)
+                     ['balanceSheetCard', 'incomeStatementCard', 'cashFlowStatementCard', 'equityStatementCard'].forEach(id => {
+                        const card = document.getElementById(id);
+                        if (card) card.style.display = 'block';
+                     });
                 } else {
+                    console.log("[DEBUG] Failed to load data. Showing warning."); // Added log
                     // If loading failed, show the no-data warning
                      if(noDataWarningElement) {
                          noDataWarningElement.textContent = t_page('noDataMessage'); // Use translated message
                          noDataWarningElement.style.display = 'block';
                      }
-                     // Optionally hide statement sections
+                     // Hide statement sections
                      ['balanceSheetCard', 'incomeStatementCard', 'cashFlowStatementCard', 'equityStatementCard'].forEach(id => {
                         const card = document.getElementById(id);
                         if (card) card.style.display = 'none';
@@ -573,7 +545,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const exportPdfBtn = document.getElementById('exportPdfBtn');
                 if (exportPdfBtn) {
                      exportPdfBtn.addEventListener('click', () => {
-                        if (!state.hasData) { alert(t_page('noDataMessage')); return; } // Prevent export if no data
+                        if (!state.hasData) { alert(t_page('noDataMessage')); return; } 
                         const element = document.getElementById('report-content');
                          if (typeof html2pdf === 'function') {
                              const opt = { margin: 0.5, filename: 'Financial_Report.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
@@ -585,7 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const exportExcelBtn = document.getElementById('exportExcelBtn');
                 if (exportExcelBtn) {
                      exportExcelBtn.addEventListener('click', () => {
-                        if (!state.hasData) { alert(t_page('noDataMessage')); return; } // Prevent export if no data
+                        if (!state.hasData) { alert(t_page('noDataMessage')); return; } 
                          if (typeof XLSX === 'undefined') { console.error("XLSX library not loaded."); alert("Excel export failed."); return; }
                          try {
                              const wb = XLSX.utils.book_new();
@@ -595,47 +567,51 @@ document.addEventListener('DOMContentLoaded', () => {
                                  if (!rows) return data;
                                  rows.forEach(row => {
                                      const rowData = [];
-                                     // Exclude header rows if needed (or handle colspan) - basic extraction for now
                                      if(row.cells.length === 2 && !row.classList.contains('section-header')) { 
                                          row.querySelectorAll('td').forEach(cell => {
                                              let cellValue = cell.textContent.trim();
                                              const numValue = parseFloat(cellValue.replace(/[,()]/g, '')); 
-                                             // Heuristic to decide if it's a number - might need refinement
                                              if (!isNaN(numValue) && (cellValue.match(/[\d,.-]+/) || cellValue === '0')) { 
                                                  rowData.push(numValue);
                                              } else {
-                                                 // Clean up labels slightly for Excel
                                                  rowData.push(cellValue.replace(/[\(\)\-\+:]/g, '').replace(/^[ \t]+|[ \t]+$/g,'').trim()); 
                                              }
                                          });
                                           if (rowData.length > 0) data.push(rowData);
-                                     } else if (row.cells.length === 1 || row.classList.contains('section-header')){
-                                        // Handle section headers or single cell rows if needed
+                                     } else if (row.cells.length > 0 && (row.classList.contains('section-header') || row.classList.contains('total-row') || row.classList.contains('subtotal-row'))) {
+                                        // Handle headers/totals spanning one effective column visually
                                         rowData.push(row.cells[0].textContent.trim().replace(/[\(\)\-\+:]/g, ''));
+                                        if (row.cells.length > 1) { // Add value if it exists (for totals)
+                                            let cellValue = row.cells[1].textContent.trim();
+                                            const numValue = parseFloat(cellValue.replace(/[,()]/g, '')); 
+                                            if (!isNaN(numValue) && (cellValue.match(/[\d,.-]+/) || cellValue === '0')) {
+                                                rowData.push(numValue);
+                                            } else {
+                                                rowData.push(cellValue); // Push as text if not clearly a number
+                                            }
+                                        }
                                         if (rowData.length > 0) data.push(rowData);
                                      }
                                  });
                                  return data;
-                             };
-                             const addSheet = (tableId, sheetName) => { /* ... (same as before) ... */ 
+                            };
+                             const addSheet = (tableId, sheetName) => { /* ... (same as before, consider improving auto-width) ... */ 
                                  const table = document.getElementById(tableId);
                                  if (table) {
                                      const tableData = extractTableData(table);
                                      if (tableData.length > 0) {
                                          const ws = XLSX.utils.aoa_to_sheet(tableData);
-                                         // Auto-fit columns (basic example)
-                                         const cols = Object.keys(ws).filter(k => k[0] !== '!').map(k => k.replace(/\d+/,''));
-                                         const colWidths = cols.reduce((acc, c) => {
-                                             if (!acc[c]) acc[c] = {wch: 0};
-                                             const cellRef = Object.keys(ws).find(k => k.replace(/\d+/,'') === c && k[0] !== '!');
-                                             if (cellRef) {
-                                                 const cellValue = ws[cellRef]?.v?.toString() || '';
-                                                 const width = cellValue.length + 2; // Add padding
-                                                 if (width > acc[c].wch) acc[c].wch = width;
-                                             }
-                                             return acc;
-                                         }, {});
-                                         ws['!cols'] = Object.values(colWidths);
+                                         // Basic auto-width (adjust as needed)
+                                          const colWidths = tableData.reduce((acc, row) => {
+                                                row.forEach((cell, i) => {
+                                                    const len = cell?.toString().length || 5;
+                                                    if (!acc[i] || len > acc[i]) {
+                                                        acc[i] = len;
+                                                    }
+                                                });
+                                                return acc;
+                                            }, []).map(w => ({ wch: w + 2 })); // Add padding
+                                          ws['!cols'] = colWidths;
 
                                          XLSX.utils.book_append_sheet(wb, ws, sheetName);
                                      } else { console.warn(`No data extracted from table: ${tableId}`); }
@@ -653,6 +629,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      });
                 } else { console.warn("Export Excel button not found"); }
 
+                console.log("[DEBUG] Report page initialization complete."); // Added log
             });
         });
     };
@@ -660,20 +637,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Helper function to load scripts
     const loadScript = (src, callback) => {
         let script = document.querySelector(`script[src="${src}"]`);
-        if (script) { // If already loaded or loading
+        if (script) {
             if (script.dataset.loaded === 'true') {
-                 callback(); // Already loaded, run callback immediately
+                 callback(); 
             } else {
-                 script.addEventListener('load', callback); // Wait for existing script to load
+                 script.addEventListener('load', callback); 
                  script.addEventListener('error', () => console.error(`Failed to load script: ${src}`));
             }
             return;
         }
-        // If not loaded, create and append
         script = document.createElement('script');
         script.src = src;
         script.onload = () => {
-            script.dataset.loaded = 'true'; // Mark as loaded
+            script.dataset.loaded = 'true'; 
             callback();
         };
         script.onerror = () => console.error(`Failed to load script: ${src}`);
