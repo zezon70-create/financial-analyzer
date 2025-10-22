@@ -1,4 +1,4 @@
-// js/report-app.js (Enhanced processing + Dual Source Input Logic + Source Selector)
+// js/report-app.js (Enhanced processing + Dual Source Input Logic + Source Selector + Simplified Init)
 
 window.pageTranslations = {
     ar: {
@@ -17,7 +17,6 @@ window.pageTranslations = {
         // *** نهاية الإضافة ***
         // BS Translations
         bsTitle: "قائمة المركز المالي",
-        // ... (باقي الترجمات العربية كما هي من الكود السابق) ...
         bsSubheader: "تعرض أصول الشركة وخصومها وحقوق ملكيتها في تاريخ محدد.",
         assets: "الأصول",
         currentAssets: "الأصول المتداولة",
@@ -130,22 +129,18 @@ window.pageTranslations = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("[DEBUG] report-app.js script started execution.");
+    console.log("[DEBUG] report-app.js script started execution."); // Log start
 
     const state = {
         trialData: [],
         uploadedData: null,
-        statements: {
-            bs: { currentAssets: [], nonCurrentAssets: [], currentLiabilities: [], nonCurrentLiabilities: [], equityCapital: [], equityRetainedEarnings: 0 },
-            is: { revenue: [], cogs: [], genAdminExpenses: [], sellingMarketingExpenses: [], depreciationAmortization: [], otherOperatingExpenses: [], interestExpense: [], taxExpense: [] },
-            totals: {}
-        },
+        statements: { /* Initial structure */ }, // Will be populated
         hasData: false
     };
     const lang = localStorage.getItem('lang') || 'ar';
     const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;
-    const formatCurrency = (value, decimals = 0) => {
-         if (!isFinite(value)) return "N/A";
+    const formatCurrency = (value, decimals = 0) => { /* ... (same as before) ... */
+        if (!isFinite(value)) return "N/A";
          const roundedValue = parseFloat(value.toFixed(decimals));
          if (Math.abs(roundedValue) < Math.pow(10, -decimals) && roundedValue < 0) {
               return (0).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
@@ -155,22 +150,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Data Loading and Processing Logic ---
 
-    const processUploadedData = () => {
-        // ... (نفس الكود من الرد السابق - يحتاج لتعديل حسب هيكل upload.html الفعلي) ...
-         try {
+    const processUploadedData = () => { /* ... (Placeholder - Needs implementation based on upload.html) ... */
+        try {
             console.log("Processing data from upload.html (Placeholder Logic)...");
+            // *** This section NEEDS to be adapted based on the ACTUAL structure saved by upload.html ***
             const bsData = state.uploadedData.balanceSheet || {};
             const isData = state.uploadedData.incomeStatement || {};
-            const totals = {}; 
+            const totals = {};
+            state.statements = { // Reset before filling
+                bs: { currentAssets: [], nonCurrentAssets: [], currentLiabilities: [], nonCurrentLiabilities: [], equityCapital: [], equityRetainedEarnings: 0 },
+                is: { revenue: [], cogs: [], genAdminExpenses: [], sellingMarketingExpenses: [], depreciationAmortization: [], otherOperatingExpenses: [], interestExpense: [], taxExpense: [] },
+                totals: {}
+            };
 
+            // Map Balance Sheet items
             state.statements.bs.currentAssets = bsData.currentAssets || [];
             state.statements.bs.nonCurrentAssets = bsData.nonCurrentAssets || [];
             state.statements.bs.currentLiabilities = bsData.currentLiabilities || [];
             state.statements.bs.nonCurrentLiabilities = bsData.nonCurrentLiabilities || [];
             state.statements.bs.equityCapital = bsData.equity?.filter(item => item.account.toLowerCase().includes('capital') || item.account.includes('رأس المال')) || [];
             const openingREItem = bsData.equity?.find(item => item.account.toLowerCase().includes('retained') || item.account.includes('أرباح'));
-            state.statements.bs.equityRetainedEarnings = openingREItem ? openingREItem.value : 0; 
+            state.statements.bs.equityRetainedEarnings = openingREItem ? openingREItem.value : 0;
 
+            // Map Income Statement items
             state.statements.is.revenue = isData.revenue || [];
             state.statements.is.cogs = isData.cogs || [];
             state.statements.is.genAdminExpenses = isData.expenses?.filter(e => e.type === 'genAdmin') || [];
@@ -180,6 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
             state.statements.is.taxExpense = isData.expenses?.filter(e => e.type === 'tax') || [];
             state.statements.is.otherOperatingExpenses = isData.expenses?.filter(e => !e.type || !['genAdmin', 'sellingMarketing', 'depreciation', 'interest', 'tax'].includes(e.type)) || [];
 
+            // Calculate Totals from Uploaded Data
             const sumValues = (arr) => arr.reduce((sum, item) => sum + (item.value || 0), 0);
             totals.totalCurrentAssets = sumValues(state.statements.bs.currentAssets);
             totals.totalNonCurrentAssets = sumValues(state.statements.bs.nonCurrentAssets);
@@ -208,7 +211,6 @@ document.addEventListener('DOMContentLoaded', () => {
             state.hasData = true;
             console.log("Successfully processed data from upload.html");
             return true;
-
         } catch (error) {
             console.error("Error processing uploaded data:", error);
             state.hasData = false;
@@ -217,8 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // Builds statements from Trial Balance
-    const buildStatementsFromTrialData = () => {
-        // ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ...
+    const buildStatementsFromTrialData = () => { /* ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ... */
         state.statements = {
             bs: { currentAssets: [], nonCurrentAssets: [], currentLiabilities: [], nonCurrentLiabilities: [], equityCapital: [], equityRetainedEarnings: 0 },
             is: { revenue: [], cogs: [], genAdminExpenses: [], sellingMarketingExpenses: [], depreciationAmortization: [], otherOperatingExpenses: [], interestExpense: [], taxExpense: [] },
@@ -309,75 +310,68 @@ document.addEventListener('DOMContentLoaded', () => {
         totals.totalLiabilitiesAndEquity = totals.totalLiabilities + totals.totalEquity;
 
         state.statements.totals = totals;
-        state.hasData = true; 
+        state.hasData = true;
         console.log("Processed Statements Data from Trial Balance:", state.statements);
         console.log("Calculated Totals from Trial Balance:", totals);
-        return true; // Indicate success
+        return true;
     };
 
     // Main function to load data based on selected source
     const loadDataAndPrepareStatements = () => {
-        state.hasData = false; // Reset flag
-        const selectedSource = document.querySelector('input[name="dataSource"]:checked')?.value;
-        console.log(`[DEBUG] Selected data source: ${selectedSource}`); // Log selected source
+        state.hasData = false; // Reset flag each time
+        // *** تحديد المصدر المختار من أزرار الراديو ***
+        const selectedSource = document.querySelector('input[name="dataSource"]:checked')?.value || 'trialData'; // Default to trialData if none selected
+        console.log(`[DEBUG] Selected data source: ${selectedSource}`);
 
         if (selectedSource === 'uploadedData') {
             const uploadedDataString = localStorage.getItem('uploadedFinancialData');
             if (uploadedDataString) {
                 try {
                     state.uploadedData = JSON.parse(uploadedDataString);
-                    // *** Basic check if uploadedData seems valid (at least has bs or is) ***
-                    if (state.uploadedData && (state.uploadedData.balanceSheet || state.uploadedData.incomeStatement)) {
+                    if (state.uploadedData && (state.uploadedData.balanceSheet || state.uploadedData.incomeStatement)) { // Basic validation
                         console.log("Found potentially valid pre-formatted data from upload.html");
-                        if (processUploadedData()) { // Try processing it
-                             return true; // Success using uploaded data
-                        } else {
-                             state.uploadedData = null;
-                             console.warn("Processing uploadedFinancialData failed.");
-                             return false; // Processing failed
-                        }
+                        return processUploadedData(); // Attempt to process
                     } else {
                          console.warn("uploadedFinancialData found but seems invalid or empty.");
-                         state.uploadedData = null;
                          return false;
                     }
                 } catch (e) {
                     console.error("Error parsing uploadedFinancialData:", e);
-                    state.uploadedData = null;
-                    return false; // Parsing failed
+                    state.uploadedData = null; // Clear invalid data
+                    return false;
                 }
             } else {
                 console.warn("Selected source is 'uploadedData', but 'uploadedFinancialData' not found in localStorage.");
-                return false; // Selected source data not found
+                return false;
             }
-        } else { // Default or selected 'trialData'
+        } else { // Handle 'trialData' source
             const trialDataString = localStorage.getItem('trialData');
             if (trialDataString) {
                  try {
                     state.trialData = JSON.parse(trialDataString);
                      if (Array.isArray(state.trialData) && state.trialData.length > 0 && !(state.trialData.length === 1 && !state.trialData[0].Account && !toNum(state.trialData[0].Debit) && !toNum(state.trialData[0].Credit))) {
                         console.log("Found trialData from input.html, building statements...");
-                        buildStatementsFromTrialData(); // Build from trial data
-                        return state.hasData; // Return the flag set inside buildStatementsFromTrialData
+                        return buildStatementsFromTrialData(); // Build from trial data
                      } else {
                          console.warn("trialData found but is empty or invalid.");
+                         state.trialData = []; // Clear invalid data
                          return false;
                      }
                 } catch(e) {
                      console.error("Error parsing trialData:", e);
+                     state.trialData = []; // Clear invalid data
                      return false;
                 }
             } else {
                 console.warn("Selected source is 'trialData', but 'trialData' not found in localStorage.");
-                return false; // Selected source data not found
+                return false;
             }
         }
     };
 
 
     // --- Rendering Functions --- (No changes needed)
-    const renderStatementSection = (items = [], sectionTitle, totalLabel, cssClass = '', decimals = 0) => {
-        // ... (Code from previous working version) ...
+    const renderStatementSection = (items = [], sectionTitle, totalLabel, cssClass = '', decimals = 0) => { /* ... (Code from previous working version) ... */
         let sectionTotal = 0;
         let html = '';
         if (!Array.isArray(items)) items = [];
@@ -394,9 +388,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         return { html, total: sectionTotal };
     };
-    const renderBalanceSheet = () => { /* ... (Code from previous working version) ... */ 
+    const renderBalanceSheet = () => { /* ... (Code from previous working version) ... */
         const { bs, totals } = state.statements;
-        if (!totals || !bs) { console.error("Statement data incomplete for Balance Sheet rendering."); return; } // Add check
+        if (!totals || !bs) { console.error("Statement data incomplete for Balance Sheet rendering."); return; }
         let html = '<table class="table table-sm report-table"><tbody>';
         const currentAssetsHtml = renderStatementSection(bs.currentAssets, t_page('currentAssets'), t_page('totalCurrentAssets'), 'assets-section');
         const nonCurrentAssetsHtml = renderStatementSection(bs.nonCurrentAssets, t_page('nonCurrentAssets'), t_page('totalNonCurrentAssets'), 'assets-section');
@@ -421,7 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     const renderIncomeStatement = () => { /* ... (Code from previous working version) ... */
         const { is: income, totals } = state.statements;
-        if (!totals || !income) { console.error("Statement data incomplete for Income Statement rendering."); return; } // Add check
+        if (!totals || !income) { console.error("Statement data incomplete for Income Statement rendering."); return; }
         let html = '<table class="table table-sm report-table"><tbody>';
         const revenueHtml = renderStatementSection(income.revenue, null, t_page('revenue'), '', 2);
         const cogsHtml = renderStatementSection(income.cogs, null, `(-) ${t_page('cogs')}`, '', 2);
@@ -451,7 +445,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const isCommentElement = document.getElementById('incomeStatementComment');
         if(isCommentElement) isCommentElement.textContent = comment;
      };
-    const renderCashFlowStatement = () => { /* ... (Code from previous working version) ... */ 
+    const renderCashFlowStatement = () => { /* ... (Code from previous working version) ... */
         const { totals } = state.statements;
         if (!totals) { console.error("Totals not calculated for Cash Flow Statement."); return; }
         const netProfit = totals.netProfit || 0;
@@ -517,15 +511,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const reloadAndRenderData = () => {
         console.log("[DEBUG] Reloading and rendering data based on selection.");
         const noDataWarningElement = document.getElementById('noDataWarning');
-        // Hide previous statements while loading
+        // Hide previous statements and warning while loading
         ['balanceSheetCard', 'incomeStatementCard', 'cashFlowStatementCard', 'equityStatementCard'].forEach(id => {
             const card = document.getElementById(id);
             if (card) card.style.display = 'none';
          });
-         if(noDataWarningElement) noDataWarningElement.style.display = 'none'; // Hide warning initially
+         if(noDataWarningElement) noDataWarningElement.style.display = 'none';
 
-        if (loadDataAndPrepareStatements()) {
+        if (loadDataAndPrepareStatements()) { // Load data based on selection
             console.log("[DEBUG] Data loaded successfully. Rendering statements...");
+            // Render statements if data loaded
             renderBalanceSheet();
             renderIncomeStatement();
             renderCashFlowStatement();
@@ -537,14 +532,16 @@ document.addEventListener('DOMContentLoaded', () => {
              });
         } else {
             console.log("[DEBUG] Failed to load data. Showing warning.");
+             // Show warning if no data found for selected source
              if(noDataWarningElement) {
                  noDataWarningElement.textContent = t_page('noDataMessage');
                  noDataWarningElement.style.display = 'block';
              }
              // Keep statement sections hidden
         }
-         // Re-apply translations if needed (might be redundant if main.js handles it well)
+         // Re-apply translations after rendering attempt
          if (typeof window.applyTranslations === 'function') {
+            console.log("Applying translations after render attempt...");
             window.applyTranslations();
          }
     }
@@ -552,32 +549,28 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Initialization ---
     const init = () => {
         console.log("[DEBUG] Initializing report page...");
-        let librariesLoadedCount = 0;
-        const totalLibraries = 2; // html2pdf and xlsx
+        // Directly call the main logic
+        reloadAndRenderData(); // Initial load and render based on default selection
 
-        // Function to run main logic after libraries attempt to load
-        const runMainLogic = () => {
-            console.log("[DEBUG] External libraries check complete. Proceeding...");
-            reloadAndRenderData(); // Initial load and render
+        // Attach export button listeners
+        const exportPdfBtn = document.getElementById('exportPdfBtn');
+        if (exportPdfBtn) {
+             exportPdfBtn.addEventListener('click', () => {
+                if (!state.hasData) { alert(t_page('noDataMessage')); return; }
+                // Check if library loaded *now* (using optional chaining)
+                if (typeof html2pdf === 'function') {
+                    const element = document.getElementById('report-content');
+                    const opt = { margin: 0.5, filename: 'Financial_Report.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
+                    html2pdf().from(element).set(opt).save();
+                } else { console.error("html2pdf library might not be loaded yet."); alert("PDF export failed. Please try again shortly."); }
+             });
+        } else { console.warn("Export PDF button not found"); }
 
-            // Attach export button listeners
-            const exportPdfBtn = document.getElementById('exportPdfBtn');
-            if (exportPdfBtn) {
-                 exportPdfBtn.addEventListener('click', () => {
-                    if (!state.hasData) { alert(t_page('noDataMessage')); return; }
-                    if (typeof html2pdf === 'function') {
-                        const element = document.getElementById('report-content');
-                        const opt = { margin: 0.5, filename: 'Financial_Report.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
-                        html2pdf().from(element).set(opt).save();
-                    } else { console.error("html2pdf library is not loaded."); alert("PDF export failed."); }
-                 });
-            } else { console.warn("Export PDF button not found"); }
-
-            const exportExcelBtn = document.getElementById('exportExcelBtn');
-            if (exportExcelBtn) {
-                 exportExcelBtn.addEventListener('click', () => {
-                    if (!state.hasData) { alert(t_page('noDataMessage')); return; }
-                     if (typeof XLSX === 'undefined') { console.error("XLSX library not loaded."); alert("Excel export failed."); return; }
+        const exportExcelBtn = document.getElementById('exportExcelBtn');
+        if (exportExcelBtn) {
+             exportExcelBtn.addEventListener('click', () => {
+                if (!state.hasData) { alert(t_page('noDataMessage')); return; }
+                 if (typeof XLSX !== 'undefined') { // Check if library loaded *now*
                      try {
                          const wb = XLSX.utils.book_new();
                          const extractTableData = (tableElement) => { /* ... (same as before) ... */
@@ -637,45 +630,34 @@ document.addEventListener('DOMContentLoaded', () => {
                          if (wb.SheetNames.length > 0) { XLSX.writeFile(wb, "Financial_Statements.xlsx"); }
                          else { alert("No data found to export to Excel."); }
                      } catch (error) { console.error("Error generating Excel file:", error); alert("Error generating Excel file."); }
-                 });
-            } else { console.warn("Export Excel button not found"); }
+                 } else { console.error("XLSX library might not be loaded yet."); alert("Excel export failed. Please try again shortly."); }
+             });
+        } else { console.warn("Export Excel button not found"); }
 
-            // *** مُضاف: مستمع حدث لأزرار اختيار المصدر ***
-            document.querySelectorAll('input[name="dataSource"]').forEach(radio => {
-                radio.addEventListener('change', reloadAndRenderData); // Reload data when selection changes
-            });
-            // *** نهاية الإضافة ***
+        // *** مُضاف: مستمع حدث لأزرار اختيار المصدر ***
+        document.querySelectorAll('input[name="dataSource"]').forEach(radio => {
+            radio.addEventListener('change', reloadAndRenderData); // Reload data when selection changes
+        });
+        // *** نهاية الإضافة ***
 
-            // Apply translations initially
-            if (typeof window.applyTranslations === 'function') {
-                console.log("Applying initial translations...");
-                window.applyTranslations();
-            } else { console.warn("applyTranslations function not found."); }
+        // Apply translations initially
+        if (typeof window.applyTranslations === 'function') {
+            console.log("Applying initial translations...");
+            window.applyTranslations();
+        } else { console.warn("applyTranslations function not found."); }
 
-            console.log("[DEBUG] Report page initialization complete.");
-        };
+        console.log("[DEBUG] Report page initialization complete.");
 
-        // Function called after each library load attempt
-        const libraryLoadAttemptDone = () => {
-            librariesLoadedCount++;
-            if (librariesLoadedCount === totalLibraries) {
-                runMainLogic(); // Run main logic only after both attempts are done
-            }
-        };
+    }; // End of simplified init
 
-        // Load libraries asynchronously
-        loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js", libraryLoadAttemptDone, libraryLoadAttemptDone); // Call done on success or error
-        loadScript("https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js", libraryLoadAttemptDone, libraryLoadAttemptDone); // Call done on success or error
-
-    };
-
-    // Helper function to load scripts
+    // *** Keep loadScript function for potential future use (though not called by simplified init) ***
     const loadScript = (src, onload, onerror) => {
+        // ... (Code for loadScript remains the same) ...
         let script = document.querySelector(`script[src="${src}"]`);
         if (script) {
             if (script.dataset.loaded === 'true') { onload(); }
-            else if (script.dataset.loaded === 'false') { onerror(); } 
-            else { 
+            else if (script.dataset.loaded === 'false') { onerror(); }
+            else {
                  script.addEventListener('load', onload);
                  script.addEventListener('error', onerror);
             }
@@ -683,11 +665,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         script = document.createElement('script');
         script.src = src;
-        script.async = true; 
+        script.async = true;
         script.onload = () => { script.dataset.loaded = 'true'; onload(); };
         script.onerror = () => { script.dataset.loaded = 'false'; console.error(`Failed to load script: ${src}`); onerror(); };
         document.head.appendChild(script);
     };
 
     init(); // Start the initialization process
-});
+
+}); // End of DOMContentLoaded listener
