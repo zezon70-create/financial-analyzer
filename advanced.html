@@ -7,7 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-theme="light">
@@ -62,15 +63,30 @@
                     </div> 
                     <aside class="col-lg-4"> 
                         <div class="analysis-sidebar"> 
-                            <div class="card-surface"> 
-                                <h5 data-translate-key="summaryTitle"></h5> 
+                            <div class="card-surface mb-4">  <h5 data-translate-key="summaryTitle"></h5> 
                                 <div id="smartSummary" class="analysis-comment"></div> 
                             </div> 
-                            <div class="card-surface"> 
-                                <h5 data-translate-key="alertsTitle"></h5> 
+                            <div class="card-surface mb-4">  <h5 data-translate-key="alertsTitle"></h5> 
                                 <div id="alertsArea" class="small text-muted"></div> 
                             </div> 
-                        </div> 
+
+                            <div class="card-surface">
+                                <h6 data-translate-key="externalInputsTitle"><i class="bi bi-input-cursor-text me-2"></i><span data-translate-key="externalInputsTitle"></span></h6>
+                                <div class="mb-2">
+                                    <label for="externalNumShares" class="form-label small mb-1" data-translate-key="labelNumShares"></label>
+                                    <input type="number" class="form-control form-control-sm" id="externalNumShares" placeholder="e.g., 1000000">
+                                </div>
+                                <div class="mb-2">
+                                    <label for="externalMarketPrice" class="form-label small mb-1" data-translate-key="labelMarketPrice"></label>
+                                    <input type="number" step="any" class="form-control form-control-sm" id="externalMarketPrice" placeholder="e.g., 25.50">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="externalTotalDividends" class="form-label small mb-1" data-translate-key="labelTotalDividends"></label>
+                                    <input type="number" class="form-control form-control-sm" id="externalTotalDividends" placeholder="e.g., 50000">
+                                </div>
+                                <button id="updateValuationRatios" class="btn btn-secondary btn-sm w-100" data-translate-key="btnUpdateValuation"><i class="bi bi-calculator me-1"></i><span data-translate-key="btnUpdateValuation"></span></button>
+                            </div>
+                            </div> 
                     </aside> 
                 </div> 
             </div>
