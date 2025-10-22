@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         marketPrice: document.getElementById('marketPrice'),
         outstandingShares: document.getElementById('outstandingShares'),
         dividendsPaid: document.getElementById('dividendsPaid'),
-        // ... (File Upload UI as before) ...
+        // --- File Upload UI ---
         fileDropArea: document.getElementById('fileDropArea'),
         fileUploader: document.getElementById('fileUploader'),
         browseButton: document.getElementById('browseButton'),
@@ -271,12 +271,129 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- File Upload Functions ---
-    const guessHeader = (fieldKey, headers) => { /* ... (Function as before) ... */ };
-    const renderColumnMapper = () => { /* ... (Function as before) ... */ };
-    const renderPreviewTable = () => { /* ... (Function as before) ... */ };
-    const handleFile = (file) => { /* ... (Function as before) ... */ };
-    const resetUploadUI = () => { /* ... (Function as before) ... */ };
-    const processFile = () => { /* ... (Function as before) ... */ };
+    const guessHeader = (fieldKey, headers) => {
+         const fieldName = fieldKey.toLowerCase();
+         const arName = (t_fields(fieldKey) || '').toLowerCase();
+         
+         for (const header of headers) {
+             const lowerHeader = String(header || '').toLowerCase().trim();
+             if (lowerHeader === fieldName || lowerHeader === arName) {
+                 return header;
+             }
+         }
+         if (fieldName === 'debit' && headers.find(h => String(h).toLowerCase().trim() === 'مدين')) return headers.find(h => String(h).toLowerCase().trim() === 'مدين');
+         if (fieldName === 'credit' && headers.find(h => String(h).toLowerCase().trim() === 'دائن')) return headers.find(h => String(h).toLowerCase().trim() === 'دائن');
+         if (fieldName === 'account' && headers.find(h => String(h).toLowerCase().trim() === 'الحساب')) return headers.find(h => String(h).toLowerCase().trim() === 'الحساب');
+         return "";
+     };
+    const renderColumnMapper = () => {
+         UI.columnMapper.innerHTML = config.requiredFields.map(fieldKey => {
+             const guessedHeader = guessHeader(fieldKey, state.fileHeaders);
+             return `
+             <div class="col-md-4 col-sm-6">
+                 <label for="map-${fieldKey}" class="form-label fw-bold">${t_fields(fieldKey)}</label>
+                 <select id="map-${fieldKey}" class="form-select form-select-sm" data-field-key="${fieldKey}">
+                     <option value="">-- ${lang === 'ar' ? 'تجاهل' : 'Ignore'} --</option>
+                     ${state.fileHeaders.map(h => `<option value="${h}" ${h === guessedHeader ? 'selected' : ''}>${h}</option>`).join('')}
+                 </select>
+             </div>`;
+         }).join('');
+     };
+    const renderPreviewTable = () => {
+         if (state.fileData.length === 0) {
+             UI.filePreviewTable.innerHTML = `<p class="text-danger">${lang === 'ar' ? 'الملف فارغ أو لا يمكن قراءته.' : 'File is empty or unreadable.'}</p>`;
+             return;
+         }
+         const headers = state.fileHeaders;
+         const rows = state.fileData.slice(0, 5); 
+         let table = '<table class="table table-sm table-bordered table-striped small">';
+         table += '<thead class="table-light">';
+         table += `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+         table += '</thead>';
+         table += '<tbody>';
+         rows.forEach(row => {
+             table += `<tr>${headers.map(h => `<td>${row[h] || ''}</td>`).join('')}</tr>`;
+         });
+         table += '</tbody>';
+         table += '</table>';
+         
+         UI.filePreviewTable.innerHTML = table;
+     };
+    const handleFile = (file) => {
+         if (!file) return;
+         UI.fileNameDisplay.textContent = `File: ${file.name} | Size: ${(file.size / 1024).toFixed(2)} KB`;
+         UI.filePreviewArea.classList.remove('d-none');
+         UI.fileDropArea.classList.add('d-none');
+         UI.previewSpinner.classList.remove('d-none');
+         UI.filePreviewTable.innerHTML = '';
+         UI.columnMapper.innerHTML = '';
+         const reader = new FileReader();
+         
+         reader.onload = (e) => {
+             try {
+                 const data = e.target.result;
+                 const workbook = XLSX.read(data, { type: 'array' });
+                 const firstSheetName = workbook.SheetNames[0];
+                 const worksheet = workbook.Sheets[firstSheetName];
+                 
+                 const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 0 });
+                 
+                 if (jsonData.length === 0) {
+                     throw new Error("No data found in file.");
+                 }
+                 state.fileData = jsonData;
+                 state.fileHeaders = Object.keys(jsonData[0]); 
+                 renderPreviewTable();
+                 renderColumnMapper();
+                 UI.previewSpinner.classList.add('d-none');
+             } catch (err) {
+                 console.error(err);
+                 alert(t_page('fileReadError'));
+                 resetUploadUI();
+             }
+         };
+         reader.onerror = () => {
+             alert(t_page('fileReadError'));
+             resetUploadUI();
+         };
+         reader.readAsArrayBuffer(file);
+     };
+    const resetUploadUI = () => {
+         UI.filePreviewArea.classList.add('d-none');
+         UI.fileDropArea.classList.remove('d-none');
+         UI.fileUploader.value = ''; 
+         state.fileData = [];
+         state.fileHeaders = [];
+     };
+    const processFile = () => {
+         if (!confirm(t_page('confirmClearUpload'))) {
+             return;
+         }
+         const mapping = {};
+         UI.columnMapper.querySelectorAll('select').forEach(sel => {
+             mapping[sel.dataset.fieldKey] = sel.value; 
+         });
+         state.trialData = []; 
+         state.fileData.forEach(row => {
+             const newRow = {
+                 Account:  row[mapping.Account] || '',
+                 MainType: row[mapping.MainType] || '',
+                 SubType:  row[mapping.SubType] || '',
+                 Debit:    toNum(row[mapping.Debit]),
+                 Credit:   toNum(row[mapping.Credit])
+             };
+             state.trialData.push(newRow);
+         });
+         if (state.trialData.length === 0) {
+             state.trialData.push({ Account: '', MainType: '', SubType: '', Debit: 0, Credit: 0 });
+         }
+         renderTable(); 
+         
+         const manualTabTrigger = new bootstrap.Tab(UI.manualTab);
+         manualTabTrigger.show();
+         resetUploadUI();
+         alert(t_page('fileProcessingSuccess'));
+     };
     
     // ========================================================
     // *** INITIALIZATION ***
