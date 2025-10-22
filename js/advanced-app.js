@@ -1,6 +1,7 @@
-// js/advanced-app.js (REFACTORED to consume 'financialDataCurrent' from report-app.js + FULL ENGLISH TRANSLATIONS)
+// js/advanced-app.js (REFACTORED + Translation Merge FIX + Full English Translations)
 
-window.pageTranslations = {
+// *** مُضاف: منطق دمج الترجمات ***
+const advancedTranslations = {
     ar: {
         pageTitle: "التحليلات المتقدمة — المحلل المالي", pageHeader: "التحليلات المتقدمة", pageSubheader: "استخدم أدوات تحليلية متخصصة للحصول على رؤى أعمق حول أداء عملك.",
         tabRatios: "النسب المالية", tabBreakeven: "تحليل التعادل", tabDupont: "تحليل دوبونت", tabVertical: "التحليل الرأسي", tabZScore: "نموذج Z-Score", tabCashFlow: "تحليل التدفقات النقدية", tabEVA: "القيمة الاقتصادية المضافة (EVA)",
@@ -17,6 +18,14 @@ window.pageTranslations = {
         summary_ok: "الوضع المالي يبدو مستقرًا...", summary_risk: "توجد بعض مؤشرات الخطر...", alert_liquidity_risk: "🔴 خطر سيولة...", alert_leverage_risk: "🟡 تنبيه دين مرتفع...", alert_profit_risk: "🔴 خطر ربحية...", alert_ok: "🟢 لا توجد مؤشرات خطر حرجة...", noDataForRatios: "لا توجد بيانات كافية لحساب النسب.", 
         beInputTitle: "مدخلات الحساب", labelFixedCosts: "إجمالي التكاليف الثابتة", labelVariableCost: "التكلفة المتغيرة للوحدة", labelSellingPrice: "سعر بيع الوحدة", btnCalculate: "احسب", beResultsTitle: "النتائج", bepUnits: "نقطة التعادل (بالوحدات)", bepValue: "نقطة التعادل (بالقيمة)", beChartTitle: "رسم بياني لنقطة التعادل", errorPrice: "سعر البيع يجب أن يكون أعلى.", errorPositiveValues: "أدخل قيم موجبة.", revenue: 'الإيرادات', totalCosts: 'إجمالي التكاليف', fixedCosts: 'التكاليف الثابتة', unitsSold: 'الوحدات المباعة', value: 'القيمة',
         dupontTitle: "تحليل دوبونت", dupontDesc: "تفكيك العائد على حقوق الملكية (ROE)...", dupontEquation: "معادلة دوبونت:", dupontCompNPM: "هامش صافي الربح", dupontCompAT: "دوران الأصول", dupontCompEM: "مضاعف الملكية", dupontCompROE: "العائد على الملكية", dupontDataWarning: "بيانات غير كافية لتحليل دوبونت (تأكد من تشغيل صفحة 'التقارير').", 
+        dupontInterpretationHighROE: "🟢 العائد المرتفع على حقوق الملكية مدفوع بشكل أساسي بـ:", // مفتاح مفقود سابقاً
+        dupontInterpretationLowROE: "🟡 العائد المنخفض على حقوق الملكية يتأثر بـ:", // مفتاح مفقود سابقاً
+        dupontFactorProfitability: "ربحية تشغيلية قوية (هامش ربح جيد).", // مفتاح مفقود سابقاً
+        dupontFactorEfficiency: "كفاءة أصول عالية (دوران أصول سريع).", // مفتاح مفقود سابقاً
+        dupontFactorLeverage: "استخدام الرفع المالي (مضاعف ملكية مرتفع).", // مفتاح مفقود سابقاً
+        dupontFactorLowProfitability: "ربحية تشغيلية ضعيفة (هامش ربح منخفض).", // مفتاح مفقود سابقاً
+        dupontFactorLowEfficiency: "كفاءة أصول منخفضة (دوران أصول بطيء).", // مفتاح مفقود سابقاً
+        dupontFactorLowLeverage: "اعتماد منخفض على الديون (مضاعف ملكية منخفض).", // مفتاح مفقود سابقاً
         verticalTitle: "التحليل الرأسي", verticalDesc: "يعرض البنود كنسبة مئوية...", verticalDataWarning: "بيانات غير كافية للتحليل الرأسي (تأكد من تشغيل صفحة 'التقارير').", 
         verticalBS: "الميزانية (% من الأصول)", verticalIS: "الدخل (% من الإيرادات)", verticalAccount: "الحساب", verticalValue: "القيمة", verticalPercent: "النسبة %",
         verticalInterpretationTitle: "أبرز الملاحظات:",
@@ -59,6 +68,14 @@ window.pageTranslations = {
         summary_ok: "Financial situation appears stable...", summary_risk: "Some risk indicators are present...", alert_liquidity_risk: "🔴 Liquidity Risk...", alert_leverage_risk: "🟡 High Debt Warning...", alert_profit_risk: "🔴 Profitability Risk...", alert_ok: "🟢 No critical risk indicators found...", noDataForRatios: "Not enough data to calculate ratios.",
         beInputTitle: "Calculation Inputs", labelFixedCosts: "Total Fixed Costs", labelVariableCost: "Variable Cost per Unit", labelSellingPrice: "Selling Price per Unit", btnCalculate: "Calculate", beResultsTitle: "Results", bepUnits: "Break-even Point (Units)", bepValue: "Break-even Point (Value)", beChartTitle: "Break-even Chart", errorPrice: "Selling price must be higher.", errorPositiveValues: "Enter positive values.", revenue: 'Revenue', totalCosts: 'Total Costs', fixedCosts: 'Fixed Costs', unitsSold: 'Units Sold', value: 'Value',
         dupontTitle: "DuPont Analysis", dupontDesc: "Breaking down Return on Equity (ROE)...", dupontEquation: "DuPont Equation:", dupontCompNPM: "Net Profit Margin", dupontCompAT: "Asset Turnover", dupontCompEM: "Equity Multiplier", dupontCompROE: "Return on Equity", dupontDataWarning: "Insufficient data for DuPont analysis (Ensure 'Report' page was run).",
+        dupontInterpretationHighROE: "🟢 High ROE is primarily driven by:",
+        dupontInterpretationLowROE: "🟡 Low ROE is impacted by:",
+        dupontFactorProfitability: "Strong operating profitability (good profit margin).",
+        dupontFactorEfficiency: "High asset efficiency (fast asset turnover).",
+        dupontFactorLeverage: "Use of financial leverage (high equity multiplier).",
+        dupontFactorLowProfitability: "Weak operating profitability (low profit margin).",
+        dupontFactorLowEfficiency: "Low asset efficiency (slow asset turnover).",
+        dupontFactorLowLeverage: "Low reliance on debt (low equity multiplier).",
         verticalTitle: "Vertical Analysis", verticalDesc: "Displays items as a percentage...", verticalDataWarning: "Insufficient data for Vertical Analysis (Ensure 'Report' page was run).",
         verticalBS: "Balance Sheet (% of Assets)", verticalIS: "Income Statement (% of Revenue)", verticalAccount: "Account", verticalValue: "Value", verticalPercent: "Percent %",
         verticalInterpretationTitle: "Key Observations:",
@@ -83,9 +100,15 @@ window.pageTranslations = {
         labelMarketPrice: "Market Price Per Share",
         labelTotalDividends: "Total Annual Dividends Paid",
         btnUpdateValuation: "Update Valuation Ratios"
-        // *** نهاية الإضافة ***
     }
 };
+
+// *** مُضاف: منطق دمج الترجمات بدلاً من الكتابة فوقها ***
+window.pageTranslations = window.pageTranslations || {}; // التأكد من وجود الكائن الرئيسي
+window.pageTranslations.ar = { ...(window.pageTranslations.ar || {}), ...(advancedTranslations.ar || {}) };
+window.pageTranslations.en = { ...(window.pageTranslations.en || {}), ...(advancedTranslations.en || {}) };
+// *** نهاية الإضافة ***
+
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -93,8 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("[DEBUG] Starting advanced-app.js initialization after delay...");
 
         const state = { 
-            statementsCurrent: null,  // Will hold data from 'financialDataCurrent'
-            statementsPrevious: null, // Will hold data from 'financialDataPrevious'
+            statementsCurrent: null,  
+            statementsPrevious: null, 
             ratios: {},
             breakevenChart: null,
             baseBreakeven: { units: NaN, value: NaN }, 
@@ -102,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
             hasPreviousData: false, 
         };
         const lang = localStorage.getItem('lang') || 'ar';
+        // *** مُعدل: التأكد من أن t_page يستخدم الكائن المدمج ***
         const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`; 
 
         const UI = { 
@@ -416,6 +440,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const dupontROE = (isFinite(npm) && isFinite(at) && isFinite(em)) ? npm * at * em : Infinity;
             if(UI.dupontROE) UI.dupontROE.textContent = formatPercent(dupontROE); if(UI.dupontNPM) UI.dupontNPM.textContent = formatPercent(npm); if(UI.dupontAT) UI.dupontAT.textContent = formatRatio(at); if(UI.dupontEM) UI.dupontEM.textContent = formatRatio(em);
             if(UI.dupontValueNPM) UI.dupontValueNPM.textContent = formatPercent(npm); if(UI.dupontValueAT) UI.dupontValueAT.textContent = formatRatio(at); if(UI.dupontValueEM) UI.dupontValueEM.textContent = formatRatio(em); if(UI.dupontValueROE) UI.dupontValueROE.textContent = formatPercent(dupontROE);
+            
+            // *** مُعدل: التأكد من أن t_page() تعمل لأن الترجمات مدمجة ***
             let interpretation = '';
             if (isFinite(dupontROE)) {
                 const highROE = dupontROE >= 0.15; interpretation += highROE ? `<p>${t_page('dupontInterpretationHighROE')}</p><ul>` : `<p>${t_page('dupontInterpretationLowROE')}</p><ul>`;
@@ -423,9 +449,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (isFinite(at)) { if (at >= 1.0) interpretation += `<li>${t_page('dupontFactorEfficiency')}</li>`; else if (at < 0.5) interpretation += `<li>${t_page('dupontFactorLowEfficiency')}</li>`; }
                 if (isFinite(em)) { if (em > 2.5) interpretation += `<li>${t_page('dupontFactorLeverage')}</li>`; else if (em < 1.5) interpretation += `<li>${t_page('dupontFactorLowLeverage')}</li>`; }
                 interpretation += `</ul>`; 
-                if (interpretation.endsWith('<ul></ul>')) { interpretation = `<p>${lang === 'ar' ? 'العوامل متوازنة...' : 'Factors appear balanced...'}</p>`; } 
+                if (interpretation.endsWith('<ul></ul>')) { interpretation = `<p>${lang === 'ar' ? 'العوامل متوازنة.' : 'Factors appear balanced.'}</p>`; } // Add translation for balanced
             } else { 
-                interpretation = `<p class="text-danger">${lang === 'ar' ? 'لا يمكن حساب التفسير...' : 'Interpretation cannot be calculated...'}</p>`; 
+                interpretation = `<p class="text-danger">${lang === 'ar' ? 'لا يمكن حساب التفسير.' : 'Interpretation cannot be calculated.'}</p>`; 
             } 
             if(UI.dupontInterpretation) UI.dupontInterpretation.innerHTML = interpretation;
             console.log("[DEBUG] Finished displaying DuPont.");
@@ -485,9 +511,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 ...state.statementsCurrent.is.taxExpense
             ];
             const sortedIsItems = isAllItems.sort((a, b) => {
-                if (a.value < 0) return -1; // Keep revenue first
-                if (b.value < 0) return 1;
-                return Math.abs(b.value || 0) - Math.abs(a.value || 0); // Sort rest by value
+                // Find revenue items (which have negative value in logic, but positive display)
+                const isRevenueA = state.statementsCurrent.is.revenue.some(rev => rev.account === a.account);
+                const isRevenueB = state.statementsCurrent.is.revenue.some(rev => rev.account === b.account);
+                if (isRevenueA) return -1;
+                if (isRevenueB) return 1;
+                return Math.abs(b.value || 0) - Math.abs(a.value || 0); // Sort rest by absolute value
             });
             
             sortedIsItems.forEach(item => { 
@@ -505,7 +534,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const comments = [];
             
             const allBsItemsSorted = [...bsAllItems].sort((a,b) => Math.abs(b.value || 0) - Math.abs(a.value || 0));
-            const largestAsset = allBsItemsSorted.find(item => item.value > 0); 
+            const largestAsset = allBsItemsSorted.find(item => state.statementsCurrent.bs.currentAssets.includes(item) || state.statementsCurrent.bs.nonCurrentAssets.includes(item));
             if (largestAsset && totalAssets !== 0) {
                  const percent = ((largestAsset.value || 0) / totalAssets);
                  comments.push(t_page('verticalLargestAsset').replace('{account}', largestAsset.account).replace('{percent}', formatPercent(percent)));
@@ -629,6 +658,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
               const generateHorizontalRows = (itemsCurrent = [], itemsPrev = []) => {
                   let rowsHTML = '';
+                  if (!Array.isArray(itemsCurrent)) itemsCurrent = [];
+                  if (!Array.isArray(itemsPrev)) itemsPrev = [];
                   const allAccountNames = new Set([...itemsCurrent.map(i => i.account), ...itemsPrev.map(i => i.account)]);
                   const prevItemsMap = new Map(itemsPrev.map(item => [item.account, item.value]));
 
@@ -648,22 +679,42 @@ document.addEventListener('DOMContentLoaded', () => {
                   });
                   return rowsHTML;
               };
+             
+             // Combine BS Items
+             const bsItemsCurrent = [
+                ...state.statementsCurrent.bs.currentAssets, ...state.statementsCurrent.bs.nonCurrentAssets,
+                ...state.statementsCurrent.bs.currentLiabilities, ...state.statementsCurrent.bs.nonCurrentLiabilities,
+                ...state.statementsCurrent.bs.equityCapital,
+                { account: t_page('retainedEarnings'), value: state.statementsCurrent.totals.retainedEarnings || 0 }
+             ];
+             const bsItemsPrevious = [
+                ...state.statementsPrevious.bs.currentAssets, ...state.statementsPrevious.bs.nonCurrentAssets,
+                ...state.statementsPrevious.bs.currentLiabilities, ...state.statementsPrevious.bs.nonCurrentLiabilities,
+                ...state.statementsPrevious.bs.equityCapital,
+                { account: t_page('retainedEarnings'), value: state.statementsPrevious.totals.retainedEarnings || 0 }
+             ];
 
-             // Generate BS Table
              let bsTableHTML = `<table class="table table-sm table-striped"><thead><tr><th>${t_page('thAccount')}</th><th class="text-end">${t_page('thCurrentPeriod')}</th><th class="text-end">${t_page('thPreviousPeriod')}</th><th class="text-end">${t_page('thChangeAbs')}</th><th class="text-end">${t_page('thChangePct')}</th></tr></thead><tbody>`;
-             bsTableHTML += generateHorizontalRows(
-                [...state.statementsCurrent.bs.currentAssets, ...state.statementsCurrent.bs.nonCurrentAssets, ...state.statementsCurrent.bs.currentLiabilities, ...state.statementsCurrent.bs.nonCurrentLiabilities, ...state.statementsCurrent.bs.equityCapital, { account: t_page('retainedEarnings'), value: state.statementsCurrent.totals.retainedEarnings || 0 }],
-                [...state.statementsPrevious.bs.currentAssets, ...state.statementsPrevious.bs.nonCurrentAssets, ...state.statementsPrevious.bs.currentLiabilities, ...state.statementsPrevious.bs.nonCurrentLiabilities, ...state.statementsPrevious.bs.equityCapital, { account: t_page('retainedEarnings'), value: state.statementsPrevious.totals.retainedEarnings || 0 }]
-             );
+             bsTableHTML += generateHorizontalRows(bsItemsCurrent, bsItemsPrevious);
              bsTableHTML += `</tbody></table>`;
              if(UI.horizontalBSTable) UI.horizontalBSTable.innerHTML = bsTableHTML; 
              
-             // Generate IS Table
+             // Combine IS Items
+             const isItemsCurrent = [
+                ...state.statementsCurrent.is.revenue, ...state.statementsCurrent.is.cogs,
+                ...state.statementsCurrent.is.genAdminExpenses, ...state.statementsCurrent.is.sellingMarketingExpenses,
+                ...state.statementsCurrent.is.depreciationAmortization, ...state.statementsCurrent.is.otherOperatingExpenses,
+                ...state.statementsCurrent.is.interestExpense, ...state.statementsCurrent.is.taxExpense
+             ];
+             const isItemsPrevious = [
+                ...state.statementsPrevious.is.revenue, ...state.statementsPrevious.is.cogs,
+                ...state.statementsPrevious.is.genAdminExpenses, ...state.statementsPrevious.is.sellingMarketingExpenses,
+                ...state.statementsPrevious.is.depreciationAmortization, ...state.statementsPrevious.is.otherOperatingExpenses,
+                ...state.statementsPrevious.is.interestExpense, ...state.statementsPrevious.is.taxExpense
+             ];
+
              let isTableHTML = `<table class="table table-sm table-striped"><thead><tr><th>${t_page('thAccount')}</th><th class="text-end">${t_page('thCurrentPeriod')}</th><th class="text-end">${t_page('thPreviousPeriod')}</th><th class="text-end">${t_page('thChangeAbs')}</th><th class="text-end">${t_page('thChangePct')}</th></tr></thead><tbody>`;
-             isTableHTML += generateHorizontalRows(
-                [...state.statementsCurrent.is.revenue, ...state.statementsCurrent.is.cogs, ...state.statementsCurrent.is.genAdminExpenses, ...state.statementsCurrent.is.sellingMarketingExpenses, ...state.statementsCurrent.is.depreciationAmortization, ...state.statementsCurrent.is.otherOperatingExpenses, ...state.statementsCurrent.is.interestExpense, ...state.statementsCurrent.is.taxExpense],
-                [...state.statementsPrevious.is.revenue, ...state.statementsPrevious.is.cogs, ...state.statementsPrevious.is.genAdminExpenses, ...state.statementsPrevious.is.sellingMarketingExpenses, ...state.statementsPrevious.is.depreciationAmortization, ...state.statementsPrevious.is.otherOperatingExpenses, ...state.statementsPrevious.is.interestExpense, ...state.statementsPrevious.is.taxExpense]
-             );
+             isTableHTML += generateHorizontalRows(isItemsCurrent, isItemsPrevious);
              isTableHTML += `</tbody></table>`;
              if(UI.horizontalISTable) UI.horizontalISTable.innerHTML = isTableHTML;
 
@@ -786,19 +837,13 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Running full analysis...");
             if (!loadProcessedData()) {
                 console.error("Failed to load essential processed data (financialDataCurrent). Aborting analysis.");
-                // Hide all tab content wrappers if data fails
-                document.querySelectorAll('.tab-pane').forEach(pane => {
-                    if (pane.id !== 'ratios-pane') { // Keep ratios pane visible for sidebar?
-                         // pane.innerHTML = `<div class="alert alert-danger">${t_page('noDataForAdvanced')}</div>`;
+                // Show a prominent error to the user
+                Object.values(UI).forEach(el => { 
+                    if (el && el.id && !['languageSelect', 'themeToggle'].includes(el.id)) {
+                       // Maybe just show a single error message
                     }
                 });
-                // Show warnings on ratio tab
-                renderRatioCategory('liquidityRatios', 'liquidityRatios', []);
-                renderRatioCategory('profitabilityRatios', 'profitabilityRatios', []);
-                renderRatioCategory('leverageRatios', 'leverageRatios', []);
-                renderRatioCategory('efficiencyRatios', 'activityRatios', []);
-                renderRatioCategory('valuationRatios', 'valuationRatios', []);
-                renderSidebar();
+                alert(t_page('noDataForAdvanced')); // Show alert
                 return false; 
             } 
 
@@ -823,6 +868,13 @@ document.addEventListener('DOMContentLoaded', () => {
             
             setTimeout(() => {
                 console.log("[DEBUG] Running initial analysis after delay...");
+                // *** مُعدل: استدعاء applyTranslations أولاً ***
+                if (typeof window.applyTranslations === 'function') { 
+                    console.log("Applying translations before initial render...");
+                    window.applyTranslations(); 
+                } 
+                else { console.warn("applyTranslations function not found."); }
+                
                 if (runAnalysis()) {
                     console.log("[DEBUG] Initial analysis successful. Rendering other tabs...");
                     calculateAndDisplayDupont(); 
@@ -836,11 +888,8 @@ document.addEventListener('DOMContentLoaded', () => {
                      console.error("[DEBUG] Initial analysis FAILED. Other tabs will not be rendered.");
                 }
                 
-                if (typeof window.applyTranslations === 'function') { 
-                    console.log("Applying translations...");
-                    window.applyTranslations(); 
-                } 
-                else { console.warn("applyTranslations function not found."); }
+                // *** تم نقل استدعاء الترجمة للأعلى ***
+                // if (typeof window.applyTranslations === 'function') { ... } 
                 
                 console.log("Advanced page initialized.");
 
@@ -861,7 +910,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.log(`${tabId} tab shown`);
                         if (!state.hasValidData) {
                             console.warn(`[DEBUG] Tab ${tabId} shown, but no valid data exists.`);
-                            // Re-run analysis to ensure warnings are displayed everywhere
                             runAnalysis(); 
                             // Call specific render function just in case runAnalysis was skipped
                             if (tabId === 'dupont') calculateAndDisplayDupont();
