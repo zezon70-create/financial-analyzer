@@ -1,4 +1,4 @@
-// js/advanced-app.js (Working Base + Vertical Commentary Added)
+// js/advanced-app.js (Working Base + Vertical Commentary + Valuation Inputs/Calc Added)
 
 window.pageTranslations = {
     ar: {
@@ -12,7 +12,7 @@ window.pageTranslations = {
         debtToEquity: "نسبة الديون لحقوق الملكية", debtToEquity_comment_low: "هيكل آمن.", debtToEquity_comment_good: "توازن جيد.", debtToEquity_comment_high: "دين مرتفع.", debtToAssets: "نسبة الديون للأصول", debtToAssets_comment_low: "وضع آمن.", debtToAssets_comment_high: "مخاطر مرتفعة.", interestCoverageRatio: "عدد مرات تغطية الفوائد", interestCoverageRatio_comment_safe: "قدرة ممتازة.", interestCoverageRatio_comment_risk: "خطر.", financialLeverage: "الرافعة المالية", financialLeverage_comment_high: "اعتماد كبير.", financialLeverage_comment_low: "اعتماد منخفض.",
         netProfitMargin: "هامش صافي الربح", netProfitMargin_comment_high: "ربحية ممتازة.", netProfitMargin_comment_avg: "ربحية مقبولة.", netProfitMargin_comment_low: "خسائر.", grossProfitMargin: "نسبة مجمل الربح", grossProfitMargin_comment_high: "هامش قوي.", grossProfitMargin_comment_low: "هامش ضعيف.", roa: "العائد على الأصول (ROA)", roa_comment_high: "كفاءة عالية.", roa_comment_low: "كفاءة منخفضة.", roe: "العائد على حقوق الملكية (ROE)", roe_comment_high: "عائد ممتاز.", roe_comment_low: "عائد ضعيف.", eps: "ربحية السهم (EPS)", eps_comment_positive: "ربح للسهم.", eps_comment_negative: "خسارة للسهم.",
         peRatio: "مضاعف الربحية (P/E)", peRatio_comment: "يقارن بالقطاع.", pbRatio: "معدل السعر للقيمة الدفترية (P/B)", pbRatio_comment: "يقارن سعر السهم بقيمته الدفترية.", dividendYield: "معدل الربح الموزع للسهم", dividendYield_comment: "هام للمستثمرين الباحثين عن دخل.", payoutRatio: "نسبة التوزيع", payoutRatio_comment: "نسبة منخفضة قد تعني إعادة استثمار.",
-        externalDataWarning: "تتطلب مدخلات إضافية (عدد الأسهم، سعر السوق، إلخ).", // تعديل النص ليكون أوضح
+        externalDataWarning: "تتطلب مدخلات إضافية (عدد الأسهم، سعر السوق، إلخ).",
         summary_ok: "الوضع المالي يبدو مستقرًا...", summary_risk: "توجد بعض مؤشرات الخطر...", alert_liquidity_risk: "🔴 خطر سيولة...", alert_leverage_risk: "🟡 تنبيه دين مرتفع...", alert_profit_risk: "🔴 خطر ربحية...", alert_ok: "🟢 لا توجد مؤشرات خطر حرجة...", noDataForRatios: "لا توجد بيانات كافية لحساب النسب.",
         beInputTitle: "مدخلات الحساب", labelFixedCosts: "إجمالي التكاليف الثابتة", labelVariableCost: "التكلفة المتغيرة للوحدة", labelSellingPrice: "سعر بيع الوحدة", btnCalculate: "احسب", beResultsTitle: "النتائج", bepUnits: "نقطة التعادل (بالوحدات)", bepValue: "نقطة التعادل (بالقيمة)", beChartTitle: "رسم بياني لنقطة التعادل", errorPrice: "سعر البيع يجب أن يكون أعلى.", errorPositiveValues: "أدخل قيم موجبة.", revenue: 'الإيرادات', totalCosts: 'إجمالي التكاليف', fixedCosts: 'التكاليف الثابتة', unitsSold: 'الوحدات المباعة', value: 'القيمة',
         dupontTitle: "تحليل دوبونت", dupontDesc: "تفكيك العائد على حقوق الملكية (ROE)...", dupontEquation: "معادلة دوبونت:", dupontCompNPM: "هامش صافي الربح", dupontCompAT: "دوران الأصول", dupontCompEM: "مضاعف الملكية", dupontCompROE: "العائد على الملكية", dupontDataWarning: "بيانات غير كافية لتحليل دوبونت.", dupontInterpretationHighROE: "🟢 عائد مرتفع...", dupontInterpretationLowROE: "🟡 عائد منخفض...", dupontFactorProfitability: "ربحية قوية...", dupontFactorEfficiency: "كفاءة أصول عالية...", dupontFactorLeverage: "استخدام الرفع...", dupontFactorLowProfitability: "ربحية ضعيفة...", dupontFactorLowEfficiency: "كفاءة أصول منخفضة...", dupontFactorLowLeverage: "اعتماد منخفض على الديون...",
@@ -30,21 +30,27 @@ window.pageTranslations = {
         evaInputTitle: "مدخلات حساب (EVA)", evaInputDesc: "يتطلب افتراضات خارجية.", labelWACC: "متوسط تكلفة رأس المال (WACC)", labelTaxRate: "معدل الضريبة", evaResultsTitle: "نتائج تحليل (EVA)", evaDataWarning: "بيانات غير كافية لحساب (EVA).", evaValueLabel: "القيمة الاقتصادية المضافة (EVA):", evaInterpretation: "التفسير:", evaInterpretationPositive: "🟢 خلق للقيمة.", evaInterpretationNegative: "🔴 تدمير للقيمة.", evaComponents: "مكونات الحساب:", evaNOPAT: "صافي الربح التشغيلي بعد الضرائب", evaInvestedCapital: "رأس المال المستثمر", evaCapitalCharge: "تكلفة رأس المال",
         horizontalTitle: "التحليل الأفقي (تحليل الاتجاه)", horizontalDesc: "يقارن بنود القوائم المالية عبر فترتين زمنيتين (الحالية والسابقة، إن وجدت).", horizontalDataWarning: "لا توجد بيانات كافية لفترتين لإجراء التحليل الأفقي. يجب تحميل بيانات فترة سابقة.", horizontalIS: "قائمة الدخل - مقارنة الفترات", horizontalBS: "الميزانية العمومية - مقارنة الفترات", horizontalAccount: "الحساب", horizontalCurrentPeriod: "الفترة الحالية", horizontalPreviousPeriod: "الفترة السابقة", horizontalChangeAbs: "التغير ($)", horizontalChangePct: "التغير (%)",
         cccTitle: "دورة التحول النقدي (CCC)", cccDesc: "تقيس الوقت بالأيام لتحويل الاستثمارات في المخزون والموارد إلى نقد.", cccDataWarning: "بيانات غير كافية لحساب CCC (يتطلب COGS, إيرادات, مخزون, عملاء, موردين - ويفضل بيانات فترتين للمتوسطات).", cccValueLabel: "دورة التحول النقدي (أيام):", cccInterpretation: "التفسير:", cccInterpretationShort: "🟢 دورة قصيرة: كفاءة عالية في إدارة رأس المال العامل.", cccInterpretationLong: "🟡 دورة طويلة: قد يشير إلى بطء في بيع المخزون أو تحصيل الديون.", cccComponents: "مكونات الحساب (أيام):", cccDSO: "متوسط فترة التحصيل (DSO)", cccDIO: "متوسط فترة التخزين (DIO)", cccDPO: "متوسط فترة السداد للموردين (DPO)",
-        scenarioTitle: "تحليل السيناريو (على نقطة التعادل)", scenarioDesc: "اختبر تأثير تغيير الافتراضات على نقطة التعادل.", scenarioInputs: "تغيير الافتراضات (%):", scenarioFixedCostsLabel: "التكاليف الثابتة", scenarioVariableCostLabel: "التكلفة المتغيرة للوحدة", scenarioSellingPriceLabel: "سعر بيع الوحدة", scenarioRunBtn: "اختبر السيناريو", scenarioResults: "النتائج:", scenarioBaseCaseInfo: "القيم الأصلية مأخوذة من تبويب تحليل التعادل.", scenarioMetric: "المقياس", scenarioBaseValue: "القيمة الأصلية", scenarioNewValue: "القيمة الجديدة", scenarioChange: "التغير (%)"
+        scenarioTitle: "تحليل السيناريو (على نقطة التعادل)", scenarioDesc: "اختبر تأثير تغيير الافتراضات على نقطة التعادل.", scenarioInputs: "تغيير الافتراضات (%):", scenarioFixedCostsLabel: "التكاليف الثابتة", scenarioVariableCostLabel: "التكلفة المتغيرة للوحدة", scenarioSellingPriceLabel: "سعر بيع الوحدة", scenarioRunBtn: "اختبر السيناريو", scenarioResults: "النتائج:", scenarioBaseCaseInfo: "القيم الأصلية مأخوذة من تبويب تحليل التعادل.", scenarioMetric: "المقياس", scenarioBaseValue: "القيمة الأصلية", scenarioNewValue: "القيمة الجديدة", scenarioChange: "التغير (%)",
+        // *** مُضاف: ترجمات مدخلات التقييم ***
+        externalInputsTitle: "مدخلات التقييم الإضافية",
+        labelNumShares: "عدد الأسهم القائمة",
+        labelMarketPrice: "سعر السهم السوقي",
+        labelTotalDividends: "إجمالي التوزيعات النقدية",
+        btnUpdateValuation: "تحديث مؤشرات التقييم"
     },
-    en: { 
+    en: {
         // *** Please fill in ALL English translations corresponding to the Arabic ones above ***
-        pageTitle: "Advanced Analytics — Financial Analyzer", pageHeader: "Advanced Analytics", pageSubheader: "Use specialized analytical tools...", 
+        pageTitle: "Advanced Analytics — Financial Analyzer", pageHeader: "Advanced Analytics", pageSubheader: "Use specialized analytical tools...",
         tabRatios: "Financial Ratios", tabBreakeven: "Break-even Analysis", tabDupont: "DuPont Analysis", tabVertical: "Vertical Analysis", tabZScore: "Altman Z-Score", tabCashFlow: "Cash Flow Analysis", tabEVA: "Economic Value Added (EVA)",
         tabHorizontal: "Horizontal Analysis", tabCCC: "Cash Conversion Cycle", tabScenario: "Scenario Analysis",
-        summaryTitle: "Smart Summary", alertsTitle: "Alerts & Risk Indicators", thRatio: "Ratio", thValue: "Value", thComment: "Analytical Comment", 
+        summaryTitle: "Smart Summary", alertsTitle: "Alerts & Risk Indicators", thRatio: "Ratio", thValue: "Value", thComment: "Analytical Comment",
         liquidityRatios: "Liquidity Indicators", profitabilityRatios: "Profitability Indicators", leverageRatios: "Leverage & Indebtedness Indicators", activityRatios: "Activity Indicators", valuationRatios: "Valuation Indicators",
         currentRatio: "Current Ratio", currentRatio_comment_high: "Excellent liquidity...", currentRatio_comment_good: "Good liquidity...", currentRatio_comment_low: "Risk indicator...", quickRatio: "Quick Ratio", quickRatio_comment_good: "Good ability...", quickRatio_comment_low: "Risk indicator...", netWorkingCapital: "Net Working Capital", netWorkingCapital_comment_positive: "Healthy position.", netWorkingCapital_comment_negative: "Risk indicator.", cashRatio: "Cash Ratio", cashRatio_comment_good: "Very strong ability.", cashRatio_comment_low: "Low reliance.",
         inventoryTurnover: "Inventory Turnover", inventoryTurnover_comment_high: "High efficiency.", inventoryTurnover_comment_low: "Weak or obsolete.", assetTurnover: "Asset Turnover", assetTurnover_comment_high: "Excellent efficiency.", assetTurnover_comment_low: "Low efficiency.", receivablesTurnover: "Receivables Turnover", receivablesTurnover_comment_high: "Strong collection.", receivablesTurnover_comment_low: "Slowness in collecting.", avgCollectionPeriod: "Average Collection Period", avgCollectionPeriod_comment_low: "Excellent speed.", avgCollectionPeriod_comment_high: "Long period.",
         debtToEquity: "Debt to Equity Ratio", debtToEquity_comment_low: "Safe structure.", debtToEquity_comment_good: "Good balance.", debtToEquity_comment_high: "High debt.", debtToAssets: "Debt to Assets Ratio", debtToAssets_comment_low: "Safe position.", debtToAssets_comment_high: "High risk.", interestCoverageRatio: "Interest Coverage Ratio", interestCoverageRatio_comment_safe: "Excellent ability.", interestCoverageRatio_comment_risk: "Risk.", financialLeverage: "Financial Leverage", financialLeverage_comment_high: "High reliance.", financialLeverage_comment_low: "Low reliance.",
-        netProfitMargin: "Net Profit Margin", netProfitMargin_comment_high: "Excellent profitability.", netProfitMargin_comment_avg: "Acceptable profitability.", netProfitMargin_comment_low: "Losses.", grossProfitMargin: "Gross Profit Margin", grossProfitMargin_comment_high: "Strong margin.", grossProfitMargin_comment_low: "Weak margin.", roa: "Return on Assets (ROA)", roa_comment_high: "High efficiency.", roa_comment_low: "Low efficiency.", roe: "Return on Equity (ROE)", roe_comment_high: "Excellent return.", roe_comment_low: "Weak return.", eps: "Earnings Per Share (EPS)", eps_comment_positive: "Profit per share.", eps_comment_negative: "Loss per share.",
+        grossProfitMargin: "Gross Profit Margin", grossProfitMargin_comment_high: "Strong margin.", grossProfitMargin_comment_low: "Weak margin.", netProfitMargin: "Net Profit Margin", netProfitMargin_comment_high: "Excellent profitability.", netProfitMargin_comment_avg: "Acceptable profitability.", netProfitMargin_comment_low: "Losses.", roa: "Return on Assets (ROA)", roa_comment_high: "High efficiency.", roa_comment_low: "Low efficiency.", roe: "Return on Equity (ROE)", roe_comment_high: "Excellent return.", roe_comment_low: "Weak return.", eps: "Earnings Per Share (EPS)", eps_comment_positive: "Profit per share.", eps_comment_negative: "Loss per share.",
         peRatio: "P/E Ratio", peRatio_comment: "Compare to industry.", pbRatio: "Price-to-Book (P/B) Ratio", pbRatio_comment: "Compares market price to book value.", dividendYield: "Dividend Yield", dividendYield_comment: "Important for income investors.", payoutRatio: "Payout Ratio", payoutRatio_comment: "Low ratio may mean reinvesting.",
-        externalDataWarning: "Requires additional inputs (No. Shares, Market Price, etc.).", // Clearer English text
+        externalDataWarning: "Requires additional inputs (No. Shares, Market Price, etc.).",
         summary_ok: "Financial situation appears stable...", summary_risk: "Some risk indicators are present...", alert_liquidity_risk: "🔴 Liquidity Risk...", alert_leverage_risk: "🟡 High Debt Warning...", alert_profit_risk: "🔴 Profitability Risk...", alert_ok: "🟢 No critical risk indicators found...", noDataForRatios: "Not enough data to calculate ratios.",
         beInputTitle: "Calculation Inputs", labelFixedCosts: "Total Fixed Costs", labelVariableCost: "Variable Cost per Unit", labelSellingPrice: "Selling Price per Unit", btnCalculate: "Calculate", beResultsTitle: "Results", bepUnits: "Break-even Point (Units)", bepValue: "Break-even Point (Value)", beChartTitle: "Break-even Chart", errorPrice: "Selling price must be higher.", errorPositiveValues: "Enter positive values.", revenue: 'Revenue', totalCosts: 'Total Costs', fixedCosts: 'Fixed Costs', unitsSold: 'Units Sold', value: 'Value',
         dupontTitle: "DuPont Analysis", dupontDesc: "Breaking down Return on Equity (ROE)...", dupontEquation: "DuPont Equation:", dupontCompNPM: "Net Profit Margin", dupontCompAT: "Asset Turnover", dupontCompEM: "Equity Multiplier", dupontCompROE: "Return on Equity", dupontDataWarning: "Insufficient data for DuPont analysis.", dupontInterpretationHighROE: "🟢 High ROE...", dupontInterpretationLowROE: "🟡 Low ROE...", dupontFactorProfitability: "Strong profitability...", dupontFactorEfficiency: "High asset efficiency...", dupontFactorLeverage: "Use of leverage...", dupontFactorLowProfitability: "Weak profitability...", dupontFactorLowEfficiency: "Low asset efficiency...", dupontFactorLowLeverage: "Low reliance on debt...",
@@ -62,7 +68,13 @@ window.pageTranslations = {
         evaInputTitle: "EVA Calculation Inputs", evaInputDesc: "Requires external assumptions.", labelWACC: "WACC", labelTaxRate: "Tax Rate", evaResultsTitle: "EVA Analysis Results", evaDataWarning: "Insufficient data for EVA.", evaValueLabel: "Economic Value Added (EVA):", evaInterpretation: "Interpretation:", evaInterpretationPositive: "🟢 Value Creation.", evaInterpretationNegative: "🔴 Value Destruction.", evaComponents: "Calculation Components:", evaNOPAT: "NOPAT", evaInvestedCapital: "Invested Capital", evaCapitalCharge: "Capital Charge",
         horizontalTitle: "Horizontal Analysis (Trend Analysis)", horizontalDesc: "Compares financial statement items across two periods (current and previous, if available).", horizontalDataWarning: "Insufficient data for two periods to perform horizontal analysis. Previous period data must be loaded.", horizontalIS: "Income Statement - Period Comparison", horizontalBS: "Balance Sheet - Period Comparison", horizontalAccount: "Account", horizontalCurrentPeriod: "Current Period", horizontalPreviousPeriod: "Previous Period", horizontalChangeAbs: "Change ($)", horizontalChangePct: "Change (%)",
         cccTitle: "Cash Conversion Cycle (CCC)", cccDesc: "Measures the time (in days) it takes to convert inventory and resource investments into cash.", cccDataWarning: "Insufficient data to calculate CCC (requires COGS, Revenue, Inventory, Receivables, Payables - preferably data from two periods for averages).", cccValueLabel: "Cash Conversion Cycle (Days):", cccInterpretation: "Interpretation:", cccInterpretationShort: "🟢 Short cycle: High efficiency in working capital management.", cccInterpretationLong: "🟡 Long cycle: May indicate slowness in selling inventory or collecting receivables.", cccComponents: "Calculation Components (Days):", cccDSO: "Days Sales Outstanding (DSO)", cccDIO: "Days Inventory Outstanding (DIO)", cccDPO: "Days Payables Outstanding (DPO)",
-        scenarioTitle: "Scenario Analysis (on Break-even)", scenarioDesc: "Test the impact of changing assumptions on the break-even point.", scenarioInputs: "Change Assumptions (%):", scenarioFixedCostsLabel: "Fixed Costs", scenarioVariableCostLabel: "Variable Cost/Unit", scenarioSellingPriceLabel: "Selling Price/Unit", scenarioRunBtn: "Run Scenario", scenarioResults: "Results:", scenarioBaseCaseInfo: "Base values are taken from the Break-even Analysis tab.", scenarioMetric: "Metric", scenarioBaseValue: "Base Value", scenarioNewValue: "New Value", scenarioChange: "Change (%)"
+        scenarioTitle: "Scenario Analysis (on Break-even)", scenarioDesc: "Test the impact of changing assumptions on the break-even point.", scenarioInputs: "Change Assumptions (%):", scenarioFixedCostsLabel: "Fixed Costs", scenarioVariableCostLabel: "Variable Cost/Unit", scenarioSellingPriceLabel: "Selling Price/Unit", scenarioRunBtn: "Run Scenario", scenarioResults: "Results:", scenarioBaseCaseInfo: "Base values are taken from the Break-even Analysis tab.", scenarioMetric: "Metric", scenarioBaseValue: "Base Value", scenarioNewValue: "New Value", scenarioChange: "Change (%)",
+        // *** Added: English translations for valuation inputs ***
+        externalInputsTitle: "Additional Valuation Inputs",
+        labelNumShares: "Number of Shares Outstanding",
+        labelMarketPrice: "Market Price Per Share",
+        labelTotalDividends: "Total Annual Dividends Paid",
+        btnUpdateValuation: "Update Valuation Ratios"
     }
 };
 
@@ -112,7 +124,12 @@ document.addEventListener('DOMContentLoaded', () => {
             waccInput: document.getElementById('waccInput'), taxRateInput: document.getElementById('taxRateInput'), calculateEVA: document.getElementById('calculateEVA'), evaDataWarning: document.getElementById('evaDataWarning'), evaResultsContainer: document.getElementById('evaResultsContainer'), evaValue: document.getElementById('evaValue'), evaInterpretation: document.getElementById('evaInterpretation'), evaValueNOPAT: document.getElementById('evaValueNOPAT'), evaValueInvestedCapital: document.getElementById('evaValueInvestedCapital'), evaValueCapitalCharge: document.getElementById('evaValueCapitalCharge'),
             horizontalDataWarning: document.getElementById('horizontalDataWarning'), horizontalResultsContainer: document.getElementById('horizontalResultsContainer'), horizontalISTable: document.getElementById('horizontalISTable'), horizontalBSTable: document.getElementById('horizontalBSTable'),
             cccDataWarning: document.getElementById('cccDataWarning'), cccResultsContainer: document.getElementById('cccResultsContainer'), cccValue: document.getElementById('cccValue'), cccInterpretation: document.getElementById('cccInterpretation'), cccValueDSO: document.getElementById('cccValueDSO'), cccValueDIO: document.getElementById('cccValueDIO'), cccValueDPO: document.getElementById('cccValueDPO'),
-            scenarioFixedCostsChange: document.getElementById('scenarioFixedCostsChange'), scenarioVariableCostChange: document.getElementById('scenarioVariableCostChange'), scenarioSellingPriceChange: document.getElementById('scenarioSellingPriceChange'), runScenario: document.getElementById('runScenario'), scenarioBaseCaseInfo: document.getElementById('scenarioBaseCaseInfo'), scenarioBaseBEPUnits: document.getElementById('scenarioBaseBEPUnits'), scenarioNewBEPUnits: document.getElementById('scenarioNewBEPUnits'), scenarioChangeBEPUnits: document.getElementById('scenarioChangeBEPUnits'), scenarioBaseBEPValue: document.getElementById('scenarioBaseBEPValue'), scenarioNewBEPValue: document.getElementById('scenarioNewBEPValue'), scenarioChangeBEPValue: document.getElementById('scenarioChangeBEPValue')
+            scenarioFixedCostsChange: document.getElementById('scenarioFixedCostsChange'), scenarioVariableCostChange: document.getElementById('scenarioVariableCostChange'), scenarioSellingPriceChange: document.getElementById('scenarioSellingPriceChange'), runScenario: document.getElementById('runScenario'), scenarioBaseCaseInfo: document.getElementById('scenarioBaseCaseInfo'), scenarioBaseBEPUnits: document.getElementById('scenarioBaseBEPUnits'), scenarioNewBEPUnits: document.getElementById('scenarioNewBEPUnits'), scenarioChangeBEPUnits: document.getElementById('scenarioChangeBEPUnits'), scenarioBaseBEPValue: document.getElementById('scenarioBaseBEPValue'), scenarioNewBEPValue: document.getElementById('scenarioNewBEPValue'), scenarioChangeBEPValue: document.getElementById('scenarioChangeBEPValue'),
+            // *** مُضاف: عناصر UI لمدخلات التقييم ***
+            externalNumShares: document.getElementById('externalNumShares'),
+            externalMarketPrice: document.getElementById('externalMarketPrice'),
+            externalTotalDividends: document.getElementById('externalTotalDividends'),
+            updateValuationRatios: document.getElementById('updateValuationRatios')
         };
         
         const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
@@ -230,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
         
-        // *** مُعدل: تم إعادة دمج حسابات CCC مع استخدام المتوسطات ***
+        // *** مُعدل: قراءة المدخلات الخارجية من UI ***
         const calculateAllRatios = () => {
              state.ratios = {}; 
              if (!state.hasValidData) { console.warn("Financials invalid, skipping ratio calculation."); return false; } 
@@ -286,21 +303,27 @@ document.addEventListener('DOMContentLoaded', () => {
                  const roa = avgAssets > 0 ? f.netProfit / avgAssets : (assets > 0 ? f.netProfit / assets : 0);
                  const roe = avgEquity > 0 ? f.netProfit / avgEquity : roeStandard;
 
-                 const externalInputs = { numberOfShares: 0, marketPricePerShare: 0, totalDividends: 0 };
-                 const eps = externalInputs.numberOfShares !== 0 ? f.netProfit / externalInputs.numberOfShares : NaN;
-                 const bookValuePerShare = externalInputs.numberOfShares !== 0 ? equity / externalInputs.numberOfShares : NaN;
-                 const dividendsPerShare = externalInputs.numberOfShares !== 0 ? externalInputs.totalDividends / externalInputs.numberOfShares : NaN;
-                 const peRatio = isFinite(eps) && eps !== 0 ? externalInputs.marketPricePerShare / eps : NaN;
-                 const pbRatio = isFinite(bookValuePerShare) && bookValuePerShare !== 0 ? externalInputs.marketPricePerShare / bookValuePerShare : NaN;
-                 const dividendYield = externalInputs.marketPricePerShare !== 0 ? dividendsPerShare / externalInputs.marketPricePerShare : NaN;
+                 // *** مُعدل: قراءة القيم من حقول الإدخال ***
+                 const externalInputs = {
+                     numberOfShares: toNum(UI.externalNumShares?.value), // Read from input
+                     marketPricePerShare: toNum(UI.externalMarketPrice?.value), // Read from input
+                     totalDividends: toNum(UI.externalTotalDividends?.value) // Read from input
+                 };
+                 // *** نهاية التعديل ***
+                 
+                 const eps = externalInputs.numberOfShares > 0 ? f.netProfit / externalInputs.numberOfShares : NaN; // Use > 0 check
+                 const bookValuePerShare = externalInputs.numberOfShares > 0 ? equity / externalInputs.numberOfShares : NaN; 
+                 const dividendsPerShare = externalInputs.numberOfShares > 0 ? externalInputs.totalDividends / externalInputs.numberOfShares : NaN;
+                 
+                 const peRatio = isFinite(eps) && eps !== 0 && externalInputs.marketPricePerShare > 0 ? externalInputs.marketPricePerShare / eps : NaN;
+                 const pbRatio = isFinite(bookValuePerShare) && bookValuePerShare !== 0 && externalInputs.marketPricePerShare > 0 ? externalInputs.marketPricePerShare / bookValuePerShare : NaN;
+                 const dividendYield = externalInputs.marketPricePerShare > 0 ? dividendsPerShare / externalInputs.marketPricePerShare : NaN;
                  const payoutRatio = f.netProfit > 0 ? externalInputs.totalDividends / f.netProfit : NaN;
 
                  state.ratios = { 
                      currentRatio, quickRatio, netWorkingCapital, cashRatio,
-                     inventoryTurnover, assetTurnover, receivablesTurnover, avgCollectionPeriod, // DSO
-                     daysInventoryOutstanding, // DIO
-                     daysPayablesOutstanding, // DPO
-                     cashConversionCycle, // CCC
+                     inventoryTurnover, assetTurnover, receivablesTurnover, avgCollectionPeriod, 
+                     daysInventoryOutstanding, daysPayablesOutstanding, cashConversionCycle, 
                      debtToAssets, debtToEquity, interestCoverageRatio, financialLeverage, 
                      grossProfitMargin, netProfitMargin, roa, roe, eps, 
                      peRatio, pbRatio, dividendYield, payoutRatio,
@@ -309,7 +332,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      operatingCashFlowRatio: f.currentLiabilities !== 0 ? f.ocf_estimated / f.currentLiabilities : Infinity, 
                      freeCashFlow: f.freeCashFlow_estimated 
                  }; 
-                 console.log("Calculated Ratios (Full Set with CCC):", state.ratios); return true; 
+                 console.log("Calculated Ratios (Full Set with CCC & Valuation):", state.ratios); return true; 
              } catch(e) { 
                  console.error("Error calculating ratios:", e); 
                  state.ratios = {}; state.hasValidData = false; return false; 
@@ -320,16 +343,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // === RENDERING FUNCTIONS (Existing + Updated Vertical + Added Others) ===
         // ==============================================
         
-        // *** مُعدل: إضافة التعليق التوضيحي للنسب التي تحتاج مدخلات خارجية ***
-        const getRatioComment = (key, value) => { 
+        const getRatioComment = (key, value) => { /* ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ... */
             if (!isFinite(value) && isNaN(value)) return "N/A"; 
             if (isNaN(value)) {
                 if (['eps', 'peRatio', 'pbRatio', 'dividendYield', 'payoutRatio'].includes(key)) {
-                    // Return the specific warning text directly in the comment column
                     return `<span class='text-warning small fst-italic'>${t_page('externalDataWarning')}</span>`;
                 }
             }
-            // ... (rest of the comments logic remains the same) ...
             if (key === 'currentRatio') { if (value >= 2) return t_page('currentRatio_comment_high'); if (value >= 1) return t_page('currentRatio_comment_good'); return t_page('currentRatio_comment_low'); } 
             if (key === 'quickRatio') { if (value >= 1) return t_page('quickRatio_comment_good'); return t_page('quickRatio_comment_low'); } 
             if (key === 'netWorkingCapital') { return value > 0 ? t_page('netWorkingCapital_comment_positive') : t_page('netWorkingCapital_comment_negative'); }
@@ -346,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (key === 'grossProfitMargin') { return value >= 0.4 ? t_page('grossProfitMargin_comment_high') : t_page('grossProfitMargin_comment_low'); } 
             if (key === 'roa') { return value >= 0.05 ? t_page('roa_comment_high') : t_page('roa_comment_low'); } 
             if (key === 'roe') { return value >= 0.15 ? t_page('roe_comment_high') : t_page('roe_comment_low'); } 
-            if (key === 'eps') { return value > 0 ? t_page('eps_comment_positive') : t_page('eps_comment_negative'); } // Will only show if EPS is calculated
+            if (key === 'eps') { return value > 0 ? t_page('eps_comment_positive') : t_page('eps_comment_negative'); } 
             if (key === 'peRatio') { return t_page('peRatio_comment'); }
             if (key === 'pbRatio') { return t_page('pbRatio_comment'); }
             if (key === 'dividendYield') { return t_page('dividendYield_comment'); }
@@ -367,7 +387,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 else if (['grossProfitMargin', 'netProfitMargin', 'roa', 'roe', 'dividendYield', 'payoutRatio'].includes(key)) { formattedValue = formatPercent(value); } 
                 else if (key === 'eps') { formattedValue = formatRatio(value, 2); } 
                 else { formattedValue = formatRatio(value, 2); }
-                // Display N/A for value if it's NaN (especially for external data ratios)
                 if (isNaN(value)) {
                     formattedValue = "N/A";
                 }
@@ -381,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!state.hasValidData) { UI.smartSummary.textContent = lang === 'ar' ? '...' : '...'; UI.alertsArea.innerHTML = `<div>${lang === 'ar' ? '...' : '...'}</div>`; return; } const { netProfitMargin, currentRatio, debtToEquity } = state.ratios; UI.smartSummary.textContent = netProfitMargin > 0 && currentRatio > 1.5 ? t_page('summary_ok') : t_page('summary_risk'); const alerts = []; if (currentRatio < 1 && isFinite(currentRatio)) alerts.push(t_page('alert_liquidity_risk')); if (debtToEquity > 2 && isFinite(debtToEquity)) alerts.push(t_page('alert_leverage_risk')); if (netProfitMargin < 0 && isFinite(netProfitMargin)) alerts.push(t_page('alert_profit_risk')); UI.alertsArea.innerHTML = alerts.length > 0 ? alerts.map(alert => `<div>${alert}</div>`).join('') : `<div>${t_page('alert_ok')}</div>`;
         };
         
-        const calculateAndDisplayBreakeven = () => { /* ... (Code from previous working version + state.baseBreakeven update) ... */
+        const calculateAndDisplayBreakeven = () => { /* ... (Code from previous working version) ... */
              const fixed = toNum(UI.fixedCosts.value); 
              const variable = toNum(UI.variableCost.value); 
              const price = toNum(UI.sellingPrice.value); 
@@ -465,7 +484,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (b.subType.includes('الإيرادات') || b.subType.includes('Revenue')) return 1;
                 return Math.abs(b.value || 0) - Math.abs(a.value || 0);
             });
-            let grossProfit = 0; 
+            let grossProfit = 0; // Will be calculated for commentary
             sortedIsItems.forEach(item => { 
                 const itemValue = item.value || 0;
                 const percentage = totalRevenue !== 0 ? (itemValue / totalRevenue) : 0; 
@@ -580,7 +599,7 @@ document.addEventListener('DOMContentLoaded', () => {
               const generateHorizontalRows = (itemsCurrent, itemsPrev, category) => {
                   let rowsHTML = '';
                   const prevItemsMap = new Map();
-                  itemsPrev.forEach(item => prevItemsMap.set(item.account, { value: item.value, rawValue: item.rawValue })); // Store both calculated and raw
+                  itemsPrev.forEach(item => prevItemsMap.set(item.account, { value: item.value, rawValue: item.rawValue })); 
 
                   itemsCurrent.forEach(itemCurr => {
                       const prevData = prevItemsMap.get(itemCurr.account) || { value: 0, rawValue: 0 };
@@ -598,7 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
                           <td class="text-end">${formatNumber(prevDisplayValue)}</td>
                           <td class="text-end">${formatNumber(changeAbsDisplay)}</td>
                           <td class="text-end ${changeAbsDisplay > 0 ? 'text-success' : (changeAbsDisplay < 0 ? 'text-danger' : '')}">${formatChangePercent(currRawValue, prevRawValue)}</td> 
-                      </tr>`; // Use formatChangePercent for percentage
+                      </tr>`;
                   });
                   return rowsHTML;
               };
@@ -711,11 +730,23 @@ document.addEventListener('DOMContentLoaded', () => {
               console.log("[DEBUG] Finished Scenario Analysis.");
         };
 
+        // *** مُضاف: دالة لتحديث النسب وإعادة العرض بعد إدخال بيانات التقييم ***
+        const updateAndRerenderValuationRatios = () => {
+            console.log("[DEBUG] Updating ratios with external inputs...");
+            if (calculateAllRatios()) { // Recalculate all ratios using new inputs
+                 // Re-render only the affected tables
+                 renderRatioCategory('profitabilityRatios', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe', 'eps']);
+                 renderRatioCategory('valuationRatios', 'valuationRatios', ['peRatio', 'pbRatio', 'dividendYield', 'payoutRatio']);
+                 console.log("[DEBUG] Profitability and Valuation tables re-rendered.");
+            } else {
+                console.error("[DEBUG] Failed to recalculate ratios after external input update.");
+            }
+        };
+
         // ==============================================
         // === RUN ANALYSIS & INITIALIZATION (Adapted) ===
         // ==============================================
         
-        // *** مُعدل: حساب الفترتين وتخزين البيانات الخام ***
         const runAnalysis = () => {
             console.log("Running full analysis...");
             state.hasValidData = calculateFinancials('trialData', 'financials', 'rawData'); 
@@ -752,7 +783,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 calculateAndDisplayEVA(); 
                 calculateAndDisplayHorizontal(); 
                 calculateAndDisplayCCC(); 
-                // Scenario is button-driven
                 
                 if (typeof window.applyTranslations === 'function') { 
                     console.log("Applying translations...");
@@ -768,6 +798,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (UI.calculateBreakeven) UI.calculateBreakeven.addEventListener('click', calculateAndDisplayBreakeven);
             if (UI.calculateEVA) UI.calculateEVA.addEventListener('click', calculateAndDisplayEVA);
             if (UI.runScenario) UI.runScenario.addEventListener('click', calculateAndDisplayScenario);
+            // *** مُضاف: مستمع زر تحديث التقييم ***
+            if (UI.updateValuationRatios) UI.updateValuationRatios.addEventListener('click', updateAndRerenderValuationRatios);
 
             // Tab Change Listeners
             const tabs = ['ratios', 'breakeven', 'dupont', 'vertical', 'zscore', 'cashflow', 'eva', 'horizontal', 'ccc', 'scenario']; 
@@ -783,13 +815,12 @@ document.addEventListener('DOMContentLoaded', () => {
                            if(prevDataExistsNow) needsRefresh = true; 
                         }
 
-                        // Re-run analysis only if absolutely necessary (e.g., data was missing or updated)
                         if (needsRefresh) { 
                             console.log("Data potentially invalid or updated for this tab, attempting re-run analysis..."); 
                             runAnalysis(); 
                         }
                         
-                        // Always re-render the specific tab's content to ensure it's up-to-date
+                        // Always re-render the specific tab's content
                         if (tabId === 'ratios') { // Re-render all ratio tables
                              renderRatioCategory('liquidityRatios', 'liquidityRatios', ['currentRatio', 'quickRatio', 'netWorkingCapital', 'cashRatio']);
                              renderRatioCategory('profitabilityRatios', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe', 'eps']);
@@ -806,7 +837,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         if (tabId === 'eva') calculateAndDisplayEVA(); 
                         if (tabId === 'horizontal') calculateAndDisplayHorizontal();
                         if (tabId === 'ccc') calculateAndDisplayCCC();
-                        // Scenario content updated via button click, no action needed here
+                        // Scenario content updated via button click
                     });
                 } else { console.warn(`Tab button not found for ID: ${tabId}-tab`); }
             });
