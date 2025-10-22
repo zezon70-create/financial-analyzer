@@ -1,4 +1,4 @@
-// js/advanced-app.js (REFACTORED to consume 'financialDataCurrent' from report-app.js)
+// js/advanced-app.js (REFACTORED to consume 'financialDataCurrent' from report-app.js + FULL ENGLISH TRANSLATIONS)
 
 window.pageTranslations = {
     ar: {
@@ -13,12 +13,11 @@ window.pageTranslations = {
         netProfitMargin: "هامش صافي الربح", netProfitMargin_comment_high: "ربحية ممتازة.", netProfitMargin_comment_avg: "ربحية مقبولة.", netProfitMargin_comment_low: "خسائر.", grossProfitMargin: "نسبة مجمل الربح", grossProfitMargin_comment_high: "هامش قوي.", grossProfitMargin_comment_low: "هامش ضعيف.", roa: "العائد على الأصول (ROA)", roa_comment_high: "كفاءة عالية.", roa_comment_low: "كفاءة منخفضة.", roe: "العائد على حقوق الملكية (ROE)", roe_comment_high: "عائد ممتاز.", roe_comment_low: "عائد ضعيف.", eps: "ربحية السهم (EPS)", eps_comment_positive: "ربح للسهم.", eps_comment_negative: "خسارة للسهم.",
         peRatio: "مضاعف الربحية (P/E)", peRatio_comment: "يقارن بالقطاع.", pbRatio: "معدل السعر للقيمة الدفترية (P/B)", pbRatio_comment: "يقارن سعر السهم بقيمته الدفترية.", dividendYield: "معدل الربح الموزع للسهم", dividendYield_comment: "هام للمستثمرين الباحثين عن دخل.", payoutRatio: "نسبة التوزيع", payoutRatio_comment: "نسبة منخفضة قد تعني إعادة استثمار.",
         externalDataWarning: "تتطلب مدخلات إضافية (عدد الأسهم، سعر السوق، إلخ).",
-        // *** مُعدل: رسالة خطأ جديدة ***
         noDataForAdvanced: "لا توجد بيانات قوائم مالية مُجهزة. يرجى تشغيل صفحة 'التقارير' أولاً لإنشاء القوائم.",
-        summary_ok: "الوضع المالي يبدو مستقرًا...", summary_risk: "توجد بعض مؤشرات الخطر...", alert_liquidity_risk: "🔴 خطر سيولة...", alert_leverage_risk: "🟡 تنبيه دين مرتفع...", alert_profit_risk: "🔴 خطر ربحية...", alert_ok: "🟢 لا توجد مؤشرات خطر حرجة...", noDataForRatios: "لا توجد بيانات كافية لحساب النسب.", // This key is still used by renderRatioCategory
+        summary_ok: "الوضع المالي يبدو مستقرًا...", summary_risk: "توجد بعض مؤشرات الخطر...", alert_liquidity_risk: "🔴 خطر سيولة...", alert_leverage_risk: "🟡 تنبيه دين مرتفع...", alert_profit_risk: "🔴 خطر ربحية...", alert_ok: "🟢 لا توجد مؤشرات خطر حرجة...", noDataForRatios: "لا توجد بيانات كافية لحساب النسب.", 
         beInputTitle: "مدخلات الحساب", labelFixedCosts: "إجمالي التكاليف الثابتة", labelVariableCost: "التكلفة المتغيرة للوحدة", labelSellingPrice: "سعر بيع الوحدة", btnCalculate: "احسب", beResultsTitle: "النتائج", bepUnits: "نقطة التعادل (بالوحدات)", bepValue: "نقطة التعادل (بالقيمة)", beChartTitle: "رسم بياني لنقطة التعادل", errorPrice: "سعر البيع يجب أن يكون أعلى.", errorPositiveValues: "أدخل قيم موجبة.", revenue: 'الإيرادات', totalCosts: 'إجمالي التكاليف', fixedCosts: 'التكاليف الثابتة', unitsSold: 'الوحدات المباعة', value: 'القيمة',
-        dupontTitle: "تحليل دوبونت", dupontDesc: "تفكيك العائد على حقوق الملكية (ROE)...", dupontEquation: "معادلة دوبونت:", dupontCompNPM: "هامش صافي الربح", dupontCompAT: "دوران الأصول", dupontCompEM: "مضاعف الملكية", dupontCompROE: "العائد على الملكية", dupontDataWarning: "بيانات غير كافية لتحليل دوبونت (تأكد من تشغيل صفحة 'التقارير').", // Updated text
-        verticalTitle: "التحليل الرأسي", verticalDesc: "يعرض البنود كنسبة مئوية...", verticalDataWarning: "بيانات غير كافية للتحليل الرأسي (تأكد من تشغيل صفحة 'التقارير').", // Updated text
+        dupontTitle: "تحليل دوبونت", dupontDesc: "تفكيك العائد على حقوق الملكية (ROE)...", dupontEquation: "معادلة دوبونت:", dupontCompNPM: "هامش صافي الربح", dupontCompAT: "دوران الأصول", dupontCompEM: "مضاعف الملكية", dupontCompROE: "العائد على الملكية", dupontDataWarning: "بيانات غير كافية لتحليل دوبونت (تأكد من تشغيل صفحة 'التقارير').", 
+        verticalTitle: "التحليل الرأسي", verticalDesc: "يعرض البنود كنسبة مئوية...", verticalDataWarning: "بيانات غير كافية للتحليل الرأسي (تأكد من تشغيل صفحة 'التقارير').", 
         verticalBS: "الميزانية (% من الأصول)", verticalIS: "الدخل (% من الإيرادات)", verticalAccount: "الحساب", verticalValue: "القيمة", verticalPercent: "النسبة %",
         verticalInterpretationTitle: "أبرز الملاحظات:",
         verticalLargestAsset: "أكبر بند أصول هو {account} بنسبة {percent}.",
@@ -26,15 +25,15 @@ window.pageTranslations = {
         verticalLargestEquity: "أكبر بند حقوق ملكية هو {account} بنسبة {percent} (من إجمالي الخصوم وحقوق الملكية).",
         verticalLargestExpense: "أكبر بند مصروفات (غير تكلفة البضاعة) هو {account} بنسبة {percent} من الإيرادات.",
         verticalGrossMarginComment: "هامش الربح الإجمالي يبلغ {percent}.",
-        zscoreTitle: "نموذج Altman Z-Score", zscoreDesc: "نموذج للتنبؤ بالإفلاس...", zscoreDataWarning: "بيانات غير كافية لحساب Z-Score (تأكد من تشغيل صفحة 'التقارير').", // Updated text
+        zscoreTitle: "نموذج Altman Z-Score", zscoreDesc: "نموذج للتنبؤ بالإفلاس...", zscoreDataWarning: "بيانات غير كافية لحساب Z-Score (تأكد من تشغيل صفحة 'التقارير').", 
         zscoreValueLabel: "قيمة Z-Score:", zscoreInterpretation: "التفسير:", zscoreZoneSafe: "🟢 منطقة آمنة", zscoreZoneGrey: "🟡 منطقة رمادية", zscoreZoneDistress: "🔴 منطقة الخطر", zscoreComponents: "مكونات النموذج:", zscoreX1: "X1 (رأس المال العامل / الأصول)", zscoreX2: "X2 (الأرباح المحتجزة / الأصول)", zscoreX3: "X3 (الأرباح ق.ف.ض / الأصول)", zscoreX4: "X4 (حقوق الملكية / الخصوم)", zscoreX5: "X5 (الإيرادات / الأصول)", zscoreRetainedEarningsNotFound: "(أرباح محتجزة غير موجودة)",
-        cfTitle: "تحليل التدفقات النقدية (تقديري)", cfDesc: "تقدير لقائمة التدفقات النقدية...", cfDataWarning: "بيانات غير كافية لتقدير التدفقات (تأكد من تشغيل صفحة 'التقارير').", // Updated text
+        cfTitle: "تحليل التدفقات النقدية (تقديري)", cfDesc: "تقدير لقائمة التدفقات النقدية...", cfDataWarning: "بيانات غير كافية لتقدير التدفقات (تأكد من تشغيل صفحة 'التقارير').", 
         cfStmtTitle: "قائمة التدفقات النقدية المقدرة", cfNetIncome: "صافي الدخل", cfDepreciationAmortization: "الإهلاك (مقدر)", cfChangesWC: "التغيرات في رأس المال العامل (مقدر)", cfOperating: "التدفق التشغيلي", cfInvesting: "التدفق الاستثماري (مقدر)", cfFinancing: "التدفق التمويلي (مقدر)", cfNetChange: "صافي التغير النقدي", cfRatiosTitle: "نسب التدفقات النقدية", cfRatioOCF: "نسبة التدفق التشغيلي", cfRatioFCF: "التدفق النقدي الحر (مقدر)", cfInterpretationPositiveOCF: "🟢 العمليات تولد نقدًا.", cfInterpretationNegativeOCF: "🔴 العمليات تستهلك نقدًا.", cfInterpretationFCF: "التدفق النقدي الحر...",
-        evaInputTitle: "مدخلات حساب (EVA)", evaInputDesc: "يتطلب افتراضات خارجية.", labelWACC: "متوسط تكلفة رأس المال (WACC)", labelTaxRate: "معدل الضريبة", evaResultsTitle: "نتائج تحليل (EVA)", evaDataWarning: "بيانات غير كافية لحساب (EVA) (تأكد من تشغيل صفحة 'التقارير').", // Updated text
+        evaInputTitle: "مدخلات حساب (EVA)", evaInputDesc: "يتطلب افتراضات خارجية.", labelWACC: "متوسط تكلفة رأس المال (WACC)", labelTaxRate: "معدل الضريبة", evaResultsTitle: "نتائج تحليل (EVA)", evaDataWarning: "بيانات غير كافية لحساب (EVA) (تأكد من تشغيل صفحة 'التقارير').", 
         evaValueLabel: "القيمة الاقتصادية المضافة (EVA):", evaInterpretation: "التفسير:", evaInterpretationPositive: "🟢 خلق للقيمة.", evaInterpretationNegative: "🔴 تدمير للقيمة.", evaComponents: "مكونات الحساب:", evaNOPAT: "صافي الربح التشغيلي بعد الضرائب", evaInvestedCapital: "رأس المال المستثمر", evaCapitalCharge: "تكلفة رأس المال",
-        horizontalTitle: "التحليل الأفقي (تحليل الاتجاه)", horizontalDesc: "يقارن بنود القوائم المالية عبر فترتين زمنيتين (الحالية والسابقة، إن وجدت).", horizontalDataWarning: "لا توجد بيانات فترة سابقة (financialDataPrevious). يرجى التأكد من إدخال بيانات الفترة السابقة وتشغيل صفحة 'التقارير'.", // Updated text
+        horizontalTitle: "التحليل الأفقي (تحليل الاتجاه)", horizontalDesc: "يقارن بنود القوائم المالية عبر فترتين زمنيتين (الحالية والسابقة، إن وجدت).", horizontalDataWarning: "لا توجد بيانات فترة سابقة (financialDataPrevious). يرجى التأكد من إدخال بيانات الفترة السابقة وتشغيل صفحة 'التقارير'.", 
         horizontalIS: "قائمة الدخل - مقارنة الفترات", horizontalBS: "الميزانية العمومية - مقارنة الفترات", horizontalAccount: "الحساب", horizontalCurrentPeriod: "الفترة الحالية", horizontalPreviousPeriod: "الفترة السابقة", horizontalChangeAbs: "التغير ($)", horizontalChangePct: "التغير (%)",
-        cccTitle: "دورة التحول النقدي (CCC)", cccDesc: "تقيس الوقت بالأيام لتحويل الاستثمارات في المخزون والموارد إلى نقد.", cccDataWarning: "بيانات غير كافية لحساب CCC (تأكد من تشغيل صفحة 'التقارير').", // Updated text
+        cccTitle: "دورة التحول النقدي (CCC)", cccDesc: "تقيس الوقت بالأيام لتحويل الاستثمارات في المخزون والموارد إلى نقد.", cccDataWarning: "بيانات غير كافية لحساب CCC (تأكد من تشغيل صفحة 'التقارير').", 
         cccValueLabel: "دورة التحول النقدي (أيام):", cccInterpretation: "التفسير:", cccInterpretationShort: "🟢 دورة قصيرة: كفاءة عالية.", cccInterpretationLong: "🟡 دورة طويلة: بطء في بيع المخزون أو التحصيل.", cccComponents: "مكونات الحساب (أيام):", cccDSO: "متوسط فترة التحصيل (DSO)", cccDIO: "متوسط فترة التخزين (DIO)", cccDPO: "متوسط فترة السداد للموردين (DPO)",
         scenarioTitle: "تحليل السيناريو (على نقطة التعادل)", scenarioDesc: "اختبر تأثير تغيير الافتراضات على نقطة التعادل.", scenarioInputs: "تغيير الافتراضات (%):", scenarioFixedCostsLabel: "التكاليف الثابتة", scenarioVariableCostLabel: "التكلفة المتغيرة للوحدة", scenarioSellingPriceLabel: "سعر بيع الوحدة", scenarioRunBtn: "اختبر السيناريو", scenarioResults: "النتائج:", scenarioBaseCaseInfo: "القيم الأصلية مأخوذة من تبويب تحليل التعادل.", scenarioMetric: "المقياس", scenarioBaseValue: "القيمة الأصلية", scenarioNewValue: "القيمة الجديدة", scenarioChange: "التغير (%)",
         externalInputsTitle: "مدخلات التقييم الإضافية",
@@ -44,8 +43,47 @@ window.pageTranslations = {
         btnUpdateValuation: "تحديث مؤشرات التقييم"
     },
     en: {
-        // *** All English translations... ***
-        // (Omitted for brevity, but all keys above need corresponding English entries)
+        // *** مُضاف: ترجمات إنجليزية كاملة ***
+        pageTitle: "Advanced Analytics — Financial Analyzer", pageHeader: "Advanced Analytics", pageSubheader: "Use specialized analytical tools for deeper insights into your business performance.",
+        tabRatios: "Financial Ratios", tabBreakeven: "Break-even Analysis", tabDupont: "DuPont Analysis", tabVertical: "Vertical Analysis", tabZScore: "Altman Z-Score", tabCashFlow: "Cash Flow Analysis", tabEVA: "Economic Value Added (EVA)",
+        tabHorizontal: "Horizontal Analysis", tabCCC: "Cash Conversion Cycle", tabScenario: "Scenario Analysis",
+        summaryTitle: "Smart Summary", alertsTitle: "Alerts & Risk Indicators", thRatio: "Ratio", thValue: "Value", thComment: "Analytical Comment",
+        liquidityRatios: "Liquidity Indicators", profitabilityRatios: "Profitability Indicators", leverageRatios: "Leverage & Indebtedness Indicators", activityRatios: "Activity Indicators", valuationRatios: "Valuation Indicators",
+        currentRatio: "Current Ratio", currentRatio_comment_high: "Excellent liquidity...", currentRatio_comment_good: "Good liquidity...", currentRatio_comment_low: "Risk indicator...", quickRatio: "Quick Ratio", quickRatio_comment_good: "Good ability...", quickRatio_comment_low: "Risk indicator...", netWorkingCapital: "Net Working Capital", netWorkingCapital_comment_positive: "Healthy position.", netWorkingCapital_comment_negative: "Risk indicator.", cashRatio: "Cash Ratio", cashRatio_comment_good: "Very strong ability.", cashRatio_comment_low: "Low reliance.",
+        inventoryTurnover: "Inventory Turnover", inventoryTurnover_comment_high: "High efficiency.", inventoryTurnover_comment_low: "Weak or obsolete.", assetTurnover: "Asset Turnover", assetTurnover_comment_high: "Excellent efficiency.", assetTurnover_comment_low: "Low efficiency.", receivablesTurnover: "Receivables Turnover", receivablesTurnover_comment_high: "Strong collection.", receivablesTurnover_comment_low: "Slowness in collecting.", avgCollectionPeriod: "Average Collection Period", avgCollectionPeriod_comment_low: "Excellent speed.", avgCollectionPeriod_comment_high: "Long period.",
+        debtToEquity: "Debt to Equity Ratio", debtToEquity_comment_low: "Safe structure.", debtToEquity_comment_good: "Good balance.", debtToEquity_comment_high: "High debt.", debtToAssets: "Debt to Assets Ratio", debtToAssets_comment_low: "Safe position.", debtToAssets_comment_high: "High risk.", interestCoverageRatio: "Interest Coverage Ratio", interestCoverageRatio_comment_safe: "Excellent ability.", interestCoverageRatio_comment_risk: "Risk.", financialLeverage: "Financial Leverage", financialLeverage_comment_high: "High reliance.", financialLeverage_comment_low: "Low reliance.",
+        grossProfitMargin: "Gross Profit Margin", grossProfitMargin_comment_high: "Strong margin.", grossProfitMargin_comment_low: "Weak margin.", netProfitMargin: "Net Profit Margin", netProfitMargin_comment_high: "Excellent profitability.", netProfitMargin_comment_avg: "Acceptable profitability.", netProfitMargin_comment_low: "Losses.", roa: "Return on Assets (ROA)", roa_comment_high: "High efficiency.", roa_comment_low: "Low efficiency.", roe: "Return on Equity (ROE)", roe_comment_high: "Excellent return.", roe_comment_low: "Weak return.", eps: "Earnings Per Share (EPS)", eps_comment_positive: "Profit per share.", eps_comment_negative: "Loss per share.",
+        peRatio: "P/E Ratio", peRatio_comment: "Compare to industry.", pbRatio: "Price-to-Book (P/B) Ratio", pbRatio_comment: "Compares market price to book value.", dividendYield: "Dividend Yield", dividendYield_comment: "Important for income investors.", payoutRatio: "Payout Ratio", payoutRatio_comment: "Low ratio may mean reinvesting.",
+        externalDataWarning: "Requires additional inputs (No. Shares, Market Price, etc.).",
+        noDataForAdvanced: "No processed financial statements found. Please run the 'Report' page first to generate statements.",
+        summary_ok: "Financial situation appears stable...", summary_risk: "Some risk indicators are present...", alert_liquidity_risk: "🔴 Liquidity Risk...", alert_leverage_risk: "🟡 High Debt Warning...", alert_profit_risk: "🔴 Profitability Risk...", alert_ok: "🟢 No critical risk indicators found...", noDataForRatios: "Not enough data to calculate ratios.",
+        beInputTitle: "Calculation Inputs", labelFixedCosts: "Total Fixed Costs", labelVariableCost: "Variable Cost per Unit", labelSellingPrice: "Selling Price per Unit", btnCalculate: "Calculate", beResultsTitle: "Results", bepUnits: "Break-even Point (Units)", bepValue: "Break-even Point (Value)", beChartTitle: "Break-even Chart", errorPrice: "Selling price must be higher.", errorPositiveValues: "Enter positive values.", revenue: 'Revenue', totalCosts: 'Total Costs', fixedCosts: 'Fixed Costs', unitsSold: 'Units Sold', value: 'Value',
+        dupontTitle: "DuPont Analysis", dupontDesc: "Breaking down Return on Equity (ROE)...", dupontEquation: "DuPont Equation:", dupontCompNPM: "Net Profit Margin", dupontCompAT: "Asset Turnover", dupontCompEM: "Equity Multiplier", dupontCompROE: "Return on Equity", dupontDataWarning: "Insufficient data for DuPont analysis (Ensure 'Report' page was run).",
+        verticalTitle: "Vertical Analysis", verticalDesc: "Displays items as a percentage...", verticalDataWarning: "Insufficient data for Vertical Analysis (Ensure 'Report' page was run).",
+        verticalBS: "Balance Sheet (% of Assets)", verticalIS: "Income Statement (% of Revenue)", verticalAccount: "Account", verticalValue: "Value", verticalPercent: "Percent %",
+        verticalInterpretationTitle: "Key Observations:",
+        verticalLargestAsset: "The largest asset item is {account} at {percent}.",
+        verticalLargestLiability: "The largest liability item is {account} at {percent} (of Total L+E).",
+        verticalLargestEquity: "The largest equity item is {account} at {percent} (of Total L+E).",
+        verticalLargestExpense: "The largest expense item (excl. COGS) is {account} at {percent} of Revenue.",
+        verticalGrossMarginComment: "Gross Profit Margin is {percent}.",
+        zscoreTitle: "Altman Z-Score", zscoreDesc: "Bankruptcy prediction model...", zscoreDataWarning: "Insufficient data for Z-Score (Ensure 'Report' page was run).",
+        zscoreValueLabel: "Z-Score Value:", zscoreInterpretation: "Interpretation:", zscoreZoneSafe: "🟢 Safe Zone", zscoreZoneGrey: "🟡 Grey Zone", zscoreZoneDistress: "🔴 Distress Zone", zscoreComponents: "Model Components:", zscoreX1: "X1 (WC / Assets)", zscoreX2: "X2 (RE / Assets)", zscoreX3: "X3 (EBIT / Assets)", zscoreX4: "X4 (Equity / Liab.)", zscoreX5: "X5 (Revenue / Assets)", zscoreRetainedEarningsNotFound: "(RE not found)",
+        cfTitle: "Cash Flow Analysis (Est.)", cfDesc: "Estimate of cash flow statement...", cfDataWarning: "Insufficient data for Cash Flow est. (Ensure 'Report' page was run).",
+        cfStmtTitle: "Estimated Cash Flow Statement", cfNetIncome: "Net Income", cfDepreciationAmortization: "Depr. & Amort. (Est.)", cfChangesWC: "Changes in Working Capital (Est.)", cfOperating: "Operating CF", cfInvesting: "Investing CF (Est.)", cfFinancing: "Financing CF (Est.)", cfNetChange: "Net Change in Cash", cfRatiosTitle: "Cash Flow Ratios", cfRatioOCF: "Operating CF Ratio", cfRatioFCF: "Free Cash Flow (Est.)", cfInterpretationPositiveOCF: "🟢 Operations generate cash.", cfInterpretationNegativeOCF: "🔴 Operations consume cash.", cfInterpretationFCF: "Free Cash Flow...",
+        evaInputTitle: "EVA Calculation Inputs", evaInputDesc: "Requires external assumptions.", labelWACC: "WACC", labelTaxRate: "Tax Rate", evaResultsTitle: "EVA Analysis Results", evaDataWarning: "Insufficient data for EVA (Ensure 'Report' page was run).",
+        evaValueLabel: "Economic Value Added (EVA):", evaInterpretation: "Interpretation:", evaInterpretationPositive: "🟢 Value Creation.", evaInterpretationNegative: "🔴 Value Destruction.", evaComponents: "Calculation Components:", evaNOPAT: "NOPAT", evaInvestedCapital: "Invested Capital", evaCapitalCharge: "Capital Charge",
+        horizontalTitle: "Horizontal Analysis (Trend Analysis)", horizontalDesc: "Compares financial statement items across two periods (current and previous, if available).", horizontalDataWarning: "Previous period data ('financialDataPrevious') not found. Please ensure prior period data was entered and the 'Report' page was run.",
+        horizontalIS: "Income Statement - Period Comparison", horizontalBS: "Balance Sheet - Period Comparison", horizontalAccount: "Account", horizontalCurrentPeriod: "Current Period", horizontalPreviousPeriod: "Previous Period", horizontalChangeAbs: "Change ($)", horizontalChangePct: "Change (%)",
+        cccTitle: "Cash Conversion Cycle (CCC)", cccDesc: "Measures the time (in days) it takes to convert inventory and resource investments into cash.", cccDataWarning: "Insufficient data for CCC (Ensure 'Report' page was run).",
+        cccValueLabel: "Cash Conversion Cycle (Days):", cccInterpretation: "Interpretation:", cccInterpretationShort: "🟢 Short cycle: High efficiency.", cccInterpretationLong: "🟡 Long cycle: Slowness in selling inventory or collecting.", cccComponents: "Calculation Components (Days):", cccDSO: "Days Sales Outstanding (DSO)", cccDIO: "Days Inventory Outstanding (DIO)", cccDPO: "Days Payables Outstanding (DPO)",
+        scenarioTitle: "Scenario Analysis (on Break-even)", scenarioDesc: "Test the impact of changing assumptions on the break-even point.", scenarioInputs: "Change Assumptions (%):", scenarioFixedCostsLabel: "Fixed Costs", scenarioVariableCostLabel: "Variable Cost/Unit", scenarioSellingPriceLabel: "Selling Price/Unit", scenarioRunBtn: "Run Scenario", scenarioResults: "Results:", scenarioBaseCaseInfo: "Base values are taken from the Break-even Analysis tab.", scenarioMetric: "Metric", scenarioBaseValue: "Base Value", scenarioNewValue: "New Value", scenarioChange: "Change (%)",
+        externalInputsTitle: "Additional Valuation Inputs",
+        labelNumShares: "Number of Shares Outstanding",
+        labelMarketPrice: "Market Price Per Share",
+        labelTotalDividends: "Total Annual Dividends Paid",
+        btnUpdateValuation: "Update Valuation Ratios"
+        // *** نهاية الإضافة ***
     }
 };
 
@@ -117,8 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // ==============================================
         // === DATA LOADING (New Simplified Function) ===
         // ==============================================
-
-        // *** مُضاف: دالة جديدة لقراءة البيانات المجهزة من report-app.js ***
         const loadProcessedData = () => {
             console.log("[DEBUG] Loading processed data from localStorage...");
             const currentDataString = localStorage.getItem('financialDataCurrent');
@@ -157,21 +193,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn("[DEBUG] 'financialDataPrevious' not found. Comparative analysis will be limited.");
             }
             
-            return state.hasValidData; // Return true only if current data is valid
+            return state.hasValidData; 
         };
-
-        // *** مُلغى: دالة calculateFinancials القديمة لم نعد بحاجة إليها ***
-        // const calculateFinancials = (rawDataKey = 'trialData', ...) => { ... } 
         
-
         // *** مُعدل: دالة حساب النسب أصبحت بسيطة جداً ***
         const calculateAllRatios = () => {
              state.ratios = {}; 
              if (!state.hasValidData) { console.warn("Ratios skipped: No valid processed data."); return false; } 
              
-             // *** البيانات الآن تأتي من المجاميع الجاهزة ***
              const f = state.statementsCurrent.totals;
-             const fPrev = state.statementsPrevious?.totals || {}; // Use empty object as fallback
+             const fPrev = state.statementsPrevious?.totals || {}; 
 
              try { 
                  const assets = f.totalAssets || 0; 
@@ -183,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  const purchases = f.purchases || 0;
                  const ebit = f.ebit || 0;
                  const workingCapital = f.workingCapital || 0;
-                 const retainedEarnings = f.retainedEarnings || 0; // Closing RE
+                 const retainedEarnings = f.retainedEarnings || 0; 
                  const interestExpense = f.totalInterest || 0;
                  const inventory = f.inventory || 0;
                  const accountsReceivable = f.accountsReceivable || 0;
@@ -194,12 +225,11 @@ document.addEventListener('DOMContentLoaded', () => {
                  const grossProfit = f.grossProfit || 0;
                  const depreciation = f.depreciationTotal || 0;
                  
-                 // *** المتوسطات ***
-                 const avgAssets = state.hasPreviousData ? (assets + fPrev.totalAssets) / 2 : assets;
-                 const avgEquity = state.hasPreviousData ? (equity + fPrev.totalEquity) / 2 : equity;
-                 const avgInventory = state.hasPreviousData ? (inventory + fPrev.inventory) / 2 : inventory;
-                 const avgReceivables = state.hasPreviousData ? (accountsReceivable + fPrev.accountsReceivable) / 2 : accountsReceivable;
-                 const avgPayables = state.hasPreviousData ? (accountsPayable + fPrev.accountsPayable) / 2 : accountsPayable;
+                 const avgAssets = state.hasPreviousData ? (assets + (fPrev.totalAssets || 0)) / 2 : assets;
+                 const avgEquity = state.hasPreviousData ? (equity + (fPrev.totalEquity || 0)) / 2 : equity;
+                 const avgInventory = state.hasPreviousData ? (inventory + (fPrev.inventory || 0)) / 2 : inventory;
+                 const avgReceivables = state.hasPreviousData ? (accountsReceivable + (fPrev.accountsReceivable || 0)) / 2 : accountsReceivable;
+                 const avgPayables = state.hasPreviousData ? (accountsPayable + (fPrev.accountsPayable || 0)) / 2 : accountsPayable;
 
                  
                  // Z-Score
@@ -222,7 +252,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  const receivablesTurnover = avgReceivables > 0 ? revenue / avgReceivables : Infinity; 
                  const avgCollectionPeriod = isFinite(receivablesTurnover) && receivablesTurnover !== 0 ? 365 / receivablesTurnover : Infinity; // DSO
                  const daysInventoryOutstanding = isFinite(inventoryTurnover) && inventoryTurnover !== 0 ? 365 / inventoryTurnover : Infinity; // DIO
-                 const costOfSalesForDPO = purchases > 0 ? purchases : cogs; // Use purchases if available, else COGS
+                 const costOfSalesForDPO = purchases > 0 ? purchases : cogs;
                  const daysPayablesOutstanding = avgPayables > 0 && costOfSalesForDPO > 0 ? (avgPayables / costOfSalesForDPO) * 365 : Infinity; // DPO
                  const cashConversionCycle = (isFinite(avgCollectionPeriod) && isFinite(daysInventoryOutstanding) && isFinite(daysPayablesOutstanding)) ? 
                                              avgCollectionPeriod + daysInventoryOutstanding - daysPayablesOutstanding : Infinity; // CCC
@@ -247,7 +277,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  };
                  
                  const eps = externalInputs.numberOfShares > 0 ? netProfit / externalInputs.numberOfShares : NaN;
-                 const bookValuePerShare = externalInputs.numberOfShares > 0 ? equity / externalInputs.numberOfShares : NaN; // Use ending equity
+                 const bookValuePerShare = externalInputs.numberOfShares > 0 ? equity / externalInputs.numberOfShares : NaN; 
                  const dividendsPerShare = externalInputs.numberOfShares > 0 ? externalInputs.totalDividends / externalInputs.numberOfShares : NaN;
                  const peRatio = isFinite(eps) && eps !== 0 && externalInputs.marketPricePerShare > 0 ? externalInputs.marketPricePerShare / eps : NaN;
                  const pbRatio = isFinite(bookValuePerShare) && bookValuePerShare !== 0 && externalInputs.marketPricePerShare > 0 ? externalInputs.marketPricePerShare / bookValuePerShare : NaN;
@@ -278,7 +308,8 @@ document.addEventListener('DOMContentLoaded', () => {
                      _revenue: revenue,
                      _liabilities: liabilities,
                      _ocf_estimated: ocf_estimated,
-                     _capex_estimated: capex_estimated
+                     _capex_estimated: capex_estimated,
+                     _depreciation: depreciation // Store depreciation for CF tab
                  }; 
                  console.log("Calculated Ratios (from processed data):", state.ratios); return true; 
              } catch(e) { 
@@ -291,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // === RENDERING FUNCTIONS (Adapted for new data source) ===
         // ==============================================
         
-        const getRatioComment = (key, value) => { /* ... (Code from previous working version - لا تغيير هنا) ... */
+        const getRatioComment = (key, value) => { /* ... (Code from previous working version) ... */
             if (!isFinite(value) && isNaN(value)) return "N/A"; 
             if (isNaN(value)) {
                 if (['eps', 'peRatio', 'pbRatio', 'dividendYield', 'payoutRatio'].includes(key)) {
@@ -371,7 +402,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // *** مُعدل: الاعتماد على state.ratios المحسوبة ***
         const calculateAndDisplayDupont = () => { 
             console.log("[DEBUG] Attempting to calculate and display DuPont...");
-            if (!state.hasValidData || !state.ratios.equityMultiplier) { 
+            if (!state.hasValidData || !isFinite(state.ratios.equityMultiplier)) { 
                 console.warn("[DEBUG] No valid data for DuPont, showing warning.");
                 if(UI.dupontDataWarning) { UI.dupontDataWarning.textContent = t_page('dupontDataWarning'); UI.dupontDataWarning.style.display = 'block'; }
                 if(UI.dupontFormulaDisplay) UI.dupontFormulaDisplay.style.display = 'none';
@@ -416,19 +447,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const totalRevenue = state.statementsCurrent.totals.totalRevenue || 0; 
             const totalLiabEquity = (state.statementsCurrent.totals.totalLiabilities || 0) + (state.statementsCurrent.totals.totalEquity || 0);
 
+            // Helper to build sorted item list for tables
+            const buildSortedList = (items) => {
+                if (!items) return [];
+                return [...items].sort((a,b) => Math.abs(b.value || 0) - Math.abs(a.value || 0));
+            };
+
             let bsTableHTML = `<table class="table table-sm table-striped"><thead><tr><th>${t_page('verticalAccount')}</th><th class="text-end">${t_page('verticalValue')}</th><th class="text-end">${t_page('verticalPercent')}</th></tr></thead><tbody>`; 
-            const sortedBsItems = [
+            const bsAllItems = [
                 ...state.statementsCurrent.bs.currentAssets, 
                 ...state.statementsCurrent.bs.nonCurrentAssets,
                 ...state.statementsCurrent.bs.currentLiabilities,
                 ...state.statementsCurrent.bs.nonCurrentLiabilities,
-                ...state.statementsCurrent.bs.equityCapital
-                // Note: Closing RE is handled manually if needed, or derived
-            ].sort((a,b) => Math.abs(b.value || 0) - Math.abs(a.value || 0));
+                ...state.statementsCurrent.bs.equityCapital,
+                { account: t_page('retainedEarnings'), value: state.statementsCurrent.totals.retainedEarnings || 0 } // Add closing RE
+            ];
+            const sortedBsItems = buildSortedList(bsAllItems);
             
             sortedBsItems.forEach(item => { 
                 const percentage = totalAssets !== 0 ? ((item.value || 0) / totalAssets) : 0; 
-                const displayValue = Math.abs(item.value || 0); // Use absolute value for display consistency
+                const displayValue = Math.abs(item.value || 0);
                 bsTableHTML += `<tr><td>${item.account}</td><td class="text-end">${formatNumber(displayValue)}</td><td class="text-end">${formatPercent(Math.abs(percentage))}</td></tr>`; 
             }); 
             bsTableHTML += `<tr class="table-light fw-bold"><td>${t_page('totalAssets')}</td><td class="text-end">${formatNumber(totalAssets)}</td><td class="text-end">100.0%</td></tr>`; 
@@ -436,7 +474,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(UI.verticalBSTable) UI.verticalBSTable.innerHTML = bsTableHTML; 
 
             let isTableHTML = `<table class="table table-sm table-striped"><thead><tr><th>${t_page('verticalAccount')}</th><th class="text-end">${t_page('verticalValue')}</th><th class="text-end">${t_page('verticalPercent')}</th></tr></thead><tbody>`; 
-            const sortedIsItems = [
+            const isAllItems = [
                 ...state.statementsCurrent.is.revenue,
                 ...state.statementsCurrent.is.cogs,
                 ...state.statementsCurrent.is.genAdminExpenses,
@@ -445,9 +483,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 ...state.statementsCurrent.is.otherOperatingExpenses,
                 ...state.statementsCurrent.is.interestExpense,
                 ...state.statementsCurrent.is.taxExpense
-            ].sort((a, b) => {
-                if (a.account.includes('الإيرادات') || a.account.includes('Revenue')) return -1; // Keep revenue first
-                if (b.account.includes('الإيرادات') || b.account.includes('Revenue')) return 1;
+            ];
+            const sortedIsItems = isAllItems.sort((a, b) => {
+                if (a.value < 0) return -1; // Keep revenue first
+                if (b.value < 0) return 1;
                 return Math.abs(b.value || 0) - Math.abs(a.value || 0); // Sort rest by value
             });
             
@@ -465,15 +504,13 @@ document.addEventListener('DOMContentLoaded', () => {
             let interpretationHTML = '';
             const comments = [];
             
-            // Find largest items from the *already sorted* arrays
-            const largestAsset = sortedBsItems.find(item => item.value > 0); // First positive value (assets)
+            const allBsItemsSorted = [...bsAllItems].sort((a,b) => Math.abs(b.value || 0) - Math.abs(a.value || 0));
+            const largestAsset = allBsItemsSorted.find(item => item.value > 0); 
             if (largestAsset && totalAssets !== 0) {
                  const percent = ((largestAsset.value || 0) / totalAssets);
                  comments.push(t_page('verticalLargestAsset').replace('{account}', largestAsset.account).replace('{percent}', formatPercent(percent)));
             }
-            const largestLiabOrEquity = sortedBsItems.find(item => item.value < 0); // First negative value (L+E) - This logic is flawed if using processed data
-            // TODO: Rework this logic if vertical analysis needs to run on raw trialData vs processed statements
-            // For now, let's use the processed lists
+            
             const largestLiabItem = [...state.statementsCurrent.bs.currentLiabilities, ...state.statementsCurrent.bs.nonCurrentLiabilities].sort((a,b) => b.value-a.value)[0];
              if (largestLiabItem && totalLiabEquity !== 0) {
                  const percent = (Math.abs(largestLiabItem.value || 0) / totalLiabEquity);
@@ -489,7 +526,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const grossMarginPercent = (state.statementsCurrent.totals.grossProfit || 0) / totalRevenue;
                 comments.push(t_page('verticalGrossMarginComment').replace('{percent}', formatPercent(grossMarginPercent)));
             }
-            const largestExpense = sortedIsItems.find(item => item.value > 0 && !item.account.toLowerCase().includes('cogs') && !item.account.includes('تكلفة'));
+            const largestExpense = sortedIsItems.find(item => item.value > 0 && !(state.statementsCurrent.is.cogs.find(c => c.account === item.account))); // Find largest expense *not* COGS
              if (largestExpense && totalRevenue !== 0) {
                  const percent = (Math.abs(largestExpense.value || 0) / totalRevenue);
                  comments.push(t_page('verticalLargestExpense').replace('{account}', largestExpense.account).replace('{percent}', formatPercent(percent)));
@@ -514,7 +551,7 @@ document.addEventListener('DOMContentLoaded', () => {
             factors.forEach(key => { 
                 const value = state.ratios[key]; 
                 let label = t_page(key.replace('zScore', 'zscore')); 
-                if (key === 'zScoreX2' && (state.statementsCurrent.totals.retainedEarnings || 0) === 0 && !isFinite(value)) { label += ` <small class="text-muted">${t_page('zscoreRetainedEarningsNotFound')}</small>`; } 
+                if (key === 'zScoreX2' && (state.ratios._retainedEarnings || 0) === 0 && !isFinite(value)) { label += ` <small class="text-muted">${t_page('zscoreRetainedEarningsNotFound')}</small>`; } 
                 factorsHTML += `<li class="list-group-item d-flex justify-content-between align-items-center">${label} <span class="badge bg-secondary rounded-pill">${formatRatio(value)}</span></li>`; 
             }); 
             if(UI.zscoreFactorsList) UI.zscoreFactorsList.innerHTML = factorsHTML;
@@ -525,7 +562,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!state.hasValidData) { if(UI.cfDataWarning) { UI.cfDataWarning.textContent = t_page('cfDataWarning'); UI.cfDataWarning.style.display = 'block'; } if(UI.cfResultsContainer) UI.cfResultsContainer.style.display = 'none'; return; } 
             if(UI.cfDataWarning) UI.cfDataWarning.style.display = 'none'; if(UI.cfResultsContainer) UI.cfResultsContainer.style.display = 'block'; 
             const r = state.ratios; // Get ratios
-            let stmtHTML = ` <tr><td>${t_page('netIncomeForCF')}</td><td class="text-end">${formatNumber(r._netProfit)}</td></tr> <tr><td class="ps-3">${t_page('depreciationAmortizationForCF')}</td><td class="text-end">${formatNumber(state.statementsCurrent.totals.depreciationTotal || 0)}</td></tr> <tr><td class="text-muted ps-3">${t_page('changesInWorkingCapital')}</td><td class="text-end text-muted">(N/A)</td></tr> <tr class="table-light fw-bold"><td>${t_page('cashFlowFromOperations')}</td><td class="text-end">${formatNumber(r._ocf_estimated)}</td></tr> <tr><td>${t_page('capitalExpenditures')}</td><td class="text-end">${formatNumber(r._capex_estimated)}</td></tr> <tr class="table-light fw-bold"><td>${t_page('cfRatioFCF')}</td><td class="text-end">${formatNumber(r.freeCashFlow)}</td></tr>`;
+            let stmtHTML = ` <tr><td>${t_page('netIncomeForCF')}</td><td class="text-end">${formatNumber(r._netProfit)}</td></tr> <tr><td class="ps-3">${t_page('depreciationAmortizationForCF')}</td><td class="text-end">${formatNumber(r._depreciation || 0)}</td></tr> <tr><td class="text-muted ps-3">${t_page('changesInWorkingCapital')}</td><td class="text-end text-muted">(N/A)</td></tr> <tr class="table-light fw-bold"><td>${t_page('cashFlowFromOperations')}</td><td class="text-end">${formatNumber(r._ocf_estimated)}</td></tr> <tr><td>${t_page('capitalExpenditures')}</td><td class="text-end">${formatNumber(r._capex_estimated)}</td></tr> <tr class="table-light fw-bold"><td>${t_page('cfRatioFCF')}</td><td class="text-end">${formatNumber(r.freeCashFlow)}</td></tr>`;
             if(UI.cfStatementTableBody) UI.cfStatementTableBody.innerHTML = stmtHTML; 
             if(UI.cfValueOCFRatio) UI.cfValueOCFRatio.textContent = formatRatio(r.operatingCashFlowRatio); 
             if(UI.cfValueFCF) UI.cfValueFCF.textContent = formatNumber(r.freeCashFlow); 
@@ -547,7 +584,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if(UI.evaDataWarning) UI.evaDataWarning.style.display = 'none';
             if(UI.evaResultsContainer) UI.evaResultsContainer.style.display = 'block';
             
-            const f = state.statementsCurrent.totals; // Use processed totals
+            const f = state.statementsCurrent.totals; 
             const wacc = toNum(UI.waccInput.value) / 100.0;
             const taxRate = toNum(UI.taxRateInput.value) / 100.0;
             if (wacc <= 0 || taxRate < 0) {
@@ -555,8 +592,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             const nopat = (f.ebit || 0) * (1 - taxRate);
-            // Invested Capital = Total Assets - Non-Interest-Bearing Current Liabilities (NIBCL)
-            // NIBCL = Total Current Liabilities - Short-Term Debt
             const nonInterestBearingCL = (f.totalCurrentLiabilities || 0) - (f.shortTermDebt || 0);
             const investedCapital = (f.totalAssets || 0) - nonInterestBearingCL; 
             const capitalCharge = investedCapital * wacc;
@@ -592,27 +627,7 @@ document.addEventListener('DOMContentLoaded', () => {
               if(UI.horizontalDataWarning) UI.horizontalDataWarning.style.display = 'none';
               if(UI.horizontalResultsContainer) UI.horizontalResultsContainer.style.display = 'block';
 
-              // Combine all item arrays
-              const itemsCurrent = [
-                  ...state.statementsCurrent.bs.currentAssets, ...state.statementsCurrent.bs.nonCurrentAssets,
-                  ...state.statementsCurrent.bs.currentLiabilities, ...state.statementsCurrent.bs.nonCurrentLiabilities,
-                  ...state.statementsCurrent.bs.equityCapital,
-                  ...state.statementsCurrent.is.revenue, ...state.statementsCurrent.is.cogs,
-                  ...state.statementsCurrent.is.genAdminExpenses, ...state.statementsCurrent.is.sellingMarketingExpenses,
-                  ...state.statementsCurrent.is.depreciationAmortization, ...state.statementsCurrent.is.otherOperatingExpenses,
-                  ...state.statementsCurrent.is.interestExpense, ...state.statementsCurrent.is.taxExpense
-              ];
-              const itemsPrevious = [
-                  ...state.statementsPrevious.bs.currentAssets, ...state.statementsPrevious.bs.nonCurrentAssets,
-                  ...state.statementsPrevious.bs.currentLiabilities, ...state.statementsPrevious.bs.nonCurrentLiabilities,
-                  ...state.statementsPrevious.bs.equityCapital,
-                  ...state.statementsPrevious.is.revenue, ...state.statementsPrevious.is.cogs,
-                  ...state.statementsPrevious.is.genAdminExpenses, ...state.statementsPrevious.is.sellingMarketingExpenses,
-                  ...state.statementsPrevious.is.depreciationAmortization, ...state.statementsPrevious.is.otherOperatingExpenses,
-                  ...state.statementsPrevious.is.interestExpense, ...state.statementsPrevious.is.taxExpense
-              ];
-
-              const generateHorizontalRows = (itemsCurrent, itemsPrev) => {
+              const generateHorizontalRows = (itemsCurrent = [], itemsPrev = []) => {
                   let rowsHTML = '';
                   const allAccountNames = new Set([...itemsCurrent.map(i => i.account), ...itemsPrev.map(i => i.account)]);
                   const prevItemsMap = new Map(itemsPrev.map(item => [item.account, item.value]));
@@ -634,18 +649,25 @@ document.addEventListener('DOMContentLoaded', () => {
                   return rowsHTML;
               };
 
-             // This logic needs refinement: BS and IS items should be separate tables.
-             // For now, let's just use the BS items as an example
+             // Generate BS Table
              let bsTableHTML = `<table class="table table-sm table-striped"><thead><tr><th>${t_page('thAccount')}</th><th class="text-end">${t_page('thCurrentPeriod')}</th><th class="text-end">${t_page('thPreviousPeriod')}</th><th class="text-end">${t_page('thChangeAbs')}</th><th class="text-end">${t_page('thChangePct')}</th></tr></thead><tbody>`;
              bsTableHTML += generateHorizontalRows(
-                [...state.statementsCurrent.bs.currentAssets, ...state.statementsCurrent.bs.nonCurrentAssets, ...state.statementsCurrent.bs.currentLiabilities, ...state.statementsCurrent.bs.nonCurrentLiabilities, ...state.statementsCurrent.bs.equityCapital],
-                [...state.statementsPrevious.bs.currentAssets, ...state.statementsPrevious.bs.nonCurrentAssets, ...state.statementsPrevious.bs.currentLiabilities, ...state.statementsPrevious.bs.nonCurrentLiabilities, ...state.statementsPrevious.bs.equityCapital]
+                [...state.statementsCurrent.bs.currentAssets, ...state.statementsCurrent.bs.nonCurrentAssets, ...state.statementsCurrent.bs.currentLiabilities, ...state.statementsCurrent.bs.nonCurrentLiabilities, ...state.statementsCurrent.bs.equityCapital, { account: t_page('retainedEarnings'), value: state.statementsCurrent.totals.retainedEarnings || 0 }],
+                [...state.statementsPrevious.bs.currentAssets, ...state.statementsPrevious.bs.nonCurrentAssets, ...state.statementsPrevious.bs.currentLiabilities, ...state.statementsPrevious.bs.nonCurrentLiabilities, ...state.statementsPrevious.bs.equityCapital, { account: t_page('retainedEarnings'), value: state.statementsPrevious.totals.retainedEarnings || 0 }]
              );
              bsTableHTML += `</tbody></table>`;
-             if(UI.horizontalBSTable) UI.horizontalBSTable.innerHTML = bsTableHTML; // Only show BS for now
-             if(UI.horizontalISTable) UI.horizontalISTable.innerHTML = ''; // Clear IS table
+             if(UI.horizontalBSTable) UI.horizontalBSTable.innerHTML = bsTableHTML; 
+             
+             // Generate IS Table
+             let isTableHTML = `<table class="table table-sm table-striped"><thead><tr><th>${t_page('thAccount')}</th><th class="text-end">${t_page('thCurrentPeriod')}</th><th class="text-end">${t_page('thPreviousPeriod')}</th><th class="text-end">${t_page('thChangeAbs')}</th><th class="text-end">${t_page('thChangePct')}</th></tr></thead><tbody>`;
+             isTableHTML += generateHorizontalRows(
+                [...state.statementsCurrent.is.revenue, ...state.statementsCurrent.is.cogs, ...state.statementsCurrent.is.genAdminExpenses, ...state.statementsCurrent.is.sellingMarketingExpenses, ...state.statementsCurrent.is.depreciationAmortization, ...state.statementsCurrent.is.otherOperatingExpenses, ...state.statementsCurrent.is.interestExpense, ...state.statementsCurrent.is.taxExpense],
+                [...state.statementsPrevious.is.revenue, ...state.statementsPrevious.is.cogs, ...state.statementsPrevious.is.genAdminExpenses, ...state.statementsPrevious.is.sellingMarketingExpenses, ...state.statementsPrevious.is.depreciationAmortization, ...state.statementsPrevious.is.otherOperatingExpenses, ...state.statementsPrevious.is.interestExpense, ...state.statementsPrevious.is.taxExpense]
+             );
+             isTableHTML += `</tbody></table>`;
+             if(UI.horizontalISTable) UI.horizontalISTable.innerHTML = isTableHTML;
 
-             console.log("[DEBUG] Finished displaying Horizontal Analysis (Simplified).");
+             console.log("[DEBUG] Finished displaying Horizontal Analysis.");
         };
 
         // *** مُعدل: الاعتماد على state.ratios المحسوبة ***
@@ -762,24 +784,27 @@ document.addEventListener('DOMContentLoaded', () => {
         // *** مُعدل: دالة runAnalysis الآن تقرأ فقط، ولا تحسب ***
         const runAnalysis = () => {
             console.log("Running full analysis...");
-            // Load processed data from localStorage
             if (!loadProcessedData()) {
-                // If loading current data fails, show a main error
                 console.error("Failed to load essential processed data (financialDataCurrent). Aborting analysis.");
-                // Show a prominent error to the user
-                Object.values(UI).forEach(el => { // Hide all UI elements?
-                    if (el && el.id && !['languageSelect', 'themeToggle'].includes(el.id)) {
-                       // Maybe just show a single error message
+                // Hide all tab content wrappers if data fails
+                document.querySelectorAll('.tab-pane').forEach(pane => {
+                    if (pane.id !== 'ratios-pane') { // Keep ratios pane visible for sidebar?
+                         // pane.innerHTML = `<div class="alert alert-danger">${t_page('noDataForAdvanced')}</div>`;
                     }
                 });
-                alert(t_page('noDataForAdvanced')); // Show alert
+                // Show warnings on ratio tab
+                renderRatioCategory('liquidityRatios', 'liquidityRatios', []);
+                renderRatioCategory('profitabilityRatios', 'profitabilityRatios', []);
+                renderRatioCategory('leverageRatios', 'leverageRatios', []);
+                renderRatioCategory('efficiencyRatios', 'activityRatios', []);
+                renderRatioCategory('valuationRatios', 'valuationRatios', []);
+                renderSidebar();
                 return false; 
             } 
 
-            // Calculate all ratios based on the loaded processed data
             if (!calculateAllRatios()) { 
                 console.error("Failed to calculate ratios even with processed data.");
-                return false; // Stop if ratio calculation fails
+                return false; 
             }
 
             // Render all ratio tables
@@ -798,9 +823,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             setTimeout(() => {
                 console.log("[DEBUG] Running initial analysis after delay...");
-                // Run analysis (loads data, calculates ratios, renders ratios)
                 if (runAnalysis()) {
-                    // If successful, proceed to render other tabs
                     console.log("[DEBUG] Initial analysis successful. Rendering other tabs...");
                     calculateAndDisplayDupont(); 
                     calculateAndDisplayVerticalAnalysis(); 
@@ -811,7 +834,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     calculateAndDisplayCCC(); 
                 } else {
                      console.error("[DEBUG] Initial analysis FAILED. Other tabs will not be rendered.");
-                     // Optionally display warnings on other tabs too
                 }
                 
                 if (typeof window.applyTranslations === 'function') { 
@@ -837,17 +859,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (tabElement) {
                     tabElement.addEventListener('shown.bs.tab', () => {
                         console.log(`${tabId} tab shown`);
-                        // Data is already loaded by runAnalysis, just re-render the specific tab's content
-                        // (No need to re-run full analysis unless data changes, which we don't track here yet)
                         if (!state.hasValidData) {
                             console.warn(`[DEBUG] Tab ${tabId} shown, but no valid data exists.`);
-                            // Maybe re-run analysis to show warnings on all tabs
+                            // Re-run analysis to ensure warnings are displayed everywhere
                             runAnalysis(); 
-                            return; // Stop if no data
+                            // Call specific render function just in case runAnalysis was skipped
+                            if (tabId === 'dupont') calculateAndDisplayDupont();
+                            if (tabId === 'vertical') calculateAndDisplayVerticalAnalysis(); 
+                            if (tabId === 'zscore') calculateAndDisplayZScore();
+                            if (tabId === 'cashflow') calculateAndDisplayCashFlowAnalysis(); 
+                            if (tabId === 'eva') calculateAndDisplayEVA(); 
+                            if (tabId === 'horizontal') calculateAndDisplayHorizontal();
+                            if (tabId === 'ccc') calculateAndDisplayCCC();
+                            return; 
                         }
                         
                         // Re-render the specific tab's content
-                        if (tabId === 'ratios') { /* Ratios are already rendered by runAnalysis */ }
+                        if (tabId === 'ratios') { /* Already rendered by runAnalysis on load */ }
                         if (tabId === 'breakeven' && state.breakevenChart) { state.breakevenChart.resize(); } 
                         if (tabId === 'dupont') calculateAndDisplayDupont();
                         if (tabId === 'vertical') calculateAndDisplayVerticalAnalysis(); 
