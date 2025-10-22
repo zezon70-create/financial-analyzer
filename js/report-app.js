@@ -1,4 +1,4 @@
-// js/report-app.js (Upgraded to handle Comparative (2-Period) Statements and save processed data for other pages)
+// js/report-app.js (Upgraded to Comparative + Full English Translations + Save for Advanced)
 
 window.pageTranslations = {
     ar: {
@@ -10,17 +10,15 @@ window.pageTranslations = {
         exportExcel: "تصدير Excel",
         total: "الإجمالي",
         noDataMessage: "لا توجد بيانات مالية لعرضها من المصدر المحدد. يرجى إدخال البيانات أولاً أو تغيير المصدر.",
-        noPreviousDataMessage: "لم يتم العثور على بيانات فترة سابقة. سيتم عرض بيانات الفترة الحالية فقط.", // *** مُضاف ***
+        noPreviousDataMessage: "لم يتم العثور على بيانات فترة سابقة. سيتم عرض بيانات الفترة الحالية فقط.",
         dataSourceTitle: "مصدر البيانات:",
         sourceTrialBalanceLabel: "استخدام ميزان المراجعة (من صفحة الإدخال)",
         sourceUploadedLabel: "استخدام القوائم المالية المرفوعة (من صفحة الرفع)",
-        // *** مُضاف: أعمدة الجدول المقارن ***
         thAccount: "الحساب",
         thCurrentPeriod: "الفترة الحالية",
         thPreviousPeriod: "الفترة السابقة",
         thChangeAbs: "التغير ($)",
         thChangePct: "التغير (%)",
-        // BS Translations
         bsTitle: "قائمة المركز المالي",
         bsSubheader: "تعرض أصول الشركة وخصومها وحقوق ملكيتها في تاريخ محدد.",
         assets: "الأصول",
@@ -54,9 +52,8 @@ window.pageTranslations = {
         totalLiabilitiesAndEquity: "إجمالي الخصوم وحقوق الملكية",
         bs_comment_balanced: "تحليل إيجابي: قائمة المركز المالي متوازنة للفترة الحالية.",
         bs_comment_unbalanced: "تحليل يتطلب الانتباه: القائمة غير متوازنة بفارق {diff} للفترة الحالية.",
-        bs_comment_growth: "مؤشر نمو: إجمالي الأصول زاد بنسبة {pct} عن الفترة السابقة.", // *** مُضاف ***
-        bs_comment_decline: "مؤشر انكماش: إجمالي الأصول انخفض بنسبة {pct} عن الفترة السابقة.", // *** مُضاف ***
-        // IS Translations
+        bs_comment_growth: "مؤشر نمو: إجمالي الأصول زاد بنسبة {pct} عن الفترة السابقة.",
+        bs_comment_decline: "مؤشر انكماش: إجمالي الأصول انخفض بنسبة {pct} عن الفترة السابقة.",
         isTitle: "قائمة الدخل الشامل",
         isSubheader: "تلخص إيرادات ومصروفات الشركة خلال فترة زمنية محددة.",
         revenue: "الإيرادات / المبيعات",
@@ -74,16 +71,15 @@ window.pageTranslations = {
         netProfit: "صافي الربح / (الخسارة) للفترة",
         is_comment_profit: "أداء قوي: الشركة تحقق صافي ربح قدره {profit} بهامش ربح يبلغ {margin}%.",
         is_comment_loss: "تحديات في الربحية: الشركة تسجل صافي خسارة بقيمة {profit}.",
-        is_comment_revenue_growth: "نمو في الإيرادات: الإيرادات زادت بنسبة {pct} عن الفترة السابقة.", // *** مُضاف ***
-        is_comment_profit_improvement: "تحسن في الربحية: صافي الربح زاد بشكل ملحوظ عن الفترة السابقة.", // *** مُضاف ***
-        // CF Translations
+        is_comment_revenue_growth: "نمو في الإيرادات: الإيرادات زادت بنسبة {pct} عن الفترة السابقة.",
+        is_comment_profit_improvement: "تحسن في الربحية: صافي الربح زاد بشكل ملحوظ عن الفترة السابقة.",
         cfTitle: "قائمة التدفقات النقدية (الطريقة غير المباشرة - تقديرية)",
         cfSubheader: "توضح حركة النقد المقدرة من الأنشطة المختلفة.",
         operatingActivities: "التدفقات النقدية من الأنشطة التشغيلية",
         netIncomeForCF: "صافي الدخل",
         adjustments: "تسويات لبنود غير نقدية:",
         depreciationAmortizationForCF: "إهلاك واستهلاك",
-        changesInWorkingCapital: "التغيرات في رأس المال العامل (تقديري)", // *** مُضاف ***
+        changesInWorkingCapital: "التغيرات في رأس المال العامل (تقديري)",
         cashFlowFromOperations: "صافي النقد الناتج من الأنشطة التشغيلية",
         investingActivities: "التدفقات النقدية من الأنشطة الاستثمارية",
         capitalExpenditures: "النفقات الرأسمالية (تقديري)",
@@ -91,20 +87,19 @@ window.pageTranslations = {
         financingActivities: "التدفقات النقدية من الأنشطة التمويلية",
         cashFlowFromFinancing: "صافي النقد من (المستخدم في) الأنشطة التمويلية",
         netCashFlow: "صافي التغير في النقد وما في حكمه",
-        beginningCash: "النقد وما في حكمه أول الفترة", // *** مُعدل ***
+        beginningCash: "النقد وما في حكمه أول الفترة",
         endingCash: "النقد وما في حكمه آخر الفترة",
         cf_comment_positive: "وضع نقدي جيد: تشير التقديرات إلى توليد تدفقات نقدية تشغيلية موجبة.",
         cf_comment_negative: "مؤشر خطر: تشير التقديرات إلى تدفق نقدي تشغيلي سالب.",
-        cf_comment_wc_source: "رأس المال العامل كان مصدراً للنقد (مثال: تحصيل سريع للعملاء).", // *** مُضاف ***
-        cf_comment_wc_use: "رأس المال العامل كان استخداماً للنقد (مثال: زيادة المخزون أو بطء التحصيل).", // *** مُضاف ***
-        // EQ Translations
+        cf_comment_wc_source: "رأس المال العامل كان مصدراً للنقد (مثال: تحصيل سريع للعملاء).",
+        cf_comment_wc_use: "رأس المال العامل كان استخداماً للنقد (مثال: زيادة المخزون أو بطء التحصيل).",
         eqTitle: "قائمة التغيرات في حقوق الملكية",
         eqSubheader: "توضح التغيرات التي طرأت على حقوق الملكية خلال الفترة.",
         openingBalanceCapital: "رأس المال أول الفترة",
         openingBalanceRetainedEarnings: "أرباح محتجزة أول الفترة",
         totalOpeningEquity: "إجمالي حقوق الملكية أول الفترة",
         netProfitForEquity: "صافي ربح / (خسارة) الفترة",
-        dividends: "توزيعات أرباح (تقديري/إن وجدت)", // *** مُضاف ***
+        dividends: "توزيعات أرباح (تقديري/إن وجدت)",
         closingBalanceCapital: "رأس المال آخر الفترة",
         closingBalanceRetainedEarnings: "أرباح محتجزة آخر الفترة",
         totalClosingEquity: "إجمالي حقوق الملكية آخر الفترة",
@@ -112,7 +107,7 @@ window.pageTranslations = {
         eq_comment_decline: "انخفاض في حقوق المساهمين: حقوق الملكية انخفضت.",
     },
     en: {
-        // *** All English translations... ***
+        // *** مُضاف: ترجمات إنجليزية كاملة ***
         pageTitle: "Detailed Financial Statements — Financial Analyzer",
         pageHeader: "Detailed Financial Statements",
         pageSubheader: "Professional IFRS-compliant reports with smart analytical commentary.",
@@ -123,28 +118,97 @@ window.pageTranslations = {
         dataSourceTitle: "Data Source:",
         sourceTrialBalanceLabel: "Use Trial Balance (from Input page)",
         sourceUploadedLabel: "Use Uploaded Statements (from Upload page)",
-        thAccount: "Account", thCurrentPeriod: "Current Period", thPreviousPeriod: "Previous Period", thChangeAbs: "Change ($)", thChangePct: "Change (%)",
-        bsTitle: "Statement of Financial Position", bsSubheader: "Shows assets, liabilities, and equity.",
-        assets: "Assets", currentAssets: "Current Assets", cashAndEquivalents: "Cash & Equivalents", accountsReceivable: "Accounts Receivable", inventory: "Inventory", otherCurrentAssets: "Other Current Assets", totalCurrentAssets: "Total Current Assets", nonCurrentAssets: "Non-current Assets", propertyPlantEquipment: "Property, Plant & Equipment (Net)", otherNonCurrentAssets: "Other Non-current Assets", totalNonCurrentAssets: "Total Non-current Assets", totalAssets: "Total Assets",
-        liabilities: "Liabilities", currentLiabilities: "Current Liabilities", accountsPayable: "Accounts Payable", shortTermLoans: "Short-term Loans", otherCurrentLiabilities: "Other Current Liabilities", totalCurrentLiabilities: "Total Current Liabilities", nonCurrentLiabilities: "Non-current Liabilities", longTermLoans: "Long-term Loans", otherNonCurrentLiabilities: "Other Non-current Liabilities", totalNonCurrentLiabilities: "Total Non-current Liabilities", totalLiabilities: "Total Liabilities",
-        equity: "Equity", paidInCapital: "Paid-in Capital", retainedEarnings: "Retained Earnings / (Accumulated Deficit)", netProfitForPeriod: "Net Profit / (Loss) for the Period", totalEquity: "Total Equity", totalLiabilitiesAndEquity: "Total Liabilities and Equity",
-        bs_comment_balanced: "Positive Analysis: Balanced statement.", bs_comment_unbalanced: "Action Required: Unbalanced by {diff}.",
+        thAccount: "Account",
+        thCurrentPeriod: "Current Period",
+        thPreviousPeriod: "Previous Period",
+        thChangeAbs: "Change ($)",
+        thChangePct: "Change (%)",
+        bsTitle: "Statement of Financial Position",
+        bsSubheader: "Shows the company's assets, liabilities, and equity at a specific date.",
+        assets: "Assets",
+        currentAssets: "Current Assets",
+        cashAndEquivalents: "Cash & Equivalents",
+        accountsReceivable: "Accounts Receivable",
+        inventory: "Inventory",
+        otherCurrentAssets: "Other Current Assets",
+        totalCurrentAssets: "Total Current Assets",
+        nonCurrentAssets: "Non-current Assets",
+        propertyPlantEquipment: "Property, Plant & Equipment (Net)",
+        otherNonCurrentAssets: "Other Non-current Assets",
+        totalNonCurrentAssets: "Total Non-current Assets",
+        totalAssets: "Total Assets",
+        liabilities: "Liabilities",
+        currentLiabilities: "Current Liabilities",
+        accountsPayable: "Accounts Payable",
+        shortTermLoans: "Short-term Loans",
+        otherCurrentLiabilities: "Other Current Liabilities",
+        totalCurrentLiabilities: "Total Current Liabilities",
+        nonCurrentLiabilities: "Non-current Liabilities",
+        longTermLoans: "Long-term Loans",
+        otherNonCurrentLiabilities: "Other Non-current Liabilities",
+        totalNonCurrentLiabilities: "Total Non-current Liabilities",
+        totalLiabilities: "Total Liabilities",
+        equity: "Equity",
+        paidInCapital: "Paid-in Capital",
+        retainedEarnings: "Retained Earnings / (Accumulated Deficit)",
+        netProfitForPeriod: "Net Profit / (Loss) for the Period",
+        totalEquity: "Total Equity",
+        totalLiabilitiesAndEquity: "Total Liabilities and Equity",
+        bs_comment_balanced: "Positive Analysis: The Statement of Financial Position is balanced for the current period.",
+        bs_comment_unbalanced: "Action Required: The statement is unbalanced by {diff} for the current period. Please review entries.",
         bs_comment_growth: "Growth Indicator: Total assets increased by {pct} from the prior period.",
         bs_comment_decline: "Contraction Indicator: Total assets decreased by {pct} from the prior period.",
-        isTitle: "Statement of Comprehensive Income", isSubheader: "Summarizes revenues and expenses.",
-        revenue: "Revenue / Sales", cogs: "Cost of Revenue / Sales", grossProfit: "Gross Profit / (Loss)", operatingExpenses: "Operating Expenses", generalAdminExpenses: "General & Administrative", sellingMarketingExpenses: "Selling & Marketing", depreciationAmortization: "Depreciation & Amortization", otherOperatingExpenses: "Other Operating Expenses", operatingProfit: "Operating Profit / (Loss) (EBIT)", interestExpense: "Interest Expense", profitBeforeTax: "Profit / (Loss) Before Tax (PBT)", taxExpense: "Tax Expense", netProfit: "Net Profit / (Loss) for the Period",
-        is_comment_profit: "Strong Performance: Net profit of {profit}, margin {margin}%.", is_comment_loss: "Profitability Challenges: Net loss of {profit}.",
+        isTitle: "Statement of Comprehensive Income",
+        isSubheader: "Summarizes revenues and expenses for a specific period.",
+        revenue: "Revenue / Sales",
+        cogs: "Cost of Revenue / Sales",
+        grossProfit: "Gross Profit / (Loss)",
+        operatingExpenses: "Operating Expenses",
+        generalAdminExpenses: "General & Administrative",
+        sellingMarketingExpenses: "Selling & Marketing",
+        depreciationAmortization: "Depreciation & Amortization",
+        otherOperatingExpenses: "Other Operating Expenses",
+        operatingProfit: "Operating Profit / (Loss) (EBIT)",
+        interestExpense: "Interest Expense",
+        profitBeforeTax: "Profit / (Loss) Before Tax (PBT)",
+        taxExpense: "Tax Expense",
+        netProfit: "Net Profit / (Loss) for the Period",
+        is_comment_profit: "Strong Performance: The company achieved a net profit of {profit} with a profit margin of {margin}%.",
+        is_comment_loss: "Profitability Challenges: The company recorded a net loss of {profit}.",
         is_comment_revenue_growth: "Revenue Growth: Revenue increased by {pct} from the prior period.",
         is_comment_profit_improvement: "Profitability Improvement: Net profit significantly increased from the prior period.",
-        cfTitle: "Statement of Cash Flows (Indirect - Est.)", cfSubheader: "Shows estimated cash movement.",
-        operatingActivities: "Cash Flows from Operating Activities", netIncomeForCF: "Net Income", adjustments: "Adjustments for non-cash items:", depreciationAmortizationForCF: "Depreciation & Amortization", changesInWorkingCapital: "Changes in Working Capital (Est.)", cashFlowFromOperations: "Net Cash from Operating Activities", investingActivities: "Cash Flows from Investing Activities", capitalExpenditures: "Capital Expenditures (Est.)", cashFlowFromInvesting: "Net Cash used in Investing Activities", financingActivities: "Cash Flows from Financing Activities", cashFlowFromFinancing: "Net Cash from (used in) Financing Activities", netCashFlow: "Net Change in Cash & Equivalents", beginningCash: "Beginning Cash & Equivalents", endingCash: "Ending Cash & Equivalents",
+        cfTitle: "Statement of Cash Flows (Indirect - Est.)",
+        cfSubheader: "Shows estimated cash movement from activities.",
+        operatingActivities: "Cash Flows from Operating Activities",
+        netIncomeForCF: "Net Income",
+        adjustments: "Adjustments for non-cash items:",
+        depreciationAmortizationForCF: "Depreciation & Amortization",
+        changesInWorkingCapital: "Changes in Working Capital (Est.)",
+        cashFlowFromOperations: "Net Cash from Operating Activities",
+        investingActivities: "Cash Flows from Investing Activities",
+        capitalExpenditures: "Capital Expenditures (Est.)",
+        cashFlowFromInvesting: "Net Cash used in Investing Activities",
+        financingActivities: "Cash Flows from Financing Activities",
+        cashFlowFromFinancing: "Net Cash from (used in) Financing Activities",
+        netCashFlow: "Net Change in Cash & Equivalents",
+        beginningCash: "Beginning Cash & Equivalents",
+        endingCash: "Ending Cash & Equivalents",
         cf_comment_positive: "Good Cash Position: Estimates indicate positive operating cash flow.",
         cf_comment_negative: "Risk Indicator: Estimates indicate negative operating cash flow.",
         cf_comment_wc_source: "Working capital was a source of cash (e.g., fast collections).",
         cf_comment_wc_use: "Working capital was a use of cash (e.g., inventory build-up).",
-        eqTitle: "Statement of Changes in Equity", eqSubheader: "Shows changes in equity.",
-        openingBalanceCapital: "Opening Capital Balance", openingBalanceRetainedEarnings: "Opening Retained Earnings", totalOpeningEquity: "Total Opening Equity", netProfitForEquity: "Net Profit / (Loss) for the Period", dividends: "Dividends (Est./If any)", closingBalanceCapital: "Closing Capital Balance", closingBalanceRetainedEarnings: "Closing Retained Earnings", totalClosingEquity: "Total Closing Equity",
-        eq_comment_growth: "Shareholder Value Growth: Equity increased.", eq_comment_decline: "Shareholder Value Decline: Equity decreased.",
+        eqTitle: "Statement of Changes in Equity",
+        eqSubheader: "Shows the changes in equity over the period.",
+        openingBalanceCapital: "Opening Capital Balance",
+        openingBalanceRetainedEarnings: "Opening Retained Earnings",
+        totalOpeningEquity: "Total Opening Equity",
+        netProfitForEquity: "Net Profit / (Loss) for the Period",
+        dividends: "Dividends (Est./If any)",
+        closingBalanceCapital: "Closing Capital Balance",
+        closingBalanceRetainedEarnings: "Closing Retained Earnings",
+        totalClosingEquity: "Total Closing Equity",
+        eq_comment_growth: "Shareholder Value Growth: Equity increased.",
+        eq_comment_decline: "Shareholder Value Decline: Equity decreased.",
     }
 };
 
@@ -186,7 +250,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Data Loading and Processing Logic ---
 
-    // *** مُعدل: تعالج هذه الدالة بيانات فترة واحدة وتعيد كائن statements ***
     const processUploadedData = (uploadedData) => {
         try {
             console.log("Processing uploaded data (Placeholder Logic)...");
@@ -198,7 +261,6 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const bsData = uploadedData.balanceSheet || {};
             const isData = uploadedData.incomeStatement || {};
-            // *** مُعدل: إنشاء كائن جديد بدلاً من تعديل state مباشرة ***
             const statements = {
                 bs: { currentAssets: [], nonCurrentAssets: [], currentLiabilities: [], nonCurrentLiabilities: [], equityCapital: [], equityRetainedEarnings: 0 },
                 is: { revenue: [], cogs: [], genAdminExpenses: [], sellingMarketingExpenses: [], depreciationAmortization: [], otherOperatingExpenses: [], interestExpense: [], taxExpense: [] },
@@ -237,9 +299,9 @@ document.addEventListener('DOMContentLoaded', () => {
             totals.totalCogs = sumValues(statements.is.cogs);
             totals.grossProfit = totals.totalRevenue - totals.totalCogs;
             totals.depreciationTotal = sumValues(statements.is.depreciationAmortization);
-            totals.totalOperatingExpenses = sumValues(statements.is.genAdminExpenses) + sumValues(state.statements.is.sellingMarketingExpenses) + totals.depreciationTotal + sumValues(state.statements.is.otherOperatingExpenses);
+            totals.totalOperatingExpenses = sumValues(statements.is.genAdminExpenses) + sumValues(statements.is.sellingMarketingExpenses) + totals.depreciationTotal + sumValues(statements.is.otherOperatingExpenses);
             totals.operatingProfit = totals.grossProfit - totals.totalOperatingExpenses;
-            totals.totalInterest = sumValues(statements.is.interestExpense); // *** مُضاف ***
+            totals.totalInterest = sumValues(statements.is.interestExpense);
             totals.profitBeforeTax = totals.operatingProfit - totals.totalInterest;
             totals.totalTax = sumValues(statements.is.taxExpense);
             totals.netProfit = totals.profitBeforeTax - totals.totalTax;
@@ -248,7 +310,6 @@ document.addEventListener('DOMContentLoaded', () => {
             totals.totalEquity = totals.totalEquityCapital + statements.bs.equityRetainedEarnings;
             totals.totalLiabilitiesAndEquity = totals.totalLiabilities + totals.totalEquity;
             
-            // *** مُضاف: حساب المجاميع الفرعية لصفحة advanced ***
             const cashItem = statements.bs.currentAssets.find(item => item.account.toLowerCase().includes('cash') || item.account.includes('نقد') || item.account.includes('bank') || item.account.includes('بنك'));
             totals.cashEquivalents = cashItem ? cashItem.value : 0;
             totals.accountsReceivable = sumValues(statements.bs.currentAssets.filter(item => item.account.toLowerCase().includes('receivable') || item.account.includes('عملاء')));
@@ -331,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         statements.bs.equityCapital.push(item);
                         totals.totalEquityCapital += item.value;
                      } else if (subType.includes('الأرباح المحتجزة') || subType.includes('Retained Earnings') || accountName.includes('retained')) {
-                         statements.bs.equityRetainedEarnings = item.value; // OPENING RE
+                         statements.bs.equityRetainedEarnings = item.value; // This is OPENING RE
                      } else {
                           statements.bs.equityCapital.push(item);
                           totals.totalEquityCapital += item.value;
@@ -421,16 +482,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             try {
                 const parsedData = JSON.parse(dataString);
-                // Basic data validation
                 if (selectedSource === 'uploadedData') {
                      if (parsedData && (parsedData.balanceSheet || parsedData.incomeStatement)) {
                         console.log(`[DEBUG] Found valid ${sourceKey}, processing...`);
-                        return processFunction(parsedData); // Process and return statements object
+                        return processFunction(parsedData); 
                     }
                 } else { // trialData
                      if (Array.isArray(parsedData) && parsedData.length > 0 && !(parsedData.length === 1 && !parsedData[0].Account && !toNum(parsedData[0].Debit) && !toNum(parsedData[0].Credit))) {
                         console.log(`[DEBUG] Found valid ${sourceKey}, building statements...`);
-                        return processFunction(parsedData); // Process and return statements object
+                        return processFunction(parsedData); 
                      }
                 }
                 console.warn(`[DEBUG] ${sourceKey} found but is empty or invalid.`);
@@ -449,8 +509,8 @@ document.addEventListener('DOMContentLoaded', () => {
             state.statementsPrevious = load('trialDataPrevious', buildStatementsFromTrialData); // Assumes this key
         }
 
-        state.hasDataCurrent = !!state.statementsCurrent; // Set flag based on successful processing
-        state.hasDataPrevious = !!state.statementsPrevious; // Set flag based on successful processing
+        state.hasDataCurrent = !!state.statementsCurrent; 
+        state.hasDataPrevious = !!state.statementsPrevious; 
 
         // *** حفظ المخرجات النظيفة لصفحة advanced ***
         if (state.hasDataCurrent) {
@@ -459,7 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log("[DEBUG] Saved processed 'financialDataCurrent' to localStorage.");
             } catch (e) { console.error("Failed to save financialDataCurrent:", e); }
         } else {
-            localStorage.removeItem('financialDataCurrent'); // Clear if no data
+            localStorage.removeItem('financialDataCurrent'); 
         }
         
         if (state.hasDataPrevious) {
@@ -468,10 +528,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log("[DEBUG] Saved processed 'financialDataPrevious' to localStorage.");
             } catch (e) { console.error("Failed to save financialDataPrevious:", e); }
         } else {
-            localStorage.removeItem('financialDataPrevious'); // Clear if no data
+            localStorage.removeItem('financialDataPrevious'); 
         }
 
-        return state.hasDataCurrent; // Return true if *at least* current data is loaded
+        return state.hasDataCurrent; 
     };
 
 
@@ -482,7 +542,16 @@ document.addEventListener('DOMContentLoaded', () => {
         let sectionTotalCurrent = 0;
         let sectionTotalPrevious = 0;
         let html = '';
-        const allAccountNames = new Set([...itemsCurrent.map(i => i.account), ...itemsPrevious.map(i => i.account)]);
+        
+        // Ensure inputs are arrays
+        if (!Array.isArray(itemsCurrent)) itemsCurrent = [];
+        if (!Array.isArray(itemsPrevious)) itemsPrevious = [];
+        
+        const allAccountNames = new Set([
+            ...itemsCurrent.map(i => i.account),
+            ...itemsPrevious.map(i => i.account)
+        ]);
+        
         const prevItemsMap = new Map(itemsPrevious.map(item => [item.account, item.value]));
 
         if (allAccountNames.size > 0 || sectionTitle) {
@@ -644,11 +713,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         html += '</tr></thead><tbody>';
 
-        // Helper function for subtotal rows
         const renderSubtotalRow = (labelKey, currentVal, prevVal, isProfit) => {
             const changeAbs = (currentVal || 0) - (prevVal || 0);
             const changePct = formatChangePercent(currentVal, prevVal);
-            // Profit: positive change is good (success), Expense: positive change is bad (danger)
             const changeClass = (changeAbs >= 0 ? (isProfit ? 'text-success' : 'text-danger') : (isProfit ? 'text-danger' : 'text-success'));
             
             return `<td class="text-end">${formatCurrency(currentVal, 2)}</td>
@@ -687,12 +754,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('incomeStatementTable').innerHTML = html;
 
         // Commentary
-        const margin = (totalsCurrent.totalRevenue || 0) !== 0 ? (totalsCurrent.netProfit / totalsCurrent.totalRevenue) * 100 : 0;
-        let comment = totalsCurrent.netProfit >= 0 
+        const margin = (totalsCurrent.totalRevenue || 0) !== 0 ? ((totalsCurrent.netProfit || 0) / totalsCurrent.totalRevenue) * 100 : 0;
+        let comment = (totalsCurrent.netProfit || 0) >= 0 
             ? t_page('is_comment_profit').replace('{profit}', formatCurrency(totalsCurrent.netProfit, 2)).replace('{margin}', margin.toFixed(1))
             : t_page('is_comment_loss').replace('{profit}', formatCurrency(totalsCurrent.netProfit, 2));
         if (state.hasDataPrevious) {
-             if (totalsCurrent.totalRevenue > totalsPrevious.totalRevenue) {
+             if (totalsCurrent.totalRevenue > (totalsPrevious.totalRevenue || 0)) {
                  comment += " " + t_page('is_comment_revenue_growth').replace('{pct}', formatChangePercent(totalsCurrent.totalRevenue, totalsPrevious.totalRevenue));
              }
              if (totalsCurrent.netProfit > (totalsPrevious.netProfit || 0)) {
@@ -710,21 +777,20 @@ document.addEventListener('DOMContentLoaded', () => {
         // Calculate CF items
         const netProfitC = totalsCurrent.netProfit || 0;
         const depreciationC = totalsCurrent.depreciationTotal || 0;
-        const changeInWC_C = (totalsCurrent.workingCapital || 0) - (totalsPrevious.workingCapital || 0);
-        const cashFromOpsC = netProfitC + depreciationC - (state.hasDataPrevious ? changeInWC_C : 0);
-        const cashFromInvestingC = -depreciationC;
-        const cashFromFinancingC = 0;
+        const changeInWC_C = (totalsCurrent.workingCapital || 0) - (totalsPrevious.workingCapital || 0); // Requires previous data
+        const cashFromOpsC = netProfitC + depreciationC - (state.hasDataPrevious ? changeInWC_C : 0); 
+        const cashFromInvestingC = -depreciationC; // Proxy
+        const cashFromFinancingC = 0; // Proxy
         const netChangeInCashC = cashFromOpsC + cashFromInvestingC + cashFromFinancingC;
-        const beginningCashC = totalsPrevious.cashEquivalents || 0;
+        const beginningCashC = totalsPrevious.cashEquivalents || 0; // Use previous period's ending cash
         const endingCashCalculatedC = beginningCashC + netChangeInCashC;
         const endingCashFromBSC = totalsCurrent.cashEquivalents || 0;
 
         const netProfitP = totalsPrevious.netProfit || 0;
         const depreciationP = totalsPrevious.depreciationTotal || 0;
-        // Cannot calculate previous WC change without T-2 data
-        const cashFromOpsP = netProfitP + depreciationP;
-        const cashFromInvestingP = -depreciationP;
-        const cashFromFinancingP = 0;
+        const cashFromOpsP = netProfitP + depreciationP; // No WC change
+        const cashFromInvestingP = -depreciationP; // Proxy
+        const cashFromFinancingP = 0; // Proxy
         const netChangeInCashP = cashFromOpsP + cashFromInvestingP + cashFromFinancingP;
         const beginningCashP = 0; // Assumption
         const endingCashCalculatedP = beginningCashP + netChangeInCashP;
@@ -737,18 +803,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         html += '</tr></thead><tbody>';
 
-        html += `<tr class="section-header"><td colspan="3"><strong>${t_page('operatingActivities')}</strong></td></tr>`;
+        html += `<tr class="section-header"><td colspan="${state.hasDataPrevious ? 3 : 2}"><strong>${t_page('operatingActivities')}</strong></td></tr>`;
         html += `<tr><td>${t_page('netIncomeForCF')}</td><td class="text-end">${formatCurrency(netProfitC)}</td>${state.hasDataPrevious ? `<td class="text-end">${formatCurrency(netProfitP)}</td>` : ''}</tr>`;
-        html += `<tr><td colspan="3">${t_page('adjustments')}</td></tr>`;
+        html += `<tr><td colspan="${state.hasDataPrevious ? 3 : 2}">${t_page('adjustments')}</td></tr>`;
         html += `<tr><td class="ps-3">${t_page('depreciationAmortizationForCF')}</td><td class="text-end">${formatCurrency(depreciationC)}</td>${state.hasDataPrevious ? `<td class="text-end">${formatCurrency(depreciationP)}</td>` : ''}</tr>`;
         html += `<tr><td class="ps-3">${t_page('changesInWorkingCapital')}</td><td class="text-end">${state.hasDataPrevious ? formatCurrency(-changeInWC_C) : 'N/A'}</td>${state.hasDataPrevious ? `<td class="text-end">N/A</td>` : ''}</tr>`;
         html += `<tr class="subtotal-row"><td>${t_page('cashFlowFromOperations')}</td><td class="text-end">${formatCurrency(cashFromOpsC)}</td>${state.hasDataPrevious ? `<td class="text-end">${formatCurrency(cashFromOpsP)}</td>` : ''}</tr>`;
         
-        html += `<tr class="section-header"><td colspan="3"><strong>${t_page('investingActivities')}</strong></td></tr>`;
+        html += `<tr class="section-header"><td colspan="${state.hasDataPrevious ? 3 : 2}"><strong>${t_page('investingActivities')}</strong></td></tr>`;
         html += `<tr><td class="ps-3">${t_page('capitalExpenditures')}</td><td class="text-end">${formatCurrency(Math.abs(cashFromInvestingC))}</td>${state.hasDataPrevious ? `<td class="text-end">${formatCurrency(Math.abs(cashFromInvestingP))}</td>` : ''}</tr>`;
         html += `<tr class="subtotal-row"><td>${t_page('cashFlowFromInvesting')}</td><td class="text-end">${formatCurrency(cashFromInvestingC)}</td>${state.hasDataPrevious ? `<td class="text-end">${formatCurrency(cashFromInvestingP)}</td>` : ''}</tr>`;
 
-        html += `<tr class="section-header"><td colspan="3"><strong>${t_page('financingActivities')}</strong></td></tr>`;
+        html += `<tr class="section-header"><td colspan="${state.hasDataPrevious ? 3 : 2}"><strong>${t_page('financingActivities')}</strong></td></tr>`;
         html += `<tr><td class="ps-3 text-muted"><em>(أنشطة تمويلية)</em></td><td class="text-end">0</td>${state.hasDataPrevious ? `<td class="text-end">0</td>` : ''}</tr>`;
         html += `<tr class="subtotal-row"><td>${t_page('cashFlowFromFinancing')}</td><td class="text-end">${formatCurrency(cashFromFinancingC)}</td>${state.hasDataPrevious ? `<td class="text-end">${formatCurrency(cashFromFinancingP)}</td>` : ''}</tr>`;
 
@@ -758,7 +824,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const cashDiffC = endingCashCalculatedC - endingCashFromBSC;
         if (Math.abs(cashDiffC) > 1) {
-             html += `<tr class="table-warning small"><td colspan="3"><em>ملاحظة (الحالية): النقدية آخر الفترة المحسوبة (${formatCurrency(endingCashCalculatedC)}) تختلف عن رصيد الميزانية (${formatCurrency(endingCashFromBSC)}).</em></td></tr>`;
+             html += `<tr class="table-warning small"><td colspan="${state.hasDataPrevious ? 3 : 2}"><em>ملاحظة (الحالية): النقدية آخر الفترة المحسوبة (${formatCurrency(endingCashCalculatedC)}) تختلف عن رصيد الميزانية (${formatCurrency(endingCashFromBSC)}).</em></td></tr>`;
         }
         
         html += `</tbody></table>`;
@@ -792,7 +858,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Current Period
         const capC = totalsCurrent.totalEquityCapital || 0;
         const netProfitC = totalsCurrent.netProfit || 0;
-        const openingREC = state.hasDataPrevious ? (bsPrevious.equityRetainedEarnings || 0) : (bsCurrent.equityRetainedEarnings - netProfitC); // Use prev closing RE, or estimate from current
+        const openingREC = state.hasDataPrevious ? (bsPrevious.equityRetainedEarnings || 0) : (bsCurrent.equityRetainedEarnings - netProfitC); // Use prev closing RE, or estimate
         const totalOpeningEqC = capC + openingREC;
         const dividendsC = 0; // Assumption
         const totalClosingEqC = totalsCurrent.totalEquity || 0; 
@@ -842,7 +908,7 @@ document.addEventListener('DOMContentLoaded', () => {
              if (!state.hasDataPrevious && state.hasDataCurrent && noDataWarningElement) {
                  noDataWarningElement.textContent = t_page('noPreviousDataMessage');
                  noDataWarningElement.style.display = 'block';
-                 noDataWarningElement.classList.remove('alert-danger');
+                 noDataWarningElement.classList.remove('alert-danger'); // Make it informational
                  noDataWarningElement.classList.add('alert-info');
              }
         } else {
@@ -850,7 +916,7 @@ document.addEventListener('DOMContentLoaded', () => {
              if(noDataWarningElement) {
                  noDataWarningElement.textContent = t_page('noDataMessage');
                  noDataWarningElement.style.display = 'block';
-                 noDataWarningElement.classList.remove('alert-info');
+                 noDataWarningElement.classList.remove('alert-info'); // Ensure it's a warning/error
                  noDataWarningElement.classList.add('alert-danger');
              }
         }
@@ -907,7 +973,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                      if (!isNaN(numValue) && (cellValue.match(/[\d,.-]+/) || cellValue === '0')) {
                                          rowData.push(numValue);
                                      } else {
-                                         rowData.push(cellValue.replace(/[\(\)\-\+:%]/g, '').replace(/^[ \t]+|[ \t]+$/g,'').trim()); // Remove % sign too
+                                         // Clean up text
+                                         rowData.push(cellValue.replace(/[\(\)\-\+:%]/g, '').replace(/^[ \t]+|[ \t]+$/g,'').trim()); 
                                      }
                                  });
                                   if (rowData.length > 0) data.push(rowData);
@@ -958,14 +1025,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     }; // End of simplified init
 
-    // *** Keep loadScript function for potential future use (though not called by simplified init) ***
+    // Helper function to load scripts
     const loadScript = (src, onload, onerror) => {
-        // ... (Code for loadScript remains the same) ...
         let script = document.querySelector(`script[src="${src}"]`);
         if (script) {
             if (script.dataset.loaded === 'true') { onload(); }
             else if (script.dataset.loaded === 'false') { onerror(); }
-            else {
+            else { 
                  script.addEventListener('load', onload);
                  script.addEventListener('error', onerror);
             }
