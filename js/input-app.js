@@ -1,4 +1,4 @@
-// js/input-app.js (Upgraded to include Market Data)
+// js/input-app.js
 
 window.pageTranslations = {
     ar: {
@@ -6,6 +6,7 @@ window.pageTranslations = {
         pageHeader: "إدخال بيانات ميزان المراجعة",
         pageSubheader: "هذه الصفحة مخصصة للمحاسبين لإدخال البيانات الدقيقة وتصنيفها طبقًا للمعايير الدولية.",
         actionsTitle: "أدوات التحكم",
+        // *** تعديل: تغيير نص الزر ليعكس الحفظ التلقائي ***
         add: "إضافة صف",
         save: "تأكيد الحفظ", 
         clear: "مسح الكل",
@@ -28,11 +29,12 @@ window.pageTranslations = {
         debit: "المدين",
         credit: "الدائن",
         confirmClear: "هل أنت متأكد من أنك تريد مسح جميع البيانات في الجدول؟",
+        // *** تعديل: رسالة التأكيد توضح الحفظ التلقائي ***
         savedSuccess: "تم تأكيد الحفظ! (ملاحظة: يتم حفظ بياناتك تلقائياً عند كل تغيير)", 
         saveAsSuccess: "تم حفظ البيانات بنجاح باسم",
         saveAsError: "الرجاء إدخال اسم لحفظ مجموعة البيانات.",
 
-        // --- File Upload Translations ---
+        // *** NEW TRANSLATIONS ***
         manualEntryTab: "إدخال يدوي",
         uploadFileTab: "رفع ملف",
         uploadFileTitle: "رفع ملف ميزان المراجعة (Excel أو CSV)",
@@ -47,27 +49,56 @@ window.pageTranslations = {
         processFileButton: "معالجة الملف وملء الجدول",
         confirmClearUpload: "سيقوم هذا بمسح أي بيانات موجودة في الجدول. هل تريد المتابعة؟",
         fileReadError: "حدث خطأ أثناء قراءة الملف. الرجاء التأكد من أنه ملف Excel أو CSV صالح.",
-        fileProcessingSuccess: "تمت معالجة الملف بنجاح! تم ملء جدول الإدخال اليدوي بالبيانات.",
-
-        // *** ADDED: Market Data Translations ***
-        marketDataTitle: "بيانات السوق (اختياري)",
-        marketDataSubheader: "أدخل هذه البيانات لحساب مؤشرات التقييم وربحية السهم.",
-        labelMarketPrice: "سعر السهم الحالي",
-        labelOutstandingShares: "عدد الأسهم القائمة",
-        labelDividendsPaid: "إجمالي التوزيعات النقدية"
+        fileProcessingSuccess: "تمت معالجة الملف بنجاح! تم ملء جدول الإدخال اليدوي بالبيانات."
     },
     en: {
         pageTitle: "Trial Balance Input — Financial Analyzer",
         pageHeader: "Trial Balance Data Entry",
         pageSubheader: "This page is for accountants to enter precise data classified according to international standards.",
-        // ... (all other English translations as before) ...
-        
-        // *** ADDED: Market Data Translations ***
-        marketDataTitle: "Market Data (Optional)",
-        marketDataSubheader: "Enter this data to calculate valuation ratios and EPS.",
-        labelMarketPrice: "Market Price per Share",
-        labelOutstandingShares: "Number of Outstanding Shares",
-        labelDividendsPaid: "Total Dividends Paid"
+        actionsTitle: "Controls",
+        // *** MODIFIED: Button text reflects auto-save ***
+        add: "Add Row",
+        save: "Confirm Save", 
+        clear: "Clear All",
+        saveForComparison: "Save a copy for comparisons",
+        saveAsPlaceholder: "e.g., Data 2024",
+        saveAs: "Save As",
+        currencyTitle: "Currency Settings",
+        currencyLabel: "Base Currency",
+        fxRateLabel: "Exchange Rate",
+        tableTitle: "Data Table",
+        thAccount: "Account",
+        thMainType: "Main Classification",
+        thSubType: "Sub Classification",
+        thDebit: "Debit",
+        thCredit: "Credit",
+        thAction: "Action",
+        balanced: "Balanced",
+        unbalanced: "Unbalanced",
+        total: "Total",
+        debit: "Debit",
+        credit: "Credit",
+        confirmClear: "Are you sure you want to clear all data in the table?",
+        // *** MODIFIED: Confirmation message explains auto-save ***
+        savedSuccess: "Save Confirmed! (Note: Your data auto-saves on every change)",
+        saveAsSuccess: "Data saved successfully as",
+        saveAsError: "Please enter a name to save the dataset.",
+        // *** NEW TRANSLATIONS ***
+        manualEntryTab: "Manual Entry",
+        uploadFileTab: "Upload File",
+        uploadFileTitle: "Upload Trial Balance (Excel or CSV)",
+        uploadDragDrop: "Drag & drop your file here, or click to browse",
+        uploadSupportedFiles: "Supported files: .xlsx, .xls, .csv",
+        uploadBrowseButton: "Browse Files",
+        uploadFileReady: "File is ready to be processed",
+        loadingPreview: "Loading preview...",
+        dataPreview: "Preview of first 5 rows:",
+        columnMappingTitle: "Column Mapping",
+        columnMappingSubtitle: "Please match the columns from your file to the required fields in the system.",
+        processFileButton: "Process File and Populate Table",
+        confirmClearUpload: "This will clear any existing data in the table. Do you want to continue?",
+        fileReadError: "An error occurred reading the file. Please ensure it's a valid Excel or CSV file.",
+        fileProcessingSuccess: "File processed successfully! The manual entry table has been populated."
     }
 };
 document.addEventListener('DOMContentLoaded', () => {
@@ -95,23 +126,14 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         requiredFields: ['Account', 'MainType', 'SubType', 'Debit', 'Credit']
     };
-    
     const state = { 
         trialData: [],
         fileData: [],
-        fileHeaders: [],
-        // *** ADDED: Market Data State ***
-        marketData: {
-            marketPrice: 0,
-            outstandingShares: 0,
-            dividendsPaid: 0
-        }
+        fileHeaders: []
     };
-    
     const lang = localStorage.getItem('lang') || 'ar';
-    const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;
+    const t_page = (key) => window.pageTranslations[lang]?.[key] || key;
     const t_fields = (key) => window.pageTranslations[lang]?.[`th${key}`] || key;
-    
     const UI = {
         currencySelect: document.getElementById('currencySelect'),
         fxRateInput: document.getElementById('fxRateInput'),
@@ -122,11 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
         clearBtn: document.getElementById('clearBtn'),
         saveAsNameInput: document.getElementById('saveAsName'),
         saveAsBtn: document.getElementById('saveAsBtn'),
-        // *** ADDED: Market Data UI ***
-        marketPrice: document.getElementById('marketPrice'),
-        outstandingShares: document.getElementById('outstandingShares'),
-        dividendsPaid: document.getElementById('dividendsPaid'),
-        // --- File Upload UI ---
         fileDropArea: document.getElementById('fileDropArea'),
         fileUploader: document.getElementById('fileUploader'),
         browseButton: document.getElementById('browseButton'),
@@ -141,74 +158,39 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const toNum = (value) => parseFloat(String(value || '').replace(/,/g, '')) || 0;
 
-    // *** UPDATED: saveData to include marketData ***
     const saveData = () => {
-        // 1. Save Trial Data
+        // This function now auto-saves everything
         localStorage.setItem('trialData', JSON.stringify(state.trialData));
-        
-        // 2. Save Market Data
-        state.marketData.marketPrice = toNum(UI.marketPrice.value);
-        state.marketData.outstandingShares = toNum(UI.outstandingShares.value);
-        state.marketData.dividendsPaid = toNum(UI.dividendsPaid.value);
-        localStorage.setItem('marketData', JSON.stringify(state.marketData));
-        
-        // 3. Save FX Rates
         const currentCurrency = UI.currencySelect.value;
         config.currencies[currentCurrency].rate = toNum(UI.fxRateInput.value) || 1;
         localStorage.setItem('fxRates', JSON.stringify(config.currencies));
-        
-        console.log("Auto-save successful! (Trial Data + Market Data)");
+        console.log("Auto-save successful!"); // For testing
     };
-
-    // *** UPDATED: loadData to include marketData ***
     const loadData = () => {
-        // 1. Load Trial Data
         state.trialData = JSON.parse(localStorage.getItem('trialData') || '[]');
         if (state.trialData.length === 0) {
             state.trialData.push({ Account: '', MainType: '', SubType: '', Debit: 0, Credit: 0 });
         }
-        
-        // 2. Load Market Data
-        state.marketData = JSON.parse(localStorage.getItem('marketData') || '{"marketPrice":0, "outstandingShares":0, "dividendsPaid":0}');
-        UI.marketPrice.value = state.marketData.marketPrice || '';
-        UI.outstandingShares.value = state.marketData.outstandingShares || '';
-        UI.dividendsPaid.value = state.marketData.dividendsPaid || '';
-        
-        // 3. Load FX Rates
         const savedRates = JSON.parse(localStorage.getItem('fxRates') || '{}');
         for (const code in savedRates) {
             if (config.currencies[code]) config.currencies[code].rate = savedRates[code].rate;
         }
     };
-
-    // *** UPDATED: handleSaveAs to include marketData ***
     const handleSaveAs = () => {
         const name = UI.saveAsNameInput.value.trim();
         if (!name) { alert(t_page('saveAsError')); return; }
-        
-        // Save current data (including market data) before creating snapshot
-        saveData(); 
-        
-        // Create a combined object for the snapshot
-        const snapshotData = {
-            trialData: state.trialData,
-            marketData: state.marketData
-        };
-        
         try {
-            localStorage.setItem(`FA_DATASET_${name}`, JSON.stringify(snapshotData));
+            localStorage.setItem(`FA_DATASET_${name}`, JSON.stringify(state.trialData));
             alert(`${t_page('saveAsSuccess')} "${name}"!`);
             UI.saveAsNameInput.value = '';
         } catch (e) { alert("Error saving data."); }
     };
-
-    const updateFxRate = () => {
+        const updateFxRate = () => {
         const currencyCode = UI.currencySelect.value;
         const currency = config.currencies[currencyCode];
         UI.fxRateInput.value = currency.rate;
         UI.fxRateInput.disabled = currencyCode === 'EGP';
     };
-    
     const renderValidation = () => {
         const totals = state.trialData.reduce((acc, row) => {
             acc.debit += toNum(row.Debit);
@@ -223,10 +205,12 @@ document.addEventListener('DOMContentLoaded', () => {
             UI.validationResult.textContent = `${t_page('unbalanced')} ❌ | ${t_page('debit')}: ${totals.debit.toLocaleString()} | ${t_page('credit')}: ${totals.credit.toLocaleString()}`;
             UI.validationResult.className = 'text-danger fw-bold';
         }
+
+        // *** تعديل: إضافة الحفظ التلقائي هنا ***
+        // This is the most efficient place, it catches almost all data changes.
         saveData();
     };
-    
-    const renderTable = () => {
+        const renderTable = () => {
         UI.tbBody.innerHTML = '';
         const currentLangTypes = config.accountTypes[lang];
         state.trialData.forEach((row, index) => {
@@ -249,20 +233,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td><button class="btn btn-sm btn-outline-danger btn-delete"><i class="bi bi-trash"></i></button></td>`;
 
             tr.querySelectorAll('input, select').forEach(el => {
+                // *** تعديل: استخدام 'input' بدلاً من 'change' لحفظ أسرع ***
+                // We use 'input' for text/number fields for instant save, and 'change' for selects
                 const eventType = (el.tagName === 'SELECT' || el.type === 'number') ? 'change' : 'input';
                 el.addEventListener(eventType, (e) => {
                     state.trialData[index][e.target.dataset.field] = e.target.type === 'number' ? toNum(e.target.value) : e.target.value;
                     if (e.target.dataset.field === "MainType") {
                         state.trialData[index]["SubType"] = "";
-                        renderTable();
+                        renderTable(); // This re-renders, which will trigger validation & save
                     } else {
-                        renderValidation();
+                        renderValidation(); // This will trigger save
                     }
                 });
             });
 
             tr.querySelector('.btn-delete').addEventListener('click', () => {
                 state.trialData.splice(index, 1);
+                // No need to call saveData() here, renderTable() will do it.
                 renderTable(); 
             });
             UI.tbBody.appendChild(tr);
@@ -270,133 +257,143 @@ document.addEventListener('DOMContentLoaded', () => {
         renderValidation();
     };
 
-    // --- File Upload Functions ---
-    const guessHeader = (fieldKey, headers) => {
-         const fieldName = fieldKey.toLowerCase();
-         const arName = (t_fields(fieldKey) || '').toLowerCase();
-         
-         for (const header of headers) {
-             const lowerHeader = String(header || '').toLowerCase().trim();
-             if (lowerHeader === fieldName || lowerHeader === arName) {
-                 return header;
-             }
-         }
-         if (fieldName === 'debit' && headers.find(h => String(h).toLowerCase().trim() === 'مدين')) return headers.find(h => String(h).toLowerCase().trim() === 'مدين');
-         if (fieldName === 'credit' && headers.find(h => String(h).toLowerCase().trim() === 'دائن')) return headers.find(h => String(h).toLowerCase().trim() === 'دائن');
-         if (fieldName === 'account' && headers.find(h => String(h).toLowerCase().trim() === 'الحساب')) return headers.find(h => String(h).toLowerCase().trim() === 'الحساب');
-         return "";
-     };
-    const renderColumnMapper = () => {
-         UI.columnMapper.innerHTML = config.requiredFields.map(fieldKey => {
-             const guessedHeader = guessHeader(fieldKey, state.fileHeaders);
-             return `
-             <div class="col-md-4 col-sm-6">
-                 <label for="map-${fieldKey}" class="form-label fw-bold">${t_fields(fieldKey)}</label>
-                 <select id="map-${fieldKey}" class="form-select form-select-sm" data-field-key="${fieldKey}">
-                     <option value="">-- ${lang === 'ar' ? 'تجاهل' : 'Ignore'} --</option>
-                     ${state.fileHeaders.map(h => `<option value="${h}" ${h === guessedHeader ? 'selected' : ''}>${h}</option>`).join('')}
-                 </select>
-             </div>`;
-         }).join('');
-     };
-    const renderPreviewTable = () => {
-         if (state.fileData.length === 0) {
-             UI.filePreviewTable.innerHTML = `<p class="text-danger">${lang === 'ar' ? 'الملف فارغ أو لا يمكن قراءته.' : 'File is empty or unreadable.'}</p>`;
-             return;
-         }
-         const headers = state.fileHeaders;
-         const rows = state.fileData.slice(0, 5); 
-         let table = '<table class="table table-sm table-bordered table-striped small">';
-         table += '<thead class="table-light">';
-         table += `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
-         table += '</thead>';
-         table += '<tbody>';
-         rows.forEach(row => {
-             table += `<tr>${headers.map(h => `<td>${row[h] || ''}</td>`).join('')}</tr>`;
-         });
-         table += '</tbody>';
-         table += '</table>';
-         
-         UI.filePreviewTable.innerHTML = table;
-     };
-    const handleFile = (file) => {
-         if (!file) return;
-         UI.fileNameDisplay.textContent = `File: ${file.name} | Size: ${(file.size / 1024).toFixed(2)} KB`;
-         UI.filePreviewArea.classList.remove('d-none');
-         UI.fileDropArea.classList.add('d-none');
-         UI.previewSpinner.classList.remove('d-none');
-         UI.filePreviewTable.innerHTML = '';
-         UI.columnMapper.innerHTML = '';
-         const reader = new FileReader();
-         
-         reader.onload = (e) => {
-             try {
-                 const data = e.target.result;
-                 const workbook = XLSX.read(data, { type: 'array' });
-                 const firstSheetName = workbook.SheetNames[0];
-                 const worksheet = workbook.Sheets[firstSheetName];
-                 
-                 const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 0 });
-                 
-                 if (jsonData.length === 0) {
-                     throw new Error("No data found in file.");
-                 }
-                 state.fileData = jsonData;
-                 state.fileHeaders = Object.keys(jsonData[0]); 
-                 renderPreviewTable();
-                 renderColumnMapper();
-                 UI.previewSpinner.classList.add('d-none');
-             } catch (err) {
-                 console.error(err);
-                 alert(t_page('fileReadError'));
-                 resetUploadUI();
-             }
-         };
-         reader.onerror = () => {
-             alert(t_page('fileReadError'));
-             resetUploadUI();
-         };
-         reader.readAsArrayBuffer(file);
-     };
-    const resetUploadUI = () => {
-         UI.filePreviewArea.classList.add('d-none');
-         UI.fileDropArea.classList.remove('d-none');
-         UI.fileUploader.value = ''; 
-         state.fileData = [];
-         state.fileHeaders = [];
-     };
-    const processFile = () => {
-         if (!confirm(t_page('confirmClearUpload'))) {
-             return;
-         }
-         const mapping = {};
-         UI.columnMapper.querySelectorAll('select').forEach(sel => {
-             mapping[sel.dataset.fieldKey] = sel.value; 
-         });
-         state.trialData = []; 
-         state.fileData.forEach(row => {
-             const newRow = {
-                 Account:  row[mapping.Account] || '',
-                 MainType: row[mapping.MainType] || '',
-                 SubType:  row[mapping.SubType] || '',
-                 Debit:    toNum(row[mapping.Debit]),
-                 Credit:   toNum(row[mapping.Credit])
-             };
-             state.trialData.push(newRow);
-         });
-         if (state.trialData.length === 0) {
-             state.trialData.push({ Account: '', MainType: '', SubType: '', Debit: 0, Credit: 0 });
-         }
-         renderTable(); 
-         
-         const manualTabTrigger = new bootstrap.Tab(UI.manualTab);
-         manualTabTrigger.show();
-         resetUploadUI();
-         alert(t_page('fileProcessingSuccess'));
-     };
-    
     // ========================================================
-    // *** INITIALIZATION ***
+    // *** FILE UPLOAD FUNCTIONS (No changes here) ***
+    // ========================================================
+
+    const guessHeader = (fieldKey, headers) => {
+        const fieldName = fieldKey.toLowerCase();
+        const arName = (t_fields(fieldKey) || '').toLowerCase();
+        
+        for (const header of headers) {
+            const lowerHeader = String(header || '').toLowerCase().trim();
+            if (lowerHeader === fieldName || lowerHeader === arName) {
+                return header;
+            }
+        }
+        if (fieldName === 'debit' && headers.find(h => String(h).toLowerCase().trim() === 'مدين')) return headers.find(h => String(h).toLowerCase().trim() === 'مدين');
+        if (fieldName === 'credit' && headers.find(h => String(h).toLowerCase().trim() === 'دائن')) return headers.find(h => String(h).toLowerCase().trim() === 'دائن');
+        if (fieldName === 'account' && headers.find(h => String(h).toLowerCase().trim() === 'الحساب')) return headers.find(h => String(h).toLowerCase().trim() === 'الحساب');
+        return "";
+    };
+
+    const renderColumnMapper = () => {
+        const optionsHTML = state.fileHeaders.map(h => `<option value="${h}">${h}</option>`).join('');
+        
+        UI.columnMapper.innerHTML = config.requiredFields.map(fieldKey => {
+            const guessedHeader = guessHeader(fieldKey, state.fileHeaders);
+            return `
+            <div class="col-md-4 col-sm-6">
+                <label for="map-${fieldKey}" class="form-label fw-bold">${t_fields(fieldKey)}</label>
+                <select id="map-${fieldKey}" class="form-select form-select-sm" data-field-key="${fieldKey}">
+                    <option value="">-- ${lang === 'ar' ? 'تجاهل' : 'Ignore'} --</option>
+                    ${state.fileHeaders.map(h => `<option value="${h}" ${h === guessedHeader ? 'selected' : ''}>${h}</option>`).join('')}
+                </select>
+            </div>`;
+        }).join('');
+    };
+
+    const renderPreviewTable = () => {
+        if (state.fileData.length === 0) {
+            UI.filePreviewTable.innerHTML = `<p class="text-danger">${lang === 'ar' ? 'الملف فارغ أو لا يمكن قراءته.' : 'File is empty or unreadable.'}</p>`;
+            return;
+        }
+        const headers = state.fileHeaders;
+        const rows = state.fileData.slice(0, 5); 
+        let table = '<table class="table table-sm table-bordered table-striped small">';
+        table += '<thead class="table-light">';
+        table += `<tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>`;
+        table += '</thead>';
+        table += '<tbody>';
+        rows.forEach(row => {
+            table += `<tr>${headers.map(h => `<td>${row[h] || ''}</td>`).join('')}</tr>`;
+        });
+        table += '</tbody>';
+        table += '</table>';
+        
+        UI.filePreviewTable.innerHTML = table;
+    };
+
+    const handleFile = (file) => {
+        if (!file) return;
+        UI.fileNameDisplay.textContent = `File: ${file.name} | Size: ${(file.size / 1024).toFixed(2)} KB`;
+        UI.filePreviewArea.classList.remove('d-none');
+        UI.fileDropArea.classList.add('d-none');
+        UI.previewSpinner.classList.remove('d-none');
+        UI.filePreviewTable.innerHTML = '';
+        UI.columnMapper.innerHTML = '';
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+            try {
+                const data = e.target.result;
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 0 });
+                
+                if (jsonData.length === 0) {
+                    throw new Error("No data found in file.");
+                }
+                state.fileData = jsonData;
+                state.fileHeaders = Object.keys(jsonData[0]); 
+                renderPreviewTable();
+                renderColumnMapper();
+                UI.previewSpinner.classList.add('d-none');
+            } catch (err) {
+                console.error(err);
+                alert(t_page('fileReadError'));
+                resetUploadUI();
+            }
+        };
+        reader.onerror = () => {
+            alert(t_page('fileReadError'));
+            resetUploadUI();
+        };
+        reader.readAsArrayBuffer(file);
+    };
+
+    const resetUploadUI = () => {
+        UI.filePreviewArea.classList.add('d-none');
+        UI.fileDropArea.classList.remove('d-none');
+        UI.fileUploader.value = ''; 
+        state.fileData = [];
+        state.fileHeaders = [];
+    };
+
+    const processFile = () => {
+        if (!confirm(t_page('confirmClearUpload'))) {
+            return;
+        }
+        const mapping = {};
+        UI.columnMapper.querySelectorAll('select').forEach(sel => {
+            mapping[sel.dataset.fieldKey] = sel.value; 
+        });
+        state.trialData = []; 
+        state.fileData.forEach(row => {
+            const newRow = {
+                Account:  row[mapping.Account] || '',
+                MainType: row[mapping.MainType] || '',
+                SubType:  row[mapping.SubType] || '',
+                Debit:    toNum(row[mapping.Debit]),
+                Credit:   toNum(row[mapping.Credit])
+            };
+            state.trialData.push(newRow);
+        });
+        if (state.trialData.length === 0) {
+            state.trialData.push({ Account: '', MainType: '', SubType: '', Debit: 0, Credit: 0 });
+        }
+        // CRITICAL: Render table, which will trigger validation, which triggers auto-save.
+        renderTable(); 
+        
+        const manualTabTrigger = new bootstrap.Tab(UI.manualTab);
+        manualTabTrigger.show();
+        resetUploadUI();
+        alert(t_page('fileProcessingSuccess'));
+    };
+    // ========================================================
+    // *** (END) FILE UPLOAD FUNCTIONS ***
     // ========================================================
 
     const init = () => {
@@ -405,29 +402,28 @@ document.addEventListener('DOMContentLoaded', () => {
             UI.currencySelect.add(new Option(`${config.currencies[code].name} (${code})`, code));
         }
         
-        loadData(); // This now loads trialData AND marketData
+        loadData();
         UI.currencySelect.value = localStorage.getItem('currency') || 'EGP';
         updateFxRate();
         renderTable();
         
         UI.addRowBtn.addEventListener('click', () => {
             state.trialData.push({ Account: '', MainType: '', SubType: '', Debit: 0, Credit: 0 });
+            // No need to save here, renderTable() triggers it.
             renderTable();
         });
 
+        // This button is now just for user confirmation
         UI.saveBtn.addEventListener('click', () => { 
-            saveData(); 
+            saveData(); // Save again just in case
             alert(t_page('savedSuccess')); 
         });
         
         UI.clearBtn.addEventListener('click', () => {
             if (confirm(t_page('confirmClear'))) {
                 state.trialData = [];
-                // *** Clear market data as well ***
-                state.marketData = { marketPrice: 0, outstandingShares: 0, dividendsPaid: 0 };
                 localStorage.removeItem('trialData');
-                localStorage.removeItem('marketData');
-                loadData(); // Reloads empty state
+                loadData();
                 renderTable(); // This will auto-save the new empty state
             }
         });
@@ -436,39 +432,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
         UI.fxRateInput.addEventListener('change', (e) => {
             config.currencies[UI.currencySelect.value].rate = toNum(e.target.value);
-            saveData(); // Auto-save
+            // *** تعديل: إضافة الحفظ التلقائي هنا ***
+            saveData(); // Auto-save when FX rate changes
         });
 
-        // *** ADDED: Event listeners for new Market Data inputs ***
-        UI.marketPrice.addEventListener('input', () => saveData());
-        UI.outstandingShares.addEventListener('input', () => saveData());
-        UI.dividendsPaid.addEventListener('input', () => saveData());
-
-        // --- NEW UPLOAD EVENT LISTENERS (as before) ---
+        // --- NEW UPLOAD EVENT LISTENERS ---
         UI.browseButton.addEventListener('click', () => UI.fileUploader.click());
         UI.fileDropArea.addEventListener('click', () => UI.fileUploader.click()); 
         UI.processFileBtn.addEventListener('click', processFile);
         UI.fileUploader.addEventListener('change', (e) => {
-             if (e.target.files.length > 0) { handleFile(e.target.files[0]); }
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
         });
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-            UI.fileDropArea.addEventListener(eventName, (e) => { e.preventDefault(); e.stopPropagation(); }, false);
+            UI.fileDropArea.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            }, false);
         });
         ['dragenter', 'dragover'].forEach(eventName => {
             UI.fileDropArea.addEventListener(eventName, () => {
-                 UI.fileDropArea.classList.add('border-success');
-                 UI.fileDropArea.classList.remove('border-primary-subtle');
+                UI.fileDropArea.classList.add('border-success');
+                UI.fileDropArea.classList.remove('border-primary-subtle');
             }, false);
         });
         ['dragleave', 'drop'].forEach(eventName => {
             UI.fileDropArea.addEventListener(eventName, () => {
-                 UI.fileDropArea.classList.remove('border-success');
-                 UI.fileDropArea.classList.add('border-primary-subtle');
+                UI.fileDropArea.classList.remove('border-success');
+                UI.fileDropArea.classList.add('border-primary-subtle');
             }, false);
         });
         UI.fileDropArea.addEventListener('drop', (e) => {
-            const dt = e.dataTransfer; const files = dt.files;
-            if (files.length > 0) { UI.fileUploader.files = files; handleFile(files[0]); }
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            if (files.length > 0) {
+                UI.fileUploader.files = files;
+                handleFile(files[0]);
+            }
         }, false);
     };
 
