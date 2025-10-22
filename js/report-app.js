@@ -1,4 +1,4 @@
-// js/report-app.js (Enhanced processing + Dual Source Input Logic)
+// js/report-app.js (Enhanced processing + Dual Source Input Logic + Source Selector)
 
 window.pageTranslations = {
     ar: {
@@ -9,9 +9,15 @@ window.pageTranslations = {
         exportPdf: "تصدير PDF",
         exportExcel: "تصدير Excel",
         total: "الإجمالي",
-        noDataMessage: "لا توجد بيانات مالية لعرضها. يرجى إدخال ميزان المراجعة من صفحة 'الإدخال' أو رفع القوائم المالية من صفحة 'الرفع'.", // رسالة جديدة
+        noDataMessage: "لا توجد بيانات مالية لعرضها من المصدر المحدد. يرجى إدخال البيانات أولاً أو تغيير المصدر.", // تعديل الرسالة
+        // *** مُضاف: ترجمات اختيار المصدر ***
+        dataSourceTitle: "مصدر البيانات:",
+        sourceTrialBalanceLabel: "استخدام ميزان المراجعة (من صفحة الإدخال)",
+        sourceUploadedLabel: "استخدام القوائم المالية المرفوعة (من صفحة الرفع)",
+        // *** نهاية الإضافة ***
         // BS Translations
         bsTitle: "قائمة المركز المالي",
+        // ... (باقي الترجمات العربية كما هي من الكود السابق) ...
         bsSubheader: "تعرض أصول الشركة وخصومها وحقوق ملكيتها في تاريخ محدد.",
         assets: "الأصول",
         currentAssets: "الأصول المتداولة",
@@ -95,12 +101,17 @@ window.pageTranslations = {
     },
     en: {
         // *** Please fill in ALL English translations corresponding to the Arabic ones above ***
-         pageTitle: "Detailed Financial Statements — Financial Analyzer",
+        pageTitle: "Detailed Financial Statements — Financial Analyzer",
         pageHeader: "Detailed Financial Statements",
         pageSubheader: "Professional IFRS-compliant reports with smart analytical commentary.",
         commentaryTitle: "Analytical Commentary",
         exportPdf: "Export PDF", exportExcel: "Export Excel", total: "Total",
-        noDataMessage: "No financial data available to display. Please enter Trial Balance data via 'Input' page or upload statements via 'Upload' page.", // New message
+        noDataMessage: "No financial data available for the selected source. Please enter data first or change the source.", // Updated message
+        // *** Added: English translations for source selector ***
+        dataSourceTitle: "Data Source:",
+        sourceTrialBalanceLabel: "Use Trial Balance (from Input page)",
+        sourceUploadedLabel: "Use Uploaded Statements (from Upload page)",
+        // *** End Addition ***
         bsTitle: "Statement of Financial Position", bsSubheader: "Shows assets, liabilities, and equity.",
         assets: "Assets", currentAssets: "Current Assets", cashAndEquivalents: "Cash & Equivalents", accountsReceivable: "Accounts Receivable", inventory: "Inventory", otherCurrentAssets: "Other Current Assets", totalCurrentAssets: "Total Current Assets", nonCurrentAssets: "Non-current Assets", propertyPlantEquipment: "Property, Plant & Equipment (Net)", otherNonCurrentAssets: "Other Non-current Assets", totalNonCurrentAssets: "Total Non-current Assets", totalAssets: "Total Assets",
         liabilities: "Liabilities", currentLiabilities: "Current Liabilities", accountsPayable: "Accounts Payable", shortTermLoans: "Short-term Loans", otherCurrentLiabilities: "Other Current Liabilities", totalCurrentLiabilities: "Total Current Liabilities", nonCurrentLiabilities: "Non-current Liabilities", longTermLoans: "Long-term Loans", otherNonCurrentLiabilities: "Other Non-current Liabilities", totalNonCurrentLiabilities: "Total Non-current Liabilities", totalLiabilities: "Total Liabilities",
@@ -117,8 +128,8 @@ window.pageTranslations = {
         eq_comment_growth: "Shareholder Value Growth: Equity increased.", eq_comment_decline: "Shareholder Value Decline: Equity decreased.",
     }
 };
+
 document.addEventListener('DOMContentLoaded', () => {
-    // *** Added console.log at the very beginning ***
     console.log("[DEBUG] report-app.js script started execution.");
 
     const state = {
@@ -132,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
         hasData: false
     };
     const lang = localStorage.getItem('lang') || 'ar';
-    const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`; // Use brackets for missing keys
+    const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;
     const formatCurrency = (value, decimals = 0) => {
          if (!isFinite(value)) return "N/A";
          const roundedValue = parseFloat(value.toFixed(decimals));
@@ -145,26 +156,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Data Loading and Processing Logic ---
 
     const processUploadedData = () => {
-        try {
-            // *** This section NEEDS to be adapted based on the ACTUAL structure saved by upload.html ***
+        // ... (نفس الكود من الرد السابق - يحتاج لتعديل حسب هيكل upload.html الفعلي) ...
+         try {
             console.log("Processing data from upload.html (Placeholder Logic)...");
             const bsData = state.uploadedData.balanceSheet || {};
             const isData = state.uploadedData.incomeStatement || {};
-            const totals = {};
+            const totals = {}; 
 
-            // Example mapping (replace with actual logic)
             state.statements.bs.currentAssets = bsData.currentAssets || [];
-            // ... (map other BS sections) ...
-             state.statements.bs.nonCurrentAssets = bsData.nonCurrentAssets || [];
+            state.statements.bs.nonCurrentAssets = bsData.nonCurrentAssets || [];
             state.statements.bs.currentLiabilities = bsData.currentLiabilities || [];
             state.statements.bs.nonCurrentLiabilities = bsData.nonCurrentLiabilities || [];
             state.statements.bs.equityCapital = bsData.equity?.filter(item => item.account.toLowerCase().includes('capital') || item.account.includes('رأس المال')) || [];
             const openingREItem = bsData.equity?.find(item => item.account.toLowerCase().includes('retained') || item.account.includes('أرباح'));
-            state.statements.bs.equityRetainedEarnings = openingREItem ? openingREItem.value : 0;
+            state.statements.bs.equityRetainedEarnings = openingREItem ? openingREItem.value : 0; 
 
             state.statements.is.revenue = isData.revenue || [];
             state.statements.is.cogs = isData.cogs || [];
-            // ... (map expenses based on assumed 'type' property or other classification logic) ...
             state.statements.is.genAdminExpenses = isData.expenses?.filter(e => e.type === 'genAdmin') || [];
             state.statements.is.sellingMarketingExpenses = isData.expenses?.filter(e => e.type === 'sellingMarketing') || [];
             state.statements.is.depreciationAmortization = isData.expenses?.filter(e => e.type === 'depreciation') || [];
@@ -172,13 +180,10 @@ document.addEventListener('DOMContentLoaded', () => {
             state.statements.is.taxExpense = isData.expenses?.filter(e => e.type === 'tax') || [];
             state.statements.is.otherOperatingExpenses = isData.expenses?.filter(e => !e.type || !['genAdmin', 'sellingMarketing', 'depreciation', 'interest', 'tax'].includes(e.type)) || [];
 
-
-            // Calculate Totals from Uploaded Data
             const sumValues = (arr) => arr.reduce((sum, item) => sum + (item.value || 0), 0);
             totals.totalCurrentAssets = sumValues(state.statements.bs.currentAssets);
             totals.totalNonCurrentAssets = sumValues(state.statements.bs.nonCurrentAssets);
             totals.totalAssets = totals.totalCurrentAssets + totals.totalNonCurrentAssets;
-            // ... (calculate all other totals similarly) ...
             totals.totalCurrentLiabilities = sumValues(state.statements.bs.currentLiabilities);
             totals.totalNonCurrentLiabilities = sumValues(state.statements.bs.nonCurrentLiabilities);
             totals.totalLiabilities = totals.totalCurrentLiabilities + totals.totalNonCurrentLiabilities;
@@ -186,10 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
             totals.totalCogs = sumValues(state.statements.is.cogs);
             totals.grossProfit = totals.totalRevenue - totals.totalCogs;
             totals.depreciationTotal = sumValues(state.statements.is.depreciationAmortization);
-            totals.totalOperatingExpenses = sumValues(state.statements.is.genAdminExpenses) +
-                                            sumValues(state.statements.is.sellingMarketingExpenses) +
-                                            totals.depreciationTotal +
-                                            sumValues(state.statements.is.otherOperatingExpenses);
+            totals.totalOperatingExpenses = sumValues(state.statements.is.genAdminExpenses) + sumValues(state.statements.is.sellingMarketingExpenses) + totals.depreciationTotal + sumValues(state.statements.is.otherOperatingExpenses);
             totals.operatingProfit = totals.grossProfit - totals.totalOperatingExpenses;
             const totalInterest = sumValues(state.statements.is.interestExpense);
             totals.profitBeforeTax = totals.operatingProfit - totalInterest;
@@ -202,20 +204,19 @@ document.addEventListener('DOMContentLoaded', () => {
             const cashItem = state.statements.bs.currentAssets.find(item => item.account.toLowerCase().includes('cash') || item.account.includes('نقد') || item.account.includes('bank') || item.account.includes('بنك'));
             totals.cashEquivalents = cashItem ? cashItem.value : 0;
 
-
             state.statements.totals = totals;
-            state.hasData = true; // Mark that data is now processed
+            state.hasData = true;
             console.log("Successfully processed data from upload.html");
             return true;
 
         } catch (error) {
             console.error("Error processing uploaded data:", error);
-            state.hasData = false; // Mark failure
+            state.hasData = false;
             return false;
         }
     };
 
-    // Builds statements from Trial Balance (original logic)
+    // Builds statements from Trial Balance
     const buildStatementsFromTrialData = () => {
         // ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ...
         state.statements = {
@@ -233,7 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const account = row.Account || 'Unknown';
 
             if (mainType.includes('الأصول') || mainType.includes('Assets')) {
-                const item = { account, value }; // Store calculated balance value
+                const item = { account, value };
                 if (subType.includes('متداول') || subType.includes('Current')) {
                     state.statements.bs.currentAssets.push(item);
                     if (accountName.includes('cash') || accountName.includes('نقد') || accountName.includes('bank') || accountName.includes('بنك')) {
@@ -284,7 +285,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Calculate Totals
         totals.totalCurrentAssets = state.statements.bs.currentAssets.reduce((sum, item) => sum + item.value, 0);
         totals.totalNonCurrentAssets = state.statements.bs.nonCurrentAssets.reduce((sum, item) => sum + item.value, 0);
         totals.totalAssets = totals.totalCurrentAssets + totals.totalNonCurrentAssets;
@@ -309,62 +309,79 @@ document.addEventListener('DOMContentLoaded', () => {
         totals.totalLiabilitiesAndEquity = totals.totalLiabilities + totals.totalEquity;
 
         state.statements.totals = totals;
-        state.hasData = true; // Mark data as processed
+        state.hasData = true; 
         console.log("Processed Statements Data from Trial Balance:", state.statements);
         console.log("Calculated Totals from Trial Balance:", totals);
+        return true; // Indicate success
     };
 
-    // Main function to load data from either source
+    // Main function to load data based on selected source
     const loadDataAndPrepareStatements = () => {
-        const uploadedDataString = localStorage.getItem('uploadedFinancialData');
-        const trialDataString = localStorage.getItem('trialData');
         state.hasData = false; // Reset flag
+        const selectedSource = document.querySelector('input[name="dataSource"]:checked')?.value;
+        console.log(`[DEBUG] Selected data source: ${selectedSource}`); // Log selected source
 
-        if (uploadedDataString) {
-            try {
-                state.uploadedData = JSON.parse(uploadedDataString);
-                console.log("Found pre-formatted data from upload.html");
-                if (processUploadedData()) { // Try processing it
-                     return true; // Success using uploaded data
-                } else {
-                     state.uploadedData = null;
-                     console.warn("Processing uploadedFinancialData failed, falling back to trialData.");
+        if (selectedSource === 'uploadedData') {
+            const uploadedDataString = localStorage.getItem('uploadedFinancialData');
+            if (uploadedDataString) {
+                try {
+                    state.uploadedData = JSON.parse(uploadedDataString);
+                    // *** Basic check if uploadedData seems valid (at least has bs or is) ***
+                    if (state.uploadedData && (state.uploadedData.balanceSheet || state.uploadedData.incomeStatement)) {
+                        console.log("Found potentially valid pre-formatted data from upload.html");
+                        if (processUploadedData()) { // Try processing it
+                             return true; // Success using uploaded data
+                        } else {
+                             state.uploadedData = null;
+                             console.warn("Processing uploadedFinancialData failed.");
+                             return false; // Processing failed
+                        }
+                    } else {
+                         console.warn("uploadedFinancialData found but seems invalid or empty.");
+                         state.uploadedData = null;
+                         return false;
+                    }
+                } catch (e) {
+                    console.error("Error parsing uploadedFinancialData:", e);
+                    state.uploadedData = null;
+                    return false; // Parsing failed
                 }
-            } catch (e) {
-                console.error("Error parsing uploadedFinancialData:", e);
-                state.uploadedData = null;
+            } else {
+                console.warn("Selected source is 'uploadedData', but 'uploadedFinancialData' not found in localStorage.");
+                return false; // Selected source data not found
+            }
+        } else { // Default or selected 'trialData'
+            const trialDataString = localStorage.getItem('trialData');
+            if (trialDataString) {
+                 try {
+                    state.trialData = JSON.parse(trialDataString);
+                     if (Array.isArray(state.trialData) && state.trialData.length > 0 && !(state.trialData.length === 1 && !state.trialData[0].Account && !toNum(state.trialData[0].Debit) && !toNum(state.trialData[0].Credit))) {
+                        console.log("Found trialData from input.html, building statements...");
+                        buildStatementsFromTrialData(); // Build from trial data
+                        return state.hasData; // Return the flag set inside buildStatementsFromTrialData
+                     } else {
+                         console.warn("trialData found but is empty or invalid.");
+                         return false;
+                     }
+                } catch(e) {
+                     console.error("Error parsing trialData:", e);
+                     return false;
+                }
+            } else {
+                console.warn("Selected source is 'trialData', but 'trialData' not found in localStorage.");
+                return false; // Selected source data not found
             }
         }
-        
-        if (trialDataString) {
-             try {
-                state.trialData = JSON.parse(trialDataString);
-                 // More robust check for empty/invalid trialData
-                 if (Array.isArray(state.trialData) && state.trialData.length > 0 && !(state.trialData.length === 1 && !state.trialData[0].Account && !toNum(state.trialData[0].Debit) && !toNum(state.trialData[0].Credit))) {
-                    console.log("Found trialData from input.html, building statements...");
-                    buildStatementsFromTrialData(); // Build from trial data
-                    return true; // Success using trial data (hasData is set inside buildStatementsFromTrialData)
-                 } else {
-                     console.warn("trialData found but is empty or invalid.");
-                 }
-            } catch(e) {
-                 console.error("Error parsing trialData:", e);
-            }
-        }
-
-        console.warn("No valid data found from input.html or upload.html");
-        return false; // No data found
     };
 
 
-    // --- Rendering Functions --- (No changes needed in these)
-    const renderStatementSection = (items = [], sectionTitle, totalLabel, cssClass = '', decimals = 0) => { // Added default empty array
-        // ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ...
+    // --- Rendering Functions --- (No changes needed)
+    const renderStatementSection = (items = [], sectionTitle, totalLabel, cssClass = '', decimals = 0) => {
+        // ... (Code from previous working version) ...
         let sectionTotal = 0;
         let html = '';
-        // Ensure items is an array before trying to iterate or check length
-        if (!Array.isArray(items)) items = []; 
-        if (items.length > 0 || sectionTitle) { 
+        if (!Array.isArray(items)) items = [];
+        if (items.length > 0 || sectionTitle) {
             html += `<tr class="section-header ${cssClass}"><td colspan="2"><strong>${sectionTitle || ''}</strong></td></tr>`;
         }
         items.forEach(item => {
@@ -372,15 +389,14 @@ document.addEventListener('DOMContentLoaded', () => {
             html += `<tr><td class="ps-3">${item.account}</td><td class="text-end">${formatCurrency(valueToFormat, decimals)}</td></tr>`;
             sectionTotal += valueToFormat;
         });
-        if (totalLabel && items.length > 0) { 
+        if (totalLabel && items.length > 0) {
              html += `<tr class="subtotal-row ${cssClass}"><td>${totalLabel}</td><td class="text-end">${formatCurrency(sectionTotal, decimals)}</td></tr>`;
         }
         return { html, total: sectionTotal };
     };
-    const renderBalanceSheet = () => { /* ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ... */ 
+    const renderBalanceSheet = () => { /* ... (Code from previous working version) ... */ 
         const { bs, totals } = state.statements;
-        // Check if totals object exists before trying to access its properties
-        if (!totals) { console.error("Totals not calculated for Balance Sheet."); return; }
+        if (!totals || !bs) { console.error("Statement data incomplete for Balance Sheet rendering."); return; } // Add check
         let html = '<table class="table table-sm report-table"><tbody>';
         const currentAssetsHtml = renderStatementSection(bs.currentAssets, t_page('currentAssets'), t_page('totalCurrentAssets'), 'assets-section');
         const nonCurrentAssetsHtml = renderStatementSection(bs.nonCurrentAssets, t_page('nonCurrentAssets'), t_page('totalNonCurrentAssets'), 'assets-section');
@@ -390,23 +406,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const nonCurrentLiabsHtml = renderStatementSection(bs.nonCurrentLiabilities, t_page('nonCurrentLiabilities'), t_page('totalNonCurrentLiabilities'), 'liabilities-section');
         html += currentLiabsHtml.html + nonCurrentLiabsHtml.html;
         html += `<tr class="subtotal-row liabilities-section"><td>${t_page('totalLiabilities')}</td><td class="text-end">${formatCurrency(totals.totalLiabilities)}</td></tr>`;
-        const equityCapitalHtml = renderStatementSection(bs.equityCapital, t_page('equity'), null, 'equity-section'); 
-        html += equityCapitalHtml.html; 
+        const equityCapitalHtml = renderStatementSection(bs.equityCapital, t_page('equity'), null, 'equity-section');
+        html += equityCapitalHtml.html;
         html += `<tr><td class="ps-3">${t_page('retainedEarnings')}</td><td class="text-end">${formatCurrency(bs.equityRetainedEarnings)}</td></tr>`;
         html += `<tr class="subtotal-row equity-section"><td>${t_page('totalEquity')}</td><td class="text-end">${formatCurrency(totals.totalEquity)}</td></tr>`;
         html += `<tr class="total-row equity-section"><td>${t_page('totalLiabilitiesAndEquity')}</td><td class="text-end">${formatCurrency(totals.totalLiabilitiesAndEquity)}</td></tr>`;
         html += '</tbody></table>';
         const bsTableElement = document.getElementById('balanceSheetTable');
         if (bsTableElement) bsTableElement.innerHTML = html;
-
-        const diff = (totals.totalAssets || 0) - (totals.totalLiabilitiesAndEquity || 0); // Add fallback for undefined totals
+        const diff = (totals.totalAssets || 0) - (totals.totalLiabilitiesAndEquity || 0);
         const comment = Math.abs(diff) < 1 ? t_page('bs_comment_balanced') : t_page('bs_comment_unbalanced').replace('{diff}', formatCurrency(diff));
         const bsCommentElement = document.getElementById('balanceSheetComment');
         if(bsCommentElement) bsCommentElement.textContent = comment;
     };
-    const renderIncomeStatement = () => { /* ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ... */
+    const renderIncomeStatement = () => { /* ... (Code from previous working version) ... */
         const { is: income, totals } = state.statements;
-        if (!totals) { console.error("Totals not calculated for Income Statement."); return; }
+        if (!totals || !income) { console.error("Statement data incomplete for Income Statement rendering."); return; } // Add check
         let html = '<table class="table table-sm report-table"><tbody>';
         const revenueHtml = renderStatementSection(income.revenue, null, t_page('revenue'), '', 2);
         const cogsHtml = renderStatementSection(income.cogs, null, `(-) ${t_page('cogs')}`, '', 2);
@@ -429,27 +444,25 @@ document.addEventListener('DOMContentLoaded', () => {
         html += '</tbody></table>';
         const isTableElement = document.getElementById('incomeStatementTable');
         if(isTableElement) isTableElement.innerHTML = html;
-
         const margin = totals.totalRevenue !== 0 ? (totals.netProfit / totals.totalRevenue) * 100 : 0;
-        const comment = totals.netProfit >= 0 
+        const comment = totals.netProfit >= 0
             ? t_page('is_comment_profit').replace('{profit}', formatCurrency(totals.netProfit, 2)).replace('{margin}', margin.toFixed(1))
             : t_page('is_comment_loss').replace('{profit}', formatCurrency(totals.netProfit, 2));
         const isCommentElement = document.getElementById('incomeStatementComment');
         if(isCommentElement) isCommentElement.textContent = comment;
      };
-    const renderCashFlowStatement = () => { /* ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ... */ 
+    const renderCashFlowStatement = () => { /* ... (Code from previous working version) ... */ 
         const { totals } = state.statements;
         if (!totals) { console.error("Totals not calculated for Cash Flow Statement."); return; }
         const netProfit = totals.netProfit || 0;
-        const depreciation = totals.depreciationTotal || 0; 
-        const cashFromOps = netProfit + depreciation; 
-        const cashFromInvesting = -depreciation; 
-        const cashFromFinancing = 0; 
+        const depreciation = totals.depreciationTotal || 0;
+        const cashFromOps = netProfit + depreciation;
+        const cashFromInvesting = -depreciation;
+        const cashFromFinancing = 0;
         const netChangeInCash = cashFromOps + cashFromInvesting + cashFromFinancing;
-        const beginningCash = 0; // Assumption
+        const beginningCash = 0;
         const endingCashCalculated = beginningCash + netChangeInCash;
         const endingCashFromBS = totals.cashEquivalents || 0;
-
         let html = `<table class="table table-sm report-table"><tbody>`;
         html += `<tr class="section-header"><td colspan="2"><strong>${t_page('operatingActivities')}</strong></td></tr>`;
         html += `<tr><td>${t_page('netIncomeForCF')}</td><td class="text-end">${formatCurrency(netProfit)}</td></tr>`;
@@ -476,20 +489,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const cfCommentElement = document.getElementById('cashFlowStatementComment');
         if(cfCommentElement) cfCommentElement.textContent = netChangeInCash >= 0 ? t_page('cf_comment_positive') : t_page('cf_comment_negative');
     };
-    const renderEquityStatement = () => { /* ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ... */
+    const renderEquityStatement = () => { /* ... (Code from previous working version) ... */
         const { bs, totals } = state.statements;
-        if (!totals) { console.error("Totals not calculated for Equity Statement."); return; }
-        const openingCapital = totals.totalEquityCapital || 0; 
+        if (!totals || !bs) { console.error("Statement data incomplete for Equity Statement rendering."); return; }
+        const openingCapital = totals.totalEquityCapital || 0;
         const netProfit = totals.netProfit || 0;
-        // Calculate opening RE if possible
-        const openingRE = (typeof bs.equityRetainedEarnings === 'number' && typeof netProfit === 'number') 
-                          ? bs.equityRetainedEarnings - netProfit 
-                          : 0; // Default to 0 if calculation isn't possible
+        const openingRE = (typeof bs.equityRetainedEarnings === 'number' && typeof netProfit === 'number')
+                          ? bs.equityRetainedEarnings - netProfit
+                          : 0;
         const openingTotalEquity = openingCapital + openingRE;
-        const closingCapital = openingCapital; 
-        const closingRE = bs.equityRetainedEarnings; 
-        const closingTotalEquity = totals.totalEquity || 0; 
-
+        const closingCapital = openingCapital;
+        const closingRE = bs.equityRetainedEarnings;
+        const closingTotalEquity = totals.totalEquity || 0;
         let html = `<table class="table table-sm report-table">`;
         html += `<tbody>`;
         html += `<tr><td>${t_page('totalOpeningEquity')}</td><td class="text-end">${formatCurrency(openingTotalEquity)}</td></tr>`;
@@ -502,157 +513,179 @@ document.addEventListener('DOMContentLoaded', () => {
         if(eqCommentElement) eqCommentElement.textContent = closingTotalEquity >= openingTotalEquity ? t_page('eq_comment_growth') : t_page('eq_comment_decline');
     };
 
+    // *** مُضاف: دالة لإعادة تحميل وعرض البيانات ***
+    const reloadAndRenderData = () => {
+        console.log("[DEBUG] Reloading and rendering data based on selection.");
+        const noDataWarningElement = document.getElementById('noDataWarning');
+        // Hide previous statements while loading
+        ['balanceSheetCard', 'incomeStatementCard', 'cashFlowStatementCard', 'equityStatementCard'].forEach(id => {
+            const card = document.getElementById(id);
+            if (card) card.style.display = 'none';
+         });
+         if(noDataWarningElement) noDataWarningElement.style.display = 'none'; // Hide warning initially
+
+        if (loadDataAndPrepareStatements()) {
+            console.log("[DEBUG] Data loaded successfully. Rendering statements...");
+            renderBalanceSheet();
+            renderIncomeStatement();
+            renderCashFlowStatement();
+            renderEquityStatement();
+             // Ensure statement sections are visible
+             ['balanceSheetCard', 'incomeStatementCard', 'cashFlowStatementCard', 'equityStatementCard'].forEach(id => {
+                const card = document.getElementById(id);
+                if (card) card.style.display = 'block';
+             });
+        } else {
+            console.log("[DEBUG] Failed to load data. Showing warning.");
+             if(noDataWarningElement) {
+                 noDataWarningElement.textContent = t_page('noDataMessage');
+                 noDataWarningElement.style.display = 'block';
+             }
+             // Keep statement sections hidden
+        }
+         // Re-apply translations if needed (might be redundant if main.js handles it well)
+         if (typeof window.applyTranslations === 'function') {
+            window.applyTranslations();
+         }
+    }
+
     // --- Initialization ---
     const init = () => {
-        console.log("[DEBUG] Initializing report page..."); // Added log
-        const noDataWarningElement = document.getElementById('noDataWarning');
+        console.log("[DEBUG] Initializing report page...");
+        let librariesLoadedCount = 0;
+        const totalLibraries = 2; // html2pdf and xlsx
 
-        // Load libraries first
-        loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js", () => {
-            loadScript("https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js", () => {
-                console.log("[DEBUG] External libraries loaded."); // Added log
-                
-                // Try loading data and preparing statements
-                if (loadDataAndPrepareStatements()) {
-                    console.log("[DEBUG] Data loaded successfully. Rendering statements..."); // Added log
-                    // If successful, render the statements
-                    renderBalanceSheet();
-                    renderIncomeStatement();
-                    renderCashFlowStatement();
-                    renderEquityStatement();
-                    // Hide the no-data warning if it exists
-                    if(noDataWarningElement) noDataWarningElement.style.display = 'none';
-                    // Show statement sections (in case they were hidden)
-                     ['balanceSheetCard', 'incomeStatementCard', 'cashFlowStatementCard', 'equityStatementCard'].forEach(id => {
-                        const card = document.getElementById(id);
-                        if (card) card.style.display = 'block';
-                     });
-                } else {
-                    console.log("[DEBUG] Failed to load data. Showing warning."); // Added log
-                    // If loading failed, show the no-data warning
-                     if(noDataWarningElement) {
-                         noDataWarningElement.textContent = t_page('noDataMessage'); // Use translated message
-                         noDataWarningElement.style.display = 'block';
-                     }
-                     // Hide statement sections
-                     ['balanceSheetCard', 'incomeStatementCard', 'cashFlowStatementCard', 'equityStatementCard'].forEach(id => {
-                        const card = document.getElementById(id);
-                        if (card) card.style.display = 'none';
-                     });
-                }
+        // Function to run main logic after libraries attempt to load
+        const runMainLogic = () => {
+            console.log("[DEBUG] External libraries check complete. Proceeding...");
+            reloadAndRenderData(); // Initial load and render
 
-                // Attach export button listeners
-                const exportPdfBtn = document.getElementById('exportPdfBtn');
-                if (exportPdfBtn) {
-                     exportPdfBtn.addEventListener('click', () => {
-                        if (!state.hasData) { alert(t_page('noDataMessage')); return; } 
+            // Attach export button listeners
+            const exportPdfBtn = document.getElementById('exportPdfBtn');
+            if (exportPdfBtn) {
+                 exportPdfBtn.addEventListener('click', () => {
+                    if (!state.hasData) { alert(t_page('noDataMessage')); return; }
+                    if (typeof html2pdf === 'function') {
                         const element = document.getElementById('report-content');
-                         if (typeof html2pdf === 'function') {
-                             const opt = { margin: 0.5, filename: 'Financial_Report.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
-                             html2pdf().from(element).set(opt).save();
-                         } else { console.error("html2pdf library is not loaded."); alert("PDF export failed."); }
-                     });
-                } else { console.warn("Export PDF button not found"); }
+                        const opt = { margin: 0.5, filename: 'Financial_Report.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
+                        html2pdf().from(element).set(opt).save();
+                    } else { console.error("html2pdf library is not loaded."); alert("PDF export failed."); }
+                 });
+            } else { console.warn("Export PDF button not found"); }
 
-                const exportExcelBtn = document.getElementById('exportExcelBtn');
-                if (exportExcelBtn) {
-                     exportExcelBtn.addEventListener('click', () => {
-                        if (!state.hasData) { alert(t_page('noDataMessage')); return; } 
-                         if (typeof XLSX === 'undefined') { console.error("XLSX library not loaded."); alert("Excel export failed."); return; }
-                         try {
-                             const wb = XLSX.utils.book_new();
-                             const extractTableData = (tableElement) => { /* ... (same as before) ... */ 
-                                 const data = [];
-                                 const rows = tableElement?.querySelectorAll('tbody tr');
-                                 if (!rows) return data;
-                                 rows.forEach(row => {
-                                     const rowData = [];
-                                     if(row.cells.length === 2 && !row.classList.contains('section-header')) { 
-                                         row.querySelectorAll('td').forEach(cell => {
-                                             let cellValue = cell.textContent.trim();
-                                             const numValue = parseFloat(cellValue.replace(/[,()]/g, '')); 
-                                             if (!isNaN(numValue) && (cellValue.match(/[\d,.-]+/) || cellValue === '0')) { 
-                                                 rowData.push(numValue);
-                                             } else {
-                                                 rowData.push(cellValue.replace(/[\(\)\-\+:]/g, '').replace(/^[ \t]+|[ \t]+$/g,'').trim()); 
-                                             }
-                                         });
-                                          if (rowData.length > 0) data.push(rowData);
-                                     } else if (row.cells.length > 0 && (row.classList.contains('section-header') || row.classList.contains('total-row') || row.classList.contains('subtotal-row'))) {
-                                        // Handle headers/totals spanning one effective column visually
-                                        rowData.push(row.cells[0].textContent.trim().replace(/[\(\)\-\+:]/g, ''));
-                                        if (row.cells.length > 1) { // Add value if it exists (for totals)
-                                            let cellValue = row.cells[1].textContent.trim();
-                                            const numValue = parseFloat(cellValue.replace(/[,()]/g, '')); 
-                                            if (!isNaN(numValue) && (cellValue.match(/[\d,.-]+/) || cellValue === '0')) {
-                                                rowData.push(numValue);
-                                            } else {
-                                                rowData.push(cellValue); // Push as text if not clearly a number
-                                            }
+            const exportExcelBtn = document.getElementById('exportExcelBtn');
+            if (exportExcelBtn) {
+                 exportExcelBtn.addEventListener('click', () => {
+                    if (!state.hasData) { alert(t_page('noDataMessage')); return; }
+                     if (typeof XLSX === 'undefined') { console.error("XLSX library not loaded."); alert("Excel export failed."); return; }
+                     try {
+                         const wb = XLSX.utils.book_new();
+                         const extractTableData = (tableElement) => { /* ... (same as before) ... */
+                              const data = [];
+                             const rows = tableElement?.querySelectorAll('tbody tr');
+                             if (!rows) return data;
+                             rows.forEach(row => {
+                                 const rowData = [];
+                                 if(row.cells.length === 2 && !row.classList.contains('section-header')) {
+                                     row.querySelectorAll('td').forEach(cell => {
+                                         let cellValue = cell.textContent.trim();
+                                         const numValue = parseFloat(cellValue.replace(/[,()]/g, ''));
+                                         if (!isNaN(numValue) && (cellValue.match(/[\d,.-]+/) || cellValue === '0')) {
+                                             rowData.push(numValue);
+                                         } else {
+                                             rowData.push(cellValue.replace(/[\(\)\-\+:]/g, '').replace(/^[ \t]+|[ \t]+$/g,'').trim());
+                                         }
+                                     });
+                                      if (rowData.length > 0) data.push(rowData);
+                                 } else if (row.cells.length > 0 && (row.classList.contains('section-header') || row.classList.contains('total-row') || row.classList.contains('subtotal-row'))) {
+                                    rowData.push(row.cells[0].textContent.trim().replace(/[\(\)\-\+:]/g, ''));
+                                    if (row.cells.length > 1) {
+                                        let cellValue = row.cells[1].textContent.trim();
+                                        const numValue = parseFloat(cellValue.replace(/[,()]/g, ''));
+                                        if (!isNaN(numValue) && (cellValue.match(/[\d,.-]+/) || cellValue === '0')) {
+                                            rowData.push(numValue);
+                                        } else {
+                                            rowData.push(cellValue);
                                         }
-                                        if (rowData.length > 0) data.push(rowData);
-                                     }
-                                 });
-                                 return data;
-                            };
-                             const addSheet = (tableId, sheetName) => { /* ... (same as before, consider improving auto-width) ... */ 
-                                 const table = document.getElementById(tableId);
-                                 if (table) {
-                                     const tableData = extractTableData(table);
-                                     if (tableData.length > 0) {
-                                         const ws = XLSX.utils.aoa_to_sheet(tableData);
-                                         // Basic auto-width (adjust as needed)
-                                          const colWidths = tableData.reduce((acc, row) => {
-                                                row.forEach((cell, i) => {
-                                                    const len = cell?.toString().length || 5;
-                                                    if (!acc[i] || len > acc[i]) {
-                                                        acc[i] = len;
-                                                    }
-                                                });
-                                                return acc;
-                                            }, []).map(w => ({ wch: w + 2 })); // Add padding
-                                          ws['!cols'] = colWidths;
+                                    }
+                                    if (rowData.length > 0) data.push(rowData);
+                                 }
+                             });
+                             return data;
+                         };
+                         const addSheet = (tableId, sheetName) => { /* ... (same as before) ... */
+                             const table = document.getElementById(tableId);
+                             if (table) {
+                                 const tableData = extractTableData(table);
+                                 if (tableData.length > 0) {
+                                     const ws = XLSX.utils.aoa_to_sheet(tableData);
+                                      const colWidths = tableData.reduce((acc, row) => {
+                                            row.forEach((cell, i) => {
+                                                const len = cell?.toString().length || 5;
+                                                if (!acc[i] || len > acc[i]) { acc[i] = len; }
+                                            }); return acc;
+                                        }, []).map(w => ({ wch: w + 2 }));
+                                      ws['!cols'] = colWidths;
+                                     XLSX.utils.book_append_sheet(wb, ws, sheetName);
+                                 } else { console.warn(`No data extracted from table: ${tableId}`); }
+                             } else { console.warn(`Table element not found: ${tableId}`); }
+                         };
+                         addSheet('balanceSheetTable', 'Balance Sheet');
+                         addSheet('incomeStatementTable', 'Income Statement');
+                         addSheet('cashFlowStatementTable', 'Cash Flow');
+                         addSheet('equityStatementTable', 'Equity');
+                         if (wb.SheetNames.length > 0) { XLSX.writeFile(wb, "Financial_Statements.xlsx"); }
+                         else { alert("No data found to export to Excel."); }
+                     } catch (error) { console.error("Error generating Excel file:", error); alert("Error generating Excel file."); }
+                 });
+            } else { console.warn("Export Excel button not found"); }
 
-                                         XLSX.utils.book_append_sheet(wb, ws, sheetName);
-                                     } else { console.warn(`No data extracted from table: ${tableId}`); }
-                                 } else { console.warn(`Table element not found: ${tableId}`); }
-                             };
-
-                             addSheet('balanceSheetTable', 'Balance Sheet');
-                             addSheet('incomeStatementTable', 'Income Statement');
-                             addSheet('cashFlowStatementTable', 'Cash Flow');
-                             addSheet('equityStatementTable', 'Equity');
-
-                             if (wb.SheetNames.length > 0) { XLSX.writeFile(wb, "Financial_Statements.xlsx"); } 
-                             else { alert("No data found to export to Excel."); }
-                         } catch (error) { console.error("Error generating Excel file:", error); alert("Error generating Excel file."); }
-                     });
-                } else { console.warn("Export Excel button not found"); }
-
-                console.log("[DEBUG] Report page initialization complete."); // Added log
+            // *** مُضاف: مستمع حدث لأزرار اختيار المصدر ***
+            document.querySelectorAll('input[name="dataSource"]').forEach(radio => {
+                radio.addEventListener('change', reloadAndRenderData); // Reload data when selection changes
             });
-        });
+            // *** نهاية الإضافة ***
+
+            // Apply translations initially
+            if (typeof window.applyTranslations === 'function') {
+                console.log("Applying initial translations...");
+                window.applyTranslations();
+            } else { console.warn("applyTranslations function not found."); }
+
+            console.log("[DEBUG] Report page initialization complete.");
+        };
+
+        // Function called after each library load attempt
+        const libraryLoadAttemptDone = () => {
+            librariesLoadedCount++;
+            if (librariesLoadedCount === totalLibraries) {
+                runMainLogic(); // Run main logic only after both attempts are done
+            }
+        };
+
+        // Load libraries asynchronously
+        loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js", libraryLoadAttemptDone, libraryLoadAttemptDone); // Call done on success or error
+        loadScript("https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js", libraryLoadAttemptDone, libraryLoadAttemptDone); // Call done on success or error
+
     };
 
     // Helper function to load scripts
-    const loadScript = (src, callback) => {
+    const loadScript = (src, onload, onerror) => {
         let script = document.querySelector(`script[src="${src}"]`);
         if (script) {
-            if (script.dataset.loaded === 'true') {
-                 callback(); 
-            } else {
-                 script.addEventListener('load', callback); 
-                 script.addEventListener('error', () => console.error(`Failed to load script: ${src}`));
+            if (script.dataset.loaded === 'true') { onload(); }
+            else if (script.dataset.loaded === 'false') { onerror(); } 
+            else { 
+                 script.addEventListener('load', onload);
+                 script.addEventListener('error', onerror);
             }
             return;
         }
         script = document.createElement('script');
         script.src = src;
-        script.onload = () => {
-            script.dataset.loaded = 'true'; 
-            callback();
-        };
-        script.onerror = () => console.error(`Failed to load script: ${src}`);
+        script.async = true; 
+        script.onload = () => { script.dataset.loaded = 'true'; onload(); };
+        script.onerror = () => { script.dataset.loaded = 'false'; console.error(`Failed to load script: ${src}`); onerror(); };
         document.head.appendChild(script);
     };
 
