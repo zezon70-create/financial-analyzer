@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-        <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css">
     <style>
         @media print {
             .no-print { display: none !important; }
@@ -16,17 +16,16 @@
             .card-surface { border: 1px solid #dee2e6 !important; box-shadow: none !important; }
             .watermark-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.1; z-index: -1; }
             .watermark-logo { max-width: 50%; height: auto; }
-            main { padding-top: 1rem !important; padding-bottom: 1rem !important; } /* Adjust padding for print */
+            main { padding-top: 1rem !important; padding-bottom: 1rem !important; }
         }
-        .watermark-container { display: none; } /* Hide watermark in browser view */
-        @media print { .watermark-container { display: block; } } /* Show watermark only on print */
+        .watermark-container { display: none; }
+        @media print { .watermark-container { display: block; } }
         .report-table td { padding-top: 0.3rem; padding-bottom: 0.3rem; font-size: 0.9em;}
         .report-table .section-header td { border-top: 1px solid #ccc; padding-top: 0.8rem; }
         .report-table .subtotal-row td { border-top: 1px solid #eee; font-weight: 600; }
         .report-table .total-row td { border-top: 2px solid #666; font-weight: bold; padding-top: 0.5rem; padding-bottom: 0.5rem; }
         .report-table .expense-total td { font-style: italic; }
         .report-table .profit-row td { font-weight: bold; }
-
     </style>
 </head>
 <body data-theme="light">
@@ -40,8 +39,7 @@
                 <a href="index.html" class="nav-link" data-translate-key="navHome"></a>
                 <a href="input.html" class="nav-link" data-translate-key="navInput"></a>
                 <a href="upload.html" class="nav-link" data-translate-key="navUpload"></a>
-                <a href="report.html" class="nav-link active" data-translate-key="navReport"></a>
-                <a href="advanced.html" class="nav-link" data-translate-key="navAdvanced"></a>
+                <a href="report.html" class="nav-link active" data-translate-key="navReport"></a> <a href="advanced.html" class="nav-link" data-translate-key="navAdvanced"></a>
                 <a href="dashboard.html" class="nav-link" data-translate-key="navDashboard"></a>
                 <a href="comparisons.html" class="nav-link" data-translate-key="navCompare"></a>
                 <a href="benchmarks.html" class="nav-link" data-translate-key="navBenchmarks"></a>
@@ -69,7 +67,22 @@
                 </div>
             </section>
 
-            <div class="alert alert-warning" id="noDataWarning" role="alert" style="display: none;">
+             <div class="card card-body mb-4 no-print bg-light border-0 shadow-sm">
+                <h6 data-translate-key="dataSourceTitle">مصدر البيانات:</h6>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="dataSource" id="sourceTrialBalance" value="trialData" checked>
+                    <label class="form-check-label small" for="sourceTrialBalance" data-translate-key="sourceTrialBalanceLabel">
+                        استخدام ميزان المراجعة (من صفحة الإدخال)
+                    </label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="dataSource" id="sourceUploadedStatements" value="uploadedData">
+                    <label class="form-check-label small" for="sourceUploadedStatements" data-translate-key="sourceUploadedLabel">
+                        استخدام القوائم المالية المرفوعة (من صفحة الرفع)
+                    </label>
+                </div>
+             </div>
+             <div class="alert alert-warning" id="noDataWarning" role="alert" style="display: none;">
                 </div>
             <section id="balanceSheetCard" class="card-surface mb-4">
                 <h4 data-translate-key="bsTitle"></h4>
