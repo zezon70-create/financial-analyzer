@@ -20,14 +20,36 @@
         }
         .watermark-container { display: none; }
         @media print { .watermark-container { display: block; } }
-        .report-table td { padding-top: 0.3rem; padding-bottom: 0.3rem; font-size: 0.9em;}
-        .report-table .section-header td { border-top: 1px solid #ccc; padding-top: 0.8rem; }
-        .report-table .subtotal-row td { border-top: 1px solid #eee; font-weight: 600; }
-        .report-table .total-row td { border-top: 2px solid #666; font-weight: bold; padding-top: 0.5rem; padding-bottom: 0.5rem; }
-        .report-table .expense-total td { font-style: italic; }
-        .report-table .profit-row td { font-weight: bold; }
+        /* تنسيق الجداول المقارنة */
+        .report-table td, .report-table th { 
+            padding-top: 0.3rem; 
+            padding-bottom: 0.3rem; 
+            font-size: 0.85em; 
+            vertical-align: middle;
+        }
+        .report-table th {
+            font-weight: 600;
+            background-color: var(--bs-light-bg-subtle);
+        }
+        .report-table .section-header td { 
+            border-top: 1px solid #ccc; 
+            padding-top: 0.8rem; 
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .report-table .subtotal-row td { 
+            border-top: 1px solid #eee; 
+            font-weight: 600; 
+        }
+        .report-table .total-row td { 
+            border-top: 2px solid #666; 
+            font-weight: bold; 
+            font-size: 0.9em;
+            padding-top: 0.5rem; 
+            padding-bottom: 0.5rem; 
+        }
     </style>
-</head>
+    </head>
 <body data-theme="light">
     <header class="site-header-global no-print">
         <div class="container-main nav-container">
@@ -51,7 +73,8 @@
         </div>
     </header>
     <main class="container-main py-4">
- <div id="report-content">
+
+        <div id="report-content">
             <div class="watermark-container">
                 <img src="assets/logo.png" class="watermark-logo" alt="Watermark">
             </div>
@@ -65,7 +88,8 @@
                     <button id="exportExcelBtn" class="btn btn-success"><i class="bi bi-file-earmark-excel"></i> <span data-translate-key="exportExcel"></span></button>
                 </div>
             </section>
- <div class="card card-body mb-4 no-print bg-light border-0 shadow-sm">
+
+            <div class="card card-body mb-4 no-print bg-light border-0 shadow-sm">
                 <h6 data-translate-key="dataSourceTitle">مصدر البيانات:</h6>
                 <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="dataSource" id="sourceTrialBalance" value="trialData" checked>
@@ -82,8 +106,7 @@
              </div>
              <div class="alert alert-warning" id="noDataWarning" role="alert" style="display: none;">
                 </div>
-            <section id="balanceSheetCard" class="card-surface mb-4">
-                <h4 data-translate-key="bsTitle"></h4>
+            <section id="balanceSheetCard" class="card-surface mb-4"> <h4 data-translate-key="bsTitle"></h4>
                 <p class="text-muted small" data-translate-key="bsSubheader"></p>
                 <div class="row g-4 mt-2">
                     <div class="col-lg-8">
@@ -95,8 +118,7 @@
                     </div>
                 </div>
             </section>
-            <section id="incomeStatementCard" class="card-surface mb-4">
-                <h4 data-translate-key="isTitle"></h4>
+            <section id="incomeStatementCard" class="card-surface mb-4"> <h4 data-translate-key="isTitle"></h4>
                 <p class="text-muted small" data-translate-key="isSubheader"></p>
                  <div class="row g-4 mt-2">
                     <div class="col-lg-8">
@@ -108,8 +130,7 @@
                     </div>
                 </div>
             </section>
-            <section id="cashFlowStatementCard" class="card-surface mb-4">
-                <h4 data-translate-key="cfTitle"></h4>
+            <section id="cashFlowStatementCard" class="card-surface mb-4"> <h4 data-translate-key="cfTitle"></h4>
                 <p class="text-muted small" data-translate-key="cfSubheader"></p>
                 <div class="row g-4 mt-2">
                     <div class="col-lg-8">
@@ -121,8 +142,7 @@
                     </div>
                 </div>
             </section>
-            <section id="equityStatementCard" class="card-surface">
-                <h4 data-translate-key="eqTitle"></h4>
+            <section id="equityStatementCard" class="card-surface"> <h4 data-translate-key="eqTitle"></h4>
                 <p class="text-muted small" data-translate-key="eqSubheader"></p>
                 <div class="row g-4 mt-2">
                     <div class="col-lg-8">
