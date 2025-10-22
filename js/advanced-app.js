@@ -1,6 +1,4 @@
 // js/advanced-app.js (REFACTORED + Translation Merge FIX + Full English Translations)
-
-// *** مُضاف: منطق دمج الترجمات ***
 const advancedTranslations = {
     ar: {
         pageTitle: "التحليلات المتقدمة — المحلل المالي", pageHeader: "التحليلات المتقدمة", pageSubheader: "استخدم أدوات تحليلية متخصصة للحصول على رؤى أعمق حول أداء عملك.",
@@ -947,3 +945,4 @@ document.addEventListener('DOMContentLoaded', () => {
         
     }, 0); 
 });
+
