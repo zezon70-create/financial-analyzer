@@ -7,8 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />    
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-theme="light">
@@ -80,7 +79,28 @@
             
             <div class="tab-pane fade" id="dupont-pane" role="tabpanel"> <div class="card-surface"> <h5 data-translate-key="dupontTitle"></h5> <p class="text-muted" data-translate-key="dupontDesc"></p> <div id="dupontResultsContainer"> <div class="alert alert-warning" id="dupontDataWarning" style="display: none;"></div> <div id="dupontFormulaDisplay" class="text-center my-4 p-3 border rounded bg-light" style="display: none;"> <h6 class="text-muted mb-3" data-translate-key="dupontEquation"></h6> <div class="d-flex justify-content-center align-items-center flex-wrap"> <span class="h4 mx-2 fw-bold" id="dupontROE"></span> <span class="h4 mx-2">=</span> <span class="h5 mx-2" id="dupontNPM"></span> <span class="h5 mx-2">×</span> <span class="h5 mx-2" id="dupontAT"></span> <span class="h5 mx-2">×</span> <span class="h5 mx-2" id="dupontEM"></span> </div> </div> <div class="row g-3"> <div class="col-md-3"> <div class="card h-100"> <div class="card-body text-center"> <h6 class="card-subtitle mb-2 text-muted" data-translate-key="dupontCompNPM"></h6> <p class="card-text h4 fw-bold text-primary" id="dupontValueNPM"></p> </div> </div> </div> <div class="col-md-3"> <div class="card h-100"> <div class="card-body text-center"> <h6 class="card-subtitle mb-2 text-muted" data-translate-key="dupontCompAT"></h6> <p class="card-text h4 fw-bold text-info" id="dupontValueAT"></p> </div> </div> </div> <div class="col-md-3"> <div class="card h-100"> <div class="card-body text-center"> <h6 class="card-subtitle mb-2 text-muted" data-translate-key="dupontCompEM"></h6> <p class="card-text h4 fw-bold text-warning" id="dupontValueEM"></p> </div> </div> </div> <div class="col-md-3"> <div class="card h-100 bg-success text-white"> <div class="card-body text-center"> <h6 class="card-subtitle mb-2" data-translate-key="dupontCompROE"></h6> <p class="card-text h4 fw-bold" id="dupontValueROE"></p> </div> </div> </div> </div> <div class="mt-4 analysis-comment" id="dupontInterpretation"></div> </div> </div> </div>
             
-            <div class="tab-pane fade" id="vertical-pane" role="tabpanel"> <div class="card-surface"> <h5 data-translate-key="verticalTitle"></h5> <p class="text-muted" data-translate-key="verticalDesc"></p> <div class="alert alert-warning" id="verticalDataWarning" style="display: none;"></div> <div class="row g-4" id="verticalResultsContainer" style="display: none;"> <div class="col-lg-6"> <h6 data-translate-key="verticalBS"></h6> <div id="verticalBSTable" class="table-responsive small"></div> </div> <div class="col-lg-6"> <h6 data-translate-key="verticalIS"></h6> <div id="verticalISTable" class="table-responsive small"></div> </div> </div> </div> </div>
+            <div class="tab-pane fade" id="vertical-pane" role="tabpanel"> 
+                <div class="card-surface"> 
+                    <h5 data-translate-key="verticalTitle"></h5> 
+                    <p class="text-muted" data-translate-key="verticalDesc"></p> 
+                    <div class="alert alert-warning" id="verticalDataWarning" style="display: none;"></div> 
+                    <div class="row g-4" id="verticalResultsContainer" style="display: none;"> 
+                        <div class="col-lg-6"> 
+                            <h6 data-translate-key="verticalBS"></h6> 
+                            <div id="verticalBSTable" class="table-responsive small"></div> 
+                        </div> 
+                        <div class="col-lg-6"> 
+                            <h6 data-translate-key="verticalIS"></h6> 
+                            <div id="verticalISTable" class="table-responsive small"></div> 
+                        </div> 
+                    </div> 
+                    
+                    <div class="mt-4 analysis-comment" id="verticalInterpretation" style="display: none;">
+                        <h6 data-translate-key="verticalInterpretationTitle"></h6>
+                        <ul id="verticalInterpretationList" class="small text-muted"></ul>
+                    </div>
+                    </div> 
+            </div>
             
             <div class="tab-pane fade" id="zscore-pane" role="tabpanel"> <div class="card-surface"> <h5 data-translate-key="zscoreTitle"></h5> <p class="text-muted" data-translate-key="zscoreDesc"></p> <div class="alert alert-warning" id="zscoreDataWarning" style="display: none;"></div> <div id="zscoreResultsContainer" style="display: none;"> <div class="text-center my-4"> <p class="text-muted mb-1" data-translate-key="zscoreValueLabel"></p> <p class="display-4 fw-bold" id="zscoreValue"></p> <p class="h5 fw-bold" id="zscoreInterpretation"></p> </div> <hr> <h6 data-translate-key="zscoreComponents"></h6> <ul class="list-group list-group-flush small" id="zscoreFactorsList"> </ul> </div> </div> </div>
             
@@ -174,7 +194,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="tab-pane fade" id="ccc-pane" role="tabpanel">
                 <div class="card-surface">
                     <h5 data-translate-key="cccTitle"></h5>
@@ -205,7 +224,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="tab-pane fade" id="scenario-pane" role="tabpanel">
                 <div class="card-surface">
                     <h5 data-translate-key="scenarioTitle"></h5>
@@ -261,7 +279,7 @@
                                         <td id="scenarioNewBEPValue">N/A</td>
                                         <td id="scenarioChangeBEPValue">N/A</td>
                                     </tr>
-                                    </tbody>
+                                </tbody>
                             </table>
                         </div>
                     </div>
