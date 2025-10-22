@@ -1,4 +1,4 @@
-// js/report-app.js
+// js/report-app.js (Enhanced processing + Dual Source Input Logic)
 
 window.pageTranslations = {
     ar: {
@@ -9,237 +9,676 @@ window.pageTranslations = {
         exportPdf: "تصدير PDF",
         exportExcel: "تصدير Excel",
         total: "الإجمالي",
+        noDataMessage: "لا توجد بيانات مالية لعرضها. يرجى إدخال ميزان المراجعة من صفحة 'الإدخال' أو رفع القوائم المالية من صفحة 'الرفع'.", // رسالة جديدة
+        // BS Translations
         bsTitle: "قائمة المركز المالي",
         bsSubheader: "تعرض أصول الشركة وخصومها وحقوق ملكيتها في تاريخ محدد.",
         assets: "الأصول",
         currentAssets: "الأصول المتداولة",
+        cashAndEquivalents: "النقد وما في حكمه",
+        accountsReceivable: "العملاء (المدينون)",
+        inventory: "المخزون",
+        otherCurrentAssets: "أصول متداولة أخرى",
+        totalCurrentAssets: "إجمالي الأصول المتداولة",
         nonCurrentAssets: "الأصول غير المتداولة",
+        propertyPlantEquipment: "العقارات والآلات والمعدات (صافي)",
+        otherNonCurrentAssets: "أصول غير متداولة أخرى",
+        totalNonCurrentAssets: "إجمالي الأصول غير المتداولة",
         totalAssets: "إجمالي الأصول",
         liabilities: "الخصوم",
         currentLiabilities: "الخصوم المتداولة",
+        accountsPayable: "الموردون (الدائنون)",
+        shortTermLoans: "قروض قصيرة الأجل",
+        otherCurrentLiabilities: "خصوم متداولة أخرى",
+        totalCurrentLiabilities: "إجمالي الخصوم المتداولة",
         nonCurrentLiabilities: "الخصوم غير المتداولة",
+        longTermLoans: "قروض طويلة الأجل",
+        otherNonCurrentLiabilities: "خصوم غير متداولة أخرى",
+        totalNonCurrentLiabilities: "إجمالي الخصوم غير المتداولة",
         totalLiabilities: "إجمالي الخصوم",
         equity: "حقوق الملكية",
+        paidInCapital: "رأس المال المدفوع",
+        retainedEarnings: "الأرباح المحتجزة / (الخسائر المرحلة)",
+        netProfitForPeriod: "صافي ربح / (خسارة) الفترة",
         totalEquity: "إجمالي حقوق الملكية",
         totalLiabilitiesAndEquity: "إجمالي الخصوم وحقوق الملكية",
-        bs_comment_balanced: "تحليل إيجابي: قائمة المركز المالي متوازنة، مما يعكس دقة البيانات وصحة المعادلة المحاسبية (الأصول = الخصوم + حقوق الملكية).",
+        bs_comment_balanced: "تحليل إيجابي: قائمة المركز المالي متوازنة، مما يعكس دقة البيانات وصحة المعادلة المحاسبية.",
         bs_comment_unbalanced: "تحليل يتطلب الانتباه: القائمة غير متوازنة بفارق {diff}. يرجى مراجعة التصنيفات والإدخالات.",
-                isTitle: "قائمة الدخل الشامل",
+        // IS Translations
+        isTitle: "قائمة الدخل الشامل",
         isSubheader: "تلخص إيرادات ومصروفات الشركة خلال فترة زمنية محددة.",
-        revenue: "الإيرادات",
-        cogs: "تكلفة المبيعات",
-        grossProfit: "مجمل الربح",
+        revenue: "الإيرادات / المبيعات",
+        cogs: "تكلفة الإيرادات / المبيعات",
+        grossProfit: "مجمل الربح / (الخسارة)",
         operatingExpenses: "المصروفات التشغيلية",
-        operatingProfit: "الربح التشغيلي",
-        netProfit: "صافي الربح",
-        is_comment_profit: "أداء قوي: الشركة تحقق صافي ربح قدره {profit} بهامش ربح يبلغ {margin}%. هذا يدل على قدرة الشركة على تحقيق أرباح بعد تغطية جميع تكاليفها.",
-        is_comment_loss: "تحديات في الربحية: الشركة تسجل صافي خسارة بقيمة {profit}. يجب التركيز على زيادة الإيرادات أو خفض التكاليف لتحسين الأداء.",
-                cfTitle: "قائمة التدفقات النقدية (الطريقة غير المباشرة)",
-        cfSubheader: "توضح حركة النقد من الأنشطة التشغيلية والاستثمارية والتمويلية.",
+        generalAdminExpenses: "مصروفات عمومية وإدارية",
+        sellingMarketingExpenses: "مصروفات بيع وتسويق",
+        depreciationAmortization: "إهلاك واستهلاك",
+        otherOperatingExpenses: "مصروفات تشغيلية أخرى",
+        operatingProfit: "الربح / (الخسارة) التشغيلي (EBIT)",
+        interestExpense: "مصروف الفائدة",
+        profitBeforeTax: "الربح / (الخسارة) قبل الضريبة (PBT)",
+        taxExpense: "مصروف الضريبة",
+        netProfit: "صافي الربح / (الخسارة) للفترة",
+        is_comment_profit: "أداء قوي: الشركة تحقق صافي ربح قدره {profit} بهامش ربح يبلغ {margin}%.",
+        is_comment_loss: "تحديات في الربحية: الشركة تسجل صافي خسارة بقيمة {profit}.",
+        // CF Translations
+        cfTitle: "قائمة التدفقات النقدية (الطريقة غير المباشرة - تقديرية)",
+        cfSubheader: "توضح حركة النقد المقدرة من الأنشطة المختلفة.",
         operatingActivities: "التدفقات النقدية من الأنشطة التشغيلية",
+        netIncomeForCF: "صافي الدخل",
+        adjustments: "تسويات لبنود غير نقدية:",
+        depreciationAmortizationForCF: "إهلاك واستهلاك",
+        cashFlowFromOperations: "صافي النقد الناتج من الأنشطة التشغيلية",
         investingActivities: "التدفقات النقدية من الأنشطة الاستثمارية",
+        capitalExpenditures: "النفقات الرأسمالية (تقديري)",
+        cashFlowFromInvesting: "صافي النقد المستخدم في الأنشطة الاستثمارية",
         financingActivities: "التدفقات النقدية من الأنشطة التمويلية",
-        netCashFlow: "صافي التغير في النقد",
-        cf_comment_positive: "وضع نقدي جيد: الشركة تولد تدفقات نقدية موجبة، مما يعزز سيولتها وقدرتها على الاستثمار وسداد الديون.",
-        cf_comment_negative: "مؤشر خطر: صافي التدفق النقدي سالب، مما قد يشير إلى وجود تحديات في السيولة على المدى القصير.",
+        cashFlowFromFinancing: "صافي النقد من (المستخدم في) الأنشطة التمويلية",
+        netCashFlow: "صافي التغير في النقد وما في حكمه",
+        beginningCash: "النقد وما في حكمه أول الفترة (مفترض 0)",
+        endingCash: "النقد وما في حكمه آخر الفترة",
+        cf_comment_positive: "وضع نقدي جيد: تشير التقديرات إلى توليد تدفقات نقدية موجبة.",
+        cf_comment_negative: "مؤشر خطر: تشير التقديرات إلى صافي تدفق نقدي سالب.",
+        // EQ Translations
         eqTitle: "قائمة التغيرات في حقوق الملكية",
         eqSubheader: "توضح التغيرات التي طرأت على حقوق الملكية خلال الفترة.",
-        openingBalance: "الرصيد الافتتاحي لحقوق الملكية",
-        closingBalance: "الرصيد الختامي لحقوق الملكية",
-        eq_comment_growth: "نمو في حقوق المساهمين: حقوق الملكية زادت خلال الفترة، وهو مؤشر إيجابي يعكس نمو قيمة الشركة للمالكين.",
-        eq_comment_decline: "انخفاض في حقوق المساهمين: حقوق الملكية انخفضت، وقد يكون ذلك بسبب الخسائر أو توزيعات الأرباح. يتطلب مراجعة.",
+        openingBalanceCapital: "رأس المال أول الفترة",
+        openingBalanceRetainedEarnings: "أرباح محتجزة أول الفترة (مفترض 0)",
+        totalOpeningEquity: "إجمالي حقوق الملكية أول الفترة",
+        netProfitForEquity: "صافي ربح / (خسارة) الفترة",
+        closingBalanceCapital: "رأس المال آخر الفترة",
+        closingBalanceRetainedEarnings: "أرباح محتجزة آخر الفترة",
+        totalClosingEquity: "إجمالي حقوق الملكية آخر الفترة",
+        eq_comment_growth: "نمو في حقوق المساهمين: حقوق الملكية زادت خلال الفترة.",
+        eq_comment_decline: "انخفاض في حقوق المساهمين: حقوق الملكية انخفضت.",
     },
     en: {
-        pageTitle: "Detailed Financial Statements — Financial Analyzer",
+        // *** Please fill in ALL English translations corresponding to the Arabic ones above ***
+         pageTitle: "Detailed Financial Statements — Financial Analyzer",
         pageHeader: "Detailed Financial Statements",
         pageSubheader: "Professional IFRS-compliant reports with smart analytical commentary.",
         commentaryTitle: "Analytical Commentary",
-        exportPdf: "Export PDF",
-        exportExcel: "Export Excel",
-        total: "Total",
-        bsTitle: "Statement of Financial Position",
-        bsSubheader: "Shows the company's assets, liabilities, and equity at a specific date.",
-        assets: "Assets",
-        currentAssets: "Current Assets",
-        nonCurrentAssets: "Non-current Assets",
-        totalAssets: "Total Assets",
-        liabilities: "Liabilities",
-        currentLiabilities: "Current Liabilities",
-        nonCurrentLiabilities: "Non-current Liabilities",
-        totalLiabilities: "Total Liabilities",
-        equity: "Equity",
-        totalEquity: "Total Equity",
-        totalLiabilitiesAndEquity: "Total Liabilities and Equity",
-        bs_comment_balanced: "Positive Analysis: The Statement of Financial Position is balanced, reflecting data accuracy and the validity of the accounting equation.",
-        bs_comment_unbalanced: "Action Required: The statement is unbalanced by {diff}. Please review classifications and entries.",
-        isTitle: "Statement of Comprehensive Income",
-        isSubheader: "Summarizes a company's revenues and expenses for a specific period.",
-        revenue: "Revenue",
-        cogs: "Cost of Goods Sold",
-        grossProfit: "Gross Profit",
-        operatingExpenses: "Operating Expenses",
-        operatingProfit: "Operating Profit",
-        netProfit: "Net Profit",
-        is_comment_profit: "Strong Performance: The company achieved a net profit of {profit} with a profit margin of {margin}%. This indicates an ability to generate profit after covering all costs.",
-        is_comment_loss: "Profitability Challenges: The company recorded a net loss of {profit}. Focus should be on increasing revenue or reducing costs to improve performance.",
-        cfTitle: "Statement of Cash Flows (Indirect Method)",
-        cfSubheader: "Shows cash movement from operating, investing, and financing activities.",
-        operatingActivities: "Cash Flows from Operating Activities",
-        investingActivities: "Cash Flows from Investing Activities",
-        financingActivities: "Cash Flows from Financing Activities",
-        netCashFlow: "Net Change in Cash",
-        cf_comment_positive: "Good Cash Position: The company is generating positive cash flow, enhancing its liquidity, investment capacity, and debt repayment ability.",
-        cf_comment_negative: "Risk Indicator: Net cash flow is negative, which may indicate short-term liquidity challenges.",
-
-        eqTitle: "Statement of Changes in Equity",
-        eqSubheader: "Shows the changes in equity over the period.",
-        openingBalance: "Opening Equity Balance",
-        closingBalance: "Closing Equity Balance",
-        eq_comment_growth: "Shareholder Value Growth: Equity increased during the period, a positive indicator reflecting growth in the company's value for its owners.",
-        eq_comment_decline: "Shareholder Value Decline: Equity has decreased, which could be due to losses or dividend distributions. Requires review.",
+        exportPdf: "Export PDF", exportExcel: "Export Excel", total: "Total",
+        noDataMessage: "No financial data available to display. Please enter Trial Balance data via 'Input' page or upload statements via 'Upload' page.", // New message
+        bsTitle: "Statement of Financial Position", bsSubheader: "Shows assets, liabilities, and equity.",
+        assets: "Assets", currentAssets: "Current Assets", cashAndEquivalents: "Cash & Equivalents", accountsReceivable: "Accounts Receivable", inventory: "Inventory", otherCurrentAssets: "Other Current Assets", totalCurrentAssets: "Total Current Assets", nonCurrentAssets: "Non-current Assets", propertyPlantEquipment: "Property, Plant & Equipment (Net)", otherNonCurrentAssets: "Other Non-current Assets", totalNonCurrentAssets: "Total Non-current Assets", totalAssets: "Total Assets",
+        liabilities: "Liabilities", currentLiabilities: "Current Liabilities", accountsPayable: "Accounts Payable", shortTermLoans: "Short-term Loans", otherCurrentLiabilities: "Other Current Liabilities", totalCurrentLiabilities: "Total Current Liabilities", nonCurrentLiabilities: "Non-current Liabilities", longTermLoans: "Long-term Loans", otherNonCurrentLiabilities: "Other Non-current Liabilities", totalNonCurrentLiabilities: "Total Non-current Liabilities", totalLiabilities: "Total Liabilities",
+        equity: "Equity", paidInCapital: "Paid-in Capital", retainedEarnings: "Retained Earnings / (Accumulated Deficit)", netProfitForPeriod: "Net Profit / (Loss) for the Period", totalEquity: "Total Equity", totalLiabilitiesAndEquity: "Total Liabilities and Equity",
+        bs_comment_balanced: "Positive Analysis: Balanced statement.", bs_comment_unbalanced: "Action Required: Unbalanced by {diff}.",
+        isTitle: "Statement of Comprehensive Income", isSubheader: "Summarizes revenues and expenses.",
+        revenue: "Revenue / Sales", cogs: "Cost of Revenue / Sales", grossProfit: "Gross Profit / (Loss)", operatingExpenses: "Operating Expenses", generalAdminExpenses: "General & Administrative", sellingMarketingExpenses: "Selling & Marketing", depreciationAmortization: "Depreciation & Amortization", otherOperatingExpenses: "Other Operating Expenses", operatingProfit: "Operating Profit / (Loss) (EBIT)", interestExpense: "Interest Expense", profitBeforeTax: "Profit / (Loss) Before Tax (PBT)", taxExpense: "Tax Expense", netProfit: "Net Profit / (Loss) for the Period",
+        is_comment_profit: "Strong Performance: Net profit of {profit}, margin {margin}%.", is_comment_loss: "Profitability Challenges: Net loss of {profit}.",
+        cfTitle: "Statement of Cash Flows (Indirect - Est.)", cfSubheader: "Shows estimated cash movement.",
+        operatingActivities: "Cash Flows from Operating Activities", netIncomeForCF: "Net Income", adjustments: "Adjustments for non-cash items:", depreciationAmortizationForCF: "Depreciation & Amortization", cashFlowFromOperations: "Net Cash from Operating Activities", investingActivities: "Cash Flows from Investing Activities", capitalExpenditures: "Capital Expenditures (Est.)", cashFlowFromInvesting: "Net Cash used in Investing Activities", financingActivities: "Cash Flows from Financing Activities", cashFlowFromFinancing: "Net Cash from (used in) Financing Activities", netCashFlow: "Net Change in Cash & Equivalents", beginningCash: "Beginning Cash & Equivalents (Assumed 0)", endingCash: "Ending Cash & Equivalents",
+        cf_comment_positive: "Good Cash Position: Estimates indicate positive cash flow.", cf_comment_negative: "Risk Indicator: Estimates indicate negative net cash flow.",
+        eqTitle: "Statement of Changes in Equity", eqSubheader: "Shows changes in equity.",
+        openingBalanceCapital: "Opening Capital Balance", openingBalanceRetainedEarnings: "Opening Retained Earnings (Assumed 0)", totalOpeningEquity: "Total Opening Equity", netProfitForEquity: "Net Profit / (Loss) for the Period", closingBalanceCapital: "Closing Capital Balance", closingBalanceRetainedEarnings: "Closing Retained Earnings", totalClosingEquity: "Total Closing Equity",
+        eq_comment_growth: "Shareholder Value Growth: Equity increased.", eq_comment_decline: "Shareholder Value Decline: Equity decreased.",
     }
 };
 document.addEventListener('DOMContentLoaded', () => {
-    const state = { trialData: [], statements: {} };
+    const state = {
+        trialData: [],
+        uploadedData: null, // To store data from upload.html if found
+        // Structure to hold processed statement data, regardless of source
+        statements: {
+            bs: {
+                currentAssets: [], nonCurrentAssets: [],
+                currentLiabilities: [], nonCurrentLiabilities: [],
+                equityCapital: [], equityRetainedEarnings: 0
+            },
+            is: {
+                revenue: [], cogs: [],
+                genAdminExpenses: [], sellingMarketingExpenses: [],
+                depreciationAmortization: [],
+                otherOperatingExpenses: [],
+                interestExpense: [],
+                taxExpense: []
+            },
+            totals: {} // Calculated totals will be stored here
+        },
+        hasData: false // Flag to indicate if any valid data was loaded
+    };
     const lang = localStorage.getItem('lang') || 'ar';
-    const t_page = (key) => window.pageTranslations[lang]?.[key] || key;
-    const formatCurrency = (value) => new Intl.NumberFormat('en-US').format(Math.round(value || 0));
-    const buildStatements = () => {
-        state.trialData = JSON.parse(localStorage.getItem('trialData') || '[]');
-        const financials = {
-            assets: { current: [], nonCurrent: [] },
-            liabilities: { current: [], nonCurrent: [] },
-            equity: { capital: [], retainedEarnings: [] },
-            income: { revenue: [], cogs: [], expenses: [] },
+    const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;
+    const formatCurrency = (value, decimals = 0) => {
+         if (!isFinite(value)) return "N/A";
+         const roundedValue = parseFloat(value.toFixed(decimals));
+         if (Math.abs(roundedValue) < Math.pow(10, -decimals) && roundedValue < 0) {
+              return (0).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+         }
+         return roundedValue.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
+    };
+
+    // --- Data Loading and Processing Logic ---
+
+    // Function to process data directly uploaded as statements (from upload.html)
+    const processUploadedData = () => {
+        try {
+            // *** افتراض: uploadedData هو كائن يحتوي على مصفوفات للحسابات والقيم لكل قسم ***
+            // *** مثال للهيكل المفترض (يجب تعديله ليطابق هيكل upload.html الفعلي): ***
+            /*
+            state.uploadedData = {
+                balanceSheet: {
+                    currentAssets: [ { account: 'النقد', value: 10000 }, ... ],
+                    nonCurrentAssets: [ { account: 'أصول ثابتة', value: 50000 }, ... ],
+                    currentLiabilities: [ { account: 'موردون', value: 5000 }, ... ],
+                    nonCurrentLiabilities: [ { account: 'قرض طويل', value: 20000 }, ... ],
+                    equity: [ { account: 'رأس المال', value: 30000 }, { account: 'أرباح مرحلة', value: 5000 } ] // Assume RE here is *opening* RE
+                },
+                incomeStatement: {
+                    revenue: [ { account: 'إيراد المبيعات', value: 100000 } ],
+                    cogs: [ { account: 'تكلفة البضاعة', value: 40000 } ],
+                    expenses: [
+                        { account: 'مصروف إيجار', value: 5000, type: 'genAdmin' }, // Added 'type' for classification
+                        { account: 'مصروف تسويق', value: 3000, type: 'sellingMarketing' },
+                        { account: 'إهلاك', value: 2000, type: 'depreciation' },
+                        { account: 'فائدة', value: 1000, type: 'interest' },
+                        { account: 'ضريبة', value: 4000, type: 'tax' }
+                    ]
+                }
+            }
+            */
+
+            console.log("Processing data from upload.html...");
+            const bsData = state.uploadedData.balanceSheet || {};
+            const isData = state.uploadedData.incomeStatement || {};
+            const totals = {}; // Calculate totals based on uploaded data
+
+            // Map Balance Sheet items
+            state.statements.bs.currentAssets = bsData.currentAssets || [];
+            state.statements.bs.nonCurrentAssets = bsData.nonCurrentAssets || [];
+            state.statements.bs.currentLiabilities = bsData.currentLiabilities || [];
+            state.statements.bs.nonCurrentLiabilities = bsData.nonCurrentLiabilities || [];
+            // Separate capital and opening RE if possible from uploaded equity structure
+            state.statements.bs.equityCapital = bsData.equity?.filter(item => item.account.toLowerCase().includes('capital') || item.account.includes('رأس المال')) || [];
+            const openingREItem = bsData.equity?.find(item => item.account.toLowerCase().includes('retained') || item.account.includes('أرباح'));
+            state.statements.bs.equityRetainedEarnings = openingREItem ? openingREItem.value : 0; // Assume 0 if not found
+
+            // Map Income Statement items
+            state.statements.is.revenue = isData.revenue || [];
+            state.statements.is.cogs = isData.cogs || [];
+            // Classify expenses based on a 'type' property (assuming upload.html provides it)
+            state.statements.is.genAdminExpenses = isData.expenses?.filter(e => e.type === 'genAdmin') || [];
+            state.statements.is.sellingMarketingExpenses = isData.expenses?.filter(e => e.type === 'sellingMarketing') || [];
+            state.statements.is.depreciationAmortization = isData.expenses?.filter(e => e.type === 'depreciation') || [];
+            state.statements.is.interestExpense = isData.expenses?.filter(e => e.type === 'interest') || [];
+            state.statements.is.taxExpense = isData.expenses?.filter(e => e.type === 'tax') || [];
+            state.statements.is.otherOperatingExpenses = isData.expenses?.filter(e => !e.type || !['genAdmin', 'sellingMarketing', 'depreciation', 'interest', 'tax'].includes(e.type)) || [];
+
+            // --- Calculate Totals from Uploaded Data ---
+            // Sum function
+            const sumValues = (arr) => arr.reduce((sum, item) => sum + (item.value || 0), 0);
+
+            totals.totalCurrentAssets = sumValues(state.statements.bs.currentAssets);
+            totals.totalNonCurrentAssets = sumValues(state.statements.bs.nonCurrentAssets);
+            totals.totalAssets = totals.totalCurrentAssets + totals.totalNonCurrentAssets;
+
+            totals.totalCurrentLiabilities = sumValues(state.statements.bs.currentLiabilities);
+            totals.totalNonCurrentLiabilities = sumValues(state.statements.bs.nonCurrentLiabilities);
+            totals.totalLiabilities = totals.totalCurrentLiabilities + totals.totalNonCurrentLiabilities;
+
+            totals.totalRevenue = sumValues(state.statements.is.revenue);
+            totals.totalCogs = sumValues(state.statements.is.cogs);
+            totals.grossProfit = totals.totalRevenue - totals.totalCogs;
+
+            totals.depreciationTotal = sumValues(state.statements.is.depreciationAmortization);
+            totals.totalOperatingExpenses = sumValues(state.statements.is.genAdminExpenses) +
+                                            sumValues(state.statements.is.sellingMarketingExpenses) +
+                                            totals.depreciationTotal +
+                                            sumValues(state.statements.is.otherOperatingExpenses);
+            totals.operatingProfit = totals.grossProfit - totals.totalOperatingExpenses;
+
+            const totalInterest = sumValues(state.statements.is.interestExpense);
+            totals.profitBeforeTax = totals.operatingProfit - totalInterest;
+            totals.totalTax = sumValues(state.statements.is.taxExpense);
+            totals.netProfit = totals.profitBeforeTax - totals.totalTax;
+
+            totals.totalEquityCapital = sumValues(state.statements.bs.equityCapital);
+            // Closing Retained Earnings = Opening RE (from uploaded data) + Net Profit
+            state.statements.bs.equityRetainedEarnings += totals.netProfit;
+            totals.totalEquity = totals.totalEquityCapital + state.statements.bs.equityRetainedEarnings;
+            totals.totalLiabilitiesAndEquity = totals.totalLiabilities + totals.totalEquity;
+
+            // Find cash balance if available
+             const cashItem = state.statements.bs.currentAssets.find(item => item.account.toLowerCase().includes('cash') || item.account.includes('نقد') || item.account.includes('bank') || item.account.includes('بنك'));
+             totals.cashEquivalents = cashItem ? cashItem.value : 0;
+
+
+            state.statements.totals = totals; // Store calculated totals
+            state.hasData = true;
+            console.log("Successfully processed data from upload.html");
+            return true;
+
+        } catch (error) {
+            console.error("Error processing uploaded data:", error);
+            // Ensure statements are reset if processing fails
+            state.statements = { bs: { currentAssets: [], nonCurrentAssets: [], currentLiabilities: [], nonCurrentLiabilities: [], equityCapital: [], equityRetainedEarnings: 0 }, is: { revenue: [], cogs: [], genAdminExpenses: [], sellingMarketingExpenses: [], depreciationAmortization: [], otherOperatingExpenses: [], interestExpense: [], taxExpense: [] }, totals: {} };
+            state.hasData = false;
+            return false;
+        }
+    };
+
+
+    // Function to build statements from Trial Balance data (original logic, renamed)
+    const buildStatementsFromTrialData = () => {
+        // ... (الكود الكامل للدالة buildStatements الأصلية من الرد السابق - لا تغيير هنا) ...
+        // Reset statement data first
+        state.statements = {
+            bs: { currentAssets: [], nonCurrentAssets: [], currentLiabilities: [], nonCurrentLiabilities: [], equityCapital: [], equityRetainedEarnings: 0 },
+            is: { revenue: [], cogs: [], genAdminExpenses: [], sellingMarketingExpenses: [], depreciationAmortization: [], otherOperatingExpenses: [], interestExpense: [], taxExpense: [] },
+            totals: {}
         };
+        const totals = state.statements.totals; // Shortcut
+
         state.trialData.forEach(row => {
             const value = (parseFloat(row.Debit) || 0) - (parseFloat(row.Credit) || 0);
             const mainType = row.MainType || '';
             const subType = row.SubType || '';
+            const accountName = (row.Account || '').toLowerCase();
+            const account = row.Account || 'Unknown';
+
             if (mainType.includes('الأصول') || mainType.includes('Assets')) {
-                if (subType.includes('متداول') || subType.includes('Current')) financials.assets.current.push({ ...row, value });
-                else financials.assets.nonCurrent.push({ ...row, value });
+                const item = { account, value };
+                if (subType.includes('متداول') || subType.includes('Current')) {
+                    state.statements.bs.currentAssets.push(item);
+                    if (accountName.includes('cash') || accountName.includes('نقد') || accountName.includes('bank') || accountName.includes('بنك')) {
+                       totals.cashEquivalents = (totals.cashEquivalents || 0) + value;
+                    }
+                } else {
+                    state.statements.bs.nonCurrentAssets.push(item);
+                }
             } else if (mainType.includes('الخصوم') || mainType.includes('Liabilities')) {
-                if (subType.includes('متداول') || subType.includes('Current')) financials.liabilities.current.push({ ...row, value: -value });
-                else financials.liabilities.nonCurrent.push({ ...row, value: -value });
+                 const item = { account, value: -value };
+                 if (subType.includes('متداول') || subType.includes('Current')) {
+                     state.statements.bs.currentLiabilities.push(item);
+                 } else {
+                     state.statements.bs.nonCurrentLiabilities.push(item);
+                 }
             } else if (mainType.includes('حقوق الملكية') || mainType.includes('Equity')) {
-                if (subType.includes('رأس المال') || subType.includes('Capital')) financials.equity.capital.push({ ...row, value: -value });
-                else financials.equity.retainedEarnings.push({ ...row, value: -value });
-            } else if (mainType.includes('قائمة الدخل') || mainType.includes('Income Statement')) {
-                if (subType.includes('الإيرادات') || subType.includes('Revenue')) financials.income.revenue.push({ ...row, value: -value });
-                else if (subType.includes('تكلفة المبيعات') || subType.includes('COGS')) financials.income.cogs.push({ ...row, value });
-                else financials.income.expenses.push({ ...row, value });
+                 const item = { account, value: -value };
+                 if (subType.includes('رأس المال') || subType.includes('Capital') || accountName.includes('capital') || accountName.includes('رأس المال')) {
+                    state.statements.bs.equityCapital.push(item);
+                 } else if (subType.includes('الأرباح المحتجزة') || subType.includes('Retained Earnings') || accountName.includes('retained')) {
+                     state.statements.bs.equityRetainedEarnings = item.value;
+                 } else {
+                      state.statements.bs.equityCapital.push(item);
+                 }
+            }
+            else if (mainType.includes('قائمة الدخل') || mainType.includes('Income Statement')) {
+                 if (subType.includes('الإيرادات') || subType.includes('Revenue')) {
+                     state.statements.is.revenue.push({ account, value: -value });
+                 } else if (subType.includes('تكلفة المبيعات') || subType.includes('COGS')) {
+                     state.statements.is.cogs.push({ account, value });
+                 } else {
+                      const item = { account, value };
+                      if (subType.includes('إهلاك') || subType.includes('Depreciation') || accountName.includes('depreciation') || accountName.includes('amortization')) {
+                          state.statements.is.depreciationAmortization.push(item);
+                          totals.depreciationTotal = (totals.depreciationTotal || 0) + value;
+                      } else if (subType.includes('فائدة') || subType.includes('Interest') || accountName.includes('interest')) {
+                          state.statements.is.interestExpense.push(item);
+                      } else if (subType.includes('ضريب') || subType.includes('Tax') || accountName.includes('tax')) {
+                           state.statements.is.taxExpense.push(item);
+                      } else if (subType.includes('بيع') || subType.includes('Selling') || subType.includes('Marketing') || accountName.includes('selling') || accountName.includes('marketing')) {
+                          state.statements.is.sellingMarketingExpenses.push(item);
+                      } else if (subType.includes('إداري') || subType.includes('General') || subType.includes('Admin') || accountName.includes('general') || accountName.includes('admin')) {
+                          state.statements.is.genAdminExpenses.push(item);
+                      } else {
+                          state.statements.is.otherOperatingExpenses.push(item);
+                      }
+                 }
             }
         });
-        state.statements = financials;
+
+        // Calculate Totals
+        totals.totalCurrentAssets = state.statements.bs.currentAssets.reduce((sum, item) => sum + item.value, 0);
+        totals.totalNonCurrentAssets = state.statements.bs.nonCurrentAssets.reduce((sum, item) => sum + item.value, 0);
+        totals.totalAssets = totals.totalCurrentAssets + totals.totalNonCurrentAssets;
+        totals.totalCurrentLiabilities = state.statements.bs.currentLiabilities.reduce((sum, item) => sum + item.value, 0);
+        totals.totalNonCurrentLiabilities = state.statements.bs.nonCurrentLiabilities.reduce((sum, item) => sum + item.value, 0);
+        totals.totalLiabilities = totals.totalCurrentLiabilities + totals.totalNonCurrentLiabilities;
+        totals.totalRevenue = state.statements.is.revenue.reduce((sum, item) => sum + item.value, 0);
+        totals.totalCogs = state.statements.is.cogs.reduce((sum, item) => sum + item.value, 0);
+        totals.grossProfit = totals.totalRevenue - totals.totalCogs;
+        const totalGenAdmin = state.statements.is.genAdminExpenses.reduce((sum, item) => sum + item.value, 0);
+        const totalSellingMarketing = state.statements.is.sellingMarketingExpenses.reduce((sum, item) => sum + item.value, 0);
+        const totalOtherOpEx = state.statements.is.otherOperatingExpenses.reduce((sum, item) => sum + item.value, 0);
+        totals.totalOperatingExpenses = totalGenAdmin + totalSellingMarketing + (totals.depreciationTotal || 0) + totalOtherOpEx;
+        totals.operatingProfit = totals.grossProfit - totals.totalOperatingExpenses;
+        const totalInterest = state.statements.is.interestExpense.reduce((sum, item) => sum + item.value, 0);
+        totals.profitBeforeTax = totals.operatingProfit - totalInterest;
+        totals.totalTax = state.statements.is.taxExpense.reduce((sum, item) => sum + item.value, 0);
+        totals.netProfit = totals.profitBeforeTax - totals.totalTax;
+        totals.totalEquityCapital = state.statements.bs.equityCapital.reduce((sum, item) => sum + item.value, 0);
+        state.statements.bs.equityRetainedEarnings += totals.netProfit;
+        totals.totalEquity = totals.totalEquityCapital + state.statements.bs.equityRetainedEarnings;
+        totals.totalLiabilitiesAndEquity = totals.totalLiabilities + totals.totalEquity;
+
+        state.statements.totals = totals; // Store calculated totals
+        console.log("Processed Statements Data from Trial Balance:", state.statements);
+        console.log("Calculated Totals from Trial Balance:", totals);
     };
-    const renderStatementSection = (items, totalLabel) => {
-        let total = 0;
-        let html = '<table class="table table-sm report-table"><tbody>';
-        items.forEach(item => {
-            html += `<tr><td>${item.Account}</td><td class="text-end">${formatCurrency(item.value)}</td></tr>`;
-            total += item.value;
-        });
-        if (totalLabel) {
-            html += `<tr class="subtotal-row"><td>${totalLabel}</td><td class="text-end">${formatCurrency(total)}</td></tr>`;
-        }
-        html += '</tbody></table>';
-        return { html, total };
-    };
-    const renderBalanceSheet = () => {
-        const { assets, liabilities, equity } = state.statements;
-        let html = `<h6>${t_page('assets')}</h6>`;
-        const currentAssets = renderStatementSection(assets.current, `${t_page('total')} ${t_page('currentAssets')}`);
-        const nonCurrentAssets = renderStatementSection(assets.nonCurrent, `${t_page('total')} ${t_page('nonCurrentAssets')}`);
-        const totalAssets = currentAssets.total + nonCurrentAssets.total;
-        html += currentAssets.html + nonCurrentAssets.html;
-        html += `<table class="table report-table"><tbody class="total-row"><tr><td>${t_page('totalAssets')}</td><td class="text-end">${formatCurrency(totalAssets)}</td></tr></tbody></table>`;
-        html += `<h6 class="mt-4">${t_page('liabilities')} & ${t_page('equity')}</h6>`;
-        const currentLiabs = renderStatementSection(liabilities.current, `${t_page('total')} ${t_page('currentLiabilities')}`);
-        const nonCurrentLiabs = renderStatementSection(liabilities.nonCurrent, `${t_page('total')} ${t_page('nonCurrentLiabilities')}`);
-        const totalLiabs = currentLiabs.total + nonCurrentLiabs.total;
-        html += currentLiabs.html + nonCurrentLiabs.html;
-        html += `<table class="table report-table"><tbody class="subtotal-row"><tr><td>${t_page('totalLiabilities')}</td><td class="text-end">${formatCurrency(totalLiabs)}</td></tr></tbody></table>`;
-              const totalEquity = renderStatementSection(equity.capital.concat(equity.retainedEarnings), t_page('totalEquity'));
-        html += totalEquity.html;
-        const totalLiabsAndEquity = totalLiabs + totalEquity.total;
-        html += `<table class="table report-table"><tbody class="total-row"><tr><td>${t_page('totalLiabilitiesAndEquity')}</td><td class="text-end">${formatCurrency(totalLiabsAndEquity)}</td></tr></tbody></table>`;
-        document.getElementById('balanceSheetTable').innerHTML = html;
-        const diff = totalAssets - totalLiabsAndEquity;
-        const comment = Math.abs(diff) < 1 ? t_page('bs_comment_balanced') : t_page('bs_comment_unbalanced').replace('{diff}', formatCurrency(diff));
-        document.getElementById('balanceSheetComment').textContent = comment;
-    };
-    const renderIncomeStatement = () => {
-        const { revenue, cogs, expenses } = state.statements.income;
-        let html = '<table class="table table-sm report-table"><tbody>';
-        const totalRevenue = renderStatementSection(revenue, t_page('revenue'), true);
-        const totalCogs = renderStatementSection(cogs, `(-) ${t_page('cogs')}`, true);
-        const grossProfit = totalRevenue.total - totalCogs.total;
-        html += totalRevenue.html + totalCogs.html + `<tr class="subtotal-row"><td>${t_page('grossProfit')}</td><td class="text-end">${formatCurrency(grossProfit)}</td></tr>`;    
-        const totalExpenses = renderStatementSection(expenses, `(-) ${t_page('operatingExpenses')}`, true);
-        const netProfit = grossProfit - totalExpenses.total;
-        html += totalExpenses.html + `</tbody></table><table class="table report-table"><tbody class="total-row"><tr><td>${t_page('netProfit')}</td><td class="text-end">${formatCurrency(netProfit)}</td></tr></tbody></table>`;
-        document.getElementById('incomeStatementTable').innerHTML = html;
-        const margin = totalRevenue.total !== 0 ? (netProfit / totalRevenue.total) * 100 : 0;
-        const comment = netProfit > 0 
-            ? t_page('is_comment_profit').replace('{profit}', formatCurrency(netProfit)).replace('{margin}', margin.toFixed(1))
-            : t_page('is_comment_loss').replace('{profit}', formatCurrency(netProfit));
-        document.getElementById('incomeStatementComment').textContent = comment;
-    };
-     const renderCashFlowStatement = () => {
-        const netProfit = (state.statements.income.revenue.reduce((s,r)=>s+r.value,0)) - (state.statements.income.cogs.reduce((s,r)=>s+r.value,0)) - (state.statements.income.expenses.reduce((s,r)=>s+r.value,0));
-        let html = `<table class="table table-sm report-table"><tbody><tr><td>${t_page('netProfit')}</td><td class="text-end">${formatCurrency(netProfit)}</td></tr>`;
-        html += `<tr class="subtotal-row"><td>${t_page('operatingActivities')}</td><td class="text-end">${formatCurrency(netProfit)}</td></tr>`;
-        html += `<tr><td>${t_page('investingActivities')}</td><td class="text-end">0</td></tr>`;
-        html += `<tr><td>${t_page('financingActivities')}</td><td class="text-end">0</td></tr>`;
-        html += `</tbody></table><table class="table report-table"><tbody class="total-row"><tr><td>${t_page('netCashFlow')}</td><td class="text-end">${formatCurrency(netProfit)}</td></tr></tbody></table>`;
-        
-        document.getElementById('cashFlowStatementTable').innerHTML = html;
-        document.getElementById('cashFlowStatementComment').textContent = netProfit > 0 ? t_page('cf_comment_positive') : t_page('cf_comment_negative');
-    };
-      const renderEquityStatement = () => {
-        const openingEquity = state.statements.equity.capital.reduce((s,r)=>s+r.value, 0);
-        const netProfit = (state.statements.income.revenue.reduce((s,r)=>s-r.value,0)) - (state.statements.income.cogs.reduce((s,r)=>s+r.value,0)) - (state.statements.income.expenses.reduce((s,r)=>s+r.value,0));
-        const closingEquity = openingEquity + netProfit;
-              let html = `<table class="table table-sm report-table"><tbody>`;
-        html += `<tr><td>${t_page('openingBalance')}</td><td class="text-end">${formatCurrency(openingEquity)}</td></tr>`;
-        html += `<tr><td>(+) ${t_page('netProfit')}</td><td class="text-end">${formatCurrency(netProfit)}</td></tr>`;
-        html += `<tr class="total-row"><td>${t_page('closingBalance')}</td><td class="text-end">${formatCurrency(closingEquity)}</td></tr>`;
-        html += `</tbody></table>`;
-               document.getElementById('equityStatementTable').innerHTML = html;
-        document.getElementById('equityStatementComment').textContent = netProfit > 0 ? t_page('eq_comment_growth') : t_page('eq_comment_decline');
-    };
-    const init = () => {
-        document.getElementById('exportPdfBtn').addEventListener('click', () => {
-            const element = document.getElementById('report-content');
-            const opt = { 
-                margin:       0.5,
-                filename:     'Financial_Report.pdf',
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2, useCORS: true },
-                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
-            };
-            html2pdf().from(element).set(opt).save();
-        });
-        document.getElementById('exportExcelBtn').addEventListener('click', () => {
-            const wb = XLSX.utils.book_new();
-            const addSheet = (element, sheetName) => {
-                if (element) {
-                    const ws = XLSX.utils.table_to_sheet(element.querySelector('table'));
-                    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+
+    // Main function to load data from either source
+    const loadDataAndPrepareStatements = () => {
+        const uploadedDataString = localStorage.getItem('uploadedFinancialData'); // Try uploaded data first
+        const trialDataString = localStorage.getItem('trialData');
+
+        if (uploadedDataString) {
+            try {
+                state.uploadedData = JSON.parse(uploadedDataString);
+                console.log("Found pre-formatted data from upload.html");
+                if (processUploadedData()) { // Try processing it
+                     return true; // Success using uploaded data
+                } else {
+                     state.uploadedData = null; // Processing failed, clear it
+                     console.warn("Processing uploadedFinancialData failed, falling back to trialData.");
                 }
-            };
-            addSheet(document.getElementById('balanceSheetTable'), 'Balance Sheet');
-            addSheet(document.getElementById('incomeStatementTable'), 'Income Statement');
-            addSheet(document.getElementById('cashFlowStatementTable'), 'Cash Flow');
-            addSheet(document.getElementById('equityStatementTable'), 'Equity');
-            XLSX.writeFile(wb, "Financial_Statements.xlsx");
-        });
-              buildStatements();
-        renderBalanceSheet();
-        renderIncomeStatement();
-        renderCashFlowStatement();
-        renderEquityStatement();
+            } catch (e) {
+                console.error("Error parsing uploadedFinancialData:", e);
+                state.uploadedData = null; // Parsing failed
+            }
+        }
+        
+        // If uploaded data not found, failed parsing, or failed processing, try trialData
+        if (trialDataString) {
+             try {
+                state.trialData = JSON.parse(trialDataString);
+                 if (state.trialData.length > 0 && !(state.trialData.length === 1 && !state.trialData[0].Account && !toNum(state.trialData[0].Debit) && !toNum(state.trialData[0].Credit))) { // Check if not empty/invalid
+                    console.log("Found trialData from input.html, building statements...");
+                    buildStatementsFromTrialData(); // Build from trial data
+                    state.hasData = true; // Set flag
+                     return true; // Success using trial data
+                 } else {
+                     console.warn("trialData found but is empty or invalid.");
+                 }
+            } catch(e) {
+                 console.error("Error parsing trialData:", e);
+            }
+        }
+
+        console.warn("No valid data found from input.html or upload.html");
+        state.hasData = false; // Ensure flag is false
+        return false; // No data found
     };
-    init();
+
+
+    // --- Rendering Functions --- (No changes needed in these)
+    const renderStatementSection = (items, sectionTitle, totalLabel, cssClass = '', decimals = 0) => {
+        // ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ...
+        let sectionTotal = 0;
+        let html = '';
+        if (items.length > 0 || sectionTitle) { 
+            html += `<tr class="section-header ${cssClass}"><td colspan="2"><strong>${sectionTitle || ''}</strong></td></tr>`;
+        }
+        items.forEach(item => {
+            // Ensure item.value exists and is a number before formatting
+            const valueToFormat = typeof item.value === 'number' ? item.value : 0;
+            html += `<tr><td class="ps-3">${item.account}</td><td class="text-end">${formatCurrency(valueToFormat, decimals)}</td></tr>`;
+            sectionTotal += valueToFormat;
+        });
+        if (totalLabel && items.length > 0) { 
+             html += `<tr class="subtotal-row ${cssClass}"><td>${totalLabel}</td><td class="text-end">${formatCurrency(sectionTotal, decimals)}</td></tr>`;
+        }
+        return { html, total: sectionTotal };
+    };
+    const renderBalanceSheet = () => { /* ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ... */ 
+        const { bs, totals } = state.statements;
+        let html = '<table class="table table-sm report-table"><tbody>';
+        const currentAssetsHtml = renderStatementSection(bs.currentAssets, t_page('currentAssets'), t_page('totalCurrentAssets'), 'assets-section');
+        const nonCurrentAssetsHtml = renderStatementSection(bs.nonCurrentAssets, t_page('nonCurrentAssets'), t_page('totalNonCurrentAssets'), 'assets-section');
+        html += currentAssetsHtml.html + nonCurrentAssetsHtml.html;
+        html += `<tr class="total-row assets-section"><td>${t_page('totalAssets')}</td><td class="text-end">${formatCurrency(totals.totalAssets)}</td></tr>`;
+        const currentLiabsHtml = renderStatementSection(bs.currentLiabilities, t_page('currentLiabilities'), t_page('totalCurrentLiabilities'), 'liabilities-section');
+        const nonCurrentLiabsHtml = renderStatementSection(bs.nonCurrentLiabilities, t_page('nonCurrentLiabilities'), t_page('totalNonCurrentLiabilities'), 'liabilities-section');
+        html += currentLiabsHtml.html + nonCurrentLiabsHtml.html;
+        html += `<tr class="subtotal-row liabilities-section"><td>${t_page('totalLiabilities')}</td><td class="text-end">${formatCurrency(totals.totalLiabilities)}</td></tr>`;
+        const equityCapitalHtml = renderStatementSection(bs.equityCapital, t_page('equity'), null, 'equity-section'); 
+        html += equityCapitalHtml.html; 
+        html += `<tr><td class="ps-3">${t_page('retainedEarnings')}</td><td class="text-end">${formatCurrency(bs.equityRetainedEarnings)}</td></tr>`;
+        html += `<tr class="subtotal-row equity-section"><td>${t_page('totalEquity')}</td><td class="text-end">${formatCurrency(totals.totalEquity)}</td></tr>`;
+        html += `<tr class="total-row equity-section"><td>${t_page('totalLiabilitiesAndEquity')}</td><td class="text-end">${formatCurrency(totals.totalLiabilitiesAndEquity)}</td></tr>`;
+        html += '</tbody></table>';
+        const bsTableElement = document.getElementById('balanceSheetTable');
+        if (bsTableElement) bsTableElement.innerHTML = html;
+
+        const diff = totals.totalAssets - totals.totalLiabilitiesAndEquity;
+        const comment = Math.abs(diff) < 1 ? t_page('bs_comment_balanced') : t_page('bs_comment_unbalanced').replace('{diff}', formatCurrency(diff));
+        const bsCommentElement = document.getElementById('balanceSheetComment');
+        if(bsCommentElement) bsCommentElement.textContent = comment;
+    };
+    const renderIncomeStatement = () => { /* ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ... */
+        const { is: income, totals } = state.statements;
+        let html = '<table class="table table-sm report-table"><tbody>';
+        const revenueHtml = renderStatementSection(income.revenue, null, t_page('revenue'), '', 2);
+        const cogsHtml = renderStatementSection(income.cogs, null, `(-) ${t_page('cogs')}`, '', 2);
+        html += revenueHtml.html + cogsHtml.html;
+        html += `<tr class="subtotal-row"><td>${t_page('grossProfit')}</td><td class="text-end">${formatCurrency(totals.grossProfit, 2)}</td></tr>`;
+        html += `<tr class="section-header"><td colspan="2"><strong>(-) ${t_page('operatingExpenses')}</strong></td></tr>`;
+        const genAdminHtml = renderStatementSection(income.genAdminExpenses, null, null, '', 2);
+        const sellingMarketingHtml = renderStatementSection(income.sellingMarketingExpenses, null, null, '', 2);
+        const depreciationHtml = renderStatementSection(income.depreciationAmortization, null, null, '', 2);
+        const otherOpExHtml = renderStatementSection(income.otherOperatingExpenses, null, null, '', 2);
+        html += genAdminHtml.html + sellingMarketingHtml.html + depreciationHtml.html + otherOpExHtml.html;
+        html += `<tr class="subtotal-row expense-total"><td>${t_page('total')} ${t_page('operatingExpenses')}</td><td class="text-end">${formatCurrency(totals.totalOperatingExpenses, 2)}</td></tr>`;
+        html += `<tr class="subtotal-row profit-row"><td>${t_page('operatingProfit')}</td><td class="text-end">${formatCurrency(totals.operatingProfit, 2)}</td></tr>`;
+        const interestHtml = renderStatementSection(income.interestExpense, null, `(-) ${t_page('interestExpense')}`, '', 2);
+        html += interestHtml.html;
+        html += `<tr class="subtotal-row profit-row"><td>${t_page('profitBeforeTax')}</td><td class="text-end">${formatCurrency(totals.profitBeforeTax, 2)}</td></tr>`;
+        const taxHtml = renderStatementSection(income.taxExpense, null, `(-) ${t_page('taxExpense')}`, '', 2);
+        html += taxHtml.html;
+        html += `<tr class="total-row profit-row"><td>${t_page('netProfit')}</td><td class="text-end">${formatCurrency(totals.netProfit, 2)}</td></tr>`;
+        html += '</tbody></table>';
+        const isTableElement = document.getElementById('incomeStatementTable');
+        if(isTableElement) isTableElement.innerHTML = html;
+
+        const margin = totals.totalRevenue !== 0 ? (totals.netProfit / totals.totalRevenue) * 100 : 0;
+        const comment = totals.netProfit >= 0 
+            ? t_page('is_comment_profit').replace('{profit}', formatCurrency(totals.netProfit, 2)).replace('{margin}', margin.toFixed(1))
+            : t_page('is_comment_loss').replace('{profit}', formatCurrency(totals.netProfit, 2));
+        const isCommentElement = document.getElementById('incomeStatementComment');
+        if(isCommentElement) isCommentElement.textContent = comment;
+     };
+    const renderCashFlowStatement = () => { /* ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ... */ 
+        const { totals } = state.statements;
+        const netProfit = totals.netProfit;
+        const depreciation = totals.depreciationTotal || 0; 
+        const cashFromOps = netProfit + depreciation; 
+        const cashFromInvesting = -depreciation; 
+        const cashFromFinancing = 0; 
+        const netChangeInCash = cashFromOps + cashFromInvesting + cashFromFinancing;
+        const beginningCash = 0; // Assumption
+        const endingCashCalculated = beginningCash + netChangeInCash;
+        const endingCashFromBS = totals.cashEquivalents || 0;
+
+        let html = `<table class="table table-sm report-table"><tbody>`;
+        html += `<tr class="section-header"><td colspan="2"><strong>${t_page('operatingActivities')}</strong></td></tr>`;
+        html += `<tr><td>${t_page('netIncomeForCF')}</td><td class="text-end">${formatCurrency(netProfit)}</td></tr>`;
+        html += `<tr><td colspan="2">${t_page('adjustments')}</td></tr>`;
+        html += `<tr><td class="ps-3">${t_page('depreciationAmortizationForCF')}</td><td class="text-end">${formatCurrency(depreciation)}</td></tr>`;
+        html += `<tr><td class="ps-3 text-muted"><em>(التغيرات في رأس المال العامل)</em></td><td class="text-end text-muted"><em>N/A</em></td></tr>`;
+        html += `<tr class="subtotal-row"><td>${t_page('cashFlowFromOperations')}</td><td class="text-end">${formatCurrency(cashFromOps)}</td></tr>`;
+        html += `<tr class="section-header"><td colspan="2"><strong>${t_page('investingActivities')}</strong></td></tr>`;
+        html += `<tr><td class="ps-3">${t_page('capitalExpenditures')}</td><td class="text-end">${formatCurrency(Math.abs(cashFromInvesting))}</td></tr>`;
+        html += `<tr class="subtotal-row"><td>${t_page('cashFlowFromInvesting')}</td><td class="text-end">${formatCurrency(cashFromInvesting)}</td></tr>`;
+        html += `<tr class="section-header"><td colspan="2"><strong>${t_page('financingActivities')}</strong></td></tr>`;
+        html += `<tr><td class="ps-3 text-muted"><em>(أنشطة تمويلية)</em></td><td class="text-end text-muted"><em>N/A</em></td></tr>`;
+        html += `<tr class="subtotal-row"><td>${t_page('cashFlowFromFinancing')}</td><td class="text-end">${formatCurrency(cashFromFinancing)}</td></tr>`;
+        html += `<tr class="subtotal-row"><td>${t_page('netCashFlow')}</td><td class="text-end">${formatCurrency(netChangeInCash)}</td></tr>`;
+        html += `<tr><td>${t_page('beginningCash')}</td><td class="text-end">${formatCurrency(beginningCash)}</td></tr>`;
+        html += `<tr class="total-row"><td>${t_page('endingCash')}</td><td class="text-end">${formatCurrency(endingCashCalculated)}</td></tr>`;
+        const cashDiff = endingCashCalculated - endingCashFromBS;
+        if (Math.abs(cashDiff) > 1) {
+             html += `<tr class="table-warning small"><td colspan="2"><em>ملاحظة: النقدية آخر الفترة المحسوبة (${formatCurrency(endingCashCalculated)}) تختلف عن رصيد النقدية في الميزانية (${formatCurrency(endingCashFromBS)}) بفارق ${formatCurrency(cashDiff)}.</em></td></tr>`;
+        }
+        html += `</tbody></table>`;
+        const cfTableElement = document.getElementById('cashFlowStatementTable');
+        if(cfTableElement) cfTableElement.innerHTML = html;
+        const cfCommentElement = document.getElementById('cashFlowStatementComment');
+        if(cfCommentElement) cfCommentElement.textContent = netChangeInCash >= 0 ? t_page('cf_comment_positive') : t_page('cf_comment_negative');
+    };
+    const renderEquityStatement = () => { /* ... (الكود الكامل للدالة من الرد السابق - لا تغيير هنا) ... */
+        const { bs, totals } = state.statements;
+        const openingCapital = totals.totalEquityCapital; 
+        const openingRE = bs.equityRetainedEarnings - totals.netProfit; 
+        const openingTotalEquity = openingCapital + openingRE;
+        const netProfit = totals.netProfit;
+        const closingCapital = openingCapital; 
+        const closingRE = bs.equityRetainedEarnings; 
+        const closingTotalEquity = totals.totalEquity; 
+
+        let html = `<table class="table table-sm report-table">`;
+        html += `<tbody>`;
+        html += `<tr><td>${t_page('totalOpeningEquity')}</td><td class="text-end">${formatCurrency(openingTotalEquity)}</td></tr>`;
+        html += `<tr><td>(+) ${t_page('netProfitForEquity')}</td><td class="text-end">${formatCurrency(netProfit)}</td></tr>`;
+        html += `<tr class="total-row"><td>${t_page('totalClosingEquity')}</td><td class="text-end">${formatCurrency(closingTotalEquity)}</td></tr>`;
+        html += `</tbody></table>`;
+        const eqTableElement = document.getElementById('equityStatementTable');
+        if(eqTableElement) eqTableElement.innerHTML = html;
+        const eqCommentElement = document.getElementById('equityStatementComment');
+        if(eqCommentElement) eqCommentElement.textContent = closingTotalEquity >= openingTotalEquity ? t_page('eq_comment_growth') : t_page('eq_comment_decline');
+    };
+
+    // --- Initialization ---
+    const init = () => {
+        // Load libraries first
+        loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js", () => {
+            loadScript("https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js", () => {
+                const noDataWarningElement = document.getElementById('noDataWarning');
+                
+                // Try loading data and preparing statements
+                if (loadDataAndPrepareStatements()) {
+                    // If successful, render the statements
+                    renderBalanceSheet();
+                    renderIncomeStatement();
+                    renderCashFlowStatement();
+                    renderEquityStatement();
+                    // Hide the no-data warning if it exists
+                    if(noDataWarningElement) noDataWarningElement.style.display = 'none';
+                } else {
+                    // If loading failed, show the no-data warning
+                     if(noDataWarningElement) {
+                         noDataWarningElement.textContent = t_page('noDataMessage'); // Use translated message
+                         noDataWarningElement.style.display = 'block';
+                     }
+                     // Optionally hide statement sections
+                     ['balanceSheetCard', 'incomeStatementCard', 'cashFlowStatementCard', 'equityStatementCard'].forEach(id => {
+                        const card = document.getElementById(id);
+                        if (card) card.style.display = 'none';
+                     });
+                }
+
+                // Attach export button listeners
+                const exportPdfBtn = document.getElementById('exportPdfBtn');
+                if (exportPdfBtn) {
+                     exportPdfBtn.addEventListener('click', () => {
+                        if (!state.hasData) { alert(t_page('noDataMessage')); return; } // Prevent export if no data
+                        const element = document.getElementById('report-content');
+                         if (typeof html2pdf === 'function') {
+                             const opt = { margin: 0.5, filename: 'Financial_Report.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, logging: false }, jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' } };
+                             html2pdf().from(element).set(opt).save();
+                         } else { console.error("html2pdf library is not loaded."); alert("PDF export failed."); }
+                     });
+                } else { console.warn("Export PDF button not found"); }
+
+                const exportExcelBtn = document.getElementById('exportExcelBtn');
+                if (exportExcelBtn) {
+                     exportExcelBtn.addEventListener('click', () => {
+                        if (!state.hasData) { alert(t_page('noDataMessage')); return; } // Prevent export if no data
+                         if (typeof XLSX === 'undefined') { console.error("XLSX library not loaded."); alert("Excel export failed."); return; }
+                         try {
+                             const wb = XLSX.utils.book_new();
+                             const extractTableData = (tableElement) => { /* ... (same as before) ... */ 
+                                 const data = [];
+                                 const rows = tableElement?.querySelectorAll('tbody tr');
+                                 if (!rows) return data;
+                                 rows.forEach(row => {
+                                     const rowData = [];
+                                     // Exclude header rows if needed (or handle colspan) - basic extraction for now
+                                     if(row.cells.length === 2 && !row.classList.contains('section-header')) { 
+                                         row.querySelectorAll('td').forEach(cell => {
+                                             let cellValue = cell.textContent.trim();
+                                             const numValue = parseFloat(cellValue.replace(/[,()]/g, '')); 
+                                             // Heuristic to decide if it's a number - might need refinement
+                                             if (!isNaN(numValue) && (cellValue.match(/[\d,.-]+/) || cellValue === '0')) { 
+                                                 rowData.push(numValue);
+                                             } else {
+                                                 // Clean up labels slightly for Excel
+                                                 rowData.push(cellValue.replace(/[\(\)\-\+:]/g, '').replace(/^[ \t]+|[ \t]+$/g,'').trim()); 
+                                             }
+                                         });
+                                          if (rowData.length > 0) data.push(rowData);
+                                     } else if (row.cells.length === 1 || row.classList.contains('section-header')){
+                                        // Handle section headers or single cell rows if needed
+                                        rowData.push(row.cells[0].textContent.trim().replace(/[\(\)\-\+:]/g, ''));
+                                        if (rowData.length > 0) data.push(rowData);
+                                     }
+                                 });
+                                 return data;
+                             };
+                             const addSheet = (tableId, sheetName) => { /* ... (same as before) ... */ 
+                                 const table = document.getElementById(tableId);
+                                 if (table) {
+                                     const tableData = extractTableData(table);
+                                     if (tableData.length > 0) {
+                                         const ws = XLSX.utils.aoa_to_sheet(tableData);
+                                         // Auto-fit columns (basic example)
+                                         const cols = Object.keys(ws).filter(k => k[0] !== '!').map(k => k.replace(/\d+/,''));
+                                         const colWidths = cols.reduce((acc, c) => {
+                                             if (!acc[c]) acc[c] = {wch: 0};
+                                             const cellRef = Object.keys(ws).find(k => k.replace(/\d+/,'') === c && k[0] !== '!');
+                                             if (cellRef) {
+                                                 const cellValue = ws[cellRef]?.v?.toString() || '';
+                                                 const width = cellValue.length + 2; // Add padding
+                                                 if (width > acc[c].wch) acc[c].wch = width;
+                                             }
+                                             return acc;
+                                         }, {});
+                                         ws['!cols'] = Object.values(colWidths);
+
+                                         XLSX.utils.book_append_sheet(wb, ws, sheetName);
+                                     } else { console.warn(`No data extracted from table: ${tableId}`); }
+                                 } else { console.warn(`Table element not found: ${tableId}`); }
+                             };
+
+                             addSheet('balanceSheetTable', 'Balance Sheet');
+                             addSheet('incomeStatementTable', 'Income Statement');
+                             addSheet('cashFlowStatementTable', 'Cash Flow');
+                             addSheet('equityStatementTable', 'Equity');
+
+                             if (wb.SheetNames.length > 0) { XLSX.writeFile(wb, "Financial_Statements.xlsx"); } 
+                             else { alert("No data found to export to Excel."); }
+                         } catch (error) { console.error("Error generating Excel file:", error); alert("Error generating Excel file."); }
+                     });
+                } else { console.warn("Export Excel button not found"); }
+
+            });
+        });
+    };
+
+    // Helper function to load scripts
+    const loadScript = (src, callback) => {
+        let script = document.querySelector(`script[src="${src}"]`);
+        if (script) { // If already loaded or loading
+            if (script.dataset.loaded === 'true') {
+                 callback(); // Already loaded, run callback immediately
+            } else {
+                 script.addEventListener('load', callback); // Wait for existing script to load
+                 script.addEventListener('error', () => console.error(`Failed to load script: ${src}`));
+            }
+            return;
+        }
+        // If not loaded, create and append
+        script = document.createElement('script');
+        script.src = src;
+        script.onload = () => {
+            script.dataset.loaded = 'true'; // Mark as loaded
+            callback();
+        };
+        script.onerror = () => console.error(`Failed to load script: ${src}`);
+        document.head.appendChild(script);
+    };
+
+    init(); // Start the initialization process
 });
