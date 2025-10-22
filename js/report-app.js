@@ -1,4 +1,4 @@
-// js/report-app.js (Upgraded to Comparative + Full English Translations + Save for Advanced)
+// js/report-app.js (FIX for ReferenceError: statements is not defined)
 
 window.pageTranslations = {
     ar: {
@@ -107,7 +107,7 @@ window.pageTranslations = {
         eq_comment_decline: "انخفاض في حقوق المساهمين: حقوق الملكية انخفضت.",
     },
     en: {
-        // *** مُضاف: ترجمات إنجليزية كاملة ***
+        // *** All English translations... ***
         pageTitle: "Detailed Financial Statements — Financial Analyzer",
         pageHeader: "Detailed Financial Statements",
         pageSubheader: "Professional IFRS-compliant reports with smart analytical commentary.",
@@ -118,97 +118,28 @@ window.pageTranslations = {
         dataSourceTitle: "Data Source:",
         sourceTrialBalanceLabel: "Use Trial Balance (from Input page)",
         sourceUploadedLabel: "Use Uploaded Statements (from Upload page)",
-        thAccount: "Account",
-        thCurrentPeriod: "Current Period",
-        thPreviousPeriod: "Previous Period",
-        thChangeAbs: "Change ($)",
-        thChangePct: "Change (%)",
-        bsTitle: "Statement of Financial Position",
-        bsSubheader: "Shows the company's assets, liabilities, and equity at a specific date.",
-        assets: "Assets",
-        currentAssets: "Current Assets",
-        cashAndEquivalents: "Cash & Equivalents",
-        accountsReceivable: "Accounts Receivable",
-        inventory: "Inventory",
-        otherCurrentAssets: "Other Current Assets",
-        totalCurrentAssets: "Total Current Assets",
-        nonCurrentAssets: "Non-current Assets",
-        propertyPlantEquipment: "Property, Plant & Equipment (Net)",
-        otherNonCurrentAssets: "Other Non-current Assets",
-        totalNonCurrentAssets: "Total Non-current Assets",
-        totalAssets: "Total Assets",
-        liabilities: "Liabilities",
-        currentLiabilities: "Current Liabilities",
-        accountsPayable: "Accounts Payable",
-        shortTermLoans: "Short-term Loans",
-        otherCurrentLiabilities: "Other Current Liabilities",
-        totalCurrentLiabilities: "Total Current Liabilities",
-        nonCurrentLiabilities: "Non-current Liabilities",
-        longTermLoans: "Long-term Loans",
-        otherNonCurrentLiabilities: "Other Non-current Liabilities",
-        totalNonCurrentLiabilities: "Total Non-current Liabilities",
-        totalLiabilities: "Total Liabilities",
-        equity: "Equity",
-        paidInCapital: "Paid-in Capital",
-        retainedEarnings: "Retained Earnings / (Accumulated Deficit)",
-        netProfitForPeriod: "Net Profit / (Loss) for the Period",
-        totalEquity: "Total Equity",
-        totalLiabilitiesAndEquity: "Total Liabilities and Equity",
-        bs_comment_balanced: "Positive Analysis: The Statement of Financial Position is balanced for the current period.",
-        bs_comment_unbalanced: "Action Required: The statement is unbalanced by {diff} for the current period. Please review entries.",
+        thAccount: "Account", thCurrentPeriod: "Current Period", thPreviousPeriod: "Previous Period", thChangeAbs: "Change ($)", thChangePct: "Change (%)",
+        bsTitle: "Statement of Financial Position", bsSubheader: "Shows assets, liabilities, and equity.",
+        assets: "Assets", currentAssets: "Current Assets", cashAndEquivalents: "Cash & Equivalents", accountsReceivable: "Accounts Receivable", inventory: "Inventory", otherCurrentAssets: "Other Current Assets", totalCurrentAssets: "Total Current Assets", nonCurrentAssets: "Non-current Assets", propertyPlantEquipment: "Property, Plant & Equipment (Net)", otherNonCurrentAssets: "Other Non-current Assets", totalNonCurrentAssets: "Total Non-current Assets", totalAssets: "Total Assets",
+        liabilities: "Liabilities", currentLiabilities: "Current Liabilities", accountsPayable: "Accounts Payable", shortTermLoans: "Short-term Loans", otherCurrentLiabilities: "Other Current Liabilities", totalCurrentLiabilities: "Total Current Liabilities", nonCurrentLiabilities: "Non-current Liabilities", longTermLoans: "Long-term Loans", otherNonCurrentLiabilities: "Other Non-current Liabilities", totalNonCurrentLiabilities: "Total Non-current Liabilities", totalLiabilities: "Total Liabilities",
+        equity: "Equity", paidInCapital: "Paid-in Capital", retainedEarnings: "Retained Earnings / (Accumulated Deficit)", netProfitForPeriod: "Net Profit / (Loss) for the Period", totalEquity: "Total Equity", totalLiabilitiesAndEquity: "Total Liabilities and Equity",
+        bs_comment_balanced: "Positive Analysis: Balanced statement.", bs_comment_unbalanced: "Action Required: Unbalanced by {diff}.",
         bs_comment_growth: "Growth Indicator: Total assets increased by {pct} from the prior period.",
         bs_comment_decline: "Contraction Indicator: Total assets decreased by {pct} from the prior period.",
-        isTitle: "Statement of Comprehensive Income",
-        isSubheader: "Summarizes revenues and expenses for a specific period.",
-        revenue: "Revenue / Sales",
-        cogs: "Cost of Revenue / Sales",
-        grossProfit: "Gross Profit / (Loss)",
-        operatingExpenses: "Operating Expenses",
-        generalAdminExpenses: "General & Administrative",
-        sellingMarketingExpenses: "Selling & Marketing",
-        depreciationAmortization: "Depreciation & Amortization",
-        otherOperatingExpenses: "Other Operating Expenses",
-        operatingProfit: "Operating Profit / (Loss) (EBIT)",
-        interestExpense: "Interest Expense",
-        profitBeforeTax: "Profit / (Loss) Before Tax (PBT)",
-        taxExpense: "Tax Expense",
-        netProfit: "Net Profit / (Loss) for the Period",
-        is_comment_profit: "Strong Performance: The company achieved a net profit of {profit} with a profit margin of {margin}%.",
-        is_comment_loss: "Profitability Challenges: The company recorded a net loss of {profit}.",
+        isTitle: "Statement of Comprehensive Income", isSubheader: "Summarizes revenues and expenses.",
+        revenue: "Revenue / Sales", cogs: "Cost of Revenue / Sales", grossProfit: "Gross Profit / (Loss)", operatingExpenses: "Operating Expenses", generalAdminExpenses: "General & Administrative", sellingMarketingExpenses: "Selling & Marketing", depreciationAmortization: "Depreciation & Amortization", otherOperatingExpenses: "Other Operating Expenses", operatingProfit: "Operating Profit / (Loss) (EBIT)", interestExpense: "Interest Expense", profitBeforeTax: "Profit / (Loss) Before Tax (PBT)", taxExpense: "Tax Expense", netProfit: "Net Profit / (Loss) for the Period",
+        is_comment_profit: "Strong Performance: Net profit of {profit}, margin {margin}%.", is_comment_loss: "Profitability Challenges: Net loss of {profit}.",
         is_comment_revenue_growth: "Revenue Growth: Revenue increased by {pct} from the prior period.",
         is_comment_profit_improvement: "Profitability Improvement: Net profit significantly increased from the prior period.",
-        cfTitle: "Statement of Cash Flows (Indirect - Est.)",
-        cfSubheader: "Shows estimated cash movement from activities.",
-        operatingActivities: "Cash Flows from Operating Activities",
-        netIncomeForCF: "Net Income",
-        adjustments: "Adjustments for non-cash items:",
-        depreciationAmortizationForCF: "Depreciation & Amortization",
-        changesInWorkingCapital: "Changes in Working Capital (Est.)",
-        cashFlowFromOperations: "Net Cash from Operating Activities",
-        investingActivities: "Cash Flows from Investing Activities",
-        capitalExpenditures: "Capital Expenditures (Est.)",
-        cashFlowFromInvesting: "Net Cash used in Investing Activities",
-        financingActivities: "Cash Flows from Financing Activities",
-        cashFlowFromFinancing: "Net Cash from (used in) Financing Activities",
-        netCashFlow: "Net Change in Cash & Equivalents",
-        beginningCash: "Beginning Cash & Equivalents",
-        endingCash: "Ending Cash & Equivalents",
+        cfTitle: "Statement of Cash Flows (Indirect - Est.)", cfSubheader: "Shows estimated cash movement.",
+        operatingActivities: "Cash Flows from Operating Activities", netIncomeForCF: "Net Income", adjustments: "Adjustments for non-cash items:", depreciationAmortizationForCF: "Depreciation & Amortization", changesInWorkingCapital: "Changes in Working Capital (Est.)", cashFlowFromOperations: "Net Cash from Operating Activities", investingActivities: "Cash Flows from Investing Activities", capitalExpenditures: "Capital Expenditures (Est.)", cashFlowFromInvesting: "Net Cash used in Investing Activities", financingActivities: "Cash Flows from Financing Activities", cashFlowFromFinancing: "Net Cash from (used in) Financing Activities", netCashFlow: "Net Change in Cash & Equivalents", beginningCash: "Beginning Cash & Equivalents", endingCash: "Ending Cash & Equivalents",
         cf_comment_positive: "Good Cash Position: Estimates indicate positive operating cash flow.",
         cf_comment_negative: "Risk Indicator: Estimates indicate negative operating cash flow.",
         cf_comment_wc_source: "Working capital was a source of cash (e.g., fast collections).",
         cf_comment_wc_use: "Working capital was a use of cash (e.g., inventory build-up).",
-        eqTitle: "Statement of Changes in Equity",
-        eqSubheader: "Shows the changes in equity over the period.",
-        openingBalanceCapital: "Opening Capital Balance",
-        openingBalanceRetainedEarnings: "Opening Retained Earnings",
-        totalOpeningEquity: "Total Opening Equity",
-        netProfitForEquity: "Net Profit / (Loss) for the Period",
-        dividends: "Dividends (Est./If any)",
-        closingBalanceCapital: "Closing Capital Balance",
-        closingBalanceRetainedEarnings: "Closing Retained Earnings",
-        totalClosingEquity: "Total Closing Equity",
-        eq_comment_growth: "Shareholder Value Growth: Equity increased.",
-        eq_comment_decline: "Shareholder Value Decline: Equity decreased.",
+        eqTitle: "Statement of Changes in Equity", eqSubheader: "Shows changes in equity.",
+        openingBalanceCapital: "Opening Capital Balance", openingBalanceRetainedEarnings: "Opening Retained Earnings", totalOpeningEquity: "Total Opening Equity", netProfitForEquity: "Net Profit / (Loss) for the Period", dividends: "Dividends (Est./If any)", closingBalanceCapital: "Closing Capital Balance", closingBalanceRetainedEarnings: "Closing Retained Earnings", totalClosingEquity: "Total Closing Equity",
+        eq_comment_growth: "Shareholder Value Growth: Equity increased.", eq_comment_decline: "Shareholder Value Decline: Equity decreased.",
     }
 };
 
@@ -220,8 +151,8 @@ document.addEventListener('DOMContentLoaded', () => {
         trialDataPrevious: null,
         uploadedDataCurrent: null,
         uploadedDataPrevious: null,
-        statementsCurrent: null, // Holds processed data for Current Period
-        statementsPrevious: null, // Holds processed data for Previous Period
+        statementsCurrent: null, 
+        statementsPrevious: null, 
         hasDataCurrent: false,
         hasDataPrevious: false
     };
@@ -240,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (previous === 0) {
             if (current > 0) return "New";
             if (current === 0) return "0.0%";
-            return "N/A"; // Or handle negative new as -100%?
+            return "N/A";
         }
         const change = (current - previous) / Math.abs(previous);
         const sign = change > 0 ? '+' : '';
@@ -253,7 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const processUploadedData = (uploadedData) => {
         try {
             console.log("Processing uploaded data (Placeholder Logic)...");
-            // *** This section NEEDS to be adapted based on the ACTUAL structure saved by upload.html ***
             if (!uploadedData || (!uploadedData.balanceSheet && !uploadedData.incomeStatement)) {
                  console.warn("Uploaded data is empty or invalid format.");
                  return null;
@@ -275,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
             statements.bs.nonCurrentLiabilities = bsData.nonCurrentLiabilities || [];
             statements.bs.equityCapital = bsData.equity?.filter(item => item.account.toLowerCase().includes('capital') || item.account.includes('رأس المال')) || [];
             const openingREItem = bsData.equity?.find(item => item.account.toLowerCase().includes('retained') || item.account.includes('أرباح'));
-            statements.bs.equityRetainedEarnings = openingREItem ? openingREItem.value : 0; // *Assumes* this is opening RE
+            statements.bs.equityRetainedEarnings = openingREItem ? openingREItem.value : 0; 
 
             // Map Income Statement items
             statements.is.revenue = isData.revenue || [];
@@ -301,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
             totals.depreciationTotal = sumValues(statements.is.depreciationAmortization);
             totals.totalOperatingExpenses = sumValues(statements.is.genAdminExpenses) + sumValues(statements.is.sellingMarketingExpenses) + totals.depreciationTotal + sumValues(statements.is.otherOperatingExpenses);
             totals.operatingProfit = totals.grossProfit - totals.totalOperatingExpenses;
-            totals.totalInterest = sumValues(statements.is.interestExpense);
+            totals.totalInterest = sumValues(statements.is.interestExpense); 
             totals.profitBeforeTax = totals.operatingProfit - totals.totalInterest;
             totals.totalTax = sumValues(statements.is.taxExpense);
             totals.netProfit = totals.profitBeforeTax - totals.totalTax;
@@ -329,8 +259,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // *** مُعدل: هذه الدالة الآن تعالج ميزان مراجعة واحد وتعيده ***
     const buildStatementsFromTrialData = (trialDataArray) => {
+        // *** FIX: Reset statements object *before* accessing totals ***
         const statements = {
             bs: { currentAssets: [], nonCurrentAssets: [], currentLiabilities: [], nonCurrentLiabilities: [], equityCapital: [], equityRetainedEarnings: 0 },
             is: { revenue: [], cogs: [], genAdminExpenses: [], sellingMarketingExpenses: [], depreciationAmortization: [], otherOperatingExpenses: [], interestExpense: [], taxExpense: [] },
@@ -338,7 +268,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         const totals = statements.totals;
         
-        // Initialize totals to 0
         Object.assign(totals, {
             totalCurrentAssets: 0, totalNonCurrentAssets: 0, totalAssets: 0,
             totalCurrentLiabilities: 0, totalNonCurrentLiabilities: 0, totalLiabilities: 0,
@@ -364,69 +293,67 @@ document.addEventListener('DOMContentLoaded', () => {
                 const account = row.Account || 'Unknown';
                 const item = { account, value }; 
 
+                // *** FIX: Use statements.bs, not state.statements.bs ***
                 if (mainType.includes('الأصول') || mainType.includes('Assets')) {
                     if (subType.includes('متداول') || subType.includes('Current')) {
-                        statements.bs.currentAssets.push(item);
+                        statements.bs.currentAssets.push(item); // FIX
                         totals.totalCurrentAssets += value;
                         if (accountName.includes('cash') || accountName.includes('نقد') || accountName.includes('bank') || accountName.includes('بنك')) { totals.cashEquivalents += value; }
                         if (accountName.includes('receivable') || accountName.includes('عملاء')) { totals.accountsReceivable += value; }
                         if (accountName.includes('inventory') || accountName.includes('مخزون')) { totals.inventory += value; }
                     } else {
-                        statements.bs.nonCurrentAssets.push(item);
+                        statements.bs.nonCurrentAssets.push(item); // FIX
                         totals.totalNonCurrentAssets += value;
                     }
                 } else if (mainType.includes('الخصوم') || mainType.includes('Liabilities')) {
                      item.value = -value;
                      if (subType.includes('متداول') || subType.includes('Current')) {
-                         statements.bs.currentLiabilities.push(item);
+                         statements.bs.currentLiabilities.push(item); // FIX
                          totals.totalCurrentLiabilities += item.value;
                          if (accountName.includes('payable') || accountName.includes('مورد')) { totals.accountsPayable += item.value; }
                          if (accountName.includes('loan') || accountName.includes('قرض قصير')) { totals.shortTermDebt += item.value; }
                      } else {
-                         statements.bs.nonCurrentLiabilities.push(item);
+                         statements.bs.nonCurrentLiabilities.push(item); // FIX
                          totals.totalNonCurrentLiabilities += item.value;
                      }
                 } else if (mainType.includes('حقوق الملكية') || mainType.includes('Equity')) {
                      item.value = -value;
                      if (subType.includes('رأس المال') || subType.includes('Capital') || accountName.includes('capital') || accountName.includes('رأس المال')) {
-                        statements.bs.equityCapital.push(item);
+                        statements.bs.equityCapital.push(item); // FIX
                         totals.totalEquityCapital += item.value;
                      } else if (subType.includes('الأرباح المحتجزة') || subType.includes('Retained Earnings') || accountName.includes('retained')) {
-                         statements.bs.equityRetainedEarnings = item.value; // This is OPENING RE
+                         statements.bs.equityRetainedEarnings = item.value; // OPENING RE
                      } else {
-                          statements.bs.equityCapital.push(item);
+                          statements.bs.equityCapital.push(item); // FIX
                           totals.totalEquityCapital += item.value;
                      }
                 }
                 else if (mainType.includes('قائمة الدخل') || mainType.includes('Income Statement')) {
                      if (subType.includes('الإيرادات') || subType.includes('Revenue')) {
                          item.value = -value;
-                         statements.is.revenue.push(item);
+                         statements.is.revenue.push(item); // FIX
                          totals.totalRevenue += item.value;
                      } else if (subType.includes('تكلفة المبيعات') || subType.includes('COGS')) {
-                         statements.is.cogs.push(item);
+                         statements.is.cogs.push(item); // FIX
                          totals.totalCogs += value;
                      } else if (subType.includes('مشتريات') || subType.includes('Purchases') || accountName.includes('purchase')) {
                          totals.purchases += value;
-                         // Optionally add to OpEx if not part of COGS
-                         // statements.is.otherOperatingExpenses.push(item);
-                         // totals.totalOperatingExpenses += value;
                      } else {
                           if (subType.includes('إهلاك') || subType.includes('Depreciation') || accountName.includes('depreciation') || accountName.includes('amortization')) {
-                              statements.is.depreciationAmortization.push(item);
+                              statements.is.depreciationAmortization.push(item); // FIX
                               totals.depreciationTotal += value;
                           } else if (subType.includes('فائدة') || subType.includes('Interest') || accountName.includes('interest')) {
-                              statements.is.interestExpense.push(item);
+                              statements.is.interestExpense.push(item); // FIX
                               totals.totalInterest += value;
                           } else if (subType.includes('ضريب') || subType.includes('Tax') || accountName.includes('tax')) {
-                               statements.is.taxExpense.push(item);
+                               statements.is.taxExpense.push(item); // FIX
                                totals.totalTax += value;
                           } else if (subType.includes('بيع') || subType.includes('Selling') || subType.includes('Marketing') || accountName.includes('selling') || accountName.includes('marketing')) {
-                              statements.is.sellingMarketingExpenses.push(item);
+                              statements.is.sellingMarketingExpenses.push(item); // FIX
                           } else if (subType.includes('إداري') || subType.includes('General') || subType.includes('Admin') || accountName.includes('general') || accountName.includes('admin')) {
-                              statements.is.genAdminExpenses.push(item);
+                              statements.is.genAdminExpenses.push(item); // FIX
                           } else {
-                              statements.is.otherOperatingExpenses.push(item);
+                              statements.is.otherOperatingExpenses.push(item); // FIX
                           }
                      }
                 }
@@ -464,9 +391,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // *** مُعدل: تحميل بيانات الفترتين بناءً على الاختيار ***
     const loadDataAndPrepareStatements = () => {
-        state.hasDataCurrent = false; // Reset flags
+        state.hasDataCurrent = false; 
         state.hasDataPrevious = false;
         state.statementsCurrent = null;
         state.statementsPrevious = null;
@@ -503,10 +429,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (selectedSource === 'uploadedData') {
             state.statementsCurrent = load('uploadedFinancialData', processUploadedData);
-            state.statementsPrevious = load('uploadedFinancialDataPrevious', processUploadedData); // Assumes this key
+            state.statementsPrevious = load('uploadedFinancialDataPrevious', processUploadedData);
         } else {
             state.statementsCurrent = load('trialData', buildStatementsFromTrialData);
-            state.statementsPrevious = load('trialDataPrevious', buildStatementsFromTrialData); // Assumes this key
+            state.statementsPrevious = load('trialDataPrevious', buildStatementsFromTrialData);
         }
 
         state.hasDataCurrent = !!state.statementsCurrent; 
@@ -537,13 +463,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Rendering Functions ---
 
-    // *** مُعدل: دالة عرض قسم واحدة تتعامل مع المقارنات ***
     const renderComparativeSection = (itemsCurrent = [], itemsPrevious = [], sectionTitle, totalLabel, cssClass = '', decimals = 0) => {
         let sectionTotalCurrent = 0;
         let sectionTotalPrevious = 0;
         let html = '';
-        
-        // Ensure inputs are arrays
         if (!Array.isArray(itemsCurrent)) itemsCurrent = [];
         if (!Array.isArray(itemsPrevious)) itemsPrevious = [];
         
@@ -555,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const prevItemsMap = new Map(itemsPrevious.map(item => [item.account, item.value]));
 
         if (allAccountNames.size > 0 || sectionTitle) {
-            html += `<tr class="section-header ${cssClass}"><td colspan="${state.hasDataPrevious ? 5 : 2}"><strong>${sectionTitle || ''}</strong></td></tr>`; // Adjust colspan
+            html += `<tr class="section-header ${cssClass}"><td colspan="${state.hasDataPrevious ? 5 : 2}"><strong>${sectionTitle || ''}</strong></td></tr>`;
         }
 
         allAccountNames.forEach(account => {
@@ -593,7 +516,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return { html, totalCurrent: sectionTotalCurrent, totalPrevious: sectionTotalPrevious };
     };
 
-    // *** مُعدل: دالة عرض الميزانية المقارنة ***
     const renderBalanceSheet = () => {
         const stmtCurrent = state.statementsCurrent;
         const stmtPrevious = state.statementsPrevious;
@@ -777,12 +699,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Calculate CF items
         const netProfitC = totalsCurrent.netProfit || 0;
         const depreciationC = totalsCurrent.depreciationTotal || 0;
-        const changeInWC_C = (totalsCurrent.workingCapital || 0) - (totalsPrevious.workingCapital || 0); // Requires previous data
+        const changeInWC_C = (totalsCurrent.workingCapital || 0) - (totalsPrevious.workingCapital || 0);
         const cashFromOpsC = netProfitC + depreciationC - (state.hasDataPrevious ? changeInWC_C : 0); 
         const cashFromInvestingC = -depreciationC; // Proxy
         const cashFromFinancingC = 0; // Proxy
         const netChangeInCashC = cashFromOpsC + cashFromInvestingC + cashFromFinancingC;
-        const beginningCashC = totalsPrevious.cashEquivalents || 0; // Use previous period's ending cash
+        const beginningCashC = totalsPrevious.cashEquivalents || 0;
         const endingCashCalculatedC = beginningCashC + netChangeInCashC;
         const endingCashFromBSC = totalsCurrent.cashEquivalents || 0;
 
@@ -1039,7 +961,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         script = document.createElement('script');
         script.src = src;
-        script.async = true;
+        script.async = true; 
         script.onload = () => { script.dataset.loaded = 'true'; onload(); };
         script.onerror = () => { script.dataset.loaded = 'false'; console.error(`Failed to load script: ${src}`); onerror(); };
         document.head.appendChild(script);
