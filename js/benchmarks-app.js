@@ -195,31 +195,28 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // دالة لتنفيذ التصدير الفعلي
-    const executePdfExport = () => {
-        if (!state.hasData) { 
-            alert(t('noDataForRatios'));
-            UI.exportPdfBtn.disabled = false; // أعد تفعيل الزر
-            return; 
-        }
-        console.log("Exporting benchmarks to PDF...");
+    const initPdfExport = () => {
+             if (UI.exportPdfBtn) {
+                 UI.exportPdfBtn.addEventListener('click', () => {
+                    if (!state.hasDataCurrent) { alert(t_page('noData')); return; }
+                    console.log("Exporting benchmarks to PDF...");
         const element = document.getElementById('benchmarks-content');
-        
-        const opt = {
-            margin: 0.5,
-            filename: 'Benchmarks_Report.pdf',
+        if (typeof html2pdf === 'function') {
+                        const opt = {
+                            margin: [0.5, 0.5, 0.5, 0.5], // [top, left, bottom, right] in inches
+                            filename: 'Benchmarks_Report.pdf',
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, useCORS: true, logging: false },
-            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                            html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: 1400 }, // استخدم نافذة أعرض
+                            jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' } // اتجاه أفقي
+                        };
+                        html2pdf().from(element).set(opt).save();
+                    } else {
+                        console.error("html2pdf library is not loaded."); 
+                        alert("PDF export failed. Library not loaded.");
+                    }
+                 });
+             } else { console.warn("Export PDF button not found"); }
         };
-
-        html2pdf().from(element).set(opt).save().then(() => {
-             UI.exportPdfBtn.disabled = false; // أعد تفعيل الزر بعد انتهاء الحفظ
-        }).catch(err => {
-            console.error("PDF Export Error:", err);
-            alert("حدث خطأ أثناء إنشاء الـ PDF: " + err.message); // إظهار رسالة خطأ أوضح
-            UI.exportPdfBtn.disabled = false; // أعد تفعيل الزر عند حدوث خطأ
-        });
-    };
 
     // دالة ربط زر PDF
     const initPdfExport = () => {
