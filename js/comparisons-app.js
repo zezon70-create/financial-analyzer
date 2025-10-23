@@ -1,6 +1,4 @@
-// js/comparisons-app.js (REFACTORED to use financialDataCurrent/Previous + PDF Export)
-
-// *** مُضاف: منطق دمج الترجمات ***
+// js/comparisons-app.js 
 const comparisonsTranslations = {
     ar: {
         pageTitle: "مقارنة الفترات — المحلل المالي",
@@ -47,16 +45,10 @@ const comparisonsTranslations = {
         equity: "Equity"
     }
 };
-
-// *** مُضاف: منطق دمج الترجمات ***
 window.pageTranslations = window.pageTranslations || {};
 window.pageTranslations.ar = { ...(window.pageTranslations.ar || {}), ...(comparisonsTranslations.ar || {}) };
 window.pageTranslations.en = { ...(window.pageTranslations.en || {}), ...(comparisonsTranslations.en || {}) };
-// *** نهاية الإضافة ***
-
-
 document.addEventListener('DOMContentLoaded', () => {
-
     const state = {
         statementsCurrent: null,
         statementsPrevious: null,
@@ -304,3 +296,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     init();
 });
+
