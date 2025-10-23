@@ -1,4 +1,6 @@
-// js/advanced-app.js (REFACTORED + Translation Merge FIX + Full English Translations)
+// js/advanced-app.js (REFACTORED + Translation Fix + PDF + ***FINAL: Save Ratios***)
+
+// *** 1. Translations (with merge logic) ***
 const advancedTranslations = {
     ar: {
         pageTitle: "التحليلات المتقدمة — المحلل المالي", pageHeader: "التحليلات المتقدمة", pageSubheader: "استخدم أدوات تحليلية متخصصة للحصول على رؤى أعمق حول أداء عملك.",
@@ -16,14 +18,14 @@ const advancedTranslations = {
         summary_ok: "الوضع المالي يبدو مستقرًا...", summary_risk: "توجد بعض مؤشرات الخطر...", alert_liquidity_risk: "🔴 خطر سيولة...", alert_leverage_risk: "🟡 تنبيه دين مرتفع...", alert_profit_risk: "🔴 خطر ربحية...", alert_ok: "🟢 لا توجد مؤشرات خطر حرجة...", noDataForRatios: "لا توجد بيانات كافية لحساب النسب.", 
         beInputTitle: "مدخلات الحساب", labelFixedCosts: "إجمالي التكاليف الثابتة", labelVariableCost: "التكلفة المتغيرة للوحدة", labelSellingPrice: "سعر بيع الوحدة", btnCalculate: "احسب", beResultsTitle: "النتائج", bepUnits: "نقطة التعادل (بالوحدات)", bepValue: "نقطة التعادل (بالقيمة)", beChartTitle: "رسم بياني لنقطة التعادل", errorPrice: "سعر البيع يجب أن يكون أعلى.", errorPositiveValues: "أدخل قيم موجبة.", revenue: 'الإيرادات', totalCosts: 'إجمالي التكاليف', fixedCosts: 'التكاليف الثابتة', unitsSold: 'الوحدات المباعة', value: 'القيمة',
         dupontTitle: "تحليل دوبونت", dupontDesc: "تفكيك العائد على حقوق الملكية (ROE)...", dupontEquation: "معادلة دوبونت:", dupontCompNPM: "هامش صافي الربح", dupontCompAT: "دوران الأصول", dupontCompEM: "مضاعف الملكية", dupontCompROE: "العائد على الملكية", dupontDataWarning: "بيانات غير كافية لتحليل دوبونت (تأكد من تشغيل صفحة 'التقارير').", 
-        dupontInterpretationHighROE: "🟢 العائد المرتفع على حقوق الملكية مدفوع بشكل أساسي بـ:", // مفتاح مفقود سابقاً
-        dupontInterpretationLowROE: "🟡 العائد المنخفض على حقوق الملكية يتأثر بـ:", // مفتاح مفقود سابقاً
-        dupontFactorProfitability: "ربحية تشغيلية قوية (هامش ربح جيد).", // مفتاح مفقود سابقاً
-        dupontFactorEfficiency: "كفاءة أصول عالية (دوران أصول سريع).", // مفتاح مفقود سابقاً
-        dupontFactorLeverage: "استخدام الرفع المالي (مضاعف ملكية مرتفع).", // مفتاح مفقود سابقاً
-        dupontFactorLowProfitability: "ربحية تشغيلية ضعيفة (هامش ربح منخفض).", // مفتاح مفقود سابقاً
-        dupontFactorLowEfficiency: "كفاءة أصول منخفضة (دوران أصول بطيء).", // مفتاح مفقود سابقاً
-        dupontFactorLowLeverage: "اعتماد منخفض على الديون (مضاعف ملكية منخفض).", // مفتاح مفقود سابقاً
+        dupontInterpretationHighROE: "🟢 العائد المرتفع على حقوق الملكية مدفوع بشكل أساسي بـ:",
+        dupontInterpretationLowROE: "🟡 العائد المنخفض على حقوق الملكية يتأثر بـ:",
+        dupontFactorProfitability: "ربحية تشغيلية قوية (هامش ربح جيد).",
+        dupontFactorEfficiency: "كفاءة أصول عالية (دوران أصول سريع).",
+        dupontFactorLeverage: "استخدام الرفع المالي (مضاعف ملكية مرتفع).",
+        dupontFactorLowProfitability: "ربحية تشغيلية ضعيفة (هامش ربح منخفض).",
+        dupontFactorLowEfficiency: "كفاءة أصول منخفضة (دوران أصول بطيء).",
+        dupontFactorLowLeverage: "اعتماد منخفض على الديون (مضاعف ملكية منخفض).",
         verticalTitle: "التحليل الرأسي", verticalDesc: "يعرض البنود كنسبة مئوية...", verticalDataWarning: "بيانات غير كافية للتحليل الرأسي (تأكد من تشغيل صفحة 'التقارير').", 
         verticalBS: "الميزانية (% من الأصول)", verticalIS: "الدخل (% من الإيرادات)", verticalAccount: "الحساب", verticalValue: "القيمة", verticalPercent: "النسبة %",
         verticalInterpretationTitle: "أبرز الملاحظات:",
@@ -101,8 +103,8 @@ const advancedTranslations = {
     }
 };
 
-// *** مُضاف: منطق دمج الترجمات بدلاً من الكتابة فوقها ***
-window.pageTranslations = window.pageTranslations || {}; // التأكد من وجود الكائن الرئيسي
+// *** مُضاف: منطق دمج الترجمات ***
+window.pageTranslations = window.pageTranslations || {};
 window.pageTranslations.ar = { ...(window.pageTranslations.ar || {}), ...(advancedTranslations.ar || {}) };
 window.pageTranslations.en = { ...(window.pageTranslations.en || {}), ...(advancedTranslations.en || {}) };
 // *** نهاية الإضافة ***
@@ -123,7 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
             hasPreviousData: false, 
         };
         const lang = localStorage.getItem('lang') || 'ar';
-        // *** مُعدل: التأكد من أن t_page يستخدم الكائن المدمج ***
         const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`; 
 
         const UI = { 
@@ -333,7 +334,11 @@ document.addEventListener('DOMContentLoaded', () => {
                      _capex_estimated: capex_estimated,
                      _depreciation: depreciation // Store depreciation for CF tab
                  }; 
+                 
+                 // *** الإضافة الوحيدة هنا: حفظ النسب لصفحة benchmarks ***
                  localStorage.setItem('calculatedRatios', JSON.stringify(state.ratios));
+                 // *** نهاية الإضافة ***
+
                  console.log("Calculated Ratios (from processed data):", state.ratios); return true; 
              } catch(e) { 
                  console.error("Error calculating ratios:", e); 
@@ -345,7 +350,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // === RENDERING FUNCTIONS (Adapted for new data source) ===
         // ==============================================
         
-        const getRatioComment = (key, value) => { /* ... (Code from previous working version) ... */
+        const getRatioComment = (key, value) => {
             if (!isFinite(value) && isNaN(value)) return "N/A"; 
             if (isNaN(value)) {
                 if (['eps', 'peRatio', 'pbRatio', 'dividendYield', 'payoutRatio'].includes(key)) {
@@ -376,7 +381,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return ""; 
         };
         
-        const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => { /* ... (Code from previous working version) ... */
+        const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => {
             const container = document.getElementById(divId); 
             if (!container) { console.error(`Element not found: ${divId}`); return; } 
             if (!state.hasValidData) { container.innerHTML = `<h5 class="mb-3">${t_page(categoryTitleKey)}</h5> <p class="text-muted">${t_page('noDataForRatios')}</p>`; return; } 
@@ -398,11 +403,11 @@ document.addEventListener('DOMContentLoaded', () => {
             container.innerHTML = tableHTML + `</tbody></table></div>`; 
         };
 
-        const renderSidebar = () => { /* ... (Code from previous working version) ... */ 
+        const renderSidebar = () => { 
             if (!state.hasValidData) { UI.smartSummary.textContent = lang === 'ar' ? '...' : '...'; UI.alertsArea.innerHTML = `<div>${lang === 'ar' ? '...' : '...'}</div>`; return; } const { netProfitMargin, currentRatio, debtToEquity } = state.ratios; UI.smartSummary.textContent = netProfitMargin > 0 && currentRatio > 1.5 ? t_page('summary_ok') : t_page('summary_risk'); const alerts = []; if (currentRatio < 1 && isFinite(currentRatio)) alerts.push(t_page('alert_liquidity_risk')); if (debtToEquity > 2 && isFinite(debtToEquity)) alerts.push(t_page('alert_leverage_risk')); if (netProfitMargin < 0 && isFinite(netProfitMargin)) alerts.push(t_page('alert_profit_risk')); UI.alertsArea.innerHTML = alerts.length > 0 ? alerts.map(alert => `<div>${alert}</div>`).join('') : `<div>${t_page('alert_ok')}</div>`;
         };
         
-        const calculateAndDisplayBreakeven = () => { /* ... (Code from previous working version) ... */
+        const calculateAndDisplayBreakeven = () => {
              const fixed = toNum(UI.fixedCosts.value); 
              const variable = toNum(UI.variableCost.value); 
              const price = toNum(UI.sellingPrice.value); 
@@ -418,11 +423,10 @@ document.addEventListener('DOMContentLoaded', () => {
              state.baseBreakeven = { units: bepUnits, value: bepValue };
              return state.baseBreakeven;
          };
-        const renderBreakevenChart = (fixed, variable, price, bepUnits) => { /* ... (Code from previous working version) ... */ 
+        const renderBreakevenChart = (fixed, variable, price, bepUnits) => { 
              if (!UI.breakevenChartCanvas) return; if (state.breakevenChart) { state.breakevenChart.destroy(); } let maxUnits = 100; if (bepUnits > 0 && isFinite(bepUnits)) { maxUnits = Math.max(100, Math.ceil(bepUnits * 2 / 10) * 10); } else if (fixed === 0 && price > variable) { maxUnits = 100; } else if (price <= variable) { maxUnits = 100; } const step = maxUnits / 10; const labels = Array.from({ length: 11 }, (_, i) => Math.round(step * i)); const fixedCostsData = labels.map(() => fixed); const totalCostsData = labels.map(unit => fixed + (variable * unit)); const revenueData = labels.map(unit => price * unit); const ctx = UI.breakevenChartCanvas.getContext('2d'); state.breakevenChart = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [ { label: t_page('revenue'), data: revenueData, borderColor: 'rgba(75, 192, 192, 1)', fill: false, tension: 0.1 }, { label: t_page('totalCosts'), data: totalCostsData, borderColor: 'rgba(255, 99, 132, 1)', fill: false, tension: 0.1 }, { label: t_page('fixedCosts'), data: fixedCostsData, borderColor: 'rgba(255, 159, 64, 1)', borderDash: [5, 5], fill: false, tension: 0.1 } ] }, options: { responsive: true, maintainAspectRatio: false, interaction: { intersect: false, mode: 'index', }, scales: { x: { title: { display: true, text: t_page('unitsSold') } }, y: { title: { display: true, text: t_page('value') }, beginAtZero: true } }, plugins: { tooltip: { callbacks: { label: function(context) { return `${context.dataset.label}: ${context.parsed.y.toLocaleString()}`; } } } } } });
         };
         
-        // *** مُعدل: الاعتماد على state.ratios المحسوبة ***
         const calculateAndDisplayDupont = () => { 
             console.log("[DEBUG] Attempting to calculate and display DuPont...");
             if (!state.hasValidData || !isFinite(state.ratios.equityMultiplier)) { 
@@ -440,7 +444,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if(UI.dupontROE) UI.dupontROE.textContent = formatPercent(dupontROE); if(UI.dupontNPM) UI.dupontNPM.textContent = formatPercent(npm); if(UI.dupontAT) UI.dupontAT.textContent = formatRatio(at); if(UI.dupontEM) UI.dupontEM.textContent = formatRatio(em);
             if(UI.dupontValueNPM) UI.dupontValueNPM.textContent = formatPercent(npm); if(UI.dupontValueAT) UI.dupontValueAT.textContent = formatRatio(at); if(UI.dupontValueEM) UI.dupontValueEM.textContent = formatRatio(em); if(UI.dupontValueROE) UI.dupontValueROE.textContent = formatPercent(dupontROE);
             
-            // *** مُعدل: التأكد من أن t_page() تعمل لأن الترجمات مدمجة ***
             let interpretation = '';
             if (isFinite(dupontROE)) {
                 const highROE = dupontROE >= 0.15; interpretation += highROE ? `<p>${t_page('dupontInterpretationHighROE')}</p><ul>` : `<p>${t_page('dupontInterpretationLowROE')}</p><ul>`;
@@ -448,7 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (isFinite(at)) { if (at >= 1.0) interpretation += `<li>${t_page('dupontFactorEfficiency')}</li>`; else if (at < 0.5) interpretation += `<li>${t_page('dupontFactorLowEfficiency')}</li>`; }
                 if (isFinite(em)) { if (em > 2.5) interpretation += `<li>${t_page('dupontFactorLeverage')}</li>`; else if (em < 1.5) interpretation += `<li>${t_page('dupontFactorLowLeverage')}</li>`; }
                 interpretation += `</ul>`; 
-                if (interpretation.endsWith('<ul></ul>')) { interpretation = `<p>${lang === 'ar' ? 'العوامل متوازنة.' : 'Factors appear balanced.'}</p>`; } // Add translation for balanced
+                if (interpretation.endsWith('<ul></ul>')) { interpretation = `<p>${lang === 'ar' ? 'العوامل متوازنة.' : 'Factors appear balanced.'}</p>`; } 
             } else { 
                 interpretation = `<p class="text-danger">${lang === 'ar' ? 'لا يمكن حساب التفسير.' : 'Interpretation cannot be calculated.'}</p>`; 
             } 
@@ -456,7 +459,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("[DEBUG] Finished displaying DuPont.");
         };
         
-        // *** مُعدل: الاعتماد على state.statementsCurrent.bs/is ***
         const calculateAndDisplayVerticalAnalysis = () => { 
             if (!state.hasValidData || !state.statementsCurrent || !state.statementsCurrent.bs || !state.statementsCurrent.is) { 
                 if(UI.verticalDataWarning) { UI.verticalDataWarning.textContent = t_page('verticalDataWarning'); UI.verticalDataWarning.style.display = 'block'; } 
@@ -472,7 +474,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const totalRevenue = state.statementsCurrent.totals.totalRevenue || 0; 
             const totalLiabEquity = (state.statementsCurrent.totals.totalLiabilities || 0) + (state.statementsCurrent.totals.totalEquity || 0);
 
-            // Helper to build sorted item list for tables
             const buildSortedList = (items) => {
                 if (!items) return [];
                 return [...items].sort((a,b) => Math.abs(b.value || 0) - Math.abs(a.value || 0));
@@ -485,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ...state.statementsCurrent.bs.currentLiabilities,
                 ...state.statementsCurrent.bs.nonCurrentLiabilities,
                 ...state.statementsCurrent.bs.equityCapital,
-                { account: t_page('retainedEarnings'), value: state.statementsCurrent.totals.retainedEarnings || 0 } // Add closing RE
+                { account: t_page('retainedEarnings'), value: state.statementsCurrent.totals.retainedEarnings || 0 }
             ];
             const sortedBsItems = buildSortedList(bsAllItems);
             
@@ -510,12 +511,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 ...state.statementsCurrent.is.taxExpense
             ];
             const sortedIsItems = isAllItems.sort((a, b) => {
-                // Find revenue items (which have negative value in logic, but positive display)
                 const isRevenueA = state.statementsCurrent.is.revenue.some(rev => rev.account === a.account);
                 const isRevenueB = state.statementsCurrent.is.revenue.some(rev => rev.account === b.account);
                 if (isRevenueA) return -1;
                 if (isRevenueB) return 1;
-                return Math.abs(b.value || 0) - Math.abs(a.value || 0); // Sort rest by absolute value
+                return Math.abs(b.value || 0) - Math.abs(a.value || 0);
             });
             
             sortedIsItems.forEach(item => { 
@@ -564,7 +564,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (UI.verticalInterpretationList) UI.verticalInterpretationList.innerHTML = interpretationHTML;
         };
 
-        // *** مُعدل: الاعتماد على state.ratios المحسوبة ***
         const calculateAndDisplayZScore = () => { 
             if (!state.hasValidData || !isFinite(state.ratios.zScore)) { if(UI.zscoreDataWarning) { UI.zscoreDataWarning.textContent = t_page('zscoreDataWarning'); UI.zscoreDataWarning.style.display = 'block'; } if(UI.zscoreResultsContainer) UI.zscoreResultsContainer.style.display = 'none'; return; } 
             if(UI.zscoreDataWarning) UI.zscoreDataWarning.style.display = 'none'; if(UI.zscoreResultsContainer) UI.zscoreResultsContainer.style.display = 'block'; 
@@ -585,11 +584,10 @@ document.addEventListener('DOMContentLoaded', () => {
             if(UI.zscoreFactorsList) UI.zscoreFactorsList.innerHTML = factorsHTML;
         };
 
-        // *** مُعدل: الاعتماد على state.ratios المحسوبة ***
         const calculateAndDisplayCashFlowAnalysis = () => { 
             if (!state.hasValidData) { if(UI.cfDataWarning) { UI.cfDataWarning.textContent = t_page('cfDataWarning'); UI.cfDataWarning.style.display = 'block'; } if(UI.cfResultsContainer) UI.cfResultsContainer.style.display = 'none'; return; } 
             if(UI.cfDataWarning) UI.cfDataWarning.style.display = 'none'; if(UI.cfResultsContainer) UI.cfResultsContainer.style.display = 'block'; 
-            const r = state.ratios; // Get ratios
+            const r = state.ratios; 
             let stmtHTML = ` <tr><td>${t_page('netIncomeForCF')}</td><td class="text-end">${formatNumber(r._netProfit)}</td></tr> <tr><td class="ps-3">${t_page('depreciationAmortizationForCF')}</td><td class="text-end">${formatNumber(r._depreciation || 0)}</td></tr> <tr><td class="text-muted ps-3">${t_page('changesInWorkingCapital')}</td><td class="text-end text-muted">(N/A)</td></tr> <tr class="table-light fw-bold"><td>${t_page('cashFlowFromOperations')}</td><td class="text-end">${formatNumber(r._ocf_estimated)}</td></tr> <tr><td>${t_page('capitalExpenditures')}</td><td class="text-end">${formatNumber(r._capex_estimated)}</td></tr> <tr class="table-light fw-bold"><td>${t_page('cfRatioFCF')}</td><td class="text-end">${formatNumber(r.freeCashFlow)}</td></tr>`;
             if(UI.cfStatementTableBody) UI.cfStatementTableBody.innerHTML = stmtHTML; 
             if(UI.cfValueOCFRatio) UI.cfValueOCFRatio.textContent = formatRatio(r.operatingCashFlowRatio); 
@@ -600,7 +598,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if(UI.cfInterpretation) UI.cfInterpretation.innerHTML = interpretation || `<p class="text-muted">${lang==='ar'?'...':'...'}</p>`;
         };
 
-        // *** مُعدل: الاعتماد على state.ratios المحسوبة ***
         const calculateAndDisplayEVA = () => { 
             console.log("[DEBUG] Attempting to calculate and display EVA...");
             if (!state.hasValidData || !isFinite(state.ratios._ebit)) {
@@ -643,7 +640,6 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("[DEBUG] Finished displaying EVA.");
         };
 
-        // *** مُعدل: الاعتماد على state.statementsCurrent/Previous ***
         const calculateAndDisplayHorizontal = () => {
              console.log("[DEBUG] Attempting to display Horizontal Analysis...");
              if (!state.hasValidData || !state.hasPreviousData) {
@@ -681,15 +677,19 @@ document.addEventListener('DOMContentLoaded', () => {
              
              // Combine BS Items
              const bsItemsCurrent = [
-                ...state.statementsCurrent.bs.currentAssets, ...state.statementsCurrent.bs.nonCurrentAssets,
-                ...state.statementsCurrent.bs.currentLiabilities, ...state.statementsCurrent.bs.nonCurrentLiabilities,
-                ...state.statementsCurrent.bs.equityCapital,
+                ...(state.statementsCurrent.bs.currentAssets || []), 
+                ...(state.statementsCurrent.bs.nonCurrentAssets || []),
+                ...(state.statementsCurrent.bs.currentLiabilities || []), 
+                ...(state.statementsCurrent.bs.nonCurrentLiabilities || []),
+                ...(state.statementsCurrent.bs.equityCapital || []),
                 { account: t_page('retainedEarnings'), value: state.statementsCurrent.totals.retainedEarnings || 0 }
              ];
              const bsItemsPrevious = [
-                ...state.statementsPrevious.bs.currentAssets, ...state.statementsPrevious.bs.nonCurrentAssets,
-                ...state.statementsPrevious.bs.currentLiabilities, ...state.statementsPrevious.bs.nonCurrentLiabilities,
-                ...state.statementsPrevious.bs.equityCapital,
+                ...(state.statementsPrevious.bs.currentAssets || []), 
+                ...(state.statementsPrevious.bs.nonCurrentAssets || []),
+                ...(state.statementsPrevious.bs.currentLiabilities || []), 
+                ...(state.statementsPrevious.bs.nonCurrentLiabilities || []),
+                ...(state.statementsPrevious.bs.equityCapital || []),
                 { account: t_page('retainedEarnings'), value: state.statementsPrevious.totals.retainedEarnings || 0 }
              ];
 
@@ -700,16 +700,24 @@ document.addEventListener('DOMContentLoaded', () => {
              
              // Combine IS Items
              const isItemsCurrent = [
-                ...state.statementsCurrent.is.revenue, ...state.statementsCurrent.is.cogs,
-                ...state.statementsCurrent.is.genAdminExpenses, ...state.statementsCurrent.is.sellingMarketingExpenses,
-                ...state.statementsCurrent.is.depreciationAmortization, ...state.statementsCurrent.is.otherOperatingExpenses,
-                ...state.statementsCurrent.is.interestExpense, ...state.statementsCurrent.is.taxExpense
+                ...(state.statementsCurrent.is.revenue || []), 
+                ...(state.statementsCurrent.is.cogs || []),
+                ...(state.statementsCurrent.is.genAdminExpenses || []), 
+                ...(state.statementsCurrent.is.sellingMarketingExpenses || []),
+                ...(state.statementsCurrent.is.depreciationAmortization || []), 
+                ...(state.statementsCurrent.is.otherOperatingExpenses || []),
+                ...(state.statementsCurrent.is.interestExpense || []), 
+                ...(state.statementsCurrent.is.taxExpense || [])
              ];
              const isItemsPrevious = [
-                ...state.statementsPrevious.is.revenue, ...state.statementsPrevious.is.cogs,
-                ...state.statementsPrevious.is.genAdminExpenses, ...state.statementsPrevious.is.sellingMarketingExpenses,
-                ...state.statementsPrevious.is.depreciationAmortization, ...state.statementsPrevious.is.otherOperatingExpenses,
-                ...state.statementsPrevious.is.interestExpense, ...state.statementsPrevious.is.taxExpense
+                ...(state.statementsPrevious.is.revenue || []), 
+                ...(state.statementsPrevious.is.cogs || []),
+                ...(state.statementsPrevious.is.genAdminExpenses || []), 
+                ...(state.statementsPrevious.is.sellingMarketingExpenses || []),
+                ...(state.statementsPrevious.is.depreciationAmortization || []), 
+                ...(state.statementsPrevious.is.otherOperatingExpenses || []),
+                ...(state.statementsPrevious.is.interestExpense || []), 
+                ...(state.statementsPrevious.is.taxExpense || [])
              ];
 
              let isTableHTML = `<table class="table table-sm table-striped"><thead><tr><th>${t_page('thAccount')}</th><th class="text-end">${t_page('thCurrentPeriod')}</th><th class="text-end">${t_page('thPreviousPeriod')}</th><th class="text-end">${t_page('thChangeAbs')}</th><th class="text-end">${t_page('thChangePct')}</th></tr></thead><tbody>`;
@@ -720,7 +728,6 @@ document.addEventListener('DOMContentLoaded', () => {
              console.log("[DEBUG] Finished displaying Horizontal Analysis.");
         };
 
-        // *** مُعدل: الاعتماد على state.ratios المحسوبة ***
         const calculateAndDisplayCCC = () => {
              console.log("[DEBUG] Attempting to display CCC...");
              const requiredData = state.hasValidData && state.ratios && isFinite(state.ratios.cashConversionCycle);
@@ -761,7 +768,6 @@ document.addEventListener('DOMContentLoaded', () => {
               console.log("[DEBUG] Finished displaying CCC.");
         };
 
-        // *** مُعدل: الاعتماد على state.baseBreakeven ***
         const calculateAndDisplayScenario = () => {
               console.log("[DEBUG] Running Scenario Analysis...");
               const baseFixed = toNum(UI.fixedCosts.value);
@@ -815,7 +821,6 @@ document.addEventListener('DOMContentLoaded', () => {
               console.log("[DEBUG] Finished Scenario Analysis.");
         };
 
-        // *** مُضاف: دالة لتحديث النسب وإعادة العرض بعد إدخال بيانات التقييم ***
         const updateAndRerenderValuationRatios = () => {
             console.log("[DEBUG] Updating ratios with external inputs...");
             if (calculateAllRatios()) { // Recalculate all ratios using new inputs
@@ -831,18 +836,15 @@ document.addEventListener('DOMContentLoaded', () => {
         // === RUN ANALYSIS & INITIALIZATION (Adapted) ===
         // ==============================================
         
-        // *** مُعدل: دالة runAnalysis الآن تقرأ فقط، ولا تحسب ***
         const runAnalysis = () => {
             console.log("Running full analysis...");
             if (!loadProcessedData()) {
                 console.error("Failed to load essential processed data (financialDataCurrent). Aborting analysis.");
-                // Show a prominent error to the user
                 Object.values(UI).forEach(el => { 
                     if (el && el.id && !['languageSelect', 'themeToggle'].includes(el.id)) {
-                       // Maybe just show a single error message
                     }
                 });
-                alert(t_page('noDataForAdvanced')); // Show alert
+                alert(t_page('noDataForAdvanced')); 
                 return false; 
             } 
 
@@ -851,7 +853,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return false; 
             }
 
-            // Render all ratio tables
             renderRatioCategory('liquidityRatios', 'liquidityRatios', ['currentRatio', 'quickRatio', 'netWorkingCapital', 'cashRatio']);
             renderRatioCategory('profitabilityRatios', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe', 'eps']);
             renderRatioCategory('leverageRatios', 'leverageRatios', ['debtToAssets', 'debtToEquity', 'interestCoverageRatio', 'financialLeverage']);
@@ -886,9 +887,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                      console.error("[DEBUG] Initial analysis FAILED. Other tabs will not be rendered.");
                 }
-                
-                // *** تم نقل استدعاء الترجمة للأعلى ***
-                // if (typeof window.applyTranslations === 'function') { ... } 
                 
                 console.log("Advanced page initialized.");
 
@@ -946,5 +944,3 @@ document.addEventListener('DOMContentLoaded', () => {
         
     }, 0); 
 });
-
-
