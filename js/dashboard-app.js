@@ -1,4 +1,6 @@
-// js/dashboard-app.js 
+// js/dashboard-app.js (REFACTORED to use financialDataCurrent + PDF Export + Translation Fix)
+
+// *** مُضاف: منطق دمج الترجمات ***
 const dashboardTranslations = {
     ar: {
         pageTitle: "لوحة التحكم — المحلل المالي",
@@ -86,23 +88,32 @@ const dashboardTranslations = {
         trend_zscore: "Z-Score"
     }
 };
+
+// *** مُضاف: منطق دمج الترجمات ***
 window.pageTranslations = window.pageTranslations || {};
 window.pageTranslations.ar = { ...(window.pageTranslations.ar || {}), ...(dashboardTranslations.ar || {}) };
 window.pageTranslations.en = { ...(window.pageTranslations.en || {}), ...(dashboardTranslations.en || {}) };
+// *** نهاية الإضافة ***
+
+
 document.addEventListener('DOMContentLoaded', () => {
+
     setTimeout(() => {
         console.log("[DEBUG] Initializing dashboard-app.js after delay...");
+
         const state = {
-            statementsCurrent: null,
-            statementsPrevious: null,
-            metricsCurrent: null, // Will hold calculated metrics for current period
-            metricsPrevious: null, // Will hold calculated metrics for previous period
+            statementsCurrent: null,  // Will hold data from 'financialDataCurrent'
+            statementsPrevious: null, // Will hold data from 'financialDataPrevious'
+            metricsCurrent: null,     // Will hold calculated metrics for current period
+            metricsPrevious: null,    // Will hold calculated metrics for previous period
             charts: {},
             hasDataCurrent: false,
             hasDataPrevious: false
         };
         const lang = localStorage.getItem('lang') || 'ar';
+        // *** مُعدل: التأكد من أن t_page يستخدم الكائن المدمج ***
         const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;
+
         const UI = {
             loadingMessage: document.getElementById('loadingMessage'),
             singlePeriodView: document.getElementById('singlePeriodView'),
@@ -130,10 +141,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const formatPercent = (value, digits = 1) => isFinite(value) && !isNaN(value) ? `${(value * 100).toFixed(digits)}%` : "N/A";
         const formatRatio = (value, digits = 2) => isFinite(value) && !isNaN(value) ? value.toFixed(digits) : "N/A";
         const formatCurrency = (value) => isFinite(value) && !isNaN(value) ? value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : "N/A";
+
         // --- Core Calculation Engine (Simplified) ---
 
-        // *** مُلغى: دالة calculateMetrics القديمة ***
-
+        // *** مُلغى: دالة calculateMetrics القديمة التي تعالج trialData ***
+        
         // *** مُضاف: دالة جديدة لقراءة البيانات المجهزة ***
         const loadProcessedData = () => {
             console.log("[DEBUG] Loading processed data from localStorage...");
@@ -294,13 +306,14 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!state.hasDataCurrent) { alert(t_page('noData')); return; }
                     console.log("Exporting dashboard to PDF...");
                     const element = document.getElementById('dashboard-content');
+                    // تأكد من أن المكتبة قد تم تحميلها (من السطر في .html)
                     if (typeof html2pdf === 'function') {
                         const opt = {
                             margin: [0.5, 0.5, 0.5, 0.5], // [top, left, bottom, right] in inches
                             filename: 'Dashboard_Report.pdf',
                             image: { type: 'jpeg', quality: 0.98 },
-                            html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: 1400 }, // Use wider window
-                            jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' } // Landscape orientation
+                            html2canvas: { scale: 2, useCORS: true, logging: false, windowWidth: 1400 }, // استخدم نافذة أعرض
+                            jsPDF: { unit: 'in', format: 'letter', orientation: 'landscape' } // اتجاه أفقي
                         };
                         html2pdf().from(element).set(opt).save();
                     } else {
@@ -313,8 +326,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- Main Initialization Function (Adapted) ---
         const loadAndRouteDashboard = () => {
+            // استدعاء الترجمة أولاً لإصلاح مشكلة المفاتيح
+            if (typeof window.applyTranslations === 'function') {
+                console.log("[DEBUG] Applying translations (dashboard-app.js)...");
+                window.applyTranslations();
+            } else {
+                console.error("[!!! DEBUG !!!] applyTranslations function not found. Check main.js");
+            }
+
             if (!loadProcessedData()) {
-                // If loading current data fails, show error and stop
+                // إذا فشل تحميل البيانات الحالية، اعرض رسالة خطأ وتوقف
                 console.log("[DEBUG] No processed data found at all.");
                 if (UI.loadingMessage) {
                      UI.loadingMessage.textContent = t_page('noData');
@@ -323,37 +344,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                  if (UI.singlePeriodView) UI.singlePeriodView.style.display = 'none';
                  if (UI.trendAnalysisView) UI.trendAnalysisView.style.display = 'none';
-                 return; // Stop execution
+                 return; // توقف
             }
 
-            // Calculate metrics for current period
+            // حساب المقاييس للفترة الحالية
             state.metricsCurrent = calculateDashboardMetrics(state.statementsCurrent);
             if (!state.metricsCurrent) {
                  console.error("[DEBUG] Failed to calculate metrics for current period.");
-                 return; // Stop if metrics calculation fails
+                 if (UI.loadingMessage) {
+                     UI.loadingMessage.textContent = t_page('noData'); // أو رسالة خطأ أخرى
+                     UI.loadingMessage.classList.remove('alert-warning');
+                     UI.loadingMessage.classList.add('alert-danger');
+                 }
+                 return; 
             }
 
             if (state.hasDataPrevious) {
-                // --- Show Trend Analysis View ---
+                // --- اعرض عرض تحليل الاتجاه ---
                 state.metricsPrevious = calculateDashboardMetrics(state.statementsPrevious);
                 if (state.metricsPrevious) {
                     console.log("[DEBUG] Previous data found. Showing Trend Analysis View.");
                     if (UI.loadingMessage) UI.loadingMessage.style.display = 'none';
                     if (UI.singlePeriodView) UI.singlePeriodView.style.display = 'none';
-                    if (UI.trendAnalysisView) UI.trendAnalysisView.style.display = 'block'; // Use block
+                    if (UI.trendAnalysisView) UI.trendAnalysisView.style.display = 'block'; // كان flex، block أفضل
                     renderTrendKPIs(state.metricsCurrent, state.metricsPrevious);
                     renderTrendCharts(state.metricsCurrent, state.metricsPrevious);
                 } else {
                     console.warn("[DEBUG] Previous data found but failed to calculate metrics. Falling back to Single Period View.");
-                    state.hasDataPrevious = false; // Treat as if no previous data
-                    if (UI.singlePeriodView) UI.singlePeriodView.style.display = 'block';
+                    state.hasDataPrevious = false; // تعامل كأنها فترة واحدة
+                    if (UI.loadingMessage) UI.loadingMessage.style.display = 'none';
                     if (UI.trendAnalysisView) UI.trendAnalysisView.style.display = 'none';
+                    if (UI.singlePeriodView) UI.singlePeriodView.style.display = 'block';
                     renderGaugeKPIs(state.metricsCurrent);
                     renderMainCharts(state.metricsCurrent);
                     renderSummaryAndAlerts(state.metricsCurrent);
                 }
             } else {
-                // --- Show Single Period View (Gauges) ---
+                // --- اعرض عرض الفترة الواحدة ---
                 console.log("[DEBUG] Only current data found. Showing Single Period View.");
                 if (UI.loadingMessage) UI.loadingMessage.style.display = 'none';
                 if (UI.trendAnalysisView) UI.trendAnalysisView.style.display = 'none';
@@ -363,45 +390,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderSummaryAndAlerts(state.metricsCurrent);
             }
             
-            if (typeof window.applyTranslations === 'function') {
-                console.log("[DEBUG] Applying translations (dashboard-app.js)...");
-                window.applyTranslations();
-            } else {
-                console.error("[!!! DEBUG !!!] applyTranslations function not found. Check main.js");
-            }
-            
-            initPdfExport(); // Initialize PDF export button
+            initPdfExport(); // قم بربط زر تصدير PDF
         };
         
-        // Simplified Init (bypasses library loading wait)
+        // Simplified Init
         console.log("[DEBUG] Bypassing library load wait. Proceeding with dashboard logic...");
         loadAndRouteDashboard();
-        
-        // Load libraries in background (for PDF export)
-        loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js", () => { console.log("html2pdf loaded."); }, () => {});
-
 
     }, 100); // 100ms delay
-    
-    // Helper function to load scripts
-    const loadScript = (src, onload, onerror) => {
-        let script = document.querySelector(`script[src="${src}"]`);
-        if (script) {
-            if (script.dataset.loaded === 'true') { onload(); }
-            else if (script.dataset.loaded === 'false') { onerror(); }
-            else { 
-                 script.addEventListener('load', onload);
-                 script.addEventListener('error', onerror);
-            }
-            return;
-        }
-        script = document.createElement('script');
-        script.src = src;
-        script.async = true; 
-        script.onload = () => { script.dataset.loaded = 'true'; onload(); };
-        script.onerror = () => { script.dataset.loaded = 'false'; console.error(`Failed to load script: ${src}`); onerror(); };
-        document.head.appendChild(script);
-    };
-
 });
-
