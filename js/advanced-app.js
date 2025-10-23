@@ -1,6 +1,5 @@
-// js/advanced-app.js (REFACTORED + Translation Fix + PDF + ***FINAL: Save Ratios***)
+// js/advanced-app.js 
 
-// *** 1. Translations (with merge logic) ***
 const advancedTranslations = {
     ar: {
         pageTitle: "التحليلات المتقدمة — المحلل المالي", pageHeader: "التحليلات المتقدمة", pageSubheader: "استخدم أدوات تحليلية متخصصة للحصول على رؤى أعمق حول أداء عملك.",
@@ -945,3 +944,4 @@ document.addEventListener('DOMContentLoaded', () => {
         
     }, 0); 
 });
+
