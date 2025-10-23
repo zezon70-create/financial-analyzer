@@ -1,6 +1,4 @@
-// js/dashboard-app.js (REFACTORED to use financialDataCurrent + PDF Export)
-
-// *** مُضاف: منطق دمج الترجمات ***
+// js/dashboard-app.js 
 const dashboardTranslations = {
     ar: {
         pageTitle: "لوحة التحكم — المحلل المالي",
@@ -88,18 +86,12 @@ const dashboardTranslations = {
         trend_zscore: "Z-Score"
     }
 };
-
-// *** مُضاف: منطق دمج الترجمات ***
 window.pageTranslations = window.pageTranslations || {};
 window.pageTranslations.ar = { ...(window.pageTranslations.ar || {}), ...(dashboardTranslations.ar || {}) };
 window.pageTranslations.en = { ...(window.pageTranslations.en || {}), ...(dashboardTranslations.en || {}) };
-// *** نهاية الإضافة ***
-
 document.addEventListener('DOMContentLoaded', () => {
-
     setTimeout(() => {
         console.log("[DEBUG] Initializing dashboard-app.js after delay...");
-
         const state = {
             statementsCurrent: null,
             statementsPrevious: null,
@@ -111,7 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         const lang = localStorage.getItem('lang') || 'ar';
         const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;
-
         const UI = {
             loadingMessage: document.getElementById('loadingMessage'),
             singlePeriodView: document.getElementById('singlePeriodView'),
@@ -139,7 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const formatPercent = (value, digits = 1) => isFinite(value) && !isNaN(value) ? `${(value * 100).toFixed(digits)}%` : "N/A";
         const formatRatio = (value, digits = 2) => isFinite(value) && !isNaN(value) ? value.toFixed(digits) : "N/A";
         const formatCurrency = (value) => isFinite(value) && !isNaN(value) ? value.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 }) : "N/A";
-
         // --- Core Calculation Engine (Simplified) ---
 
         // *** مُلغى: دالة calculateMetrics القديمة ***
@@ -414,3 +404,4 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
 });
+
