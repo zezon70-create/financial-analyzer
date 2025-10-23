@@ -55,13 +55,9 @@ const benchmarksTranslations = {
     }
 };
 
-// *** مُضاف: منطق دمج الترجمات ***
 window.pageTranslations = window.pageTranslations || {};
 window.pageTranslations.ar = { ...(window.pageTranslations.ar || {}), ...(benchmarksTranslations.ar || {}) };
 window.pageTranslations.en = { ...(window.pageTranslations.en || {}), ...(benchmarksTranslations.en || {}) };
-// *** نهاية الإضافة ***
-
-
 document.addEventListener('DOMContentLoaded', () => {
 
     const state = {
