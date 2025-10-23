@@ -1,6 +1,4 @@
-// js/benchmarks-app.js (REFACTORED to use 'calculatedRatios' + PDF Export + Translation Fix)
-
-// *** مُضاف: منطق دمج الترجمات ***
+// js/benchmarks-app.js
 const benchmarksTranslations = {
     ar: {
         pageTitle: "المقارنات المعيارية — المحلل المالي",
