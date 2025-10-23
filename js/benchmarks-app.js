@@ -12,7 +12,7 @@ const benchmarksTranslations = {
         currentRatio: "نسبة التداول", quickRatio: "نسبة السيولة السريعة",
         netProfitMargin: "هامش صافي الربح", grossProfitMargin: "هامش الربح الإجمالي", roa: "العائد على الأصول (ROA)", roe: "العائد على حقوق الملكية (ROE)",
         debtToEquity: "نسبة الديون لحقوق الملكية", debtToAssets: "نسبة الديون للأصول",
-        // *** مُعدل: استخدام نفس المفاتيح من advanced-app.js ***
+        // *** مُضاف: استخدام نفس المفاتيح من advanced-app.js ***
         inventoryTurnover: "معدل دوران المخزون",
         assetTurnover: "معدل دوران الأصول",
         receivablesTurnover: "معدل دوران العملاء",
@@ -21,7 +21,7 @@ const benchmarksTranslations = {
         financialLeverage: "الرافعة المالية",
         cashRatio: "نسبة النقد",
         netWorkingCapital: "صافي راس المال العامل",
-        // *** نهاية التعديل ***
+        // *** نهاية الإضافة ***
         selectIndustryLabel: "اختر قطاع الصناعة للمقارنة",
         selectIndustryDesc: "اختيار قطاع سيضيف مقارنة مع متوسطات الصناعة إلى جداول النسب.",
         industry_general: "عام / غير محدد", industry_retail: "تجارة التجزئة", industry_manufacturing: "الصناعة التحويلية", industry_services: "الخدمات", industry_construction: "المقاولات",
@@ -54,10 +54,16 @@ const benchmarksTranslations = {
         comparison_better: "Better", comparison_worse: "Worse", comparison_similar: "Similar"
     }
 };
+
+// *** مُضاف: منطق دمج الترجمات ***
 window.pageTranslations = window.pageTranslations || {};
 window.pageTranslations.ar = { ...(window.pageTranslations.ar || {}), ...(benchmarksTranslations.ar || {}) };
 window.pageTranslations.en = { ...(window.pageTranslations.en || {}), ...(benchmarksTranslations.en || {}) };
+// *** نهاية الإضافة ***
+
+
 document.addEventListener('DOMContentLoaded', () => {
+
     const state = {
         ratios: {}, // سيتم ملؤها من localStorage
         hasData: false,
@@ -66,30 +72,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const lang = localStorage.getItem('lang') || 'ar';
     // *** مُعدل: التأكد من أن t_page يستخدم الكائن المدمج ***
     const t = (key) => (window.pageTranslations[lang]?.[key] || `[${key}]`);
+
     const UI = {
         industrySelect: document.getElementById('industrySelectBenchmark'),
         warningDiv: document.getElementById('ratiosDataWarningBenchmark'),
         exportPdfBtn: document.getElementById('exportPdfBtn') // *** مُضاف ***
     };
+
     // بيانات المقارنة المعيارية (يمكن توسيعها لتشمل كل النسب)
     const industryBenchmarks = {
         general: {}, // لا مقارنات
-        retail: { currentRatio: 1.5, quickRatio: 0.5, netProfitMargin: 0.03, roe: 0.15, debtToEquity: 1.2, assetTurnover: 2.0, grossProfitMargin: 0.30, avgCollectionPeriod: 15, inventoryTurnover: 8.0 },
-        manufacturing: { currentRatio: 1.8, quickRatio: 0.9, netProfitMargin: 0.06, roe: 0.12, debtToEquity: 0.8, assetTurnover: 1.0, grossProfitMargin: 0.35, avgCollectionPeriod: 45, inventoryTurnover: 6.0 },
-        services: { currentRatio: 1.2, quickRatio: 1.0, netProfitMargin: 0.08, roe: 0.18, debtToEquity: 1.0, assetTurnover: 1.2, grossProfitMargin: 0.50, avgCollectionPeriod: 35, inventoryTurnover: 20.0 },
-        construction: { currentRatio: 1.3, quickRatio: 0.8, netProfitMargin: 0.04, roe: 0.14, debtToEquity: 1.5, assetTurnover: 1.5, grossProfitMargin: 0.20, avgCollectionPeriod: 60, inventoryTurnover: 10.0 }
+        retail: { currentRatio: 1.5, quickRatio: 0.5, netProfitMargin: 0.03, roe: 0.15, debtToEquity: 1.2, assetTurnover: 2.0, grossProfitMargin: 0.30, avgCollectionPeriod: 15, inventoryTurnover: 8.0, interestCoverageRatio: 4.0 },
+        manufacturing: { currentRatio: 1.8, quickRatio: 0.9, netProfitMargin: 0.06, roe: 0.12, debtToEquity: 0.8, assetTurnover: 1.0, grossProfitMargin: 0.35, avgCollectionPeriod: 45, inventoryTurnover: 6.0, interestCoverageRatio: 5.0 },
+        services: { currentRatio: 1.2, quickRatio: 1.0, netProfitMargin: 0.08, roe: 0.18, debtToEquity: 1.0, assetTurnover: 1.2, grossProfitMargin: 0.50, avgCollectionPeriod: 35, inventoryTurnover: 20.0, interestCoverageRatio: 6.0 },
+        construction: { currentRatio: 1.3, quickRatio: 0.8, netProfitMargin: 0.04, roe: 0.14, debtToEquity: 1.5, assetTurnover: 1.5, grossProfitMargin: 0.20, avgCollectionPeriod: 60, inventoryTurnover: 10.0, interestCoverageRatio: 3.5 }
     };
+
     // 3. Helper Functions
     const formatPercent = (value, digits = 1) => isFinite(value) && !isNaN(value) ? `${(value * 100).toFixed(digits)}%` : "N/A";
     const formatRatio = (value, digits = 2) => isFinite(value) && !isNaN(value) ? value.toFixed(digits) : "N/A";
     const formatDays = (value) => isFinite(value) && !isNaN(value) ? `${value.toFixed(0)} ${lang === 'ar' ? 'يوم' : 'Days'}` : "N/A";
+    const formatNumber = (value, digits = 0) => isFinite(value) && !isNaN(value) ? value.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }) : "N/A";
+
+
     // 4. *** مُعدل: دالة قراءة النسب الجاهزة ***
     const loadProcessedRatios = () => {
         state.ratios = {}; state.hasData = false;
         console.log("[DEBUG] Loading calculatedRatios from localStorage...");
         try {
-            const rawDataString = localStorage.getItem('calculatedRatios');
-            if (!rawDataString) throw new Error("localStorage 'calculatedRatios' is missing.");
+            // *** تم التعديل: القراءة من calculatedRatios ***
+            const rawDataString = localStorage.getItem('calculatedRatios'); 
+            if (!rawDataString) throw new Error("localStorage 'calculatedRatios' is missing. Run 'Advanced' page first.");
             
             const parsedData = JSON.parse(rawDataString);
             if (typeof parsedData !== 'object' || parsedData === null) throw new Error("Parsed 'calculatedRatios' is not a valid object.");
@@ -104,6 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return false; 
         }
     };
+    
+    // *** مُلغى: دالة calculateData القديمة ***
+
     // 5. Rendering Functions
     const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => {
         const container = document.getElementById(divId);
@@ -115,31 +131,40 @@ document.addEventListener('DOMContentLoaded', () => {
         const showBenchmarks = state.selectedIndustry !== 'general';
         
         // *** مُعدل: إزالة table-light من thead لإصلاح الوضع الليلي ***
-        let tableHTML = `<h5 class="mb-3">${t(categoryTitleKey)}</h5> <div class="table-responsive"> <table class="table table-sm table-striped"> <thead><tr> <th>${t('thRatio')}</th> <th class="text-end">${t('thValue')}</th> ${showBenchmarks ? `<th class="text-end">${t('thIndustryAvg')}</th>` : ''} <th>${t('thComment')}</th> </tr></thead> <tbody>`;        
+        let tableHTML = `<h5 class="mb-3">${t(categoryTitleKey)}</h5> <div class="table-responsive"> <table class="table table-sm table-striped"> <thead><tr> <th>${t('thRatio')}</th> <th class="text-end">${t('thValue')}</th> ${showBenchmarks ? `<th class="text-end">${t('thIndustryAvg')}</th>` : ''} <th>${t('thComment')}</th> </tr></thead> <tbody>`;
+        
         ratioKeys.forEach(key => {
             if (typeof state.ratios[key] === 'undefined') return; // تخطي النسبة إذا لم تكن موجودة
+
             const value = state.ratios[key]; 
             const benchmarkValue = benchmarks[key]; 
+            // *** مُعدل: تحديد التنسيق بناءً على نوع النسبة ***
             const isPercentage = key.includes('Margin') || key.includes('roa') || key.includes('roe');
             const isDays = key.includes('avgCollectionPeriod');
-            // Format values
+            const isNumber = key === 'netWorkingCapital';
+
             let formattedValue;
             if (isDays) formattedValue = formatDays(value);
             else if (isPercentage) formattedValue = formatPercent(value);
-            else formattedValue = formatRatio(value);           
+            else if (isNumber) formattedValue = formatNumber(value, 0);
+            else formattedValue = formatRatio(value);
+            
             let formattedBenchmark = '-';
             if (showBenchmarks && typeof benchmarkValue !== 'undefined' && isFinite(benchmarkValue)) {
                 if (isDays) formattedBenchmark = formatDays(benchmarkValue);
                 else if (isPercentage) formattedBenchmark = formatPercent(benchmarkValue);
+                else if (isNumber) formattedBenchmark = formatNumber(benchmarkValue, 0);
                 else formattedBenchmark = formatRatio(benchmarkValue);
             }
+
             // Comparison logic
             let comparisonIndicator = ''; 
             let comparisonText = '';
             if (showBenchmarks && typeof benchmarkValue !== 'undefined' && isFinite(value) && isFinite(benchmarkValue)) { 
                 const tolerance = 0.1 * Math.abs(benchmarkValue); 
                 // Ratios where 'lower is better'
-                const isLowerBetter = key === 'debtToEquity' || key === 'debtToAssets' || key === 'avgCollectionPeriod';               
+                const isLowerBetter = key === 'debtToEquity' || key === 'debtToAssets' || key === 'avgCollectionPeriod';
+                
                 let isBetter, isWorse;
                 if (isLowerBetter) {
                     isBetter = value < benchmarkValue - tolerance;
@@ -148,6 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     isBetter = value > benchmarkValue + tolerance;
                     isWorse = value < benchmarkValue - tolerance;
                 }
+
                 if (isBetter) { 
                     comparisonIndicator = '<i class="bi bi-arrow-up-circle-fill text-success ms-1"></i>'; 
                     comparisonText = `(${t('comparison_better')})`; 
@@ -158,7 +184,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     comparisonIndicator = '<i class="bi bi-arrow-left-right text-warning ms-1"></i>'; 
                     comparisonText = `(${t('comparison_similar')})`; 
                 } 
-            }          
+            }
+            
             tableHTML += `<tr> <td>${t(key)}</td> <td class="text-end"><strong>${formattedValue}</strong> ${comparisonIndicator}</td> ${showBenchmarks ? `<td class="text-end">${formattedBenchmark}</td>` : ''} <td class="text-muted small">${comparisonText}</td> </tr>`;
         });
         container.innerHTML = tableHTML + `</tbody></table></div>`;
@@ -169,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderRatioCategory('liquidityRatiosBenchmark', 'liquidityRatios', ['currentRatio', 'quickRatio', 'cashRatio', 'netWorkingCapital']);
         renderRatioCategory('profitabilityRatiosBenchmark', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
         renderRatioCategory('leverageRatiosBenchmark', 'leverageRatios', ['debtToAssets', 'debtToEquity', 'interestCoverageRatio', 'financialLeverage']);
-        renderRatioCategory('efficiencyRatiosBenchmark', 'activityRatios', ['assetTurnover', 'inventoryTurnover', 'receivablesTurnover', 'avgCollectionPeriod']);
+        renderRatioCategory('activityRatiosBenchmark', 'activityRatios', ['assetTurnover', 'inventoryTurnover', 'receivablesTurnover', 'avgCollectionPeriod']);
     };
     
     // *** مُضاف: دالة تصدير PDF ***
@@ -190,10 +217,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     html2pdf().from(element).set(opt).save();
                 } else {
                     console.error("html2pdf library is not loaded."); 
-                    alert("PDF export failed. Library not loaded.");
+                    alert("PDF export failed. Library not loaded. Please try again in a moment.");
                 }
              });
-         }
+         } else { console.warn("Export PDF Button not found"); }
     };
     
     // 6. Initialization
@@ -202,13 +229,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!UI.industrySelect || !UI.warningDiv) {
             console.error("Benchmark component critical elements not found."); return;
         }
-
-        // Apply translations first to populate select
+        
+        // *** مُعدل: استدعاء الترجمة أولاً ***
         if (typeof window.applyTranslations === 'function') {
             console.log("[DEBUG] Calling global applyTranslations...");
             window.applyTranslations();
         } else {
-            console.warn("[DEBUG] global applyTranslations not found (main.js might be broken), but benchmarks-app.js will still run.");
+            console.warn("[DEBUG] global applyTranslations not found.");
         }
 
         const industries = ['general', 'retail', 'manufacturing', 'services', 'construction'];
@@ -236,27 +263,27 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("[DEBUG] Benchmarks page initialization finished.");
     };
     
-    // Load external scripts (for PDF) and then init
-    loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js", init, init); // Call init regardless of success/fail
-
-});
-
-// *** مُضاف: دالة تحميل السكربت (لأنها غير موجودة في هذا الملف) ***
-const loadScript = (src, onload, onerror) => {
-    let script = document.querySelector(`script[src="${src}"]`);
-    if (script) {
-        if (script.dataset.loaded === 'true') { onload(); }
-        else if (script.dataset.loaded === 'false') { onerror(); }
-        else { 
-             script.addEventListener('load', onload);
-             script.addEventListener('error', onerror);
+    // Helper function to load scripts (needed for PDF export)
+    const loadScript = (src, onload, onerror) => {
+        let script = document.querySelector(`script[src="${src}"]`);
+        if (script) {
+            if (script.dataset.loaded === 'true') { onload(); }
+            else if (script.dataset.loaded === 'false') { onerror(); }
+            else { 
+                 script.addEventListener('load', onload);
+                 script.addEventListener('error', onerror);
+            }
+            return;
         }
-        return;
-    }
-    script = document.createElement('script');
-    script.src = src;
-    script.async = true; 
-    script.onload = () => { script.dataset.loaded = 'true'; onload(); };
-    script.onerror = () => { script.dataset.loaded = 'false'; console.error(`Failed to load script: ${src}`); onerror(); };
-    document.head.appendChild(script);
-};
+        script = document.createElement('script');
+        script.src = src;
+        script.async = true; 
+        script.onload = () => { script.dataset.loaded = 'true'; onload(); };
+        script.onerror = () => { script.dataset.loaded = 'false'; console.error(`Failed to load script: ${src}`); onerror(); };
+        document.head.appendChild(script);
+    };
+
+    // Load PDF library in background and then init
+    loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js", init, init); // Call init regardless
+    
+});
