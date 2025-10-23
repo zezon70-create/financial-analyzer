@@ -1,5 +1,4 @@
 // js/advanced-app.js 
-
 const advancedTranslations = {
     ar: {
         pageTitle: "التحليلات المتقدمة — المحلل المالي", pageHeader: "التحليلات المتقدمة", pageSubheader: "استخدم أدوات تحليلية متخصصة للحصول على رؤى أعمق حول أداء عملك.",
@@ -102,13 +101,9 @@ const advancedTranslations = {
     }
 };
 
-// *** مُضاف: منطق دمج الترجمات ***
 window.pageTranslations = window.pageTranslations || {};
 window.pageTranslations.ar = { ...(window.pageTranslations.ar || {}), ...(advancedTranslations.ar || {}) };
 window.pageTranslations.en = { ...(window.pageTranslations.en || {}), ...(advancedTranslations.en || {}) };
-// *** نهاية الإضافة ***
-
-
 document.addEventListener('DOMContentLoaded', () => {
 
     setTimeout(() => {
@@ -944,4 +939,5 @@ document.addEventListener('DOMContentLoaded', () => {
         
     }, 0); 
 });
+
 
