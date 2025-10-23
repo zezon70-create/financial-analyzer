@@ -840,6 +840,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("Running full analysis...");
             if (!loadProcessedData()) {
                 console.error("Failed to load essential processed data (financialDataCurrent). Aborting analysis.");
+                // Show a prominent error to the user
                 Object.values(UI).forEach(el => { 
                     if (el && el.id && !['languageSelect', 'themeToggle'].includes(el.id)) {
                     }
