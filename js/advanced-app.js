@@ -50,7 +50,6 @@ const advancedTranslations = {
         btnUpdateValuation: "تحديث مؤشرات التقييم"
     },
     en: {
-        // *** مُضاف: ترجمات إنجليزية كاملة ***
         pageTitle: "Advanced Analytics — Financial Analyzer", pageHeader: "Advanced Analytics", pageSubheader: "Use specialized analytical tools for deeper insights into your business performance.",
         tabRatios: "Financial Ratios", tabBreakeven: "Break-even Analysis", tabDupont: "DuPont Analysis", tabVertical: "Vertical Analysis", tabZScore: "Altman Z-Score", tabCashFlow: "Cash Flow Analysis", tabEVA: "Economic Value Added (EVA)",
         tabHorizontal: "Horizontal Analysis", tabCCC: "Cash Conversion Cycle", tabScenario: "Scenario Analysis",
@@ -106,6 +105,7 @@ window.pageTranslations.en = { ...(window.pageTranslations.en || {}), ...(advanc
 document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         console.log("[DEBUG] Starting advanced-app.js initialization after delay...");
+
         const state = { 
             statementsCurrent: null,  
             statementsPrevious: null, 
@@ -118,7 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const lang = localStorage.getItem('lang') || 'ar';
         const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`; 
         const UI = { 
-            // All existing UI elements
             smartSummary: document.getElementById('smartSummary'), alertsArea: document.getElementById('alertsArea'),
             fixedCosts: document.getElementById('fixedCosts'), variableCost: document.getElementById('variableCost'), sellingPrice: document.getElementById('sellingPrice'),
             calculateBreakeven: document.getElementById('calculateBreakeven'), breakevenResults: document.getElementById('breakevenResults'),
@@ -201,10 +200,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.warn("[DEBUG] 'financialDataPrevious' not found. Comparative analysis will be limited.");
             }            
             return state.hasValidData; 
-        };        
+        };
         const calculateAllRatios = () => {
              state.ratios = {}; 
-             if (!state.hasValidData) { console.warn("Ratios skipped: No valid processed data."); return false; }            
+             if (!state.hasValidData) { console.warn("Ratios skipped: No valid processed data."); return false; }              
              const f = state.statementsCurrent.totals;
              const fPrev = state.statementsPrevious?.totals || {}; 
              try { 
@@ -231,7 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  const avgEquity = state.hasPreviousData ? (equity + (fPrev.totalEquity || 0)) / 2 : equity;
                  const avgInventory = state.hasPreviousData ? (inventory + (fPrev.inventory || 0)) / 2 : inventory;
                  const avgReceivables = state.hasPreviousData ? (accountsReceivable + (fPrev.accountsReceivable || 0)) / 2 : accountsReceivable;
-                 const avgPayables = state.hasPreviousData ? (accountsPayable + (fPrev.accountsPayable || 0)) / 2 : accountsPayable;          
+                 const avgPayables = state.hasPreviousData ? (accountsPayable + (fPrev.accountsPayable || 0)) / 2 : accountsPayable;               
                  // Z-Score
                  const x1 = assets !== 0 ? workingCapital / assets : Infinity; 
                  const x2 = assets !== 0 ? retainedEarnings / assets : Infinity; 
@@ -258,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
                  const debtToAssets = avgAssets > 0 ? liabilities / avgAssets : Infinity;
                  const debtToEquity = avgEquity > 0 ? liabilities / avgEquity : Infinity;
                  const interestCoverageRatio = interestExpense !== 0 ? ebit / interestExpense : Infinity;
-                 const financialLeverage = (avgEquity !== 0 && avgAssets !== 0) ? avgAssets / avgEquity : Infinity;              
+                 const financialLeverage = (avgEquity !== 0 && avgAssets !== 0) ? avgAssets / avgEquity : Infinity;                 
                  // Profitability
                  const grossProfitMargin = revenue !== 0 ? grossProfit / revenue : 0;
                  const netProfitMargin = revenue !== 0 ? netProfit / revenue : 0;
@@ -269,14 +268,14 @@ document.addEventListener('DOMContentLoaded', () => {
                      numberOfShares: toNum(UI.externalNumShares?.value),
                      marketPricePerShare: toNum(UI.externalMarketPrice?.value),
                      totalDividends: toNum(UI.externalTotalDividends?.value)
-                 };              
+                 };                
                  const eps = externalInputs.numberOfShares > 0 ? netProfit / externalInputs.numberOfShares : NaN;
                  const bookValuePerShare = externalInputs.numberOfShares > 0 ? equity / externalInputs.numberOfShares : NaN; 
                  const dividendsPerShare = externalInputs.numberOfShares > 0 ? externalInputs.totalDividends / externalInputs.numberOfShares : NaN;
                  const peRatio = isFinite(eps) && eps !== 0 && externalInputs.marketPricePerShare > 0 ? externalInputs.marketPricePerShare / eps : NaN;
                  const pbRatio = isFinite(bookValuePerShare) && bookValuePerShare !== 0 && externalInputs.marketPricePerShare > 0 ? externalInputs.marketPricePerShare / bookValuePerShare : NaN;
                  const dividendYield = externalInputs.marketPricePerShare > 0 ? dividendsPerShare / externalInputs.marketPricePerShare : NaN;
-                 const payoutRatio = netProfit > 0 ? externalInputs.totalDividends / netProfit : NaN;               
+                 const payoutRatio = netProfit > 0 ? externalInputs.totalDividends / netProfit : NaN;             
                  // Other CF Ratios (Simplified)
                  const ocf_estimated = netProfit + depreciation;
                  const capex_estimated = depreciation; // Proxy
@@ -302,7 +301,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      _ocf_estimated: ocf_estimated,
                      _capex_estimated: capex_estimated,
                      _depreciation: depreciation // Store depreciation for CF tab
-                 }; 
+                 };                  
                  localStorage.setItem('calculatedRatios', JSON.stringify(state.ratios));
                  console.log("Calculated Ratios (from processed data):", state.ratios); return true; 
              } catch(e) { 
@@ -312,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         // ==============================================
         // === RENDERING FUNCTIONS (Adapted for new data source) ===
-        // ==============================================        
+        // ==============================================       
         const getRatioComment = (key, value) => {
             if (!isFinite(value) && isNaN(value)) return "N/A"; 
             if (isNaN(value)) {
@@ -401,7 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const npm = state.ratios.netProfitMargin; const at = state.ratios.assetTurnover; const em = state.ratios.equityMultiplier;
             const dupontROE = (isFinite(npm) && isFinite(at) && isFinite(em)) ? npm * at * em : Infinity;
             if(UI.dupontROE) UI.dupontROE.textContent = formatPercent(dupontROE); if(UI.dupontNPM) UI.dupontNPM.textContent = formatPercent(npm); if(UI.dupontAT) UI.dupontAT.textContent = formatRatio(at); if(UI.dupontEM) UI.dupontEM.textContent = formatRatio(em);
-            if(UI.dupontValueNPM) UI.dupontValueNPM.textContent = formatPercent(npm); if(UI.dupontValueAT) UI.dupontValueAT.textContent = formatRatio(at); if(UI.dupontValueEM) UI.dupontValueEM.textContent = formatRatio(em); if(UI.dupontValueROE) UI.dupontValueROE.textContent = formatPercent(dupontROE);          
+            if(UI.dupontValueNPM) UI.dupontValueNPM.textContent = formatPercent(npm); if(UI.dupontValueAT) UI.dupontValueAT.textContent = formatRatio(at); if(UI.dupontValueEM) UI.dupontValueEM.textContent = formatRatio(em); if(UI.dupontValueROE) UI.dupontValueROE.textContent = formatPercent(dupontROE);            
             let interpretation = '';
             if (isFinite(dupontROE)) {
                 const highROE = dupontROE >= 0.15; interpretation += highROE ? `<p>${t_page('dupontInterpretationHighROE')}</p><ul>` : `<p>${t_page('dupontInterpretationLowROE')}</p><ul>`;
@@ -415,8 +414,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } 
             if(UI.dupontInterpretation) UI.dupontInterpretation.innerHTML = interpretation;
             console.log("[DEBUG] Finished displaying DuPont.");
-        };
-        
+        };        
         const calculateAndDisplayVerticalAnalysis = () => { 
             if (!state.hasValidData || !state.statementsCurrent || !state.statementsCurrent.bs || !state.statementsCurrent.is) { 
                 if(UI.verticalDataWarning) { UI.verticalDataWarning.textContent = t_page('verticalDataWarning'); UI.verticalDataWarning.style.display = 'block'; } 
@@ -427,7 +425,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if(UI.verticalDataWarning) UI.verticalDataWarning.style.display = 'none'; 
             if(UI.verticalResultsContainer) UI.verticalResultsContainer.style.display = 'block'; 
             if(UI.verticalInterpretation) UI.verticalInterpretation.style.display = 'block';
-
             const totalAssets = state.statementsCurrent.totals.totalAssets || 0; 
             const totalRevenue = state.statementsCurrent.totals.totalRevenue || 0; 
             const totalLiabEquity = (state.statementsCurrent.totals.totalLiabilities || 0) + (state.statementsCurrent.totals.totalEquity || 0);
@@ -444,7 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ...state.statementsCurrent.bs.equityCapital,
                 { account: t_page('retainedEarnings'), value: state.statementsCurrent.totals.retainedEarnings || 0 }
             ];
-            const sortedBsItems = buildSortedList(bsAllItems);         
+            const sortedBsItems = buildSortedList(bsAllItems);            
             sortedBsItems.forEach(item => { 
                 const percentage = totalAssets !== 0 ? ((item.value || 0) / totalAssets) : 0; 
                 const displayValue = Math.abs(item.value || 0);
@@ -470,8 +467,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (isRevenueA) return -1;
                 if (isRevenueB) return 1;
                 return Math.abs(b.value || 0) - Math.abs(a.value || 0);
-            });
-            
+            });            
             sortedIsItems.forEach(item => { 
                 const itemValue = item.value || 0;
                 const percentage = totalRevenue !== 0 ? (itemValue / totalRevenue) : 0; 
@@ -489,7 +485,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (largestAsset && totalAssets !== 0) {
                  const percent = ((largestAsset.value || 0) / totalAssets);
                  comments.push(t_page('verticalLargestAsset').replace('{account}', largestAsset.account).replace('{percent}', formatPercent(percent)));
-            }           
+            }            
             const largestLiabItem = [...state.statementsCurrent.bs.currentLiabilities, ...state.statementsCurrent.bs.nonCurrentLiabilities].sort((a,b) => b.value-a.value)[0];
              if (largestLiabItem && totalLiabEquity !== 0) {
                  const percent = (Math.abs(largestLiabItem.value || 0) / totalLiabEquity);
@@ -499,7 +495,7 @@ document.addEventListener('DOMContentLoaded', () => {
              if (largestEquityItem && totalLiabEquity !== 0) {
                  const percent = (Math.abs(largestEquityItem.value || 0) / totalLiabEquity);
                  comments.push(t_page('verticalLargestEquity').replace('{account}', largestEquityItem.account).replace('{percent}', formatPercent(percent)));
-            }          
+            }            
              if (totalRevenue !== 0) {
                 const grossMarginPercent = (state.statementsCurrent.totals.grossProfit || 0) / totalRevenue;
                 comments.push(t_page('verticalGrossMarginComment').replace('{percent}', formatPercent(grossMarginPercent)));
@@ -509,7 +505,6 @@ document.addEventListener('DOMContentLoaded', () => {
                  const percent = (Math.abs(largestExpense.value || 0) / totalRevenue);
                  comments.push(t_page('verticalLargestExpense').replace('{account}', largestExpense.account).replace('{percent}', formatPercent(percent)));
             }
-
             comments.forEach(comment => { interpretationHTML += `<li>${comment}</li>`; });
             if (UI.verticalInterpretationList) UI.verticalInterpretationList.innerHTML = interpretationHTML;
         };
@@ -554,8 +549,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
             if(UI.evaDataWarning) UI.evaDataWarning.style.display = 'none';
-            if(UI.evaResultsContainer) UI.evaResultsContainer.style.display = 'block';
-            
+            if(UI.evaResultsContainer) UI.evaResultsContainer.style.display = 'block';            
             const f = state.statementsCurrent.totals; 
             const wacc = toNum(UI.waccInput.value) / 100.0;
             const taxRate = toNum(UI.taxRateInput.value) / 100.0;
@@ -636,7 +630,7 @@ document.addEventListener('DOMContentLoaded', () => {
              let bsTableHTML = `<table class="table table-sm table-striped"><thead><tr><th>${t_page('thAccount')}</th><th class="text-end">${t_page('thCurrentPeriod')}</th><th class="text-end">${t_page('thPreviousPeriod')}</th><th class="text-end">${t_page('thChangeAbs')}</th><th class="text-end">${t_page('thChangePct')}</th></tr></thead><tbody>`;
              bsTableHTML += generateHorizontalRows(bsItemsCurrent, bsItemsPrevious);
              bsTableHTML += `</tbody></table>`;
-             if(UI.horizontalBSTable) UI.horizontalBSTable.innerHTML = bsTableHTML;              
+             if(UI.horizontalBSTable) UI.horizontalBSTable.innerHTML = bsTableHTML;             
              // Combine IS Items
              const isItemsCurrent = [
                 ...(state.statementsCurrent.is.revenue || []), 
@@ -790,7 +784,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.log("Applying translations before initial render...");
                     window.applyTranslations(); 
                 } 
-                else { console.warn("applyTranslations function not found."); }              
+                else { console.warn("applyTranslations function not found."); }             
                 if (runAnalysis()) {
                     console.log("[DEBUG] Initial analysis successful. Rendering other tabs...");
                     calculateAndDisplayDupont(); 
@@ -802,7 +796,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     calculateAndDisplayCCC(); 
                 } else {
                      console.error("[DEBUG] Initial analysis FAILED. Other tabs will not be rendered.");
-                }             
+                }              
                 console.log("Advanced page initialized.");
             }, 100); 
             // Event Listeners
@@ -850,6 +844,6 @@ document.addEventListener('DOMContentLoaded', () => {
             init();
         } else {
             console.error("One or more critical tab pane elements were not found. Initialization stopped.");
-        }        
+        }       
     }, 0); 
 });
