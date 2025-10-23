@@ -1,8 +1,6 @@
 /* css/print.css - ملف مخصص للطباعة وتصدير PDF */
-
 /* هذا @media يطبق التنسيقات فقط عند الطباعة */
 @media print {
-
     /* 1. إخفاء كل شيء لا نريده */
     .no-print,
     .site-header-global,
