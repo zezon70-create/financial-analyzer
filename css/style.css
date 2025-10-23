@@ -17,7 +17,6 @@
     --shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
     --font-family: 'Cairo', system-ui, sans-serif;
 }
-
 body {
     margin: 0;
     font-family: var(--font-family);
@@ -25,18 +24,15 @@ body {
     color: var(--text-light);
     transition: background 0.3s, color 0.3s;
 }
-
 body[data-theme="dark"] {
     background: var(--bg-dark);
     color: var(--text-dark);
 }
-
 .container-main {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1.5rem;
 }
-
 /* =========================================
    2. Global Navigation Bar
    ========================================= */
@@ -157,11 +153,9 @@ body[data-theme="dark"] .form-select {
     border-color: rgba(255, 255, 255, 0.15);
     color: var(--text-dark);
 }
-
 /* =========================================
    4. Page-Specific Styles
    ========================================= */
-
 /* --- Index Page --- */
 .hero {
     background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
@@ -205,7 +199,6 @@ body[data-theme="dark"] .report-table .total-row td { background-color: rgba(13,
 .watermark-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: -1; opacity: 0; }
 .watermark-logo { width: 400px; opacity: 0.05; }
 .no-print { /* This class is used to hide elements during printing/PDF export */ }
-
 /* --- Print & PDF Export Styles --- */
 @media print {
     .no-print, .site-header-global, .site-footer {
@@ -227,4 +220,3 @@ body[data-theme="dark"] .report-table .total-row td { background-color: rgba(13,
         opacity: 1;
     }
 }
-
