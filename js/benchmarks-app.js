@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         exportPdfBtn: document.getElementById('exportPdfBtn')
     };
     const industryBenchmarks = {
-        general: {}, 
+        general: {},
         retail: { currentRatio: 1.5, quickRatio: 0.5, netProfitMargin: 0.03, roe: 0.15, debtToEquity: 1.2, assetTurnover: 2.0, grossProfitMargin: 0.30, avgCollectionPeriod: 15, inventoryTurnover: 8.0, interestCoverageRatio: 4.0 },
         manufacturing: { currentRatio: 1.8, quickRatio: 0.9, netProfitMargin: 0.06, roe: 0.12, debtToEquity: 0.8, assetTurnover: 1.0, grossProfitMargin: 0.35, avgCollectionPeriod: 45, inventoryTurnover: 6.0, interestCoverageRatio: 5.0 },
         services: { currentRatio: 1.2, quickRatio: 1.0, netProfitMargin: 0.08, roe: 0.18, debtToEquity: 1.0, assetTurnover: 1.2, grossProfitMargin: 0.50, avgCollectionPeriod: 35, inventoryTurnover: 20.0, interestCoverageRatio: 6.0 },
@@ -85,19 +85,19 @@ document.addEventListener('DOMContentLoaded', () => {
         state.ratios = {}; state.hasData = false;
         console.log("[DEBUG] Loading calculatedRatios from localStorage...");
         try {
-            const rawDataString = localStorage.getItem('calculatedRatios'); 
-            if (!rawDataString) throw new Error("localStorage 'calculatedRatios' is missing. Run 'Advanced' page first.");       
+            const rawDataString = localStorage.getItem('calculatedRatios');
+            if (!rawDataString) throw new Error("localStorage 'calculatedRatios' is missing. Run 'Advanced' page first.");
             const parsedData = JSON.parse(rawDataString);
-            if (typeof parsedData !== 'object' || parsedData === null) throw new Error("Parsed 'calculatedRatios' is not a valid object.");            
+            if (typeof parsedData !== 'object' || parsedData === null) throw new Error("Parsed 'calculatedRatios' is not a valid object.");
             state.ratios = parsedData;
             state.hasData = true;
             console.log("[DEBUG] Successfully loaded calculatedRatios:", state.ratios);
-            return true;          
-        } catch (e) { 
-            console.error("Benchmark Component Error:", e); 
-            return false; 
+            return true;
+        } catch (e) {
+            console.error("Benchmark Component Error:", e);
+            return false;
         }
-    };    
+    };
     // 5. Rendering Functions
     const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => {
         const container = document.getElementById(divId);
@@ -106,12 +106,12 @@ document.addEventListener('DOMContentLoaded', () => {
             container.innerHTML = `<h5 class="mb-3">${t(categoryTitleKey)}</h5> <p class="text-muted">${t('noDataForRatios')}</p>`; return;
         }
         const benchmarks = industryBenchmarks[state.selectedIndustry] || {};
-        const showBenchmarks = state.selectedIndustry !== 'general';       
-        let tableHTML = `<h5 class="mb-3">${t(categoryTitleKey)}</h5> <div class="table-responsive"> <table class="table table-sm table-striped"> <thead><tr> <th>${t('thRatio')}</th> <th class="text-end">${t('thValue')}</th> ${showBenchmarks ? `<th class="text-end">${t('thIndustryAvg')}</th>` : ''} <th>${t('thComment')}</th> </tr></thead> <tbody>`;        
+        const showBenchmarks = state.selectedIndustry !== 'general';
+        let tableHTML = `<h5 class="mb-3">${t(categoryTitleKey)}</h5> <div class="table-responsive"> <table class="table table-sm table-striped"> <thead><tr> <th>${t('thRatio')}</th> <th class="text-end">${t('thValue')}</th> ${showBenchmarks ? `<th class="text-end">${t('thIndustryAvg')}</th>` : ''} <th>${t('thComment')}</th> </tr></thead> <tbody>`;
         ratioKeys.forEach(key => {
-            if (typeof state.ratios[key] === 'undefined') return; 
-            const value = state.ratios[key]; 
-            const benchmarkValue = benchmarks[key]; 
+            if (typeof state.ratios[key] === 'undefined') return;
+            const value = state.ratios[key];
+            const benchmarkValue = benchmarks[key];
             const isPercentage = key.includes('Margin') || key.includes('roa') || key.includes('roe');
             const isDays = key.includes('avgCollectionPeriod');
             const isNumber = key === 'netWorkingCapital';
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isDays) formattedValue = formatDays(value);
             else if (isPercentage) formattedValue = formatPercent(value);
             else if (isNumber) formattedValue = formatNumber(value, 0);
-            else formattedValue = formatRatio(value);           
+            else formattedValue = formatRatio(value);
             let formattedBenchmark = '-';
             if (showBenchmarks && typeof benchmarkValue !== 'undefined' && isFinite(benchmarkValue)) {
                 if (isDays) formattedBenchmark = formatDays(benchmarkValue);
@@ -128,11 +128,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 else formattedBenchmark = formatRatio(benchmarkValue);
             }
             // Comparison logic
-            let comparisonIndicator = ''; 
+            let comparisonIndicator = '';
             let comparisonText = '';
-            if (showBenchmarks && typeof benchmarkValue !== 'undefined' && isFinite(value) && isFinite(benchmarkValue)) { 
-                const tolerance = 0.1 * Math.abs(benchmarkValue); 
-                const isLowerBetter = key === 'debtToEquity' || key === 'debtToAssets' || key === 'avgCollectionPeriod';                
+            if (showBenchmarks && typeof benchmarkValue !== 'undefined' && isFinite(value) && isFinite(benchmarkValue)) {
+                const tolerance = 0.1 * Math.abs(benchmarkValue);
+                const isLowerBetter = key === 'debtToEquity' || key === 'debtToAssets' || key === 'avgCollectionPeriod';
                 let isBetter, isWorse;
                 if (isLowerBetter) {
                     isBetter = value < benchmarkValue - tolerance;
@@ -141,17 +141,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     isBetter = value > benchmarkValue + tolerance;
                     isWorse = value < benchmarkValue - tolerance;
                 }
-                if (isBetter) { 
-                    comparisonIndicator = '<i class="bi bi-arrow-up-circle-fill text-success ms-1"></i>'; 
-                    comparisonText = `(${t('comparison_better')})`; 
-                } else if (isWorse) { 
-                    comparisonIndicator = '<i class="bi bi-arrow-down-circle-fill text-danger ms-1"></i>'; 
-                    comparisonText = `(${t('comparison_worse')})`; 
-                } else { 
-                    comparisonIndicator = '<i class="bi bi-arrow-left-right text-warning ms-1"></i>'; 
-                    comparisonText = `(${t('comparison_similar')})`; 
-                } 
-            }            
+                if (isBetter) {
+                    comparisonIndicator = '<i class="bi bi-arrow-up-circle-fill text-success ms-1"></i>';
+                    comparisonText = `(${t('comparison_better')})`;
+                } else if (isWorse) {
+                    comparisonIndicator = '<i class="bi bi-arrow-down-circle-fill text-danger ms-1"></i>';
+                    comparisonText = `(${t('comparison_worse')})`;
+                } else {
+                    comparisonIndicator = '<i class="bi bi-arrow-left-right text-warning ms-1"></i>';
+                    comparisonText = `(${t('comparison_similar')})`;
+                }
+            }
             tableHTML += `<tr> <td>${t(key)}</td> <td class="text-end"><strong>${formattedValue}</strong> ${comparisonIndicator}</td> ${showBenchmarks ? `<td class="text-end">${formattedBenchmark}</td>` : ''} <td class="text-muted small">${comparisonText}</td> </tr>`;
         });
         container.innerHTML = tableHTML + `</tbody></table></div>`;
@@ -161,36 +161,85 @@ document.addEventListener('DOMContentLoaded', () => {
         renderRatioCategory('profitabilityRatiosBenchmark', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
         renderRatioCategory('leverageRatiosBenchmark', 'leverageRatios', ['debtToAssets', 'debtToEquity', 'interestCoverageRatio', 'financialLeverage']);
         renderRatioCategory('activityRatiosBenchmark', 'activityRatios', ['assetTurnover', 'inventoryTurnover', 'receivablesTurnover', 'avgCollectionPeriod']);
-    };    
-    // *** مُضاف: دالة تصدير PDF ***
+    };
+    
+    // ===== [ بداية الكود الجديد لـ PDF ] =====
+
+    // دالة لتحميل السكربت عند الحاجة
+    const loadScript = (src, callback) => {
+        // 1. تحقق إذا كانت المكتبة موجودة بالفعل
+        if (typeof html2pdf === 'function') {
+            console.log("html2pdf already loaded.");
+            callback();
+            return;
+        }
+        
+        // 2. تحقق إذا كان السكربت يُحمّل حالياً (لمنع الضغط المزدوج)
+        let script = document.querySelector(`script[src="${src}"]`);
+        if (script) {
+            script.addEventListener('load', callback); // انتظر حتى ينتهي التحميل
+            return;
+        }
+        
+        // 3. إذا لم يكن موجوداً، قم بإنشائه وتحميله
+        console.log("Loading html2pdf library...");
+        script = document.createElement('script');
+        script.src = src;
+        script.onload = callback;
+        script.onerror = () => {
+            console.error("Failed to load html2pdf library.");
+            alert("PDF export failed. Library could not be loaded.");
+            UI.exportPdfBtn.disabled = false; // أعد تفعيل الزر
+        };
+        document.head.appendChild(script);
+    };
+
+    // دالة لتنفيذ التصدير الفعلي
+    const executePdfExport = () => {
+        if (!state.hasData) { 
+            alert(t('noDataForRatios'));
+            UI.exportPdfBtn.disabled = false; // أعد تفعيل الزر
+            return; 
+        }
+        console.log("Exporting benchmarks to PDF...");
+        const element = document.getElementById('benchmarks-content');
+        
+        const opt = {
+            margin: 0.5,
+            filename: 'Benchmarks_Report.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true, logging: false },
+            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().from(element).set(opt).save().then(() => {
+             UI.exportPdfBtn.disabled = false; // أعد تفعيل الزر بعد انتهاء الحفظ
+        }).catch(err => {
+            console.error("PDF Export Error:", err);
+            UI.exportPdfBtn.disabled = false; // أعد تفعيل الزر عند حدوث خطأ
+        });
+    };
+
+    // دالة ربط زر PDF
     const initPdfExport = () => {
          if (UI.exportPdfBtn) {
              UI.exportPdfBtn.addEventListener('click', () => {
-                if (!state.hasData) { alert(t('noDataForRatios')); return; }
-                console.log("Exporting benchmarks to PDF...");
-                const element = document.getElementById('benchmarks-content');
-                if (typeof html2pdf === 'function') {
-                    const opt = {
-                        margin: 0.5,
-                        filename: 'Benchmarks_Report.pdf',
-                        image: { type: 'jpeg', quality: 0.98 },
-                        html2canvas: { scale: 2, useCORS: true, logging: false },
-                        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-                    };
-                    html2pdf().from(element).set(opt).save();
-                } else {
-                    console.error("html2pdf library is not loaded."); 
-                    alert("PDF export failed. Library not loaded. Please try again in a moment.");
-                }
+                UI.exportPdfBtn.disabled = true; // قم بتعطيل الزر مؤقتاً
+                
+                // عند الضغط، قم بتحميل السكربت أولاً، ثم شغّل التصدير
+                loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js", executePdfExport);
              });
          } else { console.warn("Export PDF Button not found"); }
-    };    
+    };
+    
+    // ===== [ نهاية الكود الجديد لـ PDF ] =====
+    
     // 6. Initialization
     const init = () => {
         console.log("[DEBUG] Initializing benchmarks page...");
         if (!UI.industrySelect || !UI.warningDiv) {
             console.error("Benchmark component critical elements not found."); return;
-        }        
+        }
         if (typeof window.applyTranslations === 'function') {
             console.log("[DEBUG] Calling global applyTranslations...");
             window.applyTranslations();
@@ -204,7 +253,7 @@ document.addEventListener('DOMContentLoaded', () => {
         UI.industrySelect.addEventListener('change', (e) => {
             state.selectedIndustry = e.target.value;
             localStorage.setItem('selectedIndustry', state.selectedIndustry);
-            renderAllRatios(); 
+            renderAllRatios();
         });
         if (loadProcessedRatios()) {
             UI.warningDiv.style.display = 'none';
@@ -212,13 +261,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             UI.warningDiv.textContent = t('noDataForRatios');
             UI.warningDiv.style.display = 'block';
-        }        
+        }
         initPdfExport(); // ربط زر PDF
         console.log("[DEBUG] Benchmarks page initialization finished.");
-    };    
+    };
     
     init(); // Call init immediately
-    
-    // ---===[ تم حذف الكود المكرر لتحميل مكتبة PDF من هنا ]===---
     
 });
