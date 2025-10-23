@@ -213,4 +213,32 @@ document.addEventListener('DOMContentLoaded', () => {
             UI.warningDiv.textContent = t('noDataForRatios');
             UI.warningDiv.style.display = 'block';
         }        
-       });
+        initPdfExport(); // ربط زر PDF
+        console.log("[DEBUG] Benchmarks page initialization finished.");
+    };    
+    // Helper function to load scripts (needed for PDF export)
+    const loadScript = (src, onload, onerror) => {
+        let script = document.querySelector(`script[src="${src}"]`);
+        if (script) {
+            if (script.dataset.loaded === 'true') { onload(); }
+            else if (script.dataset.loaded === 'false') { onerror(); }
+            else { 
+                 script.addEventListener('load', onload);
+                 script.addEventListener('error', onerror);
+            }
+            return;
+        }
+        script = document.createElement('script');
+        script.src = src;
+        script.async = true; 
+        script.onload = () => { script.dataset.loaded = 'true'; onload(); };
+        script.onerror = () => { script.dataset.loaded = 'false'; console.error(`Failed to load script: ${src}`); onerror(); };
+        document.head.appendChild(script);
+    };
+    init(); // Call init immediately
+    // Load PDF lib in background
+    loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js", 
+        () => { console.log("html2pdf loaded for benchmarks."); }, 
+        () => { console.error("html2pdf failed to load."); }
+    );    
+});
