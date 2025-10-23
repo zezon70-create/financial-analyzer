@@ -1,4 +1,4 @@
-   1. Global Styles & Variables
+1. Global Styles & Variables
 :root {
     --accent-1: #0d6efd;
     --accent-1-light: rgba(13, 110, 253, 0.1);
@@ -209,3 +209,4 @@ body[data-theme="dark"] .report-table .total-row td { background-color: rgba(13,
         opacity: 1;
     }
 }
+
