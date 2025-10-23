@@ -162,26 +162,17 @@ document.addEventListener('DOMContentLoaded', () => {
         renderRatioCategory('leverageRatiosBenchmark', 'leverageRatios', ['debtToAssets', 'debtToEquity', 'interestCoverageRatio', 'financialLeverage']);
         renderRatioCategory('activityRatiosBenchmark', 'activityRatios', ['assetTurnover', 'inventoryTurnover', 'receivablesTurnover', 'avgCollectionPeriod']);
     };
-    
-    // ===== [ بداية الكود الجديد لـ PDF ] =====
-
-    // دالة لتحميل السكربت عند الحاجة
-    const loadScript = (src, callback) => {
-        // 1. تحقق إذا كانت المكتبة موجودة بالفعل
+      const loadScript = (src, callback) => {
         if (typeof html2pdf === 'function') {
             console.log("html2pdf already loaded.");
             callback();
             return;
-        }
-        
-        // 2. تحقق إذا كان السكربت يُحمّل حالياً (لمنع الضغط المزدوج)
-        let script = document.querySelector(`script[src="${src}"]`);
+        }   
+      let script = document.querySelector(`script[src="${src}"]`);
         if (script) {
             script.addEventListener('load', callback); // انتظر حتى ينتهي التحميل
             return;
         }
-        
-        // 3. إذا لم يكن موجوداً، قم بإنشائه وتحميله
         console.log("Loading html2pdf library...");
         script = document.createElement('script');
         script.src = src;
@@ -193,8 +184,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         document.head.appendChild(script);
     };
-
-    // دالة لتنفيذ التصدير الفعلي
     const executePdfExport = () => {
         if (!state.hasData) { 
             alert(t('noDataForRatios'));
@@ -202,8 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return; 
         }
         console.log("Exporting benchmarks to PDF...");
-        const element = document.getElementById('benchmarks-content');
-        
+        const element = document.getElementById('benchmarks-content');      
         const opt = {
             margin: 0.5,
             filename: 'Benchmarks_Report.pdf',
@@ -211,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
             html2canvas: { scale: 2, useCORS: true, logging: false },
             jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
         };
-
         html2pdf().from(element).set(opt).save().then(() => {
              UI.exportPdfBtn.disabled = false; // أعد تفعيل الزر بعد انتهاء الحفظ
         }).catch(err => {
@@ -219,21 +206,14 @@ document.addEventListener('DOMContentLoaded', () => {
             UI.exportPdfBtn.disabled = false; // أعد تفعيل الزر عند حدوث خطأ
         });
     };
-
-    // دالة ربط زر PDF
     const initPdfExport = () => {
          if (UI.exportPdfBtn) {
              UI.exportPdfBtn.addEventListener('click', () => {
                 UI.exportPdfBtn.disabled = true; // قم بتعطيل الزر مؤقتاً
-                
-                // عند الضغط، قم بتحميل السكربت أولاً، ثم شغّل التصدير
                 loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js", executePdfExport);
              });
          } else { console.warn("Export PDF Button not found"); }
     };
-    
-    // ===== [ نهاية الكود الجديد لـ PDF ] =====
-    
     // 6. Initialization
     const init = () => {
         console.log("[DEBUG] Initializing benchmarks page...");
