@@ -84,25 +84,25 @@ document.addEventListener('DOMContentLoaded', () => {
     const formatRatio = (value, digits = 2) => isFinite(value) && !isNaN(value) ? value.toFixed(digits) : "N/A";
     const formatDays = (value) => isFinite(value) && !isNaN(value) ? `${value.toFixed(0)} ${lang === 'ar' ? 'يوم' : 'Days'}` : "N/A";
     const formatNumber = (value, digits = 0) => isFinite(value) && !isNaN(value) ? value.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }) : "N/A";
+    // 4. *** مُعدل: دالة قراءة النسب الجاهزة ***
     const loadProcessedRatios = () => {
         state.ratios = {}; state.hasData = false;
         console.log("[DEBUG] Loading calculatedRatios from localStorage...");
         try {
             // *** تم التعديل: القراءة من calculatedRatios ***
             const rawDataString = localStorage.getItem('calculatedRatios'); 
-            if (!rawDataString) throw new Error("localStorage 'calculatedRatios' is missing. Run 'Advanced' page first.");     
+            if (!rawDataString) throw new Error("localStorage 'calculatedRatios' is missing. Run 'Advanced' page first.");           
             const parsedData = JSON.parse(rawDataString);
-            if (typeof parsedData !== 'object' || parsedData === null) throw new Error("Parsed 'calculatedRatios' is not a valid object.");           
+            if (typeof parsedData !== 'object' || parsedData === null) throw new Error("Parsed 'calculatedRatios' is not a valid object.");          
             state.ratios = parsedData;
             state.hasData = true;
             console.log("[DEBUG] Successfully loaded calculatedRatios:", state.ratios);
-            return true;           
+            return true;            
         } catch (e) { 
             console.error("Benchmark Component Error:", e); 
             return false; 
         }
-    };  
-    // *** مُلغى: دالة calculateData القديمة ***
+    };    
     // 5. Rendering Functions
     const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => {
         const container = document.getElementById(divId);
@@ -112,13 +112,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         const benchmarks = industryBenchmarks[state.selectedIndustry] || {};
         const showBenchmarks = state.selectedIndustry !== 'general';        
-        // *** مُعدل: إزالة table-light من thead لإصلاح الوضع الليلي ***
         let tableHTML = `<h5 class="mb-3">${t(categoryTitleKey)}</h5> <div class="table-responsive"> <table class="table table-sm table-striped"> <thead><tr> <th>${t('thRatio')}</th> <th class="text-end">${t('thValue')}</th> ${showBenchmarks ? `<th class="text-end">${t('thIndustryAvg')}</th>` : ''} <th>${t('thComment')}</th> </tr></thead> <tbody>`;       
         ratioKeys.forEach(key => {
-            if (typeof state.ratios[key] === 'undefined') return; // تخطي النسبة إذا لم تكن موجودة
+            if (typeof state.ratios[key] === 'undefined') return; 
             const value = state.ratios[key]; 
             const benchmarkValue = benchmarks[key]; 
-            // *** مُعدل: تحديد التنسيق بناءً على نوع النسبة ***
             const isPercentage = key.includes('Margin') || key.includes('roa') || key.includes('roe');
             const isDays = key.includes('avgCollectionPeriod');
             const isNumber = key === 'netWorkingCapital';
@@ -126,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isDays) formattedValue = formatDays(value);
             else if (isPercentage) formattedValue = formatPercent(value);
             else if (isNumber) formattedValue = formatNumber(value, 0);
-            else formattedValue = formatRatio(value);           
+            else formattedValue = formatRatio(value);          
             let formattedBenchmark = '-';
             if (showBenchmarks && typeof benchmarkValue !== 'undefined' && isFinite(benchmarkValue)) {
                 if (isDays) formattedBenchmark = formatDays(benchmarkValue);
@@ -139,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
             let comparisonText = '';
             if (showBenchmarks && typeof benchmarkValue !== 'undefined' && isFinite(value) && isFinite(benchmarkValue)) { 
                 const tolerance = 0.1 * Math.abs(benchmarkValue); 
-                // Ratios where 'lower is better'
                 const isLowerBetter = key === 'debtToEquity' || key === 'debtToAssets' || key === 'avgCollectionPeriod';               
                 let isBetter, isWorse;
                 if (isLowerBetter) {
@@ -197,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("[DEBUG] Initializing benchmarks page...");
         if (!UI.industrySelect || !UI.warningDiv) {
             console.error("Benchmark component critical elements not found."); return;
-        }       
+        }        
         if (typeof window.applyTranslations === 'function') {
             console.log("[DEBUG] Calling global applyTranslations...");
             window.applyTranslations();
@@ -219,7 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             UI.warningDiv.textContent = t('noDataForRatios');
             UI.warningDiv.style.display = 'block';
-        }        
+        }      
         initPdfExport(); // ربط زر PDF
         console.log("[DEBUG] Benchmarks page initialization finished.");
     };    
@@ -242,6 +239,7 @@ document.addEventListener('DOMContentLoaded', () => {
         script.onerror = () => { script.dataset.loaded = 'false'; console.error(`Failed to load script: ${src}`); onerror(); };
         document.head.appendChild(script);
     };
+
     // Load PDF library in background and then init
     loadScript("https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js", init, init); // Call init regardless    
 });
