@@ -139,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     isWorse = value > benchmarkValue + tolerance;
                 } else { // 'higher is better'
                     isBetter = value > benchmarkValue + tolerance;
-                    isWorse = value < benchmarkValue - tolerance;
+                    isWorse = value < benchmarkValue + tolerance;
                 }
                 if (isBetter) { 
                     comparisonIndicator = '<i class="bi bi-arrow-up-circle-fill text-success ms-1"></i>'; 
@@ -185,16 +185,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         image: { type: 'jpeg', quality: 0.98 },
                         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
                         
-                        // (الإصلاح 2): إضافة خاصية "تجاهل" للأيقونات لحل مشكلة 'Unsupported image type'
+                        // ===== [ === التعديل النهائي === ] =====
+                        // إصلاح مشكلة 'Unsupported image type'
+                        // هذا الكود يخبر المكتبة بتجاهل الأيقونات (<i>) والعلامة المائية (watermark-logo)
                         html2canvas: { 
                             scale: 2, 
                             useCORS: true, 
                             logging: false,
                             ignoreElements: (element) => {
-                                // تجاهل جميع الأيقونات (<i> tags)
-                                return element.tagName === 'I';
+                                const ignores = ['I']; // تجاهل كل الأيقونات
+                                if (element.classList.contains('watermark-logo')) {
+                                    return true; // تجاهل العلامة المائية
+                                }
+                                return ignores.includes(element.tagName);
                             }
                         }
+                        // ===== [ === نهاية التعديل النهائي === ] =====
                     };
                     
                     html2pdf().from(element).set(opt).save().then(() => {
@@ -249,6 +255,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     init(); // Call init immediately
     
-    // (الإصلاح 3): تم حذف دالة loadScript المكررة من هنا لأن المكتبة تُحمّل من ملف HTML
+    // تم حذف دالة loadScript المكررة من هنا
     
 });
