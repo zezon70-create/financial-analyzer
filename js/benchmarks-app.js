@@ -248,5 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };    
     
     init(); // Call init immediately
-
+    
+    // (الإصلاح 3): تم حذف دالة loadScript المكررة من هنا لأن المكتبة تُحمّل من ملف HTML
+    
 });
