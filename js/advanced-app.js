@@ -333,6 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
                      _capex_estimated: capex_estimated,
                      _depreciation: depreciation // Store depreciation for CF tab
                  }; 
+                 localStorage.setItem('calculatedRatios', JSON.stringify(state.ratios));
                  console.log("Calculated Ratios (from processed data):", state.ratios); return true; 
              } catch(e) { 
                  console.error("Error calculating ratios:", e); 
@@ -945,4 +946,5 @@ document.addEventListener('DOMContentLoaded', () => {
         
     }, 0); 
 });
+
 
