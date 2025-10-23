@@ -2,7 +2,7 @@
 const benchmarksTranslations = {
     ar: {
         pageTitle: "المقارنات المعيارية — المحلل المالي",
-        pageHeader: "المقارنات المعيارية (Industry Benchmarks)",
+        pageHeader: "المقارنات المعيارية",
         pageSubheader: "قارن نسبك المالية بمتوسطات الصناعة لفهم وضعك التنافسي.",
         navBenchmarks: "المقارنات المعيارية",
         exportPdf: "تصدير PDF",
