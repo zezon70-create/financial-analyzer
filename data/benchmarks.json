@@ -1,0 +1,51 @@
+{
+  "general": {},
+  "retail": {
+    "currentRatio": 1.5,
+    "quickRatio": 0.5,
+    "netProfitMargin": 0.03,
+    "roe": 0.15,
+    "debtToEquity": 1.2,
+    "assetTurnover": 2.0,
+    "grossProfitMargin": 0.3,
+    "avgCollectionPeriod": 15,
+    "inventoryTurnover": 8.0,
+    "interestCoverageRatio": 4.0
+  },
+  "manufacturing": {
+    "currentRatio": 1.8,
+    "quickRatio": 0.9,
+    "netProfitMargin": 0.06,
+    "roe": 0.12,
+    "debtToEquity": 0.8,
+    "assetTurnover": 1.0,
+    "grossProfitMargin": 0.35,
+    "avgCollectionPeriod": 45,
+    "inventoryTurnover": 6.0,
+    "interestCoverageRatio": 5.0
+  },
+  "services": {
+    "currentRatio": 1.2,
+    "quickRatio": 1.0,
+    "netProfitMargin": 0.08,
+    "roe": 0.18,
+    "debtToEquity": 1.0,
+    "assetTurnover": 1.2,
+    "grossProfitMargin": 0.5,
+    "avgCollectionPeriod": 35,
+    "inventoryTurnover": 20.0,
+    "interestCoverageRatio": 6.0
+  },
+  "construction": {
+    "currentRatio": 1.3,
+    "quickRatio": 0.8,
+    "netProfitMargin": 0.04,
+    "roe": 0.14,
+    "debtToEquity": 1.5,
+    "assetTurnover": 1.5,
+    "grossProfitMargin": 0.2,
+    "avgCollectionPeriod": 60,
+    "inventoryTurnover": 10.0,
+    "interestCoverageRatio": 3.5
+  }
+}

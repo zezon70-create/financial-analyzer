@@ -1,0 +1,85 @@
+/* css/theme.css - طبقة التحسينات البصرية */
+
+/* 1. تحسينات عامة */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 2. الهيدر (أكثر عصرية) */
+.site-header-global {
+    background: var(--card-light);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04); /* ظل أنعم وأوضح */
+    border-bottom: none; /* إزالة الخط السفلي التقليدي */
+    transition: background 0.3s ease;
+}
+
+body[data-theme="dark"] .site-header-global {
+    background: var(--card-dark);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 3. تعديل العلامة التجارية (استخدام اللوجو فقط) */
+.brand img {
+    height: 45px; /* تكبير اللوجو قليلاً */
+    margin-left: 0; /* إزالة الهامش (لأننا سنخفي النص) */
+}
+/* إخفاء النص "المحلل المالي" والاعتماد على اللوجو الذي يحمل الاسم */
+.brand .title {
+    display: none; 
+}
+
+/* 4. البطاقات (Card) المبهرة */
+.card-surface {
+    border: none; /* إزالة الحدود التقليدية */
+    border-radius: 16px; /* زيادة الاستدارة */
+    box-shadow: var(--shadow); /* استخدام الظل المحدد مسبقاً */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+@media (min-width: 992px) {
+    .card-surface:hover {
+        transform: translateY(-4px); /* تأثير "الطفو" عند المرور */
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.09);
+    }
+}
+
+/* 5. تحسين أزرار CTA (في الصفحة الرئيسية) */
+.cta-btn {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+.cta-btn:hover {
+     box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+.cta-btn.primary {
+    background: var(--accent-1);
+    color: #fff;
+}
+body[data-theme="dark"] .cta-btn.primary {
+    background: var(--accent-1);
+    color: #fff;
+}
+.cta-btn.secondary {
+    background: var(--card-light);
+    color: var(--accent-2);
+    border: 2px solid var(--accent-1-light);
+}
+body[data-theme="dark"] .cta-btn.secondary {
+    background: var(--card-dark);
+    color: var(--text-dark);
+    border: 2px solid rgba(255,255,255,0.1);
+}
+
+
+/* 6. تحسين لوحة التحكم (Dashboard) */
+.kpi-card .gauge-label {
+    font-weight: 700; /* خط أعرض للعنوان */
+    font-size: 1rem;
+    color: var(--text-light);
+}
+body[data-theme="dark"] .kpi-card .gauge-label {
+    color: var(--text-dark);
+}
+.kpi-simple-card .gauge-value {
+    font-weight: 800; /* خط أثقل للأرقام */
+}
