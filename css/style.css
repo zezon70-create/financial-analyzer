@@ -3,13 +3,15 @@
    ========================================= */
 html {
     box-sizing: border-box;
-    scroll-behavior: smooth; /* إضافة حركة تمرير ناعمة */
+    scroll-behavior: smooth; 
 }
+
 *,
 *::before,
 *::after {
-    box-sizing: inherit; /* يجعل التعامل مع Paddin و Border أسهل */
+    box-sizing: inherit; 
 }
+
 /* =========================================
    1. Global Styles & Variables
    ========================================= */
@@ -29,6 +31,7 @@ html {
     --shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
     --font-family: 'Cairo', system-ui, sans-serif;
 }
+
 body {
     margin: 0;
     font-family: var(--font-family);
@@ -36,15 +39,18 @@ body {
     color: var(--text-light);
     transition: background 0.3s, color 0.3s;
 }
+
 body[data-theme="dark"] {
     background: var(--bg-dark);
     color: var(--text-dark);
 }
+
 .container-main {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1.5rem;
 }
+
 /* =========================================
    2. Global Navigation Bar
    ========================================= */
@@ -110,16 +116,14 @@ body[data-theme="dark"] .nav-link {
     font-size: 1.2rem;
     color: var(--muted-light);
     padding: 0;
-    width: 24px; /* إضافة لتثبيت العرض */
-    height: 24px; /* إضافة لتثبيت الارتفاع */
+    width: 24px; 
+    height: 24px; 
     position: relative;
 }
 body[data-theme="dark"] .controls .theme-toggle {
     color: var(--muted-dark);
 }
-/* تم حذف كود ::before الخاص بـ .theme-toggle 
-   لأن ملف main.js يقوم بتبديل الأيقونة باستخدام innerHTML
-*/
+
 /* =========================================
    3. Common Components
    ========================================= */
@@ -170,9 +174,11 @@ body[data-theme="dark"] .form-select {
     border-color: rgba(255, 255, 255, 0.15);
     color: var(--text-dark);
 }
+
 /* =========================================
    4. Page-Specific Styles
    ========================================= */
+
 /* --- Index Page --- */
 .hero {
     background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
@@ -198,9 +204,8 @@ body[data-theme="dark"] .form-select {
     text-align: center; 
     box-shadow: var(--shadow); 
     border: 1px solid #e9ecef;
-    transition: transform 0.2s, box-shadow 0.2s; /* تحسين: إضافة transition */
+    transition: transform 0.2s, box-shadow 0.2s; 
 }
-/* تحسين: إضافة تأثير hover لبطاقات الخطوات */
 .step-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 12px 30px rgba(0,0,0,0.1);
@@ -224,6 +229,7 @@ body[data-theme="dark"] .kpi-card { background: var(--card-dark); border-color: 
 body[data-theme="dark"] .kpi-card .label { color: var(--muted-dark); }
 .kpi-card .value { font-size: 1.5rem; font-weight: 700; margin-top: 0.25rem; }
 .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; align-items: start; }
+
 /* --- Report Page --- */
 .report-table { font-size: 0.95rem; }
 .report-table tbody tr:last-child { border-bottom: none; }
@@ -234,6 +240,7 @@ body[data-theme="dark"] .report-table .total-row td { background-color: rgba(13,
 .watermark-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: -1; opacity: 0; }
 .watermark-logo { width: 400px; opacity: 0.05; }
 .no-print { /* This class is used to hide elements during printing/PDF export */ }
+
 /* =========================================
    5. Print & PDF Export Styles
    ========================================= */
@@ -257,8 +264,9 @@ body[data-theme="dark"] .report-table .total-row td { background-color: rgba(13,
         opacity: 1;
     }
 }
+
 /* =========================================
-   6. Splash Screen Styles (إضافة جديدة)
+   6. Splash Screen Styles (النسخة العالمية المحسّنة)
    ========================================= */
 .splash-screen {
     position: fixed;
@@ -266,64 +274,58 @@ body[data-theme="dark"] .report-table .total-row td { background-color: rgba(13,
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: var(--bg-light); /* يستخدم لون الخلفية الافتراضي */
+    background-color: var(--bg-light); 
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999; /* تأكد أنها فوق كل شيء */
+    z-index: 9999; 
     opacity: 1;
     visibility: visible;
-    transition: opacity 0.5s ease-out, visibility 0.5s ease-out; /* حركة إخفاء ناعمة */
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out; 
 }
+
 body[data-theme="dark"] .splash-screen {
-    background-color: var(--bg-dark); /* يستخدم لون الخلفية الداكن */
+    background-color: var(--bg-dark); 
 }
+
 .splash-screen.hidden {
     opacity: 0;
     visibility: hidden;
-    pointer-events: none; /* يمنع التفاعل بعد الاختفاء */
+    pointer-events: none; 
 }
+
 .splash-content {
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
+    justify-content: center; 
+    align-items: center; 
 }
+
 .splash-logo {
-    width: 150px; /* حجم الشعار في شاشة الترحيب */
+    width: 180px; /* تم تكبير الشعار قليلاً */
     height: auto;
-    animation: bounceIn 0.8s ease-out; /* تأثير دخول للشعار */
+    animation: pulse 2s infinite ease-in-out; /* حركة النبض */
 }
+
+/* إخفاء العناصر الأخرى للتركيز على اللوجو */
 .splash-text {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--text-light);
-    opacity: 0.8;
-    animation: fadeIn 1s ease-out 0.3s forwards; /* تأثير ظهور للنص بعد الشعار */
+    display: none;
 }
-body[data-theme="dark"] .splash-text {
-    color: var(--text-dark);
-}
-/* Spinner Styles (عجلة التحميل) */
 .splash-spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid var(--accent-1-light); /* لون فاتح للخلفية */
-    border-top: 4px solid var(--accent-1);    /* لون أساسي للحركة */
-    border-radius: 50%;
-    animation: spin 1s linear infinite; /* حركة دوران */
+    display: none;
 }
-/* Keyframe Animations */
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-@keyframes bounceIn {
-    0% { transform: scale(0.7); opacity: 0; }
-    60% { transform: scale(1.1); opacity: 1; }
-    100% { transform: scale(1); }
-}
-@keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 0.8; }
+
+/* إضافة حركة "النبض" الجديدة */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.05); /* يكبر قليلاً */
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
 }
