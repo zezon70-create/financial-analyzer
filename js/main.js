@@ -1,4 +1,5 @@
-// js/main.js (النسخة المصححة + دمج الشاشة الترحيبية)
+// js/main.js (الكود الأصلي + إضافة آمنة للشاشة الترحيبية)
+
 // --- 1. STATE & CONFIG (Global Scope) ---
 const state = {
     preferences: {
@@ -6,24 +7,27 @@ const state = {
         lang: localStorage.getItem('lang') || 'ar',
     }
 };
+
 const translations = {
     ar: {
         brandTitle: "المحلل المالي", navHome: "الرئيسية", navInput: "الإدخال", navUpload: "الرفع",
         navReport: "التقرير", navAdvanced: "تحليلات متقدمة", navDashboard: "لوحة التحكم", navCompare: "المقارنات",
         footerText: "© 2025 المحلل المالي. جميع الحقوق محفوظة.",
-        navBenchmarks: "المقارنات المعيارية",
+        navBenchmarks: "المقارنات المعيارية", // تمت إضافته
         exportPdf: "تصدير PDF",
     },
     en: {
         brandTitle: "Financial Analyzer", navHome: "Home", navInput: "Input", navUpload: "Upload",
         navReport: "Report", navAdvanced: "Advanced", navDashboard: "Dashboard", navCompare: "Comparisons",
         footerText: "© 2025 Financial Analyzer. All rights reserved.",
-        navBenchmarks: "Benchmarks",
+        navBenchmarks: "Benchmarks", // تمت إضافته
         exportPdf: "Export PDF",
     }
 };
+
 // --- 2. GLOBAL FUNCTIONS ---
 const t = (key) => (translations[state.preferences.lang] && translations[state.preferences.lang][key]) || key;
+
 const applyTheme = (theme) => {
     document.body.setAttribute('data-theme', theme);
     const themeToggle = document.getElementById('themeToggle');
@@ -32,8 +36,8 @@ const applyTheme = (theme) => {
     }
     localStorage.setItem('theme', theme);
 };
+
 // *** Define applyTranslations GLOBALLY ***
-// *** (تم التراجع عن تعديل el.offsetParent الذي سبب المشكلة) ***
 function applyTranslations() {
     const lang = state.preferences.lang;
     console.log(`Applying translations for language: ${lang} (main.js)`);
@@ -45,10 +49,24 @@ function applyTranslations() {
         const translatedText = pageTranslations[lang]?.[key]
                              || translations[lang]?.[key]
                              || `[${key}]`;
-        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        
+        // التحقق من نوع العنصر قبل تغيير المحتوى
+        if (el.tagName === 'TITLE') {
+             el.textContent = translatedText;
+        } else if (el.tagName === 'IMG') {
+            if (el.dataset.translateKey === 'brandLogoAlt') {
+                el.alt = translatedText;
+            }
+        } else if (el.tagName === 'BUTTON') {
+             if (el.dataset.translateKey === 'themeToggleLabel') {
+                el.setAttribute('aria-label', translatedText);
+            } else {
+                el.textContent = translatedText;
+            }
+        } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
             if (translatedText !== `[${key}]`) { el.placeholder = translatedText; }
         } else {
-            el.textContent = translatedText; // <-- هذا هو الكود الأصلي الصحيح
+            el.textContent = translatedText;
         }
     });
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
@@ -57,16 +75,17 @@ function applyTranslations() {
     });
     console.log("Translations applied (main.js).");
 };
+
 // --- 3. DOMContentLoaded for Initialization and Event Binding ---
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM fully loaded and parsed (main.js)");    
-    // تعريف عناصر الواجهة
-    const UI = { 
-        themeToggle: document.getElementById('themeToggle'), 
-        languageSelect: document.getElementById('languageSelect'),
-        splashScreen: document.getElementById('splashScreen') // <-- إضافة عنصر الشاشة
-    };
-    // --- (الكود الأصلي الخاص بك - كما هو) ---
+    console.log("DOM fully loaded and parsed (main.js)");
+    
+    // --- إضافة جديدة: تحديد عنصر الشاشة الترحيبية ---
+    const splashScreen = document.getElementById('splashScreen');
+    
+    // --- الكود الأصلي الخاص بك (كما هو) ---
+    const UI = { themeToggle: document.getElementById('themeToggle'), languageSelect: document.getElementById('languageSelect') };
+
     if (UI.themeToggle) { UI.themeToggle.addEventListener('click', () => { const newTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; applyTheme(newTheme); }); }
     if (UI.languageSelect) {
         UI.languageSelect.innerHTML = `<option value="ar">العربية</option><option value="en">English</option>`;
@@ -76,28 +95,31 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('lang', state.preferences.lang);
             window.location.reload();
         });
-    }    
-    applyTheme(state.preferences.theme);    
-    // استدعاء الترجمة مرة واحدة (كما كان في الكود الأصلي)
-    // هذا سيقوم بترجمة كل شيء بما في ذلك الشاشة الترحيبية
-    applyTranslations();    
+    }
+    applyTheme(state.preferences.theme);
+    // Call translation ONCE here after DOM is ready
+    applyTranslations();
     console.log("Initial setup complete (main.js).");
-    // --- (نهاية الكود الأصلي) ---
+    // --- نهاية الكود الأصلي ---
+
+
     // =========================================
-    //  إضافة جديدة: كود الشاشة الترحيبية
+    //  إضافة جديدة: كود إخفاء الشاشة الترحيبية
     //  (يتم إضافته في النهاية لضمان عمل الكود الأصلي أولاً)
     // =========================================
-    if (UI.splashScreen) {
-        const splashDuration = 1500; // مدة العرض: 1.5 ثانية        
-        // لا نحتاج لاستدعاء الترجمة مرة أخرى، فقد تم استدعاؤها بالفعل        
+    if (splashScreen) {
+        const splashDuration = 1500; // مدة العرض: 1.5 ثانية
+        
         setTimeout(() => {
-            UI.splashScreen.classList.add('hidden');
+            splashScreen.classList.add('hidden');
         }, splashDuration);
     }
     // =========================================
     //  نهاية كود الشاشة الترحيبية
     // =========================================
+
 });
+
 // *** ADD THIS LINE AT THE VERY END (Outside DOMContentLoaded) ***
 window.applyTranslations = applyTranslations;
 console.log("applyTranslations function explicitly attached to window.");
