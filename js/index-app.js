@@ -1,5 +1,4 @@
 // js/index-app.js
-
 window.pageTranslations = {
     ar: {
         // مفاتيح الهيدر (Header)
@@ -7,13 +6,11 @@ window.pageTranslations = {
         brandLogoAlt: "شعار المحلل المالي",
         themeToggleLabel: "تبديل الثيم (فاتح/داكن)",
         splashLoadingText: "جاري التحميل...", // (هذا المفتاح لم يعد مستخدماً في التصميم العالمي، لكن لا ضرر من بقائه)
-
         // مفاتيح محتوى الصفحة (Hero)
         heroTitle: "حوّل الأرقام إلى قرارات استراتيجية",
         heroSubtitle: "تحليل مالي شامل، تقارير احترافية، وتنبؤات ذكية. كل ذلك بخصوصية تامة، فبياناتك لا تغادر جهازك أبدًا.",
         ctaAccountant: "ابدأ كـ محاسب (ميزان المراجعة)",
         ctaOwner: "ابدأ كـ صاحب عمل (قوائم مالية)",
-
         // مفاتيح قسم (How it works)
         howTitle: "تحليل مالي في 3 خطوات بسيطة",
         step1Title: "1. أدخل بياناتك",
@@ -29,13 +26,11 @@ window.pageTranslations = {
         brandLogoAlt: "Financial Analyzer Logo",
         themeToggleLabel: "Toggle theme (light/dark)",
         splashLoadingText: "Loading...", // (This key is no longer used, but harmless)
-
         // Page Content (Hero)
         heroTitle: "Turn Numbers into Strategic Decisions",
         heroSubtitle: "Comprehensive financial analysis, professional reports, and smart forecasts. All with complete privacy—your data never leaves your device.",
         ctaAccountant: "Start as Accountant (Trial Balance)",
         ctaOwner: "Start as Business Owner (Financial Statements)",
-
         // How it works
         howTitle: "Financial Analysis in 3 Simple Steps",
         step1Title: "1. Input Your Data",
