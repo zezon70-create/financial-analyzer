@@ -1,5 +1,4 @@
-// js/main.js (Corrected Version + Explicit Global Export + Splash Screen)
-
+// js/main.js
 // --- 1. STATE & CONFIG (Global Scope) ---
 const state = {
     preferences: {
@@ -7,7 +6,6 @@ const state = {
         lang: localStorage.getItem('lang') || 'ar',
     }
 };
-
 const translations = {
     ar: {
         brandTitle: "المحلل المالي", navHome: "الرئيسية", navInput: "الإدخال", navUpload: "الرفع",
@@ -24,10 +22,8 @@ const translations = {
         exportPdf: "Export PDF",
     }
 };
-
 // --- 2. GLOBAL FUNCTIONS ---
 const t = (key) => (translations[state.preferences.lang] && translations[state.preferences.lang][key]) || key;
-
 const applyTheme = (theme) => {
     document.body.setAttribute('data-theme', theme);
     const themeToggle = document.getElementById('themeToggle');
@@ -36,7 +32,6 @@ const applyTheme = (theme) => {
     }
     localStorage.setItem('theme', theme);
 };
-
 // *** Define applyTranslations GLOBALLY ***
 function applyTranslations() {
     const lang = state.preferences.lang;
@@ -64,27 +59,22 @@ function applyTranslations() {
     });
     console.log("Translations applied (main.js).");
 };
-
 // --- 3. DOMContentLoaded for Initialization and Event Binding ---
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM fully loaded and parsed (main.js)");
-    
+    console.log("DOM fully loaded and parsed (main.js)");    
     // تم تحديث UI ليشمل الشاشة الترحيبية
     const UI = { 
         themeToggle: document.getElementById('themeToggle'), 
         languageSelect: document.getElementById('languageSelect'),
         splashScreen: document.getElementById('splashScreen') // <-- إضافة عنصر الشاشة
     };
-
     // =========================================
     //  إضافة جديدة: كود الشاشة الترحيبية
     // =========================================
     if (UI.splashScreen) {
-        const splashDuration = 1500; // مدة العرض: 1.5 ثانية
-        
+        const splashDuration = 1500; // مدة العرض: 1.5 ثانية        
         // تأكد من تطبيق الترجمة على الشاشة الترحيبية فوراً
-        applyTranslations(); 
-        
+        applyTranslations();         
         setTimeout(() => {
             UI.splashScreen.classList.add('hidden');
         }, splashDuration);
@@ -92,8 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // =========================================
     //  نهاية كود الشاشة الترحيبية
     // =========================================
-
-
     if (UI.themeToggle) { UI.themeToggle.addEventListener('click', () => { const newTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; applyTheme(newTheme); }); }
     if (UI.languageSelect) {
         UI.languageSelect.innerHTML = `<option value="ar">العربية</option><option value="en">English</option>`;
@@ -104,15 +92,12 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.reload();
         });
     }
-    applyTheme(state.preferences.theme);
-    
+    applyTheme(state.preferences.theme);    
     // تم نقل استدعاء الترجمة الأول لداخل كود الشاشة الترحيبية
     // لضمان ترجمة نص "جاري التحميل..." قبل اختفاء الشاشة
     // applyTranslations(); // <-- هذا السطر تم نقله للأعلى
-
     console.log("Initial setup complete (main.js).");
 });
-
 // *** ADD THIS LINE AT THE VERY END (Outside DOMContentLoaded) ***
 window.applyTranslations = applyTranslations;
 console.log("applyTranslations function explicitly attached to window.");
