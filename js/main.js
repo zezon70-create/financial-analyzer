@@ -61,7 +61,7 @@ function applyTranslations() {
 };
 // --- 3. DOMContentLoaded for Initialization and Event Binding ---
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM fully loaded and parsed (main.js)");    
+    console.log("DOM fully loaded and parsed (main.js)");
     // تم تحديث UI ليشمل الشاشة الترحيبية
     const UI = { 
         themeToggle: document.getElementById('themeToggle'), 
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //  إضافة جديدة: كود الشاشة الترحيبية
     // =========================================
     if (UI.splashScreen) {
-        const splashDuration = 1500; // مدة العرض: 1.5 ثانية        
+        const splashDuration = 1500; // مدة العرض: 1.5 ثانية
         // تأكد من تطبيق الترجمة على الشاشة الترحيبية فوراً
         applyTranslations();         
         setTimeout(() => {
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.reload();
         });
     }
-    applyTheme(state.preferences.theme);    
+    applyTheme(state.preferences.theme);
     // تم نقل استدعاء الترجمة الأول لداخل كود الشاشة الترحيبية
     // لضمان ترجمة نص "جاري التحميل..." قبل اختفاء الشاشة
     // applyTranslations(); // <-- هذا السطر تم نقله للأعلى
