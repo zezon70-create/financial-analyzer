@@ -629,7 +629,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ...(state.statementsPrevious.bs.equityCapital || []),
                 { account: t_page('retainedEarnings'), value: state.statementsPrevious.totals.retainedEarnings || 0 }
              ];
-             let bsTableHTML = `<table class="table table-sm table-striped"><thead><tr><th>${t_page('thAccount')}</th><th class="text-end">${t_page('thCurrentPeriod')}</th><th class="text-end">${t_page('thPreviousPeriod')}</th><th class="text-end">${t_page('thChangeAbs')}</th><th class="text-end">${t_page('thChangePct')}</th></tr></thead><tbody>`;
+             let bsTableHTML = `<table class="table table-sm table-striped"><thead><tr><th>${t_page('horizontalAccount')}</th><th class="text-end">${t_page('horizontalCurrentPeriod')}</th><th class="text-end">${t_page('horizontalPreviousPeriod')}</th><th class="text-end">${t_page('horizontalChangeAbs')}</th><th class="text-end">${t_page('horizontalChangePct')}</th></tr></thead><tbody>`;
              bsTableHTML += generateHorizontalRows(bsItemsCurrent, bsItemsPrevious);
              bsTableHTML += `</tbody></table>`;
              if(UI.horizontalBSTable) UI.horizontalBSTable.innerHTML = bsTableHTML;             
@@ -654,7 +654,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 ...(state.statementsPrevious.is.interestExpense || []), 
                 ...(state.statementsPrevious.is.taxExpense || [])
              ];
-             let isTableHTML = `<table class="table table-sm table-striped"><thead><tr><th>${t_page('thAccount')}</th><th class="text-end">${t_page('thCurrentPeriod')}</th><th class="text-end">${t_page('thPreviousPeriod')}</th><th class="text-end">${t_page('thChangeAbs')}</th><th class="text-end">${t_page('thChangePct')}</th></tr></thead><tbody>`;
+             let isTableHTML = `<table class="table table-sm table-striped"><thead><tr><th>${t_page('horizontalAccount')}</th><th class="text-end">${t_page('horizontalCurrentPeriod')}</th><th class="text-end">${t_page('horizontalPreviousPeriod')}</th><th class="text-end">${t_page('horizontalChangeAbs')}</th><th class="text-end">${t_page('horizontalChangePct')}</th></tr></thead><tbody>`;
              isTableHTML += generateHorizontalRows(isItemsCurrent, isItemsPrevious);
              isTableHTML += `</tbody></table>`;
              if(UI.horizontalISTable) UI.horizontalISTable.innerHTML = isTableHTML;
@@ -886,3 +886,4 @@ document.addEventListener('DOMContentLoaded', () => {
         }       
     }, 0); 
 });
+
