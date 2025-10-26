@@ -1,4 +1,4 @@
-// js/main.js (Corrected Version + Explicit Global Export)
+// js/main.js (Corrected Version + Explicit Global Export + Splash Screen)
 
 // --- 1. STATE & CONFIG (Global Scope) ---
 const state = {
@@ -52,7 +52,10 @@ function applyTranslations() {
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
             if (translatedText !== `[${key}]`) { el.placeholder = translatedText; }
         } else {
-            el.textContent = translatedText;
+            // التحقق قبل الكتابة لتجنب الكتابة على عناصر الشاشة الترحيبية بعد إخفائها
+            if (el.offsetParent !== null) {
+                el.textContent = translatedText;
+            }
         }
     });
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
@@ -65,7 +68,31 @@ function applyTranslations() {
 // --- 3. DOMContentLoaded for Initialization and Event Binding ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded and parsed (main.js)");
-    const UI = { themeToggle: document.getElementById('themeToggle'), languageSelect: document.getElementById('languageSelect') };
+    
+    // تم تحديث UI ليشمل الشاشة الترحيبية
+    const UI = { 
+        themeToggle: document.getElementById('themeToggle'), 
+        languageSelect: document.getElementById('languageSelect'),
+        splashScreen: document.getElementById('splashScreen') // <-- إضافة عنصر الشاشة
+    };
+
+    // =========================================
+    //  إضافة جديدة: كود الشاشة الترحيبية
+    // =========================================
+    if (UI.splashScreen) {
+        const splashDuration = 1500; // مدة العرض: 1.5 ثانية
+        
+        // تأكد من تطبيق الترجمة على الشاشة الترحيبية فوراً
+        applyTranslations(); 
+        
+        setTimeout(() => {
+            UI.splashScreen.classList.add('hidden');
+        }, splashDuration);
+    }
+    // =========================================
+    //  نهاية كود الشاشة الترحيبية
+    // =========================================
+
 
     if (UI.themeToggle) { UI.themeToggle.addEventListener('click', () => { const newTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; applyTheme(newTheme); }); }
     if (UI.languageSelect) {
@@ -78,8 +105,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
     applyTheme(state.preferences.theme);
-    // Call translation ONCE here after DOM is ready
-    applyTranslations();
+    
+    // تم نقل استدعاء الترجمة الأول لداخل كود الشاشة الترحيبية
+    // لضمان ترجمة نص "جاري التحميل..." قبل اختفاء الشاشة
+    // applyTranslations(); // <-- هذا السطر تم نقله للأعلى
+
     console.log("Initial setup complete (main.js).");
 });
 
