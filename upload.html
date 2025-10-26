@@ -38,7 +38,6 @@
             <h1 data-translate-key="pageHeader"></h1>
             <p class="text-muted" data-translate-key="pageSubheader"></p>
         </section>
-
         <section class="card-surface mb-4">
              <div class="row g-4">
                  <div class="col-lg-7"> <h5 data-translate-key="actionsTitle"></h5>
@@ -57,9 +56,7 @@
                  </div>
                  </div>
         </section>
-
-        <section class="card-surface">
-            
+        <section class="card-surface">          
             <ul class="nav nav-pills nav-fill mb-4" id="entryTypeTabs" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="manual-tab" data-bs-toggle="pill" data-bs-target="#manual-pane" type="button" role="tab" aria-controls="manual-pane" aria-selected="true">
@@ -72,11 +69,8 @@
                     </button>
                 </li>
             </ul>
-
-            <div class="tab-content" id="entryTypeTabsContent">
-                
-                <div class="tab-pane fade show active" id="manual-pane" role="tabpanel" aria-labelledby="manual-tab">
-                    
+            <div class="tab-content" id="entryTypeTabsContent">                
+                <div class="tab-pane fade show active" id="manual-pane" role="tabpanel" aria-labelledby="manual-tab">                    
                     <h5 data-translate-key="entryTitle"></h5>
                     <ul class="nav nav-tabs mt-3" id="statementTabs" role="tablist">
                         <li class="nav-item" role="presentation">
@@ -89,8 +83,7 @@
                                 <span data-translate-key="tabIS"></span>
                             </button>
                         </li>
-                    </ul>
-            
+                    </ul>            
                     <div class="tab-content pt-3">
                         <div class="tab-pane fade show active" id="bs-pane" role="tabpanel">
                             <div class="table-responsive"><table id="bsTable" class="table align-middle"></table></div>
@@ -101,24 +94,18 @@
                             <button class="btn btn-sm btn-outline-primary mt-2" data-table="is"><i class="bi bi-plus"></i> <span data-translate-key="addIS"></span></button>
                         </div>
                     </div>
-
-                </div> <div class="tab-pane fade" id="upload-pane" role="tabpanel" aria-labelledby="upload-tab">
-                    
+                </div> <div class="tab-pane fade" id="upload-pane" role="tabpanel" aria-labelledby="upload-tab">                    
                     <h5 data-translate-key="uploadFileTitle">رفع ملف القوائم المالية (Excel أو CSV)</h5>
-                    <p class="text-muted" data-translate-key="uploadFileSubtitle">يجب أن يحتوي الملف على عمود لـ "البند" وعمود لـ "القيمة".</p>
-                    
+                    <p class="text-muted" data-translate-key="uploadFileSubtitle">يجب أن يحتوي الملف على عمود لـ "البند" وعمود لـ "القيمة".</p>                  
                     <div id="fileDropArea" class="card p-5 text-center mt-3" style="border: 3px dashed var(--bs-primary-border-subtle); background-color: var(--bs-tertiary-bg); cursor: pointer;">
                         <i class="bi bi-cloud-arrow-up" style="font-size: 4rem; color: var(--bs-primary);"></i>
                         <p class="h5 mt-3 mb-2" data-translate-key="uploadDragDrop">اسحب وأفلت ملفك هنا، أو اضغط للاختيار</p>
-                        <p class="text-muted small" data-translate-key="uploadSupportedFiles">الملفات المدعومة: .xlsx, .xls, .csv</p>
-                        
-                        <input type="file" id="fileUploader" class="d-none" accept=".xlsx, .xls, .csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/csv">
-                        
+                        <p class="text-muted small" data-translate-key="uploadSupportedFiles">الملفات المدعومة: .xlsx, .xls, .csv</p>                     
+                        <input type="file" id="fileUploader" class="d-none" accept=".xlsx, .xls, .csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, text/csv">                      
                         <button type="button" class="btn btn-primary btn-lg mt-3 align-self-center" id="browseButton">
                             <span data-translate-key="uploadBrowseButton">تصفح الملفات</span>
                         </button>
-                    </div>
-                    
+                    </div>                   
                     <div id="filePreviewArea" class="mt-4 d-none">
                         <h5><i class="bi bi-check-circle-fill text-success"></i> <span data-translate-key="uploadFileReady">الملف جاهز للمعالجة</span></h5>
                         <div id="fileNameDisplay" class="alert alert-success"></div>
@@ -128,36 +115,26 @@
                                 <span class="visually-hidden">Loading...</span>
                             </div>
                             <p data-translate-key="loadingPreview">جاري تحميل المعاينة...</p>
-                        </div>
-                        
+                        </div>                       
                         <h6 data-translate-key="dataPreview">معاينة أول 5 صفوف:</h6>
                         <div id="filePreviewTable" class="table-responsive small border rounded p-2"></div>
-
                         <hr class="my-4">
                         <h5 data-translate-key="columnMappingTitle">مطابقة الأعمدة</h5>
-                        <p class="text-muted" data-translate-key="columnMappingSubtitle">الرجاء مطابقة الأعمدة من ملفك مع الحقول المطلوبة.</p>
-                        
+                        <p class="text-muted" data-translate-key="columnMappingSubtitle">الرجاء مطابقة الأعمدة من ملفك مع الحقول المطلوبة.</p>                      
                         <div id="columnMapper" class="row g-3 p-3 border rounded" style="background-color: var(--bs-tertiary-bg);"></div>
-
                         <button id="processFileBtn" class="btn btn-success btn-lg mt-4 w-100"><i class="bi bi-gear-fill me-2"></i> <span data-translate-key="processFileButton">معالجة الملف وملء الجداول</span></button>
                     </div>
-
                 </div> </div> </section>
-
-    </main>
-    
+    </main>    
     <footer class="site-footer">
         <div class="container-main">
             <p data-translate-key="footerText"></p>
         </div>
     </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-    
-    <script src="js/main.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>    
+    <script src="js/main.js"></script>    
     <script src="js/upload-app.js"></script>
 </body>
 </html>
