@@ -1,5 +1,4 @@
 // js/index-app.js
-// Translations specific to this page are now here
 window.pageTranslations = {
     ar: {
         // --- مفاتيح تمت إضافتها ---
