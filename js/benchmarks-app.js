@@ -361,35 +361,45 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (watermark) watermark.style.display = ''; // إعادة الوضع الافتراضي
                     UI.exportPdfBtn.disabled = false;
                 };
+                
+                // ==========================================================
+                // === [بداية إصلاح PDF النهائي] ===
+                // ==========================================================
 
-                if (typeof html2pdf === 'function') {
-                    const opt = {
-                        margin: 0.5,
-                        filename: 'Benchmarks_Report.pdf',
-                        image: { type: 'jpeg', quality: 0.98 },
-                        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
-                        html2canvas: { 
-                            scale: 2, 
-                            useCORS: true, 
-                            logging: false
-                            // تم حذف 'ignoreElements' لأننا نخفي العناصر يدوياً
-                        }
-                    };
-                    
-                    html2pdf().from(element).set(opt).save().then(() => {
-                        console.log("PDF export successful.");
-                        showElements(); // إعادة إظهار العناصر بعد النجاح
-                    }).catch(err => {
-                        console.error("PDF Export Error:", err);
-                        alert("حدث خطأ أثناء إنشاء الـ PDF: " + err.message);
-                        showElements(); // إعادة إظهار العناصر بعد الفشل
-                    });
+                // 2. انتظر حتى يقوم المتصفح بتحديث العرض (إخفاء العناصر)
+                setTimeout(() => {
+                    if (typeof html2pdf === 'function') {
+                        const opt = {
+                            margin: 0.5,
+                            filename: 'Benchmarks_Report.pdf',
+                            image: { type: 'jpeg', quality: 0.98 },
+                            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+                            html2canvas: { 
+                                scale: 2, 
+                                useCORS: true, 
+                                logging: false
+                            }
+                        };
+                        
+                        html2pdf().from(element).set(opt).save().then(() => {
+                            console.log("PDF export successful.");
+                            showElements(); // إعادة إظهار العناصر بعد النجاح
+                        }).catch(err => {
+                            console.error("PDF Export Error:", err);
+                            alert("حدث خطأ أثناء إنشاء الـ PDF: " + err.message);
+                            showElements(); // إعادة إظهار العناصر بعد الفشل
+                        });
 
-                } else {
-                    console.error("html2pdf library is not loaded."); 
-                    alert("PDF export failed. Library not loaded.");
-                    showElements(); // إعادة إظهار العناصر إذا لم يتم العثور على المكتبة
-                }
+                    } else {
+                        console.error("html2pdf library is not loaded."); 
+                        alert("PDF export failed. Library not loaded.");
+                        showElements(); // إعادة إظهار العناصر إذا لم يتم العثور على المكتبة
+                    }
+                }, 10); // تأخير بسيط (10 مللي ثانية) لضمان حدوث التحديث
+
+                // ==========================================================
+                // === [نهاية إصلاح PDF النهائي] ===
+                // ==========================================================
              });
          } else { console.warn("Export PDF button not found"); }
     };
@@ -443,9 +453,4 @@ document.addEventListener('DOMContentLoaded', () => {
         initPdfExport(); // ربط زر PDF
         // === [نهاية تعديل PDF] ===
         
-        console.log("[DEBUG] Benchmarks page initialization finished.");
-    };    
-    
-    init(); // Call init immediately
-    
-});
+        console.log("[DEBUG] Benchmarks page initialization finished
