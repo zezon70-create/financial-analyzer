@@ -41,3 +41,4 @@ window.pageTranslations = {
         step3Desc: "Compare performance across different periods and discover trends to make confident, data-driven financial decisions."
     }
 };
+
