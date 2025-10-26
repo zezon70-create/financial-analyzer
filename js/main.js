@@ -1,4 +1,5 @@
-// js/main.js
+// js/main.js (النسخة المصححة + دمج الشاشة الترحيبية)
+
 // --- 1. STATE & CONFIG (Global Scope) ---
 const state = {
     preferences: {
@@ -6,24 +7,27 @@ const state = {
         lang: localStorage.getItem('lang') || 'ar',
     }
 };
+
 const translations = {
     ar: {
         brandTitle: "المحلل المالي", navHome: "الرئيسية", navInput: "الإدخال", navUpload: "الرفع",
         navReport: "التقرير", navAdvanced: "تحليلات متقدمة", navDashboard: "لوحة التحكم", navCompare: "المقارنات",
         footerText: "© 2025 المحلل المالي. جميع الحقوق محفوظة.",
-        navBenchmarks: "المقارنات المعيارية", // تمت إضافته
+        navBenchmarks: "المقارنات المعيارية",
         exportPdf: "تصدير PDF",
     },
     en: {
         brandTitle: "Financial Analyzer", navHome: "Home", navInput: "Input", navUpload: "Upload",
         navReport: "Report", navAdvanced: "Advanced", navDashboard: "Dashboard", navCompare: "Comparisons",
         footerText: "© 2025 Financial Analyzer. All rights reserved.",
-        navBenchmarks: "Benchmarks", // تمت إضافته
+        navBenchmarks: "Benchmarks",
         exportPdf: "Export PDF",
     }
 };
+
 // --- 2. GLOBAL FUNCTIONS ---
 const t = (key) => (translations[state.preferences.lang] && translations[state.preferences.lang][key]) || key;
+
 const applyTheme = (theme) => {
     document.body.setAttribute('data-theme', theme);
     const themeToggle = document.getElementById('themeToggle');
@@ -32,7 +36,9 @@ const applyTheme = (theme) => {
     }
     localStorage.setItem('theme', theme);
 };
+
 // *** Define applyTranslations GLOBALLY ***
+// *** (تم التراجع عن تعديل el.offsetParent الذي سبب المشكلة) ***
 function applyTranslations() {
     const lang = state.preferences.lang;
     console.log(`Applying translations for language: ${lang} (main.js)`);
@@ -47,10 +53,7 @@ function applyTranslations() {
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
             if (translatedText !== `[${key}]`) { el.placeholder = translatedText; }
         } else {
-            // التحقق قبل الكتابة لتجنب الكتابة على عناصر الشاشة الترحيبية بعد إخفائها
-            if (el.offsetParent !== null) {
-                el.textContent = translatedText;
-            }
+            el.textContent = translatedText; // <-- هذا هو الكود الأصلي الصحيح
         }
     });
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
@@ -59,29 +62,19 @@ function applyTranslations() {
     });
     console.log("Translations applied (main.js).");
 };
+
 // --- 3. DOMContentLoaded for Initialization and Event Binding ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded and parsed (main.js)");
-    // تم تحديث UI ليشمل الشاشة الترحيبية
+    
+    // تعريف عناصر الواجهة
     const UI = { 
         themeToggle: document.getElementById('themeToggle'), 
         languageSelect: document.getElementById('languageSelect'),
         splashScreen: document.getElementById('splashScreen') // <-- إضافة عنصر الشاشة
     };
-    // =========================================
-    //  إضافة جديدة: كود الشاشة الترحيبية
-    // =========================================
-    if (UI.splashScreen) {
-        const splashDuration = 1500; // مدة العرض: 1.5 ثانية
-        // تأكد من تطبيق الترجمة على الشاشة الترحيبية فوراً
-        applyTranslations();         
-        setTimeout(() => {
-            UI.splashScreen.classList.add('hidden');
-        }, splashDuration);
-    }
-    // =========================================
-    //  نهاية كود الشاشة الترحيبية
-    // =========================================
+
+    // --- (الكود الأصلي الخاص بك - كما هو) ---
     if (UI.themeToggle) { UI.themeToggle.addEventListener('click', () => { const newTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; applyTheme(newTheme); }); }
     if (UI.languageSelect) {
         UI.languageSelect.innerHTML = `<option value="ar">العربية</option><option value="en">English</option>`;
@@ -92,12 +85,35 @@ document.addEventListener('DOMContentLoaded', () => {
             window.location.reload();
         });
     }
+    
     applyTheme(state.preferences.theme);
-    // تم نقل استدعاء الترجمة الأول لداخل كود الشاشة الترحيبية
-    // لضمان ترجمة نص "جاري التحميل..." قبل اختفاء الشاشة
-    // applyTranslations(); // <-- هذا السطر تم نقله للأعلى
+    
+    // استدعاء الترجمة مرة واحدة (كما كان في الكود الأصلي)
+    // هذا سيقوم بترجمة كل شيء بما في ذلك الشاشة الترحيبية
+    applyTranslations();
+    
     console.log("Initial setup complete (main.js).");
+    // --- (نهاية الكود الأصلي) ---
+
+
+    // =========================================
+    //  إضافة جديدة: كود الشاشة الترحيبية
+    //  (يتم إضافته في النهاية لضمان عمل الكود الأصلي أولاً)
+    // =========================================
+    if (UI.splashScreen) {
+        const splashDuration = 1500; // مدة العرض: 1.5 ثانية
+        
+        // لا نحتاج لاستدعاء الترجمة مرة أخرى، فقد تم استدعاؤها بالفعل
+        
+        setTimeout(() => {
+            UI.splashScreen.classList.add('hidden');
+        }, splashDuration);
+    }
+    // =========================================
+    //  نهاية كود الشاشة الترحيبية
+    // =========================================
 });
+
 // *** ADD THIS LINE AT THE VERY END (Outside DOMContentLoaded) ***
 window.applyTranslations = applyTranslations;
 console.log("applyTranslations function explicitly attached to window.");
