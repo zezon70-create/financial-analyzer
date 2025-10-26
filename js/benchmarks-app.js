@@ -6,7 +6,6 @@ const benchmarksTranslations = {
         pageSubheader: "قارن نسبك المالية بمتوسطات الصناعة والفترة السابقة لفهم وضعك التنافسي.",
         navBenchmarks: "المقارنات المعيارية",
         exportPdf: "تصدير PDF",
-        
         // --- [تعديل] تم تغيير "القيمة" إلى "الحالية" و "السابقة" ---
         thRatio: "النسبة", 
         thPreviousValue: "الفترة السابقة", // <-- إضافة
@@ -14,7 +13,6 @@ const benchmarksTranslations = {
         thIndustryAvg: "متوسط الصناعة", 
         thComment: "مقارنة (بالصناعة)",
         // --- نهاية التعديل ---
-
         noDataForRatios: "لا توجد نسب محسوبة. يرجى تشغيل صفحة 'التحليلات المتقدمة' أولاً.",
         noDataForPreviousRatios: "لم يتم العثور على بيانات فترة سابقة.",
         liquidityRatios: "مؤشرات السيولة", profitabilityRatios: "مؤشرات الربحية", leverageRatios: "مؤشرات الروافع والمديونية", activityRatios: "مؤشرات النشاط",
