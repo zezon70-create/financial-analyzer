@@ -3,11 +3,20 @@ const benchmarksTranslations = {
     ar: {
         pageTitle: "المقارنات المعيارية — المحلل المالي",
         pageHeader: "المقارنات المعيارية",
-        pageSubheader: "قارن نسبك المالية بمتوسطات الصناعة لفهم وضعك التنافسي.",
+        pageSubheader: "قارن نسبك المالية بمتوسطات الصناعة والفترة السابقة لفهم وضعك التنافسي.",
         navBenchmarks: "المقارنات المعيارية",
         exportPdf: "تصدير PDF",
-        thRatio: "النسبة", thValue: "القيمة", thIndustryAvg: "متوسط الصناعة", thComment: "مقارنة",
+        
+        // --- [تعديل] تم تغيير "القيمة" إلى "الحالية" و "السابقة" ---
+        thRatio: "النسبة", 
+        thPreviousValue: "الفترة السابقة", // <-- إضافة
+        thCurrentValue: "الفترة الحالية", // <-- تعديل
+        thIndustryAvg: "متوسط الصناعة", 
+        thComment: "مقارنة (بالصناعة)",
+        // --- نهاية التعديل ---
+
         noDataForRatios: "لا توجد نسب محسوبة. يرجى تشغيل صفحة 'التحليلات المتقدمة' أولاً.",
+        noDataForPreviousRatios: "لم يتم العثور على بيانات فترة سابقة.",
         liquidityRatios: "مؤشرات السيولة", profitabilityRatios: "مؤشرات الربحية", leverageRatios: "مؤشرات الروافع والمديونية", activityRatios: "مؤشرات النشاط",
         currentRatio: "نسبة التداول", quickRatio: "نسبة السيولة السريعة",
         netProfitMargin: "هامش صافي الربح", grossProfitMargin: "هامش الربح الإجمالي", roa: "العائد على الأصول (ROA)", roe: "العائد على حقوق الملكية (ROE)",
@@ -26,14 +35,22 @@ const benchmarksTranslations = {
         comparison_better: "أفضل", comparison_worse: "أسوأ", comparison_similar: "مماثل"
     },
     en: {
-        // *** مُضاف: ترجمات إنجليزية كاملة ***
         pageTitle: "Industry Benchmarks — Financial Analyzer",
         pageHeader: "Industry Benchmarks",
-        pageSubheader: "Compare your financial ratios against industry averages to understand your competitive position.",
+        pageSubheader: "Compare your financial ratios against industry averages and your prior period.",
         navBenchmarks: "Benchmarks",
         exportPdf: "Export PDF",
-        thRatio: "Ratio", thValue: "Value", thIndustryAvg: "Industry Avg.", thComment: "Comparison",
+        
+        // --- [Edit] Changed "Value" to "Current" and "Previous" ---
+        thRatio: "Ratio", 
+        thPreviousValue: "Previous Value", // <-- Added
+        thCurrentValue: "Current Value", // <-- Edited
+        thIndustryAvg: "Industry Avg.", 
+        thComment: "Comparison (vs. Industry)",
+        // --- End Edit ---
+        
         noDataForRatios: "No calculated ratios found. Please run the 'Advanced Analytics' page first.",
+        noDataForPreviousRatios: "No prior period data found.",
         liquidityRatios: "Liquidity Ratios", profitabilityRatios: "Profitability Ratios", leverageRatios: "Leverage Ratios", activityRatios: "Activity Ratios",
         currentRatio: "Current Ratio", quickRatio: "Quick Ratio",
         netProfitMargin: "Net Profit Margin", grossProfitMargin: "Gross Profit Margin", roa: "Return on Assets (ROA)", roe: "Return on Equity (ROE)",
@@ -57,11 +74,18 @@ window.pageTranslations.ar = { ...(window.pageTranslations.ar || {}), ...(benchm
 window.pageTranslations.en = { ...(window.pageTranslations.en || {}), ...(benchmarksTranslations.en || {}) };
 document.addEventListener('DOMContentLoaded', () => {
     console.log("[DEBUG] benchmarks-app.js script started execution.");
+    
+    // --- [تعديل] تم تحديث كائن الحالة "state" ---
     const state = {
-        ratios: {},
-        hasData: false,
+        ratiosCurrent: {},
+        ratiosPrevious: {},
+        statementsPrevious: null, // <-- إضافة
+        hasDataCurrent: false, // <-- تعديل
+        hasDataPrevious: false, // <-- إضافة
         selectedIndustry: 'general'
     };
+    // --- نهاية التعديل ---
+
     const lang = localStorage.getItem('lang') || 'ar';
     const t = (key) => (window.pageTranslations[lang]?.[key] || `[${key}]`);
     const UI = {
@@ -81,45 +105,150 @@ document.addEventListener('DOMContentLoaded', () => {
     const formatRatio = (value, digits = 2) => isFinite(value) && !isNaN(value) ? value.toFixed(digits) : "N/A";
     const formatDays = (value) => isFinite(value) && !isNaN(value) ? `${value.toFixed(0)} ${lang === 'ar' ? 'يوم' : 'Days'}` : "N/A";
     const formatNumber = (value, digits = 0) => isFinite(value) && !isNaN(value) ? value.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }) : "N/A";
-    const loadProcessedRatios = () => {
-        state.ratios = {}; state.hasData = false;
-        console.log("[DEBUG] Loading calculatedRatios from localStorage...");
+
+    // --- [إضافة] دالة جديدة لحساب نسب الفترة السابقة ---
+    // هذه الدالة تحسب النسب المطلوبة بناءً على بيانات الفترة السابقة فقط
+    const calculatePreviousRatios = () => {
+        if (!state.statementsPrevious || !state.statementsPrevious.totals) {
+            state.hasDataPrevious = false;
+            return false;
+        }
+        const fPrev = state.statementsPrevious.totals;
+        try {
+            const assets = fPrev.totalAssets || 0;
+            const equity = fPrev.totalEquity || 0;
+            const liabilities = fPrev.totalLiabilities || 0;
+            const revenue = fPrev.totalRevenue || 0;
+            const netProfit = fPrev.netProfit || 0;
+            const cogs = fPrev.totalCogs || 0;
+            const ebit = fPrev.ebit || 0;
+            const interestExpense = fPrev.totalInterest || 0;
+            const inventory = fPrev.inventory || 0;
+            const accountsReceivable = fPrev.accountsReceivable || 0;
+            const currentAssets = fPrev.totalCurrentAssets || 0;
+            const currentLiabilities = fPrev.totalCurrentLiabilities || 0;
+            const cashEquivalents = fPrev.cashEquivalents || 0;
+            const grossProfit = fPrev.grossProfit || 0;
+            
+            // حساب النسب (باستخدام بيانات الفترة السابقة فقط)
+            // ملاحظة: هذه النسب لا تستخدم "متوسط" فترتين، بل هي نقطة زمنية للفترة السابقة
+            state.ratiosPrevious = {
+                currentRatio: currentLiabilities !== 0 ? currentAssets / currentLiabilities : Infinity,
+                quickRatio: currentLiabilities !== 0 ? (currentAssets - inventory) / currentLiabilities : Infinity,
+                netWorkingCapital: fPrev.workingCapital || 0,
+                cashRatio: currentLiabilities !== 0 ? cashEquivalents / currentLiabilities : Infinity,
+                inventoryTurnover: cogs > 0 && inventory > 0 ? cogs / inventory : Infinity,
+                assetTurnover: assets > 0 ? revenue / assets : 0,
+                receivablesTurnover: accountsReceivable > 0 ? revenue / accountsReceivable : Infinity,
+                avgCollectionPeriod: (accountsReceivable > 0 && revenue > 0) ? (accountsReceivable / revenue) * 365 : Infinity,
+                debtToAssets: assets > 0 ? liabilities / assets : Infinity,
+                debtToEquity: equity > 0 ? liabilities / equity : Infinity,
+                interestCoverageRatio: interestExpense !== 0 ? ebit / interestExpense : Infinity,
+                financialLeverage: (equity !== 0 && assets !== 0) ? assets / equity : Infinity,
+                grossProfitMargin: revenue !== 0 ? grossProfit / revenue : 0,
+                netProfitMargin: revenue !== 0 ? netProfit / revenue : 0,
+                roa: assets > 0 ? netProfit / assets : 0,
+                roe: equity > 0 ? netProfit / equity : 0
+            };
+            
+            state.hasDataPrevious = true;
+            console.log("[DEBUG] Successfully calculated Previous Ratios:", state.ratiosPrevious);
+            return true;
+        } catch (e) {
+            console.error("Error calculating PREVIOUS ratios:", e);
+            state.hasDataPrevious = false;
+            return false;
+        }
+    };
+    // --- [نهاية الإضافة] ---
+
+    // --- [تعديل] دالة تحميل البيانات (تحمل الآن الحالية والسابقة) ---
+    const loadAllData = () => {
+        state.hasDataCurrent = false;
+        state.hasDataPrevious = false;
+        
+        // 1. تحميل النسب الحالية (المحسوبة من صفحة "التحليلات المتقدمة")
         try {
             const rawDataString = localStorage.getItem('calculatedRatios'); 
             if (!rawDataString) throw new Error("localStorage 'calculatedRatios' is missing. Run 'Advanced' page first.");       
             const parsedData = JSON.parse(rawDataString);
             if (typeof parsedData !== 'object' || parsedData === null) throw new Error("Parsed 'calculatedRatios' is not a valid object.");            
-            state.ratios = parsedData;
-            state.hasData = true;
-            console.log("[DEBUG] Successfully loaded calculatedRatios:", state.ratios);
-            return true;          
+            state.ratiosCurrent = parsedData;
+            state.hasDataCurrent = true;
+            console.log("[DEBUG] Successfully loaded calculatedRatios (Current):", state.ratiosCurrent);
         } catch (e) { 
-            console.error("Benchmark Component Error:", e); 
-            return false; 
+            console.error("Benchmark Component Error (Current Ratios):", e); 
         }
+
+        // 2. تحميل بيانات الفترة السابقة (لحساب نسب الفترة السابقة)
+        try {
+            const previousDataString = localStorage.getItem('financialDataPrevious');
+            if (previousDataString) {
+                state.statementsPrevious = JSON.parse(previousDataString);
+                if (state.statementsPrevious && state.statementsPrevious.totals) {
+                    calculatePreviousRatios(); // هذه الدالة تضبط state.hasDataPrevious
+                }
+            } else {
+                console.warn("[DEBUG] 'financialDataPrevious' not found. No previous ratios will be shown.");
+            }
+        } catch (e) {
+            console.error("Error parsing 'financialDataPrevious':", e);
+        }
+        
+        return state.hasDataCurrent; // الصفحة لا تزال تعمل طالما النسب الحالية موجودة
     };    
-    // 5. Rendering Functions
+    // --- [نهاية التعديل] ---
+
+    // --- [تعديل] دالة عرض الجداول (تم تطويرها بالكامل) ---
     const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => {
         const container = document.getElementById(divId);
         if (!container) return;
-        if (!state.hasData) {
+        
+        if (!state.hasDataCurrent) { // تم التعديل
             container.innerHTML = `<h5 class="mb-3">${t(categoryTitleKey)}</h5> <p class="text-muted">${t('noDataForRatios')}</p>`; return;
         }
+        
         const benchmarks = industryBenchmarks[state.selectedIndustry] || {};
-        const showBenchmarks = state.selectedIndustry !== 'general';       
-        let tableHTML = `<h5 class="mb-3">${t(categoryTitleKey)}</h5> <div class="table-responsive"> <table class="table table-sm table-striped"> <thead><tr> <th>${t('thRatio')}</th> <th class="text-end">${t('thValue')}</th> ${showBenchmarks ? `<th class="text-end">${t('thIndustryAvg')}</th>` : ''} <th>${t('thComment')}</th> </tr></thead> <tbody>`;        
+        const showBenchmarks = state.selectedIndustry !== 'general';
+        const showPrevious = state.hasDataPrevious; // <-- إضافة
+
+        // تعديل رأس الجدول
+        let tableHTML = `<h5 class="mb-3">${t(categoryTitleKey)}</h5> <div class="table-responsive"> <table class="table table-sm table-striped"> <thead><tr> 
+            <th>${t('thRatio')}</th> 
+            ${showPrevious ? `<th class="text-end">${t('thPreviousValue')}</th>` : ''}
+            <th class="text-end">${t('thCurrentValue')}</th> 
+            ${showBenchmarks ? `<th class="text-end">${t('thIndustryAvg')}</th>` : ''} 
+            <th>${t('thComment')}</th> 
+            </tr></thead> <tbody>`;
+            
         ratioKeys.forEach(key => {
-            if (typeof state.ratios[key] === 'undefined') return; 
-            const value = state.ratios[key]; 
+            if (typeof state.ratiosCurrent[key] === 'undefined') return; 
+            
+            const valueCurrent = state.ratiosCurrent[key];
+            const valuePrevious = state.ratiosPrevious[key]; // <-- إضافة
             const benchmarkValue = benchmarks[key]; 
+            
             const isPercentage = key.includes('Margin') || key.includes('roa') || key.includes('roe');
             const isDays = key.includes('avgCollectionPeriod');
             const isNumber = key === 'netWorkingCapital';
-            let formattedValue;
-            if (isDays) formattedValue = formatDays(value);
-            else if (isPercentage) formattedValue = formatPercent(value);
-            else if (isNumber) formattedValue = formatNumber(value, 0);
-            else formattedValue = formatRatio(value);           
+            
+            // تنسيق القيمة الحالية
+            let formattedValueCurrent;
+            if (isDays) formattedValueCurrent = formatDays(valueCurrent);
+            else if (isPercentage) formattedValueCurrent = formatPercent(valueCurrent);
+            else if (isNumber) formattedValueCurrent = formatNumber(valueCurrent, 0);
+            else formattedValueCurrent = formatRatio(valueCurrent);
+            
+            // تنسيق القيمة السابقة
+            let formattedValuePrevious = '-';
+            if (showPrevious && typeof valuePrevious !== 'undefined' && isFinite(valuePrevious)) {
+                if (isDays) formattedValuePrevious = formatDays(valuePrevious);
+                else if (isPercentage) formattedValuePrevious = formatPercent(valuePrevious);
+                else if (isNumber) formattedValuePrevious = formatNumber(valuePrevious, 0);
+                else formattedValuePrevious = formatRatio(valuePrevious);
+            }
+
+            // تنسيق قيمة الصناعة
             let formattedBenchmark = '-';
             if (showBenchmarks && typeof benchmarkValue !== 'undefined' && isFinite(benchmarkValue)) {
                 if (isDays) formattedBenchmark = formatDays(benchmarkValue);
@@ -127,19 +256,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 else if (isNumber) formattedBenchmark = formatNumber(benchmarkValue, 0);
                 else formattedBenchmark = formatRatio(benchmarkValue);
             }
-            // Comparison logic
+            
+            // مؤشر "الطفرة" (مقارنة الحالية بالسابقة)
+            let leapIndicator = '';
+            if (showPrevious && isFinite(valueCurrent) && isFinite(valuePrevious) && valuePrevious !== 0) {
+                const isLowerBetter = key === 'debtToEquity' || key === 'debtToAssets' || key === 'avgCollectionPeriod';
+                let improved;
+                if (isLowerBetter) {
+                    improved = valueCurrent < valuePrevious;
+                } else { // 'higher is better'
+                    improved = valueCurrent > valuePrevious;
+                }
+                
+                if (valueCurrent !== valuePrevious) {
+                     leapIndicator = improved ? 
+                        `<i class="bi bi-graph-up-arrow text-success ms-1" title="${lang === 'ar' ? 'تحسن عن الفترة السابقة' : 'Improved vs. Prior'}"></i>` :
+                        `<i class="bi bi-graph-down-arrow text-danger ms-1" title="${lang === 'ar' ? 'تراجع عن الفترة السابقة' : 'Declined vs. Prior'}"></i>`;
+                }
+            }
+
+            // مؤشر المقارنة (مقارنة الحالية بالصناعة)
             let comparisonIndicator = ''; 
             let comparisonText = '';
-            if (showBenchmarks && typeof benchmarkValue !== 'undefined' && isFinite(value) && isFinite(benchmarkValue)) { 
+            if (showBenchmarks && typeof benchmarkValue !== 'undefined' && isFinite(valueCurrent) && isFinite(benchmarkValue)) { 
                 const tolerance = 0.1 * Math.abs(benchmarkValue); 
                 const isLowerBetter = key === 'debtToEquity' || key === 'debtToAssets' || key === 'avgCollectionPeriod';                
                 let isBetter, isWorse;
                 if (isLowerBetter) {
-                    isBetter = value < benchmarkValue - tolerance;
-                    isWorse = value > benchmarkValue + tolerance;
+                    isBetter = valueCurrent < benchmarkValue - tolerance;
+                    isWorse = valueCurrent > benchmarkValue + tolerance;
                 } else { // 'higher is better'
-                    isBetter = value > benchmarkValue + tolerance;
-                    isWorse = value < benchmarkValue + tolerance;
+                    isBetter = valueCurrent > benchmarkValue + tolerance;
+                    isWorse = valueCurrent < benchmarkValue + tolerance;
                 }
                 if (isBetter) { 
                     comparisonIndicator = '<i class="bi bi-arrow-up-circle-fill text-success ms-1"></i>'; 
@@ -152,10 +300,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     comparisonText = `(${t('comparison_similar')})`; 
                 } 
             }            
-            tableHTML += `<tr> <td>${t(key)}</td> <td class="text-end"><strong>${formattedValue}</strong> ${comparisonIndicator}</td> ${showBenchmarks ? `<td class="text-end">${formattedBenchmark}</td>` : ''} <td class="text-muted small">${comparisonText}</td> </tr>`;
+            
+            // بناء صف الجدول
+            tableHTML += `<tr> 
+                <td>${t(key)}</td> 
+                ${showPrevious ? `<td class="text-end">${formattedValuePrevious}</td>` : ''}
+                <td class="text-end"><strong>${formattedValueCurrent}</strong> ${leapIndicator} ${comparisonIndicator}</td> 
+                ${showBenchmarks ? `<td class="text-end">${formattedBenchmark}</td>` : ''} 
+                <td class="text-muted small">${comparisonText}</td> 
+                </tr>`;
         });
         container.innerHTML = tableHTML + `</tbody></table></div>`;
     };
+    // --- [نهاية التعديل] ---
+
     const renderAllRatios = () => {
         renderRatioCategory('liquidityRatiosBenchmark', 'liquidityRatios', ['currentRatio', 'quickRatio', 'cashRatio', 'netWorkingCapital']);
         renderRatioCategory('profitabilityRatiosBenchmark', 'profitabilityRatios', ['grossProfitMargin', 'netProfitMargin', 'roa', 'roe']);
@@ -163,13 +321,13 @@ document.addEventListener('DOMContentLoaded', () => {
         renderRatioCategory('activityRatiosBenchmark', 'activityRatios', ['assetTurnover', 'inventoryTurnover', 'receivablesTurnover', 'avgCollectionPeriod']);
     };    
     
-    // ===== [ بداية التعديلات ] =====
+    // --- [تفعيل PDF] ---
+    // هذا الكود هو النسخة المطورة التي طلبتها، والتي تتجاهل الأيقونات لتصدير سليم.
     const initPdfExport = () => {
          if (UI.exportPdfBtn) {
              UI.exportPdfBtn.addEventListener('click', () => {
                 
-                // (الإصلاح 1): استخدام اسم المتغير الصحيح
-                if (!state.hasData) { 
+                if (!state.hasDataCurrent) { // تم التعديل
                     alert(t('noDataForRatios')); 
                     return; 
                 }
@@ -185,22 +343,20 @@ document.addEventListener('DOMContentLoaded', () => {
                         image: { type: 'jpeg', quality: 0.98 },
                         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
                         
-                        // ===== [ === التعديل النهائي === ] =====
-                        // إصلاح مشكلة 'Unsupported image type'
-                        // هذا الكود يخبر المكتبة بتجاهل الأيقونات (<i>) والعلامة المائية (watermark-logo)
+                        // هذا هو الكود المطور لتجاهل الأيقونات التي تسبب مشاكل
                         html2canvas: { 
                             scale: 2, 
                             useCORS: true, 
                             logging: false,
                             ignoreElements: (element) => {
-                                const ignores = ['I']; // تجاهل كل الأيقونات
+                                // تجاهل كل وسوم <i> (الأيقونات)
+                                const ignores = ['I']; 
                                 if (element.classList.contains('watermark-logo')) {
                                     return true; // تجاهل العلامة المائية
                                 }
                                 return ignores.includes(element.tagName);
                             }
                         }
-                        // ===== [ === نهاية التعديل النهائي === ] =====
                     };
                     
                     html2pdf().from(element).set(opt).save().then(() => {
@@ -219,7 +375,7 @@ document.addEventListener('DOMContentLoaded', () => {
              });
          } else { console.warn("Export PDF button not found"); }
     };
-    // ===== [ نهاية التعديلات ] =====
+    // --- [نهاية تفعيل PDF] ---
 
     // 6. Initialization
     const init = () => {
@@ -242,19 +398,28 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('selectedIndustry', state.selectedIndustry);
             renderAllRatios(); 
         });
-        if (loadProcessedRatios()) {
+
+        // --- [تعديل] استخدام الدالة الجديدة لتحميل البيانات ---
+        if (loadAllData()) {
             UI.warningDiv.style.display = 'none';
             renderAllRatios();
+            
+            // إضافة تحذير إذا لم يتم العثور على بيانات سابقة
+            if (!state.hasDataPrevious) {
+                // يمكنك إضافة رسالة في مكان آخر إذا أردت
+                console.warn(t('noDataForPreviousRatios'));
+            }
+
         } else {
             UI.warningDiv.textContent = t('noDataForRatios');
             UI.warningDiv.style.display = 'block';
         }        
+        // --- [نهاية التعديل] ---
+        
         initPdfExport(); // ربط زر PDF
         console.log("[DEBUG] Benchmarks page initialization finished.");
     };    
     
     init(); // Call init immediately
-    
-    // تم حذف دالة loadScript المكررة من هنا
     
 });
