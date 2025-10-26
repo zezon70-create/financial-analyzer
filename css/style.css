@@ -1,12 +1,3 @@
-html {
-    box-sizing: border-box;
-    scroll-behavior: smooth; 
-}
-*,
-*::before,
-*::after {
-    box-sizing: inherit; 
-}
 /* =========================================
    1. Global Styles & Variables
    ========================================= */
@@ -26,6 +17,7 @@ html {
     --shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
     --font-family: 'Cairo', system-ui, sans-serif;
 }
+
 body {
     margin: 0;
     font-family: var(--font-family);
@@ -38,11 +30,13 @@ body[data-theme="dark"] {
     background: var(--bg-dark);
     color: var(--text-dark);
 }
+
 .container-main {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1.5rem;
 }
+
 /* =========================================
    2. Global Navigation Bar
    ========================================= */
@@ -108,13 +102,16 @@ body[data-theme="dark"] .nav-link {
     font-size: 1.2rem;
     color: var(--muted-light);
     padding: 0;
-    width: 24px; 
-    height: 24px; 
+    /* --- إضافة بسيطة لمنع اهتزاز الصفحة --- */
+    width: 24px;
+    height: 24px;
     position: relative;
+    /* --- نهاية الإضافة --- */
 }
 body[data-theme="dark"] .controls .theme-toggle {
     color: var(--muted-dark);
 }
+
 /* =========================================
    3. Common Components
    ========================================= */
@@ -165,9 +162,11 @@ body[data-theme="dark"] .form-select {
     border-color: rgba(255, 255, 255, 0.15);
     color: var(--text-dark);
 }
+
 /* =========================================
    4. Page-Specific Styles
    ========================================= */
+
 /* --- Index Page --- */
 .hero {
     background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
@@ -186,26 +185,8 @@ body[data-theme="dark"] .form-select {
 .how-it-works { padding: 5rem 0; }
 .section-title { text-align: center; font-size: 2.25rem; font-weight: 700; margin-bottom: 3rem; }
 .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-.step-card { 
-    background: var(--card-light); 
-    border-radius: var(--radius); 
-    padding: 2rem; 
-    text-align: center; 
-    box-shadow: var(--shadow); 
-    border: 1px solid #e9ecef;
-    transition: transform 0.2s, box-shadow 0.2s; 
-}
-.step-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 30px rgba(0,0,0,0.1);
-}
-body[data-theme="dark"] .step-card { 
-    background: var(--card-dark); 
-    border-color: rgba(255, 255, 255, 0.1); 
-}
-body[data-theme="dark"] .step-card:hover {
-    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-}
+.step-card { background: var(--card-light); border-radius: var(--radius); padding: 2rem; text-align: center; box-shadow: var(--shadow); border: 1px solid #e9ecef; }
+body[data-theme="dark"] .step-card { background: var(--card-dark); border-color: rgba(255, 255, 255, 0.1); }
 .step-icon { font-size: 2.5rem; color: var(--accent-1); margin-bottom: 1.5rem; }
 .step-card h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; }
 
@@ -218,6 +199,7 @@ body[data-theme="dark"] .kpi-card { background: var(--card-dark); border-color: 
 body[data-theme="dark"] .kpi-card .label { color: var(--muted-dark); }
 .kpi-card .value { font-size: 1.5rem; font-weight: 700; margin-top: 0.25rem; }
 .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; align-items: start; }
+
 /* --- Report Page --- */
 .report-table { font-size: 0.95rem; }
 .report-table tbody tr:last-child { border-bottom: none; }
@@ -228,9 +210,8 @@ body[data-theme="dark"] .report-table .total-row td { background-color: rgba(13,
 .watermark-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: -1; opacity: 0; }
 .watermark-logo { width: 400px; opacity: 0.05; }
 .no-print { /* This class is used to hide elements during printing/PDF export */ }
-/* =========================================
-   5. Print & PDF Export Styles
-   ========================================= */
+
+/* --- Print & PDF Export Styles --- */
 @media print {
     .no-print, .site-header-global, .site-footer {
         display: none !important;
@@ -251,8 +232,9 @@ body[data-theme="dark"] .report-table .total-row td { background-color: rgba(13,
         opacity: 1;
     }
 }
+
 /* =========================================
-   6. Splash Screen Styles (النسخة العالمية المحسّنة)
+   6. Splash Screen Styles (إضافة جديدة - النسخة العالمية)
    ========================================= */
 .splash-screen {
     position: fixed;
@@ -269,39 +251,45 @@ body[data-theme="dark"] .report-table .total-row td { background-color: rgba(13,
     visibility: visible;
     transition: opacity 0.5s ease-out, visibility 0.5s ease-out; 
 }
+
 body[data-theme="dark"] .splash-screen {
     background-color: var(--bg-dark); 
 }
+
 .splash-screen.hidden {
     opacity: 0;
     visibility: hidden;
     pointer-events: none; 
 }
+
 .splash-content {
     display: flex;
     justify-content: center; 
     align-items: center; 
 }
+
 .splash-logo {
-    width: 180px; /* تم تكبير الشعار قليلاً */
+    width: 180px; /* لوجو كبير وواضح */
     height: auto;
     animation: pulse 2s infinite ease-in-out; /* حركة النبض */
 }
-/* إخفاء العناصر الأخرى للتركيز على اللوجو */
+
+/* إخفاء العناصر الأخرى (النص والـ spinner) للتركيز على اللوجو */
 .splash-text {
     display: none;
 }
 .splash-spinner {
     display: none;
 }
-/* إضافة حركة "النبض" الجديدة */
+
+/* حركة "النبض" للوجو */
 @keyframes pulse {
     0% {
         transform: scale(1);
         opacity: 0.8;
     }
     50% {
-        transform: scale(1.05); /* يكبر قليلاً */
+        transform: scale(1.05); 
         opacity: 1;
     }
     100% {
@@ -309,4 +297,3 @@ body[data-theme="dark"] .splash-screen {
         opacity: 0.8;
     }
 }
-
