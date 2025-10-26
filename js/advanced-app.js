@@ -47,7 +47,8 @@ const advancedTranslations = {
         labelNumShares: "عدد الأسهم القائمة",
         labelMarketPrice: "سعر السهم السوقي",
         labelTotalDividends: "إجمالي التوزيعات النقدية",
-        btnUpdateValuation: "تحديث مؤشرات التقييم"
+        btnUpdateValuation: "تحديث مؤشرات التقييم",
+        exportPdf: "تصدير PDF" // *** تمت الإضافة ***
     },
     en: {
         pageTitle: "Advanced Analytics — Financial Analyzer", pageHeader: "Advanced Analytics", pageSubheader: "Use specialized analytical tools for deeper insights into your business performance.",
@@ -96,7 +97,8 @@ const advancedTranslations = {
         labelNumShares: "Number of Shares Outstanding",
         labelMarketPrice: "Market Price Per Share",
         labelTotalDividends: "Total Annual Dividends Paid",
-        btnUpdateValuation: "Update Valuation Ratios"
+        btnUpdateValuation: "Update Valuation Ratios",
+        exportPdf: "Export PDF" // *** تمت الإضافة ***
     }
 };
 window.pageTranslations = window.pageTranslations || {};
@@ -797,6 +799,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                      console.error("[DEBUG] Initial analysis FAILED. Other tabs will not be rendered.");
                 }              
+                
+                // *** بداية الإضافة: تطبيق الترجمة بعد عرض كل المحتوى الديناميكي ***
+                if (typeof window.applyTranslations === 'function') { 
+                    console.log("Applying translations *after* initial render and all dynamic content...");
+                    window.applyTranslations(); 
+                }
+                // *** نهاية الإضافة ***
+
                 console.log("Advanced page initialized.");
             }, 100); 
             // Event Listeners
@@ -804,6 +814,35 @@ document.addEventListener('DOMContentLoaded', () => {
             if (UI.calculateEVA) UI.calculateEVA.addEventListener('click', calculateAndDisplayEVA);
             if (UI.runScenario) UI.runScenario.addEventListener('click', calculateAndDisplayScenario);
             if (UI.updateValuationRatios) UI.updateValuationRatios.addEventListener('click', updateAndRerenderValuationRatios);
+            
+            // *** بداية الإضافة: مستمعي أزرار تصدير PDF ***
+            document.querySelectorAll('.export-pdf-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const targetId = e.currentTarget.dataset.exportTarget;
+                    const targetElement = document.querySelector(targetId);
+                    if (!targetElement) {
+                        console.error(`Export target '${targetId}' not found.`);
+                        alert('Error: Could not find content to export.');
+                        return;
+                    }
+                    if (typeof html2pdf === 'function') {
+                        const tabName = targetId.replace('-pane-content', '').replace('#', '');
+                        const opt = {
+                            margin: 0.5,
+                            filename: `Financial_Analysis_${tabName}.pdf`,
+                            image: { type: 'jpeg', quality: 0.98 },
+                            html2canvas: { scale: 2, useCORS: true, logging: false },
+                            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+                        };
+                        html2pdf().from(targetElement).set(opt).save();
+                    } else {
+                        console.error("html2pdf library not loaded.");
+                        alert("PDF export failed. Library not loaded.");
+                    }
+                });
+            });
+            // *** نهاية الإضافة ***
+            
             // Tab Change Listeners
             const tabs = ['ratios', 'breakeven', 'dupont', 'vertical', 'zscore', 'cashflow', 'eva', 'horizontal', 'ccc', 'scenario']; 
             tabs.forEach(tabId => {
