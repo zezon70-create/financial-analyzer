@@ -1,12 +1,10 @@
 // js/input-app.js
-
 window.pageTranslations = {
     ar: {
         pageTitle: "إدخال ميزان المراجعة — المحلل المالي",
         pageHeader: "إدخال بيانات ميزان المراجعة",
         pageSubheader: "هذه الصفحة مخصصة للمحاسبين لإدخال البيانات الدقيقة وتصنيفها طبقًا للمعايير الدولية.",
         actionsTitle: "أدوات التحكم",
-        // *** تعديل: تغيير نص الزر ليعكس الحفظ التلقائي ***
         add: "إضافة صف",
         save: "تأكيد الحفظ", 
         clear: "مسح الكل",
@@ -29,12 +27,11 @@ window.pageTranslations = {
         debit: "المدين",
         credit: "الدائن",
         confirmClear: "هل أنت متأكد من أنك تريد مسح جميع البيانات في الجدول؟",
-        // *** تعديل: رسالة التأكيد توضح الحفظ التلقائي ***
         savedSuccess: "تم تأكيد الحفظ! (ملاحظة: يتم حفظ بياناتك تلقائياً عند كل تغيير)", 
         saveAsSuccess: "تم حفظ البيانات بنجاح باسم",
         saveAsError: "الرجاء إدخال اسم لحفظ مجموعة البيانات.",
-
-        // *** NEW TRANSLATIONS ***
+        savePrevious: "حفظ كفترة سابقة",
+        savedPreviousSuccess: "تم حفظ بيانات الفترة السابقة بنجاح!",
         manualEntryTab: "إدخال يدوي",
         uploadFileTab: "رفع ملف",
         uploadFileTitle: "رفع ملف ميزان المراجعة (Excel أو CSV)",
@@ -83,7 +80,8 @@ window.pageTranslations = {
         savedSuccess: "Save Confirmed! (Note: Your data auto-saves on every change)",
         saveAsSuccess: "Data saved successfully as",
         saveAsError: "Please enter a name to save the dataset.",
-        // *** NEW TRANSLATIONS ***
+        savePrevious: "Save as Previous Period",
+        savedPreviousSuccess: "Previous period data saved successfully!",
         manualEntryTab: "Manual Entry",
         uploadFileTab: "Upload File",
         uploadFileTitle: "Upload Trial Balance (Excel or CSV)",
@@ -144,6 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         clearBtn: document.getElementById('clearBtn'),
         saveAsNameInput: document.getElementById('saveAsName'),
         saveAsBtn: document.getElementById('saveAsBtn'),
+        savePreviousBtn: document.getElementById('savePreviousBtn'), // *** إضافة الزر هنا ***
         fileDropArea: document.getElementById('fileDropArea'),
         fileUploader: document.getElementById('fileUploader'),
         browseButton: document.getElementById('browseButton'),
@@ -185,7 +184,23 @@ document.addEventListener('DOMContentLoaded', () => {
             UI.saveAsNameInput.value = '';
         } catch (e) { alert("Error saving data."); }
     };
-        const updateFxRate = () => {
+
+    // *** إضافة دالة جديدة لحفظ الفترة السابقة ***
+    const handleSavePrevious = () => {
+        if (state.trialData.length === 0 || (state.trialData.length === 1 && !state.trialData[0].Account && !toNum(state.trialData[0].Debit) && !toNum(state.trialData[0].Credit))) {
+            alert(lang === 'ar' ? 'لا توجد بيانات لحفظها.' : 'No data to save.');
+            return;
+        }
+        try {
+            localStorage.setItem('trialDataPrevious', JSON.stringify(state.trialData));
+            alert(t_page('savedPreviousSuccess'));
+        } catch (e) {
+            alert("Error saving previous period data.");
+        }
+    };
+    // *** نهاية الإضافة ***
+
+    const updateFxRate = () => {
         const currencyCode = UI.currencySelect.value;
         const currency = config.currencies[currencyCode];
         UI.fxRateInput.value = currency.rate;
@@ -428,6 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         UI.saveAsBtn.addEventListener('click', handleSaveAs);
+        UI.savePreviousBtn.addEventListener('click', handleSavePrevious); // *** إضافة مستمع الحدث ***
         UI.currencySelect.addEventListener('change', updateFxRate);
 
         UI.fxRateInput.addEventListener('change', (e) => {
