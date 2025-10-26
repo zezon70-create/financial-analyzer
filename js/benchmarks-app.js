@@ -337,7 +337,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================================
     
     // --- [تفعيل PDF] ---
-    // تم تبسيط هذه الدالة. الكود المطور في "renderRatioCategory" هو ما سيحل المشكلة.
+    // هذا هو الكود المطور الذي يجمع بين تجاهل الأيقونات وتجاهل العلامة المائية
     const initPdfExport = () => {
          if (UI.exportPdfBtn) {
              UI.exportPdfBtn.addEventListener('click', () => {
@@ -358,13 +358,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         image: { type: 'jpeg', quality: 0.98 },
                         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
                         
-                        // تم تبسيط هذا الجزء
-                        // المكتبة ستحترم "data-html2canvas-ignore" التي أضفناها للأيقونات
+                        // هذا هو الكود المطور لتجاهل الأيقونات التي تسبب مشاكل
                         html2canvas: { 
                             scale: 2, 
                             useCORS: true, 
-                            logging: false
-                            // تم حذف دالة 'ignoreElements' القديمة لأنها غير موثوقة وفشلت
+                            logging: false,
+                            
+                            // [الإصلاح] إضافة هذه الدالة لتجاهل العلامة المائية
+                            ignoreElements: (element) => {
+                                // هذه الدالة تتجاهل العلامة المائية
+                                // (الأيقونات تم تجاهلها بالفعل باستخدام data-html2canvas-ignore)
+                                if (element.classList.contains('watermark-logo')) {
+                                    return true; 
+                                }
+                                return false;
+                            }
                         }
                     };
                     
@@ -384,7 +392,7 @@ document.addEventListener('DOMContentLoaded', () => {
              });
          } else { console.warn("Export PDF button not found"); }
     };
-    // =================================G=========================
+    // ==========================================================
     // === [نهاية إصلاح PDF] ===
     // ==========================================================
 
