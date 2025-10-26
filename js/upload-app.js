@@ -25,6 +25,11 @@ window.pageTranslations = {
         noDataToSave: "لا توجد بيانات لحفظها.",
         saveAsSuccess: "تم حفظ البيانات بنجاح باسم",
         saveAsError: "الرجاء إدخال اسم لحفظ مجموعة البيانات.",
+
+        // *** إضافة ترجمات جديدة ***
+        savePrevious: "حفظ كفترة سابقة",
+        savedPreviousSuccess: "تم حفظ بيانات الفترة السابقة بنجاح!",
+
         manualEntryTab: "إدخال يدوي",
         uploadFileTab: "رفع ملف",
         uploadFileTitle: "رفع ملف القوائم المالية (Excel أو CSV)",
@@ -69,6 +74,11 @@ window.pageTranslations = {
         noDataToSave: "No data to save.",
         saveAsSuccess: "Data saved successfully as",
         saveAsError: "Please enter a name to save the dataset.",
+
+        // *** إضافة ترجمات جديدة ***
+        savePrevious: "Save as Previous Period",
+        savedPreviousSuccess: "Previous period data saved successfully!",
+
         manualEntryTab: "Manual Entry",
         uploadFileTab: "Upload File",
         uploadFileTitle: "Upload Financial Statements (Excel or CSV)",
@@ -107,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
         saveAsBtn: document.getElementById('saveAsBtn'),
         saveBtn: document.getElementById('saveBtn'),
         clearBtn: document.getElementById('clearBtn'),
+        savePreviousBtn: document.getElementById('savePreviousBtn'), // *** إضافة الزر هنا ***
         tabContent: document.querySelector('.tab-content'),
         fileDropArea: document.getElementById('fileDropArea'),
         fileUploader: document.getElementById('fileUploader'),
@@ -132,12 +143,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // *** تعديل: هذه الدالة أصبحت هي المسؤولة عن الحفظ التلقائي ***
     const saveData = () => {
-        localStorage.setItem('statementData', JSON.stringify(state.data));
+        // *** تصحيح: تغيير المفتاح من 'statementData' إلى 'uploadedFinancialData' ***
+        localStorage.setItem('uploadedFinancialData', JSON.stringify(state.data));
         console.log("Auto-save successful!"); // For testing
     };
 
     const loadData = () => {
-        const storedData = JSON.parse(localStorage.getItem('statementData') || '{}');
+        // *** تصحيح: تغيير المفتاح من 'statementData' إلى 'uploadedFinancialData' ***
+        const storedData = JSON.parse(localStorage.getItem('uploadedFinancialData') || '{}');
         const defaultRow = (fields) => fields.reduce((acc, field) => ({ ...acc, [field]: '' }), {});
         for (const key in config.tables) {
             state.data[key] = storedData[key]?.length > 0 ? storedData[key] : [defaultRow(config.tables[key].fields)];
@@ -161,6 +174,22 @@ document.addEventListener('DOMContentLoaded', () => {
             UI.saveAsNameInput.value = '';
         } catch (e) { alert("Error saving data."); }
     };
+
+    // *** إضافة دالة جديدة لحفظ الفترة السابقة ***
+    const handleSavePrevious = () => {
+        if (state.data.bs.length === 0 && state.data.is.length === 0) {
+            alert(t_page('noDataToSave'));
+            return;
+        }
+        try {
+            // *** هذا هو المفتاح الذي يبحث عنه ملف report-app.js ***
+            localStorage.setItem('uploadedFinancialDataPrevious', JSON.stringify(state.data));
+            alert(t_page('savedPreviousSuccess'));
+        } catch (e) {
+            alert("Error saving previous period data.");
+        }
+    };
+    // *** نهاية الإضافة ***
     
     const renderTable = (tableKey) => {
         const tableEl = document.getElementById(`${tableKey}Table`);
@@ -367,7 +396,8 @@ document.addEventListener('DOMContentLoaded', () => {
         
         UI.clearBtn.addEventListener('click', () => {
             if (confirm(t_page('confirmClear'))) {
-                localStorage.removeItem('statementData');
+                // *** تصحيح: تغيير المفتاح من 'statementData' إلى 'uploadedFinancialData' ***
+                localStorage.removeItem('uploadedFinancialData');
                 loadData();
                 // *** تعديل: إضافة الحفظ التلقائي هنا ***
                 saveData(); // Save the new empty state
@@ -376,6 +406,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         UI.saveAsBtn.addEventListener('click', handleSaveAs);
+        UI.savePreviousBtn.addEventListener('click', handleSavePrevious); // *** إضافة مستمع الحدث ***
         
         UI.tabContent.addEventListener('click', (e) => {
             const btn = e.target.closest('[data-table]');
