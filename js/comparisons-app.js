@@ -15,6 +15,8 @@ const comparisonsTranslations = {
         // *** مُضاف: رسائل خطأ جديدة ***
         noDataCurrent: "لا توجد بيانات للفترة الحالية. يرجى تشغيل صفحة 'التقارير' أولاً.",
         noDataPrevious: "لا توجد بيانات للفترة السابقة. لا يمكن إجراء مقارنة.",
+        thPreviousPeriod: "الفترة السابقة",
+        thCurrentPeriod: "الفترة الحالية",
         // *** مُضاف: بنود للرسوم البيانية ***
         revenue: "الإيرادات",
         grossProfit: "مجمل الربح",
@@ -37,6 +39,8 @@ const comparisonsTranslations = {
         tableHdrChangePercent: "Change (%)",
         noDataCurrent: "No data found for the current period. Please run the 'Report' page first.",
         noDataPrevious: "No data found for the previous period. Comparison cannot be performed.",
+        thPreviousPeriod: "Previous Period",
+        thCurrentPeriod: "Current Period",
         revenue: "Revenue",
         grossProfit: "Gross Profit",
         netProfit: "Net Profit",
@@ -296,4 +300,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     init();
 });
+
 
