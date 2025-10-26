@@ -75,14 +75,16 @@ window.pageTranslations.en = { ...(window.pageTranslations.en || {}), ...(benchm
 document.addEventListener('DOMContentLoaded', () => {
     console.log("[DEBUG] benchmarks-app.js script started execution.");
     
+    // --- [تعديل] تم تحديث كائن الحالة "state" ---
     const state = {
         ratiosCurrent: {},
         ratiosPrevious: {},
-        statementsPrevious: null, 
-        hasDataCurrent: false, 
-        hasDataPrevious: false, 
+        statementsPrevious: null, // <-- إضافة
+        hasDataCurrent: false, // <-- تعديل
+        hasDataPrevious: false, // <-- إضافة
         selectedIndustry: 'general'
     };
+    // --- نهاية التعديل ---
 
     const lang = localStorage.getItem('lang') || 'ar';
     const t = (key) => (window.pageTranslations[lang]?.[key] || `[${key}]`);
@@ -104,7 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const formatDays = (value) => isFinite(value) && !isNaN(value) ? `${value.toFixed(0)} ${lang === 'ar' ? 'يوم' : 'Days'}` : "N/A";
     const formatNumber = (value, digits = 0) => isFinite(value) && !isNaN(value) ? value.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits }) : "N/A";
 
-    // دالة حساب نسب الفترة السابقة
+    // --- [إضافة] دالة جديدة لحساب نسب الفترة السابقة ---
+    // هذه الدالة تحسب النسب المطلوبة بناءً على بيانات الفترة السابقة فقط
     const calculatePreviousRatios = () => {
         if (!state.statementsPrevious || !state.statementsPrevious.totals) {
             state.hasDataPrevious = false;
@@ -127,6 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const cashEquivalents = fPrev.cashEquivalents || 0;
             const grossProfit = fPrev.grossProfit || 0;
             
+            // حساب النسب (باستخدام بيانات الفترة السابقة فقط)
+            // ملاحظة: هذه النسب لا تستخدم "متوسط" فترتين، بل هي نقطة زمنية للفترة السابقة
             state.ratiosPrevious = {
                 currentRatio: currentLiabilities !== 0 ? currentAssets / currentLiabilities : Infinity,
                 quickRatio: currentLiabilities !== 0 ? (currentAssets - inventory) / currentLiabilities : Infinity,
@@ -155,13 +160,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
     };
+    // --- [نهاية الإضافة] ---
 
-    // دالة تحميل البيانات
+    // --- [تعديل] دالة تحميل البيانات (تحمل الآن الحالية والسابقة) ---
     const loadAllData = () => {
         state.hasDataCurrent = false;
         state.hasDataPrevious = false;
         
-        // 1. تحميل النسب الحالية
+        // 1. تحميل النسب الحالية (المحسوبة من صفحة "التحليلات المتقدمة")
         try {
             const rawDataString = localStorage.getItem('calculatedRatios'); 
             if (!rawDataString) throw new Error("localStorage 'calculatedRatios' is missing. Run 'Advanced' page first.");       
@@ -174,13 +180,13 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Benchmark Component Error (Current Ratios):", e); 
         }
 
-        // 2. تحميل بيانات الفترة السابقة
+        // 2. تحميل بيانات الفترة السابقة (لحساب نسب الفترة السابقة)
         try {
             const previousDataString = localStorage.getItem('financialDataPrevious');
             if (previousDataString) {
                 state.statementsPrevious = JSON.parse(previousDataString);
                 if (state.statementsPrevious && state.statementsPrevious.totals) {
-                    calculatePreviousRatios(); 
+                    calculatePreviousRatios(); // هذه الدالة تضبط state.hasDataPrevious
                 }
             } else {
                 console.warn("[DEBUG] 'financialDataPrevious' not found. No previous ratios will be shown.");
@@ -189,21 +195,22 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error("Error parsing 'financialDataPrevious':", e);
         }
         
-        return state.hasDataCurrent; 
+        return state.hasDataCurrent; // الصفحة لا تزال تعمل طالما النسب الحالية موجودة
     };    
+    // --- [نهاية التعديل] ---
 
-    // دالة عرض الجداول
+    // --- [تعديل] دالة عرض الجداول (تم تطويرها بالكامل) ---
     const renderRatioCategory = (divId, categoryTitleKey, ratioKeys) => {
         const container = document.getElementById(divId);
         if (!container) return;
         
-        if (!state.hasDataCurrent) { 
+        if (!state.hasDataCurrent) { // تم التعديل
             container.innerHTML = `<h5 class="mb-3">${t(categoryTitleKey)}</h5> <p class="text-muted">${t('noDataForRatios')}</p>`; return;
         }
         
         const benchmarks = industryBenchmarks[state.selectedIndustry] || {};
         const showBenchmarks = state.selectedIndustry !== 'general';
-        const showPrevious = state.hasDataPrevious; 
+        const showPrevious = state.hasDataPrevious; // <-- إضافة
 
         // تعديل رأس الجدول
         let tableHTML = `<h5 class="mb-3">${t(categoryTitleKey)}</h5> <div class="table-responsive"> <table class="table table-sm table-striped"> <thead><tr> 
@@ -218,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (typeof state.ratiosCurrent[key] === 'undefined') return; 
             
             const valueCurrent = state.ratiosCurrent[key];
-            const valuePrevious = state.ratiosPrevious[key]; 
+            const valuePrevious = state.ratiosPrevious[key]; // <-- إضافة
             const benchmarkValue = benchmarks[key]; 
             
             const isPercentage = key.includes('Margin') || key.includes('roa') || key.includes('roe');
@@ -250,7 +257,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 else formattedBenchmark = formatRatio(benchmarkValue);
             }
             
-            // --- [بداية تعديل PDF] ---
+            // ==========================================================
+            // === [بداية إصلاح PDF] ===
+            // ==========================================================
+            
             // مؤشر "الطفرة" (مقارنة الحالية بالسابقة)
             let leapIndicator = '';
             if (showPrevious && isFinite(valueCurrent) && isFinite(valuePrevious) && valuePrevious !== 0) {
@@ -297,7 +307,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     comparisonText = `(${t('comparison_similar')})`; 
                 } 
             }            
-            // --- [نهاية تعديل PDF] ---
+            
+            // ==========================================================
+            // === [نهاية إصلاح PDF] ===
+            // ==========================================================
             
             // بناء صف الجدول
             tableHTML += `<tr> 
@@ -310,6 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         container.innerHTML = tableHTML + `</tbody></table></div>`;
     };
+    // --- [نهاية التعديل] ---
 
     const renderAllRatios = () => {
         renderRatioCategory('liquidityRatiosBenchmark', 'liquidityRatios', ['currentRatio', 'quickRatio', 'cashRatio', 'netWorkingCapital']);
@@ -318,19 +332,23 @@ document.addEventListener('DOMContentLoaded', () => {
         renderRatioCategory('activityRatiosBenchmark', 'activityRatios', ['assetTurnover', 'inventoryTurnover', 'receivablesTurnover', 'avgCollectionPeriod']);
     };    
     
-    // --- [بداية تعديل PDF] ---
-    // دالة تصدير PDF (النسخة المبسطة)
+    // ==========================================================
+    // === [بداية إصلاح PDF] ===
+    // ==========================================================
+    
+    // --- [تفعيل PDF] ---
+    // تم تبسيط هذه الدالة. الكود المطور في "renderRatioCategory" هو ما سيحل المشكلة.
     const initPdfExport = () => {
          if (UI.exportPdfBtn) {
              UI.exportPdfBtn.addEventListener('click', () => {
                 
-                if (!state.hasDataCurrent) { 
+                if (!state.hasDataCurrent) { // تم التعديل
                     alert(t('noDataForRatios')); 
                     return; 
                 }
                 
                 console.log("Exporting benchmarks to PDF...");
-                UI.exportPdfBtn.disabled = true; 
+                UI.exportPdfBtn.disabled = true; // تعطيل الزر
                 const element = document.getElementById('benchmarks-content');
 
                 if (typeof html2pdf === 'function') {
@@ -340,11 +358,13 @@ document.addEventListener('DOMContentLoaded', () => {
                         image: { type: 'jpeg', quality: 0.98 },
                         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
                         
-                        // تم تبسيط هذا الجزء. المكتبة ستحترم data-html2canvas-ignore="true"
+                        // تم تبسيط هذا الجزء
+                        // المكتبة ستحترم "data-html2canvas-ignore" التي أضفناها للأيقونات
                         html2canvas: { 
                             scale: 2, 
                             useCORS: true, 
                             logging: false
+                            // تم حذف دالة 'ignoreElements' القديمة لأنها غير موثوقة
                         }
                     };
                     
@@ -359,12 +379,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     console.error("html2pdf library is not loaded."); 
                     alert("PDF export failed. Library not loaded.");
-                    UI.exportPdfBtn.disabled = false; 
+                    UI.exportPdfBtn.disabled = false; // إعادة تفعيل الزر
                 }
              });
          } else { console.warn("Export PDF button not found"); }
     };
-    // --- [نهاية تعديل PDF] ---
+    // ==========================================================
+    // === [نهاية إصلاح PDF] ===
+    // ==========================================================
 
     // 6. Initialization
     const init = () => {
@@ -388,11 +410,14 @@ document.addEventListener('DOMContentLoaded', () => {
             renderAllRatios(); 
         });
 
+        // --- [تعديل] استخدام الدالة الجديدة لتحميل البيانات ---
         if (loadAllData()) {
             UI.warningDiv.style.display = 'none';
             renderAllRatios();
             
+            // إضافة تحذير إذا لم يتم العثور على بيانات سابقة
             if (!state.hasDataPrevious) {
+                // يمكنك إضافة رسالة في مكان آخر إذا أردت
                 console.warn(t('noDataForPreviousRatios'));
             }
 
@@ -400,11 +425,12 @@ document.addEventListener('DOMContentLoaded', () => {
             UI.warningDiv.textContent = t('noDataForRatios');
             UI.warningDiv.style.display = 'block';
         }        
+        // --- [نهاية التعديل] ---
         
         initPdfExport(); // ربط زر PDF
         console.log("[DEBUG] Benchmarks page initialization finished.");
     };    
     
-    init(); 
+    init(); // Call init immediately
     
 });
