@@ -1,5 +1,4 @@
 // js/index-app.js
-
 // Translations specific to this page are now here
 window.pageTranslations = {
     ar: {
@@ -8,7 +7,6 @@ window.pageTranslations = {
         brandLogoAlt: "شعار المحلل المالي",
         themeToggleLabel: "تبديل الثيم (فاتح/داكن)",
         // --- نهاية الإضافات ---
-        
         heroTitle: "حوّل الأرقام إلى قرارات استراتيجية",
         heroSubtitle: "تحليل مالي شامل، تقارير احترافية، وتنبؤات ذكية. كل ذلك بخصوصية تامة، فبياناتك لا تغادر جهازك أبدًا.",
         ctaAccountant: "ابدأ كـ محاسب (ميزان المراجعة)",
@@ -27,7 +25,6 @@ window.pageTranslations = {
         brandLogoAlt: "Financial Analyzer Logo",
         themeToggleLabel: "Toggle theme (light/dark)",
         // --- End of Additions ---
-
         heroTitle: "Turn Numbers into Strategic Decisions",
         heroSubtitle: "Comprehensive financial analysis, professional reports, and smart forecasts. All with complete privacy—your data never leaves your device.",
         ctaAccountant: "Start as Accountant (Trial Balance)",
