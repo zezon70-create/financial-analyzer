@@ -91,7 +91,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const UI = {
         industrySelect: document.getElementById('industrySelectBenchmark'),
         warningDiv: document.getElementById('ratiosDataWarningBenchmark'),
-        exportPdfBtn: document.getElementById('exportPdfBtn')
     };
     const industryBenchmarks = {
         general: {}, 
@@ -323,75 +322,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderRatioCategory('leverageRatiosBenchmark', 'leverageRatios', ['debtToAssets', 'debtToEquity', 'interestCoverageRatio', 'financialLeverage']);
         renderRatioCategory('activityRatiosBenchmark', 'activityRatios', ['assetTurnover', 'inventoryTurnover', 'receivablesTurnover', 'avgCollectionPeriod']);
     };    
-    
-    // ==========================================================
-    // === [بداية إصلاح PDF النهائي] ===
-    // ==========================================================
-    
-    // --- [تفعيل PDF] ---
-    // هذا هو الكود المطور الذي يستخدم طريقة "الإخفاء والإظهار"
-    const initPdfExport = () => {
-         if (UI.exportPdfBtn) {
-             UI.exportPdfBtn.addEventListener('click', () => {
-                
-                if (!state.hasDataCurrent) { 
-                    alert(t('noDataForRatios')); 
-                    return; 
-                }
-                
-                console.log("Exporting benchmarks to PDF...");
-                UI.exportPdfBtn.disabled = true; 
-                const element = document.getElementById('benchmarks-content');
-
-                // 1. إخفاء العناصر المسببة للمشكلة قبل التصدير
-                const icons = element.querySelectorAll('i.bi'); // استهداف كل أيقونات bootstrap
-                const watermark = element.querySelector('.watermark-container'); // استهداف حاوية العلامة المائية
-
-                icons.forEach(icon => icon.style.display = 'none');
-                if (watermark) watermark.style.display = 'none'; // إخفاء العلامة المائية
-
-                // دالة لإعادة إظهار العناصر (سواء نجح أو فشل)
-                const showElements = () => {
-                    icons.forEach(icon => icon.style.display = ''); // إعادة الوضع الافتراضي
-                    if (watermark) watermark.style.display = ''; // إعادة الوضع الافتراضي
-                    UI.exportPdfBtn.disabled = false;
-                };
-
-                if (typeof html2pdf === 'function') {
-                    const opt = {
-                        margin: 0.5,
-                        filename: 'Benchmarks_Report.pdf',
-                        image: { type: 'jpeg', quality: 0.98 },
-                        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
-                        html2canvas: { 
-                            scale: 2, 
-                            useCORS: true, 
-                            logging: false
-                            // تم حذف 'ignoreElements' لأننا نخفي العناصر يدوياً
-                        }
-                    };
-                    
-                    html2pdf().from(element).set(opt).save().then(() => {
-                        console.log("PDF export successful.");
-                        showElements(); // إعادة إظهار العناصر بعد النجاح
-                    }).catch(err => {
-                        console.error("PDF Export Error:", err);
-                        alert("حدث خطأ أثناء إنشاء الـ PDF: " + err.message);
-                        showElements(); // إعادة إظهار العناصر بعد الفشل
-                    });
-
-                } else {
-                    console.error("html2pdf library is not loaded."); 
-                    alert("PDF export failed. Library not loaded.");
-                    showElements(); // إعادة إظهار العناصر إذا لم يتم العثور على المكتبة
-                }
-             });
-         } else { console.warn("Export PDF button not found"); }
-    };
-    // ==========================================================
-    // === [نهاية إصلاح PDF النهائي] ===
-    // ==========================================================
-
     // 6. Initialization
     const init = () => {
         console.log("[DEBUG] Initializing benchmarks page...");
@@ -431,7 +361,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }        
         // --- [نهاية التعديل] ---
         
-        initPdfExport(); // ربط زر PDF
         console.log("[DEBUG] Benchmarks page initialization finished.");
     };    
     
