@@ -257,10 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 else formattedBenchmark = formatRatio(benchmarkValue);
             }
             
-            // ==========================================================
-            // === [بداية إصلاح PDF] ===
-            // ==========================================================
-            
             // مؤشر "الطفرة" (مقارنة الحالية بالسابقة)
             let leapIndicator = '';
             if (showPrevious && isFinite(valueCurrent) && isFinite(valuePrevious) && valuePrevious !== 0) {
@@ -273,10 +269,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 if (valueCurrent !== valuePrevious) {
-                     // أضفنا data-html2canvas-ignore="true" للأيقونات
+                     // ملاحظة: تم حذف data-html2canvas-ignore="true" من هنا لأننا سنستخدم طريقة الإخفاء
                      leapIndicator = improved ? 
-                        `<i class="bi bi-graph-up-arrow text-success ms-1" title="${lang === 'ar' ? 'تحسن عن الفترة السابقة' : 'Improved vs. Prior'}" data-html2canvas-ignore="true"></i>` :
-                        `<i class="bi bi-graph-down-arrow text-danger ms-1" title="${lang === 'ar' ? 'تراجع عن الفترة السابقة' : 'Declined vs. Prior'}" data-html2canvas-ignore="true"></i>`;
+                        `<i class="bi bi-graph-up-arrow text-success ms-1" title="${lang === 'ar' ? 'تحسن عن الفترة السابقة' : 'Improved vs. Prior'}"></i>` :
+                        `<i class="bi bi-graph-down-arrow text-danger ms-1" title="${lang === 'ar' ? 'تراجع عن الفترة السابقة' : 'Declined vs. Prior'}"></i>`;
                 }
             }
 
@@ -295,22 +291,18 @@ document.addEventListener('DOMContentLoaded', () => {
                     isWorse = valueCurrent < benchmarkValue + tolerance;
                 }
                 
-                // أضفنا data-html2canvas-ignore="true" للأيقونات
+                // ملاحظة: تم حذف data-html2canvas-ignore="true" من هنا
                 if (isBetter) { 
-                    comparisonIndicator = '<i class="bi bi-arrow-up-circle-fill text-success ms-1" data-html2canvas-ignore="true"></i>'; 
+                    comparisonIndicator = '<i class="bi bi-arrow-up-circle-fill text-success ms-1"></i>'; 
                     comparisonText = `(${t('comparison_better')})`; 
                 } else if (isWorse) { 
-                    comparisonIndicator = '<i class="bi bi-arrow-down-circle-fill text-danger ms-1" data-html2canvas-ignore="true"></i>'; 
+                    comparisonIndicator = '<i class="bi bi-arrow-down-circle-fill text-danger ms-1"></i>'; 
                     comparisonText = `(${t('comparison_worse')})`; 
                 } else { 
-                    comparisonIndicator = '<i class="bi bi-arrow-left-right text-warning ms-1" data-html2canvas-ignore="true"></i>'; 
+                    comparisonIndicator = '<i class="bi bi-arrow-left-right text-warning ms-1"></i>'; 
                     comparisonText = `(${t('comparison_similar')})`; 
                 } 
             }            
-            
-            // ==========================================================
-            // === [نهاية إصلاح PDF] ===
-            // ==========================================================
             
             // بناء صف الجدول
             tableHTML += `<tr> 
@@ -333,23 +325,37 @@ document.addEventListener('DOMContentLoaded', () => {
     };    
     
     // ==========================================================
-    // === [بداية إصلاح PDF] ===
+    // === [بداية إصلاح PDF النهائي] ===
     // ==========================================================
     
     // --- [تفعيل PDF] ---
-    // هذا هو الكود المطور الذي يجمع بين تجاهل الأيقونات وتجاهل العلامة المائية
+    // هذا هو الكود المطور الذي يستخدم طريقة "الإخفاء والإظهار"
     const initPdfExport = () => {
          if (UI.exportPdfBtn) {
              UI.exportPdfBtn.addEventListener('click', () => {
                 
-                if (!state.hasDataCurrent) { // تم التعديل
+                if (!state.hasDataCurrent) { 
                     alert(t('noDataForRatios')); 
                     return; 
                 }
                 
                 console.log("Exporting benchmarks to PDF...");
-                UI.exportPdfBtn.disabled = true; // تعطيل الزر
+                UI.exportPdfBtn.disabled = true; 
                 const element = document.getElementById('benchmarks-content');
+
+                // 1. إخفاء العناصر المسببة للمشكلة قبل التصدير
+                const icons = element.querySelectorAll('i.bi'); // استهداف كل أيقونات bootstrap
+                const watermark = element.querySelector('.watermark-container'); // استهداف حاوية العلامة المائية
+
+                icons.forEach(icon => icon.style.display = 'none');
+                if (watermark) watermark.style.display = 'none'; // إخفاء العلامة المائية
+
+                // دالة لإعادة إظهار العناصر (سواء نجح أو فشل)
+                const showElements = () => {
+                    icons.forEach(icon => icon.style.display = ''); // إعادة الوضع الافتراضي
+                    if (watermark) watermark.style.display = ''; // إعادة الوضع الافتراضي
+                    UI.exportPdfBtn.disabled = false;
+                };
 
                 if (typeof html2pdf === 'function') {
                     const opt = {
@@ -357,46 +363,33 @@ document.addEventListener('DOMContentLoaded', () => {
                         filename: 'Benchmarks_Report.pdf',
                         image: { type: 'jpeg', quality: 0.98 },
                         jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
-                        
-                        // هذا هو الكود المطور لتجاهل الأيقونات التي تسبب مشاكل
                         html2canvas: { 
                             scale: 2, 
                             useCORS: true, 
-                            logging: false,
-                            
-                            // [الإصلاح] إضافة هذه الدالة لتجاهل العلامة المائية والأيقونات
-                            ignoreElements: (element) => {
-                                // 1. تجاهل الأيقونات (وسم <i>)
-                                if (element.tagName === 'I') {
-                                    return true;
-                                }
-                                // 2. تجاهل العلامة المائية
-                                if (element.classList.contains('watermark-logo')) {
-                                    return true; 
-                                }
-                                return false;
-                            }
+                            logging: false
+                            // تم حذف 'ignoreElements' لأننا نخفي العناصر يدوياً
                         }
                     };
                     
                     html2pdf().from(element).set(opt).save().then(() => {
-                        UI.exportPdfBtn.disabled = false; // إعادة تفعيل الزر
+                        console.log("PDF export successful.");
+                        showElements(); // إعادة إظهار العناصر بعد النجاح
                     }).catch(err => {
                         console.error("PDF Export Error:", err);
                         alert("حدث خطأ أثناء إنشاء الـ PDF: " + err.message);
-                        UI.exportPdfBtn.disabled = false; // إعادة تفعيل الزر
+                        showElements(); // إعادة إظهار العناصر بعد الفشل
                     });
 
                 } else {
                     console.error("html2pdf library is not loaded."); 
                     alert("PDF export failed. Library not loaded.");
-                    UI.exportPdfBtn.disabled = false; // إعادة تفعيل الزر
+                    showElements(); // إعادة إظهار العناصر إذا لم يتم العثور على المكتبة
                 }
              });
          } else { console.warn("Export PDF button not found"); }
     };
     // ==========================================================
-    // === [نهاية إصلاح PDF] ===
+    // === [نهاية إصلاح PDF النهائي] ===
     // ==========================================================
 
     // 6. Initialization
@@ -412,7 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn("[DEBUG] global applyTranslations not found.");
         }
         const industries = ['general', 'retail', 'manufacturing', 'services', 'construction'];
-        UI.industrySelect.innerHTML = industries.map(key => `<option value="${key}">${t(`industry_${key}`)}</option>`).join('');
+        UI.industrySelect.innerHTML = industries.map(key => `<option value="${key}">${t(`industry_${key}`)}</option>G`);
         state.selectedIndustry = localStorage.getItem('selectedIndustry') || 'general';
         UI.industrySelect.value = state.selectedIndustry;
         UI.industrySelect.addEventListener('change', (e) => {
