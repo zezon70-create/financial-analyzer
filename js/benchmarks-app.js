@@ -88,16 +88,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const lang = localStorage.getItem('lang') || 'ar';
     const t = (key) => (window.pageTranslations[lang]?.[key] || `[${key}]`);
-    
-    // === [بدء تعديل PDF] ===
-    // أضفنا الزر إلى كائن الواجهة
     const UI = {
         industrySelect: document.getElementById('industrySelectBenchmark'),
         warningDiv: document.getElementById('ratiosDataWarningBenchmark'),
-        exportPdfBtn: document.getElementById('exportPdfBtn') // <-- إضافة
     };
-    // === [نهاية تعديل PDF] ===
-    
     const industryBenchmarks = {
         general: {}, 
         retail: { currentRatio: 1.5, quickRatio: 0.5, netProfitMargin: 0.03, roe: 0.15, debtToEquity: 1.2, assetTurnover: 2.0, grossProfitMargin: 0.30, avgCollectionPeriod: 15, inventoryTurnover: 8.0, interestCoverageRatio: 4.0 },
@@ -328,85 +322,6 @@ document.addEventListener('DOMContentLoaded', () => {
         renderRatioCategory('leverageRatiosBenchmark', 'leverageRatios', ['debtToAssets', 'debtToEquity', 'interestCoverageRatio', 'financialLeverage']);
         renderRatioCategory('activityRatiosBenchmark', 'activityRatios', ['assetTurnover', 'inventoryTurnover', 'receivablesTurnover', 'avgCollectionPeriod']);
     };    
-    
-    // ==========================================================
-    // === [بداية إضافة PDF] ===
-    // ==========================================================
-    
-    // --- [إضافة] ---
-    // هذا هو الكود المطور الذي يستخدم طريقة "الإخفاء والإظهار"
-    const initPdfExport = () => {
-         if (UI.exportPdfBtn) {
-             UI.exportPdfBtn.addEventListener('click', () => {
-                
-                if (!state.hasDataCurrent) { 
-                    alert(t('noDataForRatios')); 
-                    return; 
-                }
-                
-                console.log("Exporting benchmarks to PDF...");
-                UI.exportPdfBtn.disabled = true; 
-                const element = document.getElementById('benchmarks-content');
-
-                // 1. إخفاء العناصر المسببة للمشكلة قبل التصدير
-                const icons = element.querySelectorAll('i.bi'); // استهداف كل أيقونات bootstrap
-                const watermark = element.querySelector('.watermark-container'); // استهداف حاوية العلامة المائية
-
-                icons.forEach(icon => icon.style.display = 'none');
-                if (watermark) watermark.style.display = 'none'; // إخفاء العلامة المائية
-
-                // دالة لإعادة إظهار العناصر (سواء نجح أو فشل)
-                const showElements = () => {
-                    icons.forEach(icon => icon.style.display = ''); // إعادة الوضع الافتراضي
-                    if (watermark) watermark.style.display = ''; // إعادة الوضع الافتراضي
-                    UI.exportPdfBtn.disabled = false;
-                };
-                
-                // ==========================================================
-                // === [بداية إصلاح PDF النهائي] ===
-                // ==========================================================
-
-                // 2. انتظر حتى يقوم المتصفح بتحديث العرض (إخفاء العناصر)
-                setTimeout(() => {
-                    if (typeof html2pdf === 'function') {
-                        const opt = {
-                            margin: 0.5,
-                            filename: 'Benchmarks_Report.pdf',
-                            image: { type: 'jpeg', quality: 0.98 },
-                            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
-                            html2canvas: { 
-                                scale: 2, 
-                                useCORS: true, 
-                                logging: false
-                            }
-                        };
-                        
-                        html2pdf().from(element).set(opt).save().then(() => {
-                            console.log("PDF export successful.");
-                            showElements(); // إعادة إظهار العناصر بعد النجاح
-                        }).catch(err => {
-                            console.error("PDF Export Error:", err);
-                            alert("حدث خطأ أثناء إنشاء الـ PDF: " + err.message);
-                            showElements(); // إعادة إظهار العناصر بعد الفشل
-                        });
-
-                    } else {
-                        console.error("html2pdf library is not loaded."); 
-                        alert("PDF export failed. Library not loaded.");
-                        showElements(); // إعادة إظهار العناصر إذا لم يتم العثور على المكتبة
-                    }
-                }, 10); // تأخير بسيط (10 مللي ثانية) لضمان حدوث التحديث
-
-                // ==========================================================
-                // === [نهاية إصلاح PDF النهائي] ===
-                // ==========================================================
-             });
-         } else { console.warn("Export PDF button not found"); }
-    };
-    // ==========================================================
-    // === [نهاية إضافة PDF] ===
-    // ==========================================================
-    
     // 6. Initialization
     const init = () => {
         console.log("[DEBUG] Initializing benchmarks page...");
@@ -420,10 +335,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn("[DEBUG] global applyTranslations not found.");
         }
         const industries = ['general', 'retail', 'manufacturing', 'services', 'construction'];
-        
-        // [إصلاح خطأ مطبعي] تم حذف حرف 'G' الزائد من السطر التالي
-        UI.industrySelect.innerHTML = industries.map(key => `<option value="${key}">${t(`industry_${key}`)}</option>`).join('');
-        
+        UI.industrySelect.innerHTML = industries.map(key => `<option value="${key}">${t(`industry_${key}`)}</option>G`);
         state.selectedIndustry = localStorage.getItem('selectedIndustry') || 'general';
         UI.industrySelect.value = state.selectedIndustry;
         UI.industrySelect.addEventListener('change', (e) => {
@@ -449,8 +361,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }        
         // --- [نهاية التعديل] ---
         
-        // === [بدء تعديل PDF] ===
-        initPdfExport(); // ربط زر PDF
-        // === [نهاية تعديل PDF] ===
-        
-        console.log("[DEBUG] Benchmarks page initialization finished
+        console.log("[DEBUG] Benchmarks page initialization finished.");
+    };    
+    
+    init(); // Call init immediately
+    
+});
