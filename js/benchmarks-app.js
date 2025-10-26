@@ -364,7 +364,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             scale: 2, 
                             useCORS: true, 
                             logging: false
-                            // تم حذف دالة 'ignoreElements' القديمة لأنها غير موثوقة
+                            // تم حذف دالة 'ignoreElements' القديمة لأنها غير موثوقة وفشلت
                         }
                     };
                     
@@ -384,7 +384,7 @@ document.addEventListener('DOMContentLoaded', () => {
              });
          } else { console.warn("Export PDF button not found"); }
     };
-    // ==========================================================
+    // =================================G=========================
     // === [نهاية إصلاح PDF] ===
     // ==========================================================
 
