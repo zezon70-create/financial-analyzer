@@ -364,10 +364,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             useCORS: true, 
                             logging: false,
                             
-                            // [الإصلاح] إضافة هذه الدالة لتجاهل العلامة المائية
+                            // [الإصلاح] إضافة هذه الدالة لتجاهل العلامة المائية والأيقونات
                             ignoreElements: (element) => {
-                                // هذه الدالة تتجاهل العلامة المائية
-                                // (الأيقونات تم تجاهلها بالفعل باستخدام data-html2canvas-ignore)
+                                // 1. تجاهل الأيقونات (وسم <i>)
+                                if (element.tagName === 'I') {
+                                    return true;
+                                }
+                                // 2. تجاهل العلامة المائية
                                 if (element.classList.contains('watermark-logo')) {
                                     return true; 
                                 }
