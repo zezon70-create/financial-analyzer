@@ -1,10 +1,12 @@
 // js/input-app.js
+
 window.pageTranslations = {
     ar: {
         pageTitle: "إدخال ميزان المراجعة — المحلل المالي",
         pageHeader: "إدخال بيانات ميزان المراجعة",
         pageSubheader: "هذه الصفحة مخصصة للمحاسبين لإدخال البيانات الدقيقة وتصنيفها طبقًا للمعايير الدولية.",
         actionsTitle: "أدوات التحكم",
+        // *** تعديل: تغيير نص الزر ليعكس الحفظ التلقائي ***
         add: "إضافة صف",
         save: "تأكيد الحفظ", 
         clear: "مسح الكل",
@@ -27,11 +29,16 @@ window.pageTranslations = {
         debit: "المدين",
         credit: "الدائن",
         confirmClear: "هل أنت متأكد من أنك تريد مسح جميع البيانات في الجدول؟",
+        // *** تعديل: رسالة التأكيد توضح الحفظ التلقائي ***
         savedSuccess: "تم تأكيد الحفظ! (ملاحظة: يتم حفظ بياناتك تلقائياً عند كل تغيير)", 
         saveAsSuccess: "تم حفظ البيانات بنجاح باسم",
         saveAsError: "الرجاء إدخال اسم لحفظ مجموعة البيانات.",
+        
+        // *** إضافة ترجمات جديدة ***
         savePrevious: "حفظ كفترة سابقة",
         savedPreviousSuccess: "تم حفظ بيانات الفترة السابقة بنجاح!",
+
+        // *** NEW TRANSLATIONS ***
         manualEntryTab: "إدخال يدوي",
         uploadFileTab: "رفع ملف",
         uploadFileTitle: "رفع ملف ميزان المراجعة (Excel أو CSV)",
@@ -80,8 +87,12 @@ window.pageTranslations = {
         savedSuccess: "Save Confirmed! (Note: Your data auto-saves on every change)",
         saveAsSuccess: "Data saved successfully as",
         saveAsError: "Please enter a name to save the dataset.",
+        
+        // *** إضافة ترجمات جديدة ***
         savePrevious: "Save as Previous Period",
         savedPreviousSuccess: "Previous period data saved successfully!",
+
+        // *** NEW TRANSLATIONS ***
         manualEntryTab: "Manual Entry",
         uploadFileTab: "Upload File",
         uploadFileTitle: "Upload Trial Balance (Excel or CSV)",
