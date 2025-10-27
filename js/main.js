@@ -74,18 +74,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // Call translation ONCE here after DOM is ready
     applyTranslations();
     console.log("Initial setup complete (main.js).");
-    // =========================================
-    // =========================================
     const splashScreen = document.getElementById('splashScreen');
     if (splashScreen) {
         const splashDuration = 1500; // مدة العرض: 1.5 ثانية
-        
         setTimeout(() => {
             splashScreen.classList.add('hidden');
         }, splashDuration);
     }
-    // =========================================
-    // =========================================
 });
 // *** ADD THIS LINE AT THE VERY END (Outside DOMContentLoaded) ***
 window.applyTranslations = applyTranslations;
