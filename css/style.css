@@ -1,6 +1,4 @@
-/* =========================================
    1. Global Styles & Variables
-   ========================================= */
 :root {
     --accent-1: #0d6efd;
     --accent-1-light: rgba(13, 110, 253, 0.1);
@@ -25,21 +23,16 @@ body {
     color: var(--text-light);
     transition: background 0.3s, color 0.3s;
 }
-
 body[data-theme="dark"] {
     background: var(--bg-dark);
     color: var(--text-dark);
 }
-
 .container-main {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1.5rem;
 }
-
-/* =========================================
    2. Global Navigation Bar
-   ========================================= */
 .site-header-global {
     background: var(--card-light);
     border-bottom: 1px solid #e9ecef;
@@ -285,3 +278,4 @@ body[data-theme="dark"] .splash-screen {
         opacity: 0.8;
     }
 }
+
