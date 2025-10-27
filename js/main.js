@@ -1,5 +1,4 @@
 // js/main.js (الكود الأصلي + إضافة آمنة للشاشة الترحيبية)
-
 // --- 1. STATE & CONFIG (Global Scope) ---
 const state = {
     preferences: {
@@ -7,7 +6,6 @@ const state = {
         lang: localStorage.getItem('lang') || 'ar',
     }
 };
-
 const translations = {
     ar: {
         brandTitle: "المحلل المالي", navHome: "الرئيسية", navInput: "الإدخال", navUpload: "الرفع",
@@ -24,10 +22,8 @@ const translations = {
         exportPdf: "Export PDF",
     }
 };
-
 // --- 2. GLOBAL FUNCTIONS ---
 const t = (key) => (translations[state.preferences.lang] && translations[state.preferences.lang][key]) || key;
-
 const applyTheme = (theme) => {
     document.body.setAttribute('data-theme', theme);
     const themeToggle = document.getElementById('themeToggle');
@@ -36,7 +32,6 @@ const applyTheme = (theme) => {
     }
     localStorage.setItem('theme', theme);
 };
-
 // *** Define applyTranslations GLOBALLY ***
 function applyTranslations() {
     const lang = state.preferences.lang;
@@ -61,14 +56,10 @@ function applyTranslations() {
     });
     console.log("Translations applied (main.js).");
 };
-
 // --- 3. DOMContentLoaded for Initialization and Event Binding ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded and parsed (main.js)");
-    
-    // --- (هذا هو الكود الأصلي الخاص بك) ---
     const UI = { themeToggle: document.getElementById('themeToggle'), languageSelect: document.getElementById('languageSelect') };
-
     if (UI.themeToggle) { UI.themeToggle.addEventListener('click', () => { const newTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; applyTheme(newTheme); }); }
     if (UI.languageSelect) {
         UI.languageSelect.innerHTML = `<option value="ar">العربية</option><option value="en">English</option>`;
@@ -83,12 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Call translation ONCE here after DOM is ready
     applyTranslations();
     console.log("Initial setup complete (main.js).");
-    // --- (نهاية الكود الأصلي) ---
-
-
     // =========================================
-    //  إضافة جديدة: كود إخفاء الشاشة الترحيبية
-    //  (تمت إضافته في النهاية لضمان عمل الكود الأصلي أولاً)
     // =========================================
     const splashScreen = document.getElementById('splashScreen');
     if (splashScreen) {
@@ -99,11 +85,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }, splashDuration);
     }
     // =========================================
-    //  نهاية كود الشاشة الترحيبية
     // =========================================
-
 });
-
 // *** ADD THIS LINE AT THE VERY END (Outside DOMContentLoaded) ***
 window.applyTranslations = applyTranslations;
 console.log("applyTranslations function explicitly attached to window.");
