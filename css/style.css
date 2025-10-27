@@ -1,0 +1,393 @@
+/* =========================================
+   1. Global Styles & Variables
+   ========================================= */
+:root {
+    --accent-1: #0d6efd;
+    --accent-1-light: rgba(13, 110, 253, 0.1);
+    --accent-2: #4a4de6;
+    --bg-light: #f8f9fa;
+    --bg-dark: #0c1427;
+    --card-light: #ffffff;
+    --card-dark: #162242;
+    --text-light: #212529;
+    --text-dark: #e8eaed;
+    --muted-light: #6c757d;
+    --muted-dark: #a0aec0;
+    --radius: 12px;
+    --shadow: 0 8px 25px rgba(0, 0, 0, 0.07);
+    --font-family: 'Cairo', system-ui, sans-serif;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-family);
+    background: var(--bg-light);
+    color: var(--text-light);
+    transition: background 0.3s, color 0.3s;
+}
+
+body[data-theme="dark"] {
+    background: var(--bg-dark);
+    color: var(--text-dark);
+}
+
+.container-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+}
+
+/* =========================================
+   2. Global Navigation Bar
+   ========================================= */
+.site-header-global {
+    background: var(--card-light);
+    border-bottom: 1px solid #e9ecef;
+    position: sticky;
+    top: 0;
+    z-index: 1100;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+body[data-theme="dark"] .site-header-global {
+    background: var(--card-dark);
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 70px;
+}
+.brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: inherit;
+}
+.brand img {
+    height: 40px;
+    margin-left: 12px; /* RTL */
+}
+.brand .title {
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+.main-nav {
+    display: flex;
+    gap: 2rem;
+}
+.nav-link {
+    text-decoration: none;
+    color: var(--muted-light);
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 1.5rem 0;
+    border-bottom: 3px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+body[data-theme="dark"] .nav-link {
+    color: var(--muted-dark);
+}
+.nav-link:hover {
+    color: var(--accent-1);
+}
+.nav-link.active {
+    color: var(--accent-1);
+    border-bottom-color: var(--accent-1);
+}
+.controls .theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: var(--muted-light);
+    padding: 0;
+}
+body[data-theme="dark"] .controls .theme-toggle {
+    color: var(--muted-dark);
+}
+
+/* =========================================
+   3. Common Components
+   ========================================= */
+.page-header h1 {
+    font-weight: 800;
+}
+.card-surface {
+    background: var(--card-light);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid #e9ecef;
+}
+body[data-theme="dark"] .card-surface {
+    background: var(--card-dark);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+.analysis-comment {
+    padding: 1rem;
+    border-radius: 10px;
+    background: rgba(13, 110, 253, 0.05);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    min-height: 72px;
+}
+body[data-theme="dark"] .analysis-comment {
+    background: rgba(13, 110, 253, 0.1);
+    color: var(--muted-dark);
+}
+.chart-wrap {
+    position: relative;
+    height: 250px;
+}
+.site-footer {
+    padding: 2rem 0;
+    text-align: center;
+    background: var(--card-light);
+    border-top: 1px solid #e9ecef;
+    margin-top: 3rem;
+}
+body[data-theme="dark"] .site-footer {
+    background: var(--card-dark);
+    border-top-color: rgba(255, 255, 255, 0.1);
+}
+body[data-theme="dark"] .form-control,
+body[data-theme="dark"] .form-select {
+    background-color: var(--bg-dark);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: var(--text-dark);
+}
+
+/* =========================================
+   4. Page-Specific Styles
+   ========================================= */
+
+/* --- Index Page --- */
+.hero {
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    color: #fff;
+    padding: 6rem 0;
+    text-align: center;
+}
+.hero-content { max-width: 800px; margin: 0 auto; padding: 0 1.5rem; }
+.hero h1 { font-size: clamp(2.5rem, 5vw, 3.5rem); font-weight: 800; margin-bottom: 1.5rem; }
+.hero p { font-size: 1.25rem; max-width: 650px; margin: 0 auto 2.5rem auto; opacity: 0.9; }
+.cta-buttons { display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap; }
+.cta-btn { padding: 1rem 2rem; border-radius: 50px; font-size: 1.1rem; font-weight: 700; text-decoration: none; transition: transform 0.2s, box-shadow 0.2s; display: inline-flex; align-items: center; gap: 0.75rem; }
+.cta-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+.cta-btn.primary { background: #fff; color: var(--accent-1); }
+.cta-btn.secondary { background: transparent; color: #fff; border: 2px solid #fff; }
+.how-it-works { padding: 5rem 0; }
+.section-title { text-align: center; font-size: 2.25rem; font-weight: 700; margin-bottom: 3rem; }
+.steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+.step-card { background: var(--card-light); border-radius: var(--radius); padding: 2rem; text-align: center; box-shadow: var(--shadow); border: 1px solid #e9ecef; }
+body[data-theme="dark"] .step-card { background: var(--card-dark); border-color: rgba(255, 255, 255, 0.1); }
+.step-icon { font-size: 2.5rem; color: var(--accent-1); margin-bottom: 1.5rem; }
+.step-card h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; }
+
+/* --- Advanced & Dashboard Pages --- */
+.analysis-sidebar { position: sticky; top: 100px; }
+.kpi-row-dash { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+.kpi-card { background: var(--card-light); padding: 1rem; border-radius: var(--radius); box-shadow: var(--shadow); border: 1px solid #e9ecef; }
+body[data-theme="dark"] .kpi-card { background: var(--card-dark); border-color: rgba(255, 255, 255, 0.1); }
+.kpi-card .label { font-size: 0.9rem; color: var(--muted-light); }
+body[data-theme="dark"] .kpi-card .label { color: var(--muted-dark); }
+.kpi-card .value { font-size: 1.5rem; font-weight: 700; margin-top: 0.25rem; }
+.dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem; align-items: start; }
+
+/* --- Report Page --- */
+.report-table { font-size: 0.95rem; }
+.report-table tbody tr:last-child { border-bottom: none; }
+.report-table .subtotal-row td { font-weight: 600; border-top: 1px solid #dee2e6; background-color: var(--bg-light); }
+.report-table .total-row td { font-weight: 700; font-size: 1rem; background-color: var(--accent-1-light); color: var(--accent-1); border-top: 2px solid var(--accent-1); }
+body[data-theme="dark"] .report-table .subtotal-row td { background-color: rgba(255, 255, 255, 0.03); border-top-color: rgba(255, 255, 255, 0.1); }
+body[data-theme="dark"] .report-table .total-row td { background-color: rgba(13, 110, 253, 0.2); }
+.watermark-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: -1; opacity: 0; }
+.watermark-logo { width: 400px; opacity: 0.05; }
+.no-print { /* This class is used to hide elements during printing/PDF export */ }
+
+/* --- Print & PDF Export Styles --- */
+@media print {
+    .no-print, .site-header-global, .site-footer {
+        display: none !important;
+    }
+    .card-surface {
+        box-shadow: none;
+        border: 1px solid #ccc;
+        page-break-inside: avoid;
+    }
+    body {
+        background: #fff !important;
+        color: #000 !important;
+    }
+    .container-main {
+        padding: 0;
+    }
+    .watermark-container {
+        opacity: 1;
+    }
+}
+/* =========================================
+   6. Splash Screen Styles (إضافة جديدة - النسخة العالمية)
+   ========================================= */
+.splash-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-light); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; 
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s ease-out, visibility 0.5s ease-out; 
+}
+
+body[data-theme="dark"] .splash-screen {
+    background-color: var(--bg-dark); 
+}
+
+.splash-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none; 
+}
+
+.splash-content {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+}
+
+.splash-logo {
+    width: 180px; /* لوجو كبير وواضح */
+    height: auto;
+    animation: pulse 2s infinite ease-in-out; /* حركة النبض */
+}
+
+/* حركة "النبض" للوجو */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    50% {
+        transform: scale(1.05); 
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+}
+
+/* =========================================
+   7. Password Modal Styles (إضافة جديدة)
+   ========================================= */
+.password-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* خلفية معتمة */
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9998; /* خلف الشاشة الترحيبية */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+}
+
+.password-modal.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.password-content {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    padding: 2.5rem; /* بادنج أكبر */
+    animation: fadeInDown 0.5s ease-out; /* تأثير دخول */
+}
+
+.password-logo {
+    width: 80px; /* لوجو أصغر داخل المودال */
+    height: auto;
+    margin-bottom: 1rem;
+}
+
+.password-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.password-subtitle {
+    font-size: 1rem;
+    color: var(--muted-light);
+    margin-bottom: 1.5rem;
+}
+body[data-theme="dark"] .password-subtitle {
+    color: var(--muted-dark);
+}
+
+.password-input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.password-input-group .form-control {
+    flex-grow: 1; /* ليأخذ المساحة المتبقية */
+}
+
+.password-error {
+    color: #dc3545; /* لون أحمر للخطر */
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    height: 1.2em; /* حجز مساحة لمنع "القفز" */
+    visibility: hidden; /* إخفاؤه مبدئياً */
+}
+
+.password-error.visible {
+    visibility: visible;
+}
+
+/* تأثيرات الحركة */
+.password-content.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+/* =========================================
+   8. (إصلاح بسيط) - تثبيت عرض زر الثيم
+   (لمنع اهتزاز الهيدر عند تحميل الأيقونة)
+   ========================================= */
+.controls .theme-toggle {
+    width: 24px;
+    height: 24px;
+    position: relative;
+    display: inline-block;
+}
