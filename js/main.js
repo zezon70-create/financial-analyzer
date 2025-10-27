@@ -49,21 +49,7 @@ function applyTranslations() {
         const translatedText = pageTranslations[lang]?.[key]
                              || translations[lang]?.[key]
                              || `[${key}]`;
-        
-        // التحقق من نوع العنصر قبل تغيير المحتوى
-        if (el.tagName === 'TITLE') {
-             el.textContent = translatedText;
-        } else if (el.tagName === 'IMG') {
-            if (el.dataset.translateKey === 'brandLogoAlt') {
-                el.alt = translatedText;
-            }
-        } else if (el.tagName === 'BUTTON') {
-             if (el.dataset.translateKey === 'themeToggleLabel') {
-                el.setAttribute('aria-label', translatedText);
-            } else {
-                el.textContent = translatedText;
-            }
-        } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
             if (translatedText !== `[${key}]`) { el.placeholder = translatedText; }
         } else {
             el.textContent = translatedText;
@@ -80,10 +66,7 @@ function applyTranslations() {
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded and parsed (main.js)");
     
-    // --- إضافة جديدة: تحديد عنصر الشاشة الترحيبية ---
-    const splashScreen = document.getElementById('splashScreen');
-    
-    // --- الكود الأصلي الخاص بك (كما هو) ---
+    // --- (هذا هو الكود الأصلي الخاص بك) ---
     const UI = { themeToggle: document.getElementById('themeToggle'), languageSelect: document.getElementById('languageSelect') };
 
     if (UI.themeToggle) { UI.themeToggle.addEventListener('click', () => { const newTheme = document.body.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; applyTheme(newTheme); }); }
@@ -100,13 +83,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Call translation ONCE here after DOM is ready
     applyTranslations();
     console.log("Initial setup complete (main.js).");
-    // --- نهاية الكود الأصلي ---
+    // --- (نهاية الكود الأصلي) ---
 
 
     // =========================================
     //  إضافة جديدة: كود إخفاء الشاشة الترحيبية
-    //  (يتم إضافته في النهاية لضمان عمل الكود الأصلي أولاً)
+    //  (تمت إضافته في النهاية لضمان عمل الكود الأصلي أولاً)
     // =========================================
+    const splashScreen = document.getElementById('splashScreen');
     if (splashScreen) {
         const splashDuration = 1500; // مدة العرض: 1.5 ثانية
         
