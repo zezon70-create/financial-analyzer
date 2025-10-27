@@ -1,5 +1,4 @@
 // js/main.js (Corrected Version + Explicit Global Export)
-
 // --- 1. STATE & CONFIG (Global Scope) ---
 const state = {
     preferences: {
@@ -7,7 +6,6 @@ const state = {
         lang: localStorage.getItem('lang') || 'ar',
     }
 };
-
 const translations = {
     ar: {
         brandTitle: "المحلل المالي", navHome: "الرئيسية", navInput: "الإدخال", navUpload: "الرفع",
@@ -36,7 +34,6 @@ const translations = {
     passwordErrorText: "Incorrect password. Please try again."
     }
 };
-
 // --- 2. GLOBAL FUNCTIONS ---
 const t = (key) => (translations[state.preferences.lang] && translations[state.preferences.lang][key]) || key;
 const applyTheme = (theme) => {
@@ -47,7 +44,6 @@ const applyTheme = (theme) => {
     }
     localStorage.setItem('theme', theme);
 };
-
 // *** Define applyTranslations GLOBALLY ***
 function applyTranslations() {
     const lang = state.preferences.lang;
@@ -195,12 +191,7 @@ if (isAuthenticated) {
         passwordInput.addEventListener('input', hidePasswordError);
     }
 }
-
-// ==========================================================
-//  (نهاية الإضافة المحدّثة)
-// ==========================================================
 });
-
 // *** ADD THIS LINE AT THE VERY END (Outside DOMContentLoaded) ***
 window.applyTranslations = applyTranslations;
 console.log("applyTranslations function explicitly attached to window.");
