@@ -1,4 +1,6 @@
+/* =========================================
    1. Global Styles & Variables
+   ========================================= */
 :root {
     --accent-1: #0d6efd;
     --accent-1-light: rgba(13, 110, 253, 0.1);
@@ -23,16 +25,21 @@ body {
     color: var(--text-light);
     transition: background 0.3s, color 0.3s;
 }
+
 body[data-theme="dark"] {
     background: var(--bg-dark);
     color: var(--text-dark);
 }
+
 .container-main {
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 1.5rem;
 }
+
+/* =========================================
    2. Global Navigation Bar
+   ========================================= */
 .site-header-global {
     background: var(--card-light);
     border-bottom: 1px solid #e9ecef;
@@ -220,10 +227,8 @@ body[data-theme="dark"] .report-table .total-row td { background-color: rgba(13,
         opacity: 1;
     }
 }
-
 /* =========================================
    6. Splash Screen Styles (إضافة جديدة - النسخة العالمية)
-   (تمت إضافة هذا الكود بالكامل في نهاية الملف)
    ========================================= */
 .splash-screen {
     position: fixed;
@@ -279,3 +284,110 @@ body[data-theme="dark"] .splash-screen {
     }
 }
 
+/* =========================================
+   7. Password Modal Styles (إضافة جديدة)
+   ========================================= */
+.password-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* خلفية معتمة */
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9998; /* خلف الشاشة الترحيبية */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+}
+
+.password-modal.visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.password-content {
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    padding: 2.5rem; /* بادنج أكبر */
+    animation: fadeInDown 0.5s ease-out; /* تأثير دخول */
+}
+
+.password-logo {
+    width: 80px; /* لوجو أصغر داخل المودال */
+    height: auto;
+    margin-bottom: 1rem;
+}
+
+.password-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.password-subtitle {
+    font-size: 1rem;
+    color: var(--muted-light);
+    margin-bottom: 1.5rem;
+}
+body[data-theme="dark"] .password-subtitle {
+    color: var(--muted-dark);
+}
+
+.password-input-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.password-input-group .form-control {
+    flex-grow: 1; /* ليأخذ المساحة المتبقية */
+}
+
+.password-error {
+    color: #dc3545; /* لون أحمر للخطر */
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    height: 1.2em; /* حجز مساحة لمنع "القفز" */
+    visibility: hidden; /* إخفاؤه مبدئياً */
+}
+
+.password-error.visible {
+    visibility: visible;
+}
+
+/* تأثيرات الحركة */
+.password-content.shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+  20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+
+/* =========================================
+   8. (إصلاح بسيط) - تثبيت عرض زر الثيم
+   (لمنع اهتزاز الهيدر عند تحميل الأيقونة)
+   ========================================= */
+.controls .theme-toggle {
+    width: 24px;
+    height: 24px;
+    position: relative;
+    display: inline-block;
+}
