@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTranslations();
     console.log("Initial setup complete (main.js).");
     // ==========================================================
-//  (إضافة جديدة) - كود التحكم في الشاشة الترحيبية والباسورد
+//  (إضافة جديدة محدّثة) - كود التحكم في الشاشة الترحيبية والباسورد
 // ==========================================================
 
 // *** يمكنك تغيير الباسورد من هنا ***
@@ -109,9 +109,8 @@ const passwordContent = document.querySelector('.password-content');
 // مدة عرض الشاشة الترحيبية (بالمللي ثانية)
 const splashDuration = 1500; // 1.5 ثانية
 
+// ----- (الدوال المساعدة زي ما هي) -----
 const showPasswordModal = () => {
-    // ملاحظة: لا نحتاج لترجمة العناصر يدوياً هنا
-    // لأن دالة applyTranslations() الأصلية شغالة بالفعل وهتترجمهم
     passwordModal.classList.add('visible');
     passwordInput.focus(); // التركيز على حقل الإدخال
 };
@@ -132,48 +131,73 @@ const showPasswordError = () => {
 const hidePasswordError = () => {
     passwordError.classList.remove('visible');
 };
+// ----- (نهاية الدوال المساعدة) -----
 
-// 1. التحكم في الشاشة الترحيبية
-if (splashScreen) {
-    setTimeout(() => {
-        splashScreen.classList.add('hidden');
 
-        // 2. بعد اختفاء الشاشة الترحيبية، أظهر شاشة الباسورد
-        if (passwordModal) {
-            // ننتظر 500ms (مدة اختفاء الشاشة) قبل إظهار الباسورد
-            setTimeout(showPasswordModal, 500); 
-        }
+// 1. التحقق من الـ Session Storage (الذاكرة المؤقتة للتاب)
+//    هل المستخدم سجل دخوله قبل كده في التاب دي؟
+const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
 
-    }, splashDuration);
-}
+if (isAuthenticated) {
+    // --- نعم، المستخدم مسجل دخوله بالفعل ---
 
-// 3. التحكم في زر الباسورد
-if (passwordButton) {
-    // وظيفة زر الدخول
-    passwordButton.addEventListener('click', () => {
-        if (passwordInput.value === CORRECT_PASSWORD) {
-            hidePasswordError();
-            hidePasswordModal();
-        } else {
-            showPasswordError();
-            passwordInput.value = ""; // تفريغ الحقل بعد الخطأ
-        }
-    });
+    // 1. التحكم في الشاشة الترحيبية (فقط)
+    if (splashScreen) {
+        setTimeout(() => {
+            splashScreen.classList.add('hidden');
+            // مش هنظهر شاشة الباسورد
+        }, splashDuration);
+    }
 
-    // إضافة إمكانية الضغط على "Enter"
-    passwordInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault(); // منع أي سلوك افتراضي للـ Enter
-            passwordButton.click(); // كأن المستخدم ضغط على الزر
-        }
-    });
+} else {
+    // --- لا، دي أول مرة يفتح أو قفل التاب وفتحها ---
 
-    // إخفاء رسالة الخطأ عند البدء في الكتابة
-    passwordInput.addEventListener('input', hidePasswordError);
+    // 1. التحكم في الشاشة الترحيبية
+    if (splashScreen) {
+        setTimeout(() => {
+            splashScreen.classList.add('hidden');
+
+            // 2. بعد اختفاء الشاشة الترحيبية، أظهر شاشة الباسورد
+            if (passwordModal) {
+                // ننتظر 500ms (مدة اختفاء الشاشة) قبل إظهار الباسورد
+                setTimeout(showPasswordModal, 500); 
+            }
+
+        }, splashDuration);
+    }
+
+    // 3. التحكم في زر الباسورد
+    if (passwordButton) {
+        // وظيفة زر الدخول
+        passwordButton.addEventListener('click', () => {
+            if (passwordInput.value === CORRECT_PASSWORD) {
+                hidePasswordError();
+                hidePasswordModal();
+
+                // *** الإضافة الأهم: سجل في الذاكرة إنك عديت ***
+                sessionStorage.setItem('isAuthenticated', 'true'); 
+
+            } else {
+                showPasswordError();
+                passwordInput.value = ""; // تفريغ الحقل بعد الخطأ
+            }
+        });
+
+        // إضافة إمكانية الضغط على "Enter"
+        passwordInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault(); 
+                passwordButton.click(); 
+            }
+        });
+
+        // إخفاء رسالة الخطأ عند البدء في الكتابة
+        passwordInput.addEventListener('input', hidePasswordError);
+    }
 }
 
 // ==========================================================
-//  (نهاية الإضافة)
+//  (نهاية الإضافة المحدّثة)
 // ==========================================================
 });
 
