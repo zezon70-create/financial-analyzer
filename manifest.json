@@ -1,21 +1,21 @@
 {
-    "name": "المحلل المالي",
-    "short_name": "المحلل",
-    "start_url": "/index.html",
-    "display": "standalone",
-    "background_color": "#f8f9fa",
-    "theme_color": "#0d6efd",
-    "description": "تحليل مالي شامل، تقارير احترافية، وتنبؤات ذكية.",
-    "icons": [
-        {
-            "src": "assets/icons/icon-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "assets/icons/icon-512x512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ]
+"name": "المحلل المالي",
+"short_name": "المحلل",
+"start_url": "/index.html",
+"display": "standalone",
+"background_color": "#f8f9fa",
+"theme_color": "#0d6efd",
+"description": "تحليل مالي شامل، تقارير احترافية، وتنبؤات ذكية.",
+"icons": [
+{
+"src": "assets/icons/icon-192x192.png",
+"sizes": "192x192",
+"type": "image/png"
+},
+{
+"src": "assets/icons/icon-512x512.png",
+"sizes": "512x512",
+"type": "image/png"
+}
+]
 }
