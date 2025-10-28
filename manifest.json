@@ -1,7 +1,7 @@
 {
     "name": "المحلل المالي",
     "short_name": "المحلل",
-    "start_url": "/index.html",
+"start_url": "index.html",
     "display": "standalone",
     "background_color": "#f8f9fa",
     "theme_color": "#0d6efd",
