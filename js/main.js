@@ -1,8 +1,12 @@
 // js/main.js (Corrected Version + Explicit Global Export)
 // js/main.js
 
-// ▼▼▼=============== Firebase Initialization ===============▼▼▼
-/const firebaseConfig = {
+// ▼▼▼=============== Firebase Initialization (صيغة الموديول) ===============▼▼▼
+// بنستدعي الدوال اللي محتاجينها بس من كل مكتبة
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { getAuth, RecaptchaVerifier, signInWithPhoneNumber, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+const firebaseConfig = {
   apiKey: "AIzaSyAgE_QIPBLwLyzBSTes9DZeoSRRGGsjFc4",
   authDomain: "financial-analyzer-auth.firebaseapp.com",
   projectId: "financial-analyzer-auth",
@@ -13,15 +17,14 @@
 };
 
 // Initialize Firebase
-let app, auth, db; // Define them here
+let app, auth, db;
 try {
-    app = firebase.initializeApp(firebaseConfig);
-    auth = firebase.getAuth(app);
-    db = firebase.getFirestore(app); // Initialize Firestore
-    console.log("Firebase Initialized Successfully.");
+    app = initializeApp(firebaseConfig); // بنستخدم الدالة المستوردة
+    auth = getAuth(app);                 // بنستخدم الدالة المستوردة
+    db = getFirestore(app);              // بنستخدم الدالة المستوردة
+    console.log("Firebase Initialized Successfully (Module).");
 } catch (error) {
     console.error("Firebase Initialization Failed:", error);
-    // ممكن تعرض رسالة للمستخدم إن فيه مشكلة في الاتصال بالخدمة
 }
 // ▲▲▲=============== End Firebase Initialization ===============▲▲▲
 
@@ -254,7 +257,7 @@ function setupRecaptchaVerifier() {
         if (window.recaptchaVerifier && !window.recaptchaVerifier.destroyed) {
             // لا يوجد طريقة مباشرة للتدمير، سنقوم بإعادة تعيينه عند الحاجة
         }
-        window.recaptchaVerifier = new firebase.RecaptchaVerifier(auth, 'passwordButton', {
+        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'passwordButton', {
             'size': 'invisible',
             'callback': (response) => console.log("reCAPTCHA verified."),
             'expired-callback': () => {
@@ -332,8 +335,8 @@ if (isAuthenticated) {
                  return;
             }
 
-            firebase.signInWithPhoneNumber(auth, formattedPhoneNumber, window.recaptchaVerifier)
-                .then((result) => {
+            signInWithPhoneNumber(auth, formattedPhoneNumber, window.recaptchaVerifier)
+                    .then((result) => {
                     confirmationResult = result;
                     console.log("OTP sent successfully!");
                     if(otpPhoneNumberDisplay) otpPhoneNumberDisplay.textContent = formattedPhoneNumber;
@@ -390,12 +393,10 @@ if (isAuthenticated) {
                     console.log("OTP Verified for:", phoneNumberVerified);
 
                     // --- ▼▼▼ التحقق من Firestore ▼▼▼ ---
-                    const allowedNumbersRef = firebase.collection(db, "allowed_numbers");
-                    const q = firebase.query(allowedNumbersRef, firebase.where("phoneNumber", "==", phoneNumberVerified));
-
-                    return firebase.getDocs(q); // نرجع Promise للـ chain
-                })
-                .then((querySnapshot) => {
+                    const allowedNumbersRef = collection(db, "allowed_numbers"); 
+const q = query(allowedNumbersRef, where("phoneNumber", "==", phoneNumberVerified));
+getDocs(q)
+                    .then((querySnapshot) => {
                      // هنا نتيجة التحقق من Firestore
                      if (!querySnapshot.empty) {
                          console.log("Phone number IS authorized.");
@@ -404,7 +405,7 @@ if (isAuthenticated) {
                      } else {
                          console.warn("Phone number is NOT authorized.");
                          showOtpError(t('unauthorizedNumberError'));
-                         firebase.signOut(auth).catch(err => console.error("Sign out error:", err)); // حاول تسجيل الخروج
+                         signOut(auth).catch(err => console.error("Sign out error:", err)); // حاول تسجيل الخروج
                          // لا تخفي المودال ولا تسجل الدخول
                      }
                 })
