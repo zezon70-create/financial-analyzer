@@ -75,7 +75,6 @@
         </div>
     </header>
     <main class="container-main py-4">
-
         <div id="report-content">
             <div class="watermark-container">
                 <img src="assets/logo.png" class="watermark-logo" alt="Watermark">
@@ -166,18 +165,18 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
     <script src="js/main.js"></script>
     <script src="js/report-app.js"></script>
-        <script>
+  <script>
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('/service-worker.js')
-                .then((reg) => {
-                    console.log('Service worker متسجل وتمام:', reg);
-                })
-                .catch((err) => {
-                    console.log('فشل تسجيل Service worker:', err);
-                });
-        });
-    }
+window.addEventListener('load', () => {
+navigator.serviceWorker.register('/service-worker.js')
+.then((reg) => {
+console.log('Service worker متسجل وتمام:', reg);
+})
+.catch((err) => {
+console.log('فشل تسجيل Service worker:', err);
+});
+});
+}
 </script>
 </body>
 </html>
