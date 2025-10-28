@@ -12,66 +12,66 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="manifest" href="manifest.json">
 <style>
-        @media print {
-            .no-print { display: none !important; }
-            body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            .card-surface { border: 1px solid #dee2e6 !important; box-shadow: none !important; }
-            .watermark-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.1; z-index: -1; }
-            .watermark-logo { max-width: 50%; height: auto; }
-            main { padding-top: 1rem !important; padding-bottom: 1rem !important; }
-        }
-        .watermark-container { display: none; }
-        @media print { .watermark-container { display: block; } }
-    </style>
+@media print {
+.no-print { display: none !important; }
+body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+.card-surface { border: 1px solid #dee2e6 !important; box-shadow: none !important; }
+.watermark-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.1; z-index: -1; }
+.watermark-logo { max-width: 50%; height: auto; }
+main { padding-top: 1rem !important; padding-bottom: 1rem !important; }
+}
+.watermark-container { display: none; }
+@media print { .watermark-container { display: block; } }
+</style>
 </head>
 <body data-theme="light">
-    <header class="site-header-global no-print">
-        <div class="container-main nav-container">
-            <a href="index.html" class="brand">
-                <img src="assets/logo.png" alt="شعار المحلل المالي">
-                <span class="title" data-translate-key="brandTitle"></span>
-            </a>
-            <nav class="main-nav">
-                <a href="index.html" class="nav-link" data-translate-key="navHome"></a>
-                <a href="input.html" class="nav-link" data-translate-key="navInput"></a>
-                <a href="upload.html" class="nav-link" data-translate-key="navUpload"></a>
-                <a href="report.html" class="nav-link" data-translate-key="navReport"></a>
-                <a href="advanced.html" class="nav-link" data-translate-key="navAdvanced"></a>
-                <a href="dashboard.html" class="nav-link" data-translate-key="navDashboard"></a>
-                <a href="comparisons.html" class="nav-link" data-translate-key="navCompare"></a>
-                <a href="benchmarks.html" class="nav-link active" data-translate-key="navBenchmarks"></a> 
-            </nav>
-            <div class="controls d-flex align-items-center gap-3">
-                <select id="languageSelect" class="form-select form-select-sm" style="width: auto;"></select>
-                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
-            </div>
-        </div>
-    </header>
-    <main class="container-main py-4">
-        <div id="benchmarks-content">
-            <div class="watermark-container">
-                <img src="assets/logo.png" class="watermark-logo" alt="Watermark">
-            </div>
-            <section class="page-header d-flex justify-content-between align-items-center mb-4">
-                 <div>
-                    <h1 data-translate-key="pageHeader"></h1>
-                    <p class="text-muted" data-translate-key="pageSubheader"></p>
-                </div>
-            </section>
-            <section id="benchmarkRatiosSection" class="card-surface mb-4">               
-                 <div class="mb-4 p-3 border rounded" style="background-color: var(--bs-tertiary-bg);">
-                      <label for="industrySelectBenchmark" class="form-label fw-bold" data-translate-key="selectIndustryLabel"></label>
-                      <select class="form-select" id="industrySelectBenchmark">
-                           </select>
-                      <div class="form-text" data-translate-key="selectIndustryDesc"></div>
-                 </div>
-                 <div class="alert alert-danger" id="ratiosDataWarningBenchmark" style="display: none;"></div> <div id="liquidityRatiosBenchmark" class="mb-4"></div>
-                 <div id="profitabilityRatiosBenchmark" class="mb-4"></div>
-                 <div id="leverageRatiosBenchmark" class="mb-4"></div>
-                 <div id="activityRatiosBenchmark" class="mb-4"></div> </section>
-        </div> </main>    
-    <footer class="site-footer no-print">
-        <div class="container-main">
+<header class="site-header-global no-print">
+<div class="container-main nav-container">
+<a href="index.html" class="brand">
+<img src="assets/logo.png" alt="شعار المحلل المالي">
+<span class="title" data-translate-key="brandTitle"></span>
+</a>
+<nav class="main-nav">
+<a href="index.html" class="nav-link" data-translate-key="navHome"></a>
+<a href="input.html" class="nav-link" data-translate-key="navInput"></a>
+<a href="upload.html" class="nav-link" data-translate-key="navUpload"></a>
+<a href="report.html" class="nav-link" data-translate-key="navReport"></a>
+<a href="advanced.html" class="nav-link" data-translate-key="navAdvanced"></a>
+<a href="dashboard.html" class="nav-link" data-translate-key="navDashboard"></a>
+<a href="comparisons.html" class="nav-link" data-translate-key="navCompare"></a>
+<a href="benchmarks.html" class="nav-link active" data-translate-key="navBenchmarks"></a> 
+</nav>
+<div class="controls d-flex align-items-center gap-3">
+<select id="languageSelect" class="form-select form-select-sm" style="width: auto;"></select>
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+</div>
+</div>
+</header>
+<main class="container-main py-4">
+<div id="benchmarks-content">
+<div class="watermark-container">
+<img src="assets/logo.png" class="watermark-logo" alt="Watermark">
+</div>
+<section class="page-header d-flex justify-content-between align-items-center mb-4">
+<div>
+<h1 data-translate-key="pageHeader"></h1>
+<p class="text-muted" data-translate-key="pageSubheader"></p>
+</div>
+</section>
+<section id="benchmarkRatiosSection" class="card-surface mb-4">               
+<div class="mb-4 p-3 border rounded" style="background-color: var(--bs-tertiary-bg);">
+<label for="industrySelectBenchmark" class="form-label fw-bold" data-translate-key="selectIndustryLabel"></label>
+<select class="form-select" id="industrySelectBenchmark">
+</select>
+<div class="form-text" data-translate-key="selectIndustryDesc"></div>
+</div>
+<div class="alert alert-danger" id="ratiosDataWarningBenchmark" style="display: none;"></div> <div id="liquidityRatiosBenchmark" class="mb-4"></div>
+<div id="profitabilityRatiosBenchmark" class="mb-4"></div>
+<div id="leverageRatiosBenchmark" class="mb-4"></div>
+<div id="activityRatiosBenchmark" class="mb-4"></div> </section>
+</div> </main>    
+<footer class="site-footer no-print">
+<div class="container-main">
 <p data-translate-key="footerText"></p>
 </div>
 </footer>
