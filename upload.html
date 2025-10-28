@@ -138,5 +138,18 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>    
     <script src="js/main.js"></script>    
     <script src="js/upload-app.js"></script>
+        <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js')
+                .then((reg) => {
+                    console.log('Service worker متسجل وتمام:', reg);
+                })
+                .catch((err) => {
+                    console.log('فشل تسجيل Service worker:', err);
+                });
+        });
+    }
+</script>
 </body>
 </html>
