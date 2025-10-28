@@ -2,7 +2,7 @@
 // js/main.js
 
 // ▼▼▼=============== Firebase Initialization ===============▼▼▼
-/const firebaseConfig = {
+const firebaseConfig = {
   apiKey: "AIzaSyAgE_QIPBLwLyzBSTes9DZeoSRRGGsjFc4",
   authDomain: "financial-analyzer-auth.firebaseapp.com",
   projectId: "financial-analyzer-auth",
@@ -24,18 +24,12 @@ try {
     // ممكن تعرض رسالة للمستخدم إن فيه مشكلة في الاتصال بالخدمة
 }
 // ▲▲▲=============== End Firebase Initialization ===============▲▲▲
-
-// --- (باقي الكود بتاع state و translations زي ما هو) ---
-const state = { /* ... */ };
-
-// --- 1. STATE & CONFIG (Global Scope) ---
 const state = {
     preferences: {
         theme: localStorage.getItem('theme') || 'light',
         lang: localStorage.getItem('lang') || 'ar',
     }
 };
-
 const translations = {
     ar: {
         brandTitle: "المحلل المالي", navHome: "الرئيسية", navInput: "الإدخال", navUpload: "الرفع",
