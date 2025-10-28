@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title data-translate-key="pageTitle">المحلل المالي - رؤى دقيقة لقرارات واثقة</title>
+<script src="js/auth-guard.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="css/style.css">
+<link rel="manifest" href="manifest.json">
+</head>
+<body data-theme="light">
+<div id="splashScreen" class="splash-screen">
+<div class="splash-content">
+<img src="assets/logo.png" alt="شعار المحلل المالي" class="splash-logo">
+</div>
+</div>
+<div id="passwordModal" class="password-modal">
+<div class="password-content card-surface">
+<img src="assets/logo.png" alt="شعار المحلل المالي" class="password-logo">
+<h4 class="password-title" data-translate-key="passwordTitle"></h4>
+<p class="password-subtitle" data-translate-key="passwordSubtitle"></p>
+<div class="password-input-group">
+<input type="password" id="passwordInput" class="form-control" data-translate-key="passwordPlaceholder">
+<button id="passwordButton" class="cta-btn primary" style="border-radius: 8px;" data-translate-key="passwordButtonText"></button>
+</div>
+<p id="passwordError" class="password-error" data-translate-key="passwordErrorText"></p>
+</div>
+</div>
+<header class="site-header-global">
+<div class="container-main nav-container">
+<a href="index.html" class="brand">
+<img src="assets/logo.png" alt="شعار المحلل المالي">
+<span class="title" data-translate-key="brandTitle"></span>
+</a>
+<nav class="main-nav">
+<a href="index.html" class="nav-link" data-translate-key="navHome"></a>
+<a href="input.html" class="nav-link" data-translate-key="navInput"></a>
+<a href="upload.html" class="nav-link" data-translate-key="navUpload"></a>
+<a href="report.html" class="nav-link" data-translate-key="navReport"></a>
+<a href="advanced.html" class="nav-link" data-translate-key="navAdvanced"></a>
+<a href="dashboard.html" class="nav-link" data-translate-key="navDashboard"></a>
+<a href="comparisons.html" class="nav-link" data-translate-key="navCompare"></a>
+<a href="benchmarks.html" class="nav-link" data-translate-key="navBenchmarks"></a>
+</nav>
+<div class="controls d-flex align-items-center gap-3">
+<select id="languageSelect" class="form-select form-select-sm" style="width: auto;"></select>
+<button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+</div>
+</div>
+</header>
+<main>
+<section class="hero">
+<div class="hero-content">
+<h1 data-translate-key="heroTitle"></h1>
+<p data-translate-key="heroSubtitle"></p>
+<div class="cta-buttons">
+<a href="input.html" class="cta-btn primary">
+<i class="fa-solid fa-calculator"></i>
+<span data-translate-key="ctaAccountant"></span>
+</a>
+<a href="upload.html" class="cta-btn secondary">
+<i class="fa-solid fa-briefcase"></i>
+<span data-translate-key="ctaOwner"></span>
+</a>
+</div>
+</div>
+</section>
+<section class="how-it-works">
+<div class="container-main">
+<h2 class="section-title" data-translate-key="howTitle"></h2>
+<div class="steps-grid">
+<div class="step-card">
+<div class="step-icon"><i class="fa-solid fa-file-import"></i></div>
+<h3 data-translate-key="step1Title"></h3>
+<p data-translate-key="step1Desc"></p>
+</div>
+<div class="step-card">
+<div class="step-icon"><i class="fa-solid fa-chart-pie"></i></div>
+<h3 data-translate-key="step2Title"></h3>
+<p data-translate-key="step2Desc"></p>
+</div>
+<div class="step-card">
+<div class="step-icon"><i class="fa-solid fa-bullseye"></i></div>
+<h3 data-translate-key="step3Title"></h3>
+<p data-translate-key="step3Desc"></p>
+</div>
+</div>
+</div>
+</section>
+</main>
+<footer class="site-footer">
+<div class="container-main"><p data-translate-key="footerText"></p></div>
+</footer>
+<script src="js/main.js"></script>
+<script>
+// Translations specific to this page
+window.pageTranslations = {
+ar: {
+pageTitle: "المحلل المالي - رؤى دقيقة لقرارات واثقة",
+heroTitle: "حوّل الأرقام إلى قرارات استراتيجية",
+heroSubtitle: "تحليل مالي شامل، تقارير احترافية، وتنبؤات ذكية. كل ذلك بخصوصية تامة، فبياناتك لا تغادر جهازك أبدًا.",
+ctaAccountant: "ابدأ كـ محاسب (ميزان المراجعة)",
+ctaOwner: "ابدأ كـ صاحب عمل (قوائم مالية)",
+howTitle: "تحليل مالي في 3 خطوات بسيطة",
+step1Title: "1. أدخل بياناتك",
+step1Desc: "اختر الطريقة التي تناسبك: إدخال يدوي دقيق لميزان المراجعة أو رفع سريع للقوائم المالية الجاهزة.",
+step2Title: "2. احصل على رؤى فورية",
+step2Desc: "يقوم المحلل المالي بإنشاء التقارير، حساب النسب، وعرض التحليلات المتقدمة في لوحة تحكم تفاعلية.",
+step3Title: "3. قارن واتخذ القرار",
+step3Desc: "قارن الأداء بين الفترات المختلفة واكتشف الاتجاهات لاتخاذ قرارات مالية واثقة ومبنية على البيانات." // تم حذف الفاصلة الزائدة من هنا
+},
+en: {
+pageTitle: "Financial Analyzer - Accurate Insights for Confident Decisions",
+heroTitle: "Turn Numbers into Strategic Decisions",
+heroSubtitle: "Comprehensive financial analysis, professional reports, and smart forecasts. All with complete privacy—your data never leaves your device.",
+ctaAccountant: "Start as Accountant (Trial Balance)",
+ctaOwner: "Start as Business Owner (Financial Statements)",
+howTitle: "Financial Analysis in 3 Simple Steps",
+step1Title: "1. Input Your Data",
+step1Desc: "Choose your method: precise manual entry of a trial balance or a quick upload of ready-made financial statements.",
+step2Title: "2. Get Instant Insights",
+step2Desc: "The Financial Analyzer generates reports, calculates ratios, and displays advanced analytics in an interactive dashboard.",
+step3Title: "3. Compare and Decide",
+step3Desc: "Compare performance across different periods and discover trends to make confident, data-driven financial decisions."
+}
+};
+</script>
+<script src="js/index-app.js"></script>
+<script src="js/index-app.js"></script>
+<script>
+if ('serviceWorker' in navigator) {
+window.addEventListener('load', () => {
+navigator.serviceWorker.register('service-worker.js')
+.then((reg) => {
+console.log('Service worker متسجل وتمام:', reg);
+})
+.catch((err) => {
+console.log('فشل تسجيل Service worker:', err);
+});
+});
+}
+</script>
+</body>
+</html>
