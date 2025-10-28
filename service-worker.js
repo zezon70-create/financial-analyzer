@@ -1,34 +1,34 @@
 // service-worker.js
 const CACHE_NAME = 'financial-analyzer-v1';
 const FILES_TO_CACHE = [
-    '/',
-    '/index.html',
-    '/input.html',
-    '/upload.html',
-    '/report.html', 
-    '/advanced.html', 
-    '/dashboard.html', 
-    '/comparisons.html', 
-    '/benchmarks.html', 
+    '',
+    'index.html',
+    'input.html',
+    'upload.html',
+    'report.html', 
+    'advanced.html', 
+    'dashboard.html', 
+    'comparisons.html', 
+    'benchmarks.html', 
 
 
-    '/css/style.css',
+    'css/style.css',
 
-    '/js/main.js',
-    '/js/auth-guard.js',
-    '/js/index-app.js',
-    '/js/input-app.js',
-    '/js/upload-app.js',
-    '/js/report-app.js',
-    '/js/advanced-app.js',
-    '/js/dashboard-app.js',
-    '/js/comparisons-app.js',
-    '/js/benchmarks-app.js',
+    'js/main.js',
+    'js/auth-guard.js',
+    'js/index-app.js',
+    'js/input-app.js',
+    'js/upload-app.js',
+    'js/report-app.js',
+    'js/advanced-app.js',
+    'js/dashboard-app.js',
+    'js/comparisons-app.js',
+    'js/benchmarks-app.js',
    
 
-    '/assets/logo.png',
-    '/assets/icons/icon-192x192.png',
-    '/assets/icons/icon-512x512.png',
+    'assets/logo.png',
+    'assets/icons/icon-192x192.png',
+    'assets/icons/icon-512x512.png',
 
     // الملفات الخارجية (CDN)
     'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap',
