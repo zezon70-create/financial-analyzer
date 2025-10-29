@@ -1,5 +1,4 @@
 // js/main.js (Corrected Version + Explicit Global Export)
-
 // --- 1. STATE & CONFIG (Global Scope) ---
 const state = {
     preferences: {
@@ -7,7 +6,6 @@ const state = {
         lang: localStorage.getItem('lang') || 'ar',
     }
 };
-
 const translations = {
     ar: {
         brandTitle: "المحلل المالي", navHome: "الرئيسية", navInput: "الإدخال", navUpload: "الرفع",
@@ -36,7 +34,6 @@ const translations = {
     passwordErrorText: "Incorrect password. Please try again."
     }
 };
-
 // --- 2. GLOBAL FUNCTIONS ---
 const t = (key) => (translations[state.preferences.lang] && translations[state.preferences.lang][key]) || key;
 const applyTheme = (theme) => {
@@ -47,7 +44,6 @@ const applyTheme = (theme) => {
     }
     localStorage.setItem('theme', theme);
 };
-
 // *** Define applyTranslations GLOBALLY ***
 function applyTranslations() {
     const lang = state.preferences.lang;
@@ -72,7 +68,6 @@ function applyTranslations() {
     });
     console.log("Translations applied (main.js).");
 };
-
 // --- 3. DOMContentLoaded for Initialization and Event Binding ---
 document.addEventListener('DOMContentLoaded', () => {
     console.log("DOM fully loaded and parsed (main.js)");
@@ -90,34 +85,23 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTheme(state.preferences.theme);
     // Call translation ONCE here after DOM is ready
     applyTranslations();
-    console.log("Initial setup complete (main.js).");
-    // ==========================================================
-//  (إضافة جديدة محدّثة) - كود التحكم في الشاشة الترحيبية والباسورد
-// ==========================================================
-
-// *** يمكنك تغيير الباسورد من هنا ***
-
-// تحديد العناصر الجديدة
+    console.log("Initial setup complete (main.js).")
 const splashScreen = document.getElementById('splashScreen');
 const passwordModal = document.getElementById('passwordModal');
 const passwordInput = document.getElementById('passwordInput');
 const passwordButton = document.getElementById('passwordButton');
 const passwordError = document.getElementById('passwordError');
 const passwordContent = document.querySelector('.password-content');
-
 // مدة عرض الشاشة الترحيبية (بالمللي ثانية)
 const splashDuration = 1500; // 1.5 ثانية
-
 // ----- (الدوال المساعدة زي ما هي) -----
 const showPasswordModal = () => {
     passwordModal.classList.add('visible');
     passwordInput.focus(); // التركيز على حقل الإدخال
 };
-
 const hidePasswordModal = () => {
     passwordModal.classList.remove('visible');
 };
-
 const showPasswordError = () => {
     passwordError.classList.add('visible');
     passwordContent.classList.add('shake');
@@ -126,20 +110,16 @@ const showPasswordError = () => {
         passwordContent.classList.remove('shake');
     }, 500);
 };
-
 const hidePasswordError = () => {
     passwordError.classList.remove('visible');
 };
 // ----- (نهاية الدوال المساعدة) -----
 
-
 // 1. التحقق من الـ Session Storage (الذاكرة المؤقتة للتاب)
 //    هل المستخدم سجل دخوله قبل كده في التاب دي؟
 const isAuthenticated = sessionStorage.getItem('isAuthenticated') === 'true';
-
 if (isAuthenticated) {
     // --- نعم، المستخدم مسجل دخوله بالفعل ---
-
     // 1. التحكم في الشاشة الترحيبية (فقط)
     if (splashScreen) {
         setTimeout(() => {
@@ -147,10 +127,8 @@ if (isAuthenticated) {
             // مش هنظهر شاشة الباسورد
         }, splashDuration);
     }
-
 } else {
     // --- لا، دي أول مرة يفتح أو قفل التاب وفتحها ---
-
     // 1. التحكم في الشاشة الترحيبية
     if (splashScreen) {
         setTimeout(() => {
@@ -164,13 +142,11 @@ if (isAuthenticated) {
 
         }, splashDuration);
     }
-
     // 3. التحكم في زر الباسورد
     // --- عند الضغط على زر "دخول" ---
 if (passwordButton) {
     passwordButton.addEventListener('click', () => {
         const enteredPassword = passwordInput.value;
-
         // --- ▼▼▼ قراءة ملف الباسوردات والتحقق ▼▼▼ ---
         fetch('zezo.json') // اسم الملف اللي عملناه
             .then(response => {
@@ -199,7 +175,6 @@ if (passwordButton) {
             });
         // --- ▲▲▲ نهاية قراءة الملف والتحقق ▲▲▲ ---
     });
-
     // إضافة إمكانية الضغط على "Enter" (زي ما هو)
     if(passwordInput) passwordInput.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
@@ -207,17 +182,14 @@ if (passwordButton) {
             passwordButton.click();
         }
     });
-
     // إخفاء رسالة الخطأ عند البدء في الكتابة (زي ما هو)
     if(passwordInput) passwordInput.addEventListener('input', hidePasswordError);
 }
 }
-
 // ==========================================================
 //  (نهاية الإضافة المحدّثة)
 // ==========================================================
 });
-
 // *** ADD THIS LINE AT THE VERY END (Outside DOMContentLoaded) ***
 window.applyTranslations = applyTranslations;
 console.log("applyTranslations function explicitly attached to window.");
