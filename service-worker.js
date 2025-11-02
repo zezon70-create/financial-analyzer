@@ -1,10 +1,5 @@
 // service-worker.js (نسخة محدثة مع تنظيف الكاش)
-
-// --- الخطوة 1: تغيير اسم الكاش (الإصدار) ---
-// غيرنا v1 لـ v2
 const CACHE_NAME = 'financial-analyzer-v2';
-
-// دي قايمة الملفات بتاعتك زي ما هي
 const FILES_TO_CACHE = [
     'index.html',
     'zezo.json',
@@ -16,9 +11,7 @@ const FILES_TO_CACHE = [
     'comparisons.html', 
     'benchmarks.html',
     'favicon.ico',
-
     'css/style.css',
-
     'js/main.js',
     'js/auth-guard.js',
     'js/index-app.js',
@@ -28,20 +21,14 @@ const FILES_TO_CACHE = [
     'js/advanced-app.js',
     'js/dashboard-app.js',
     'js/comparisons-app.js',
-    'js/benchmarks-app.js',
-   
+    'js/benchmarks-app.js',   
     'assets/logo.png',
     'assets/icons/icon-192x192.png',
     'assets/icons/icon-512x512.png',
-
-    'manifest.json', // (لازم نضيف ده كمان)
-
-    // الملفات الخارجية (CDN)
+    'manifest.json',
     'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css'
-    // (ضيف أي لينكات CDN تانية لو موجودة)
 ];
-
 // --- حدث الـ "Install" (التثبيت) ---
 // (ده زي ما هو، هيخزن الملفات في الكاش الجديد v2)
 self.addEventListener('install', (event) => {
@@ -53,7 +40,6 @@ self.addEventListener('install', (event) => {
             })
     );
 });
-
 // --- ▼▼▼ الخطوة 2: إضافة حدث الـ "Activate" (التفعيل) ▼▼▼ ---
 // (ده الكود الجديد اللي هيمسح الكاش القديم v1)
 self.addEventListener('activate', (event) => {
@@ -77,8 +63,6 @@ self.addEventListener('activate', (event) => {
     return self.clients.claim(); 
 });
 // --- ▲▲▲ نهاية الإضافة ▲▲▲ ---
-
-
 // --- حدث الـ "Fetch" (جلب البيانات) ---
 // (ده زي ما هو، بيجيب الملفات من الكاش الأول)
 self.addEventListener('fetch', (event) => {
