@@ -64,6 +64,8 @@ return response;
 }
 return fetch(event.request);
 }
+
+      
 )
 );
 });
