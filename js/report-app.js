@@ -1,4 +1,4 @@
-// js/report-app.js (FIXED: Corrected double-counting bug)
+// js/report-app.js (FIXED: Added the missing 'sumValues' helper function)
 
 window.pageTranslations = {
     ar: {
@@ -107,7 +107,7 @@ window.pageTranslations = {
         eq_comment_decline: "انخفاض في حقوق المساهمين: حقوق الملكية انخفضت.",
     },
     en: {
-        // *** (All English translations are the same as before) ***
+        // ... (All English translations are the same as before) ...
         pageTitle: "Detailed Financial Statements — Financial Analyzer",
         // ... (all other keys) ...
         eq_comment_decline: "Shareholder Value Decline: Equity decreased.",
@@ -120,8 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const state = {
         trialDataCurrent: null,
         trialDataPrevious: null,
-        uploadedDataCurrent: null, // This will be { bs: [], is: [] }
-        uploadedDataPrevious: null, // This will be { bs: [], is: [] }
+        uploadedDataCurrent: null, 
+        uploadedDataPrevious: null, 
         statementsCurrent: null, 
         statementsPrevious: null, 
         hasDataCurrent: false,
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Data Loading and Processing Logic ---
 
-    // --- ▼▼▼ (FIXED) دالة معالجة البيانات المرفوعة بالتصنيفات ▼▼▼ ---
+    // --- (FIXED) دالة معالجة البيانات المرفوعة بالتصنيفات ---
     const processUploadedData = (uploadedData) => {
         try {
             console.log("Processing uploaded data with classifications...");
@@ -162,22 +162,18 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             const classificationMap = {
-                // BS - Assets
                 'opt_cash': 'cashEquivalents',
                 'opt_receivables': 'accountsReceivable',
                 'opt_inventory': 'inventory',
                 'opt_otherCurrentAssets': 'otherCurrentAssets',
                 'opt_fixedAssets': 'propertyPlantEquipment',
                 'opt_otherNonCurrentAssets': 'otherNonCurrentAssets',
-                // BS - Liabilities
                 'opt_payables': 'accountsPayable',
                 'opt_shortTermDebt': 'shortTermLoans',
                 'opt_otherCurrentLiabilities': 'otherCurrentLiabilities',
                 'opt_longTermDebt': 'longTermLoans',
                 'opt_otherNonCurrentLiabilities': 'otherNonCurrentLiabilities',
-                // BS - Equity
                 'opt_equity': 'paidInCapital', 
-                // IS
                 'opt_revenue': 'revenue',
                 'opt_cogs': 'cogs',
                 'opt_operatingExpense': 'operatingExpenses', 
@@ -195,7 +191,6 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             const totals = statements.totals;
             
-            // تهيئة المجاميع بصفر
             Object.assign(totals, {
                 totalCurrentAssets: 0, totalNonCurrentAssets: 0, totalAssets: 0,
                 totalCurrentLiabilities: 0, totalNonCurrentLiabilities: 0, totalLiabilities: 0,
@@ -204,20 +199,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 totalOperatingExpenses: 0, operatingProfit: 0, 
                 profitBeforeTax: 0, totalTax: 0, netProfit: 0,
                 cashEquivalents: 0, accountsReceivable: 0, inventory: 0, 
-                // --- ▼▼▼ (إضافة إصلاح) إضافة مجاميع فرعية ناقصة ▼▼▼ ---
                 otherCurrentAssets: 0,
                 propertyPlantEquipment: 0,
                 otherNonCurrentAssets: 0,
-                // ---
                 accountsPayable: 0, shortTermDebt: 0,
                 otherCurrentLiabilities: 0,
                 longTermLoans: 0,
                 otherNonCurrentLiabilities: 0,
-                // ---
                 paidInCapital: 0,
-                // ---
                 operatingExpenses: 0,
-                // --- ▲▲▲ (نهاية إضافة الإصلاح) ▲▲▲ ---
                 purchases: 0, depreciationTotal: 0, totalInterest: 0, ebit: 0, workingCapital: 0, retainedEarnings: 0
             });
 
@@ -230,7 +220,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     const accountItem = { account: item.Account, value: item.Value || 0 };
 
                     switch (classification) {
-                        // Current Assets
                         case 'cashEquivalents':
                             statements.bs.currentAssets.push(accountItem);
                             totals.cashEquivalents += accountItem.value;
@@ -245,18 +234,16 @@ document.addEventListener('DOMContentLoaded', () => {
                             break;
                         case 'otherCurrentAssets':
                             statements.bs.currentAssets.push(accountItem);
-                            totals.otherCurrentAssets += accountItem.value; // <-- (إضافة إصلاح)
+                            totals.otherCurrentAssets += accountItem.value; 
                             break;
-                        // Non-Current Assets
                         case 'propertyPlantEquipment':
                             statements.bs.nonCurrentAssets.push(accountItem);
-                            totals.propertyPlantEquipment += accountItem.value; // <-- (إضافة إصلاح)
+                            totals.propertyPlantEquipment += accountItem.value; 
                             break;
                         case 'otherNonCurrentAssets':
                             statements.bs.nonCurrentAssets.push(accountItem);
-                            totals.otherNonCurrentAssets += accountItem.value; // <-- (إضافة إصلاح)
+                            totals.otherNonCurrentAssets += accountItem.value; 
                             break;
-                        // Current Liabilities
                         case 'accountsPayable':
                             statements.bs.currentLiabilities.push(accountItem);
                             totals.accountsPayable += accountItem.value;
@@ -267,21 +254,19 @@ document.addEventListener('DOMContentLoaded', () => {
                             break;
                         case 'otherCurrentLiabilities':
                             statements.bs.currentLiabilities.push(accountItem);
-                            totals.otherCurrentLiabilities += accountItem.value; // <-- (إضافة إصلاح)
+                            totals.otherCurrentLiabilities += accountItem.value; 
                             break;
-                        // Non-Current Liabilities
                         case 'longTermLoans':
                             statements.bs.nonCurrentLiabilities.push(accountItem);
-                            totals.longTermLoans += accountItem.value; // <-- (إضافة إصلاح)
+                            totals.longTermLoans += accountItem.value; 
                             break;
                         case 'otherNonCurrentLiabilities':
                             statements.bs.nonCurrentLiabilities.push(accountItem);
-                            totals.otherNonCurrentLiabilities += accountItem.value; // <-- (إضافة إصلاح)
+                            totals.otherNonCurrentLiabilities += accountItem.value; 
                             break;
-                        // Equity
                         case 'paidInCapital':
                             statements.bs.equityCapital.push(accountItem);
-                            totals.paidInCapital += accountItem.value; // <-- (إضافة إصلاح)
+                            totals.paidInCapital += accountItem.value; 
                             break;
                     }
                 });
@@ -298,14 +283,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     switch (classification) {
                         case 'revenue':
                             statements.is.revenue.push(accountItem);
-                            totals.totalRevenue += accountItem.value; // <-- (إضافة إصلاح)
+                            totals.totalRevenue += accountItem.value; 
                             break;
                         case 'cogs':
                             statements.is.cogs.push(accountItem);
-                            totals.totalCogs += accountItem.value; // <-- (إضافة إصلاح)
+                            totals.totalCogs += accountItem.value; 
                             break;
                         case 'operatingExpenses':
-                            // (المنطق القديم كان سليم)
                             if (item.Account.toLowerCase().includes('sell') || item.Account.includes('بيع') || item.Account.includes('تسويق')) {
                                 statements.is.sellingMarketingExpenses.push(accountItem);
                             } else {
@@ -314,15 +298,15 @@ document.addEventListener('DOMContentLoaded', () => {
                             break;
                         case 'depreciationAmortization':
                             statements.is.depreciationAmortization.push(accountItem);
-                            totals.depreciationTotal += accountItem.value; // <-- (إضافة إصلاح)
+                            totals.depreciationTotal += accountItem.value; 
                             break;
                         case 'interestExpense':
                             statements.is.interestExpense.push(accountItem);
-                            totals.totalInterest += accountItem.value; // <-- (إضافة إصلاح)
+                            totals.totalInterest += accountItem.value; 
                             break;
                         case 'taxExpense':
                             statements.is.taxExpense.push(accountItem);
-                            totals.totalTax += accountItem.value; // <-- (إضافة إصلاح)
+                            totals.totalTax += accountItem.value; 
                             break;
                         case 'otherOperatingExpenses':
                             statements.is.otherOperatingExpenses.push(accountItem);
@@ -332,9 +316,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // --- حساب المجاميع من البيانات المصنفة ---
-            // (هنستخدم المجاميع الفرعية اللي حسبناها فوق)
-            
-            // --- ▼▼▼ (إصلاح جوهري) طريقة حساب المجاميع ▼▼▼ ---
+
+            // --- ▼▼▼ (هنا الإصلاح) إضافة تعريف الدالة المنسية ▼▼▼ ---
+            const sumValues = (arr) => arr.reduce((sum, item) => sum + (item.value || 0), 0);
+            // --- ▲▲▲ (نهاية الإصلاح) ▲▲▲ ---
             
             // مجاميع الميزانية
             totals.totalCurrentAssets = totals.cashEquivalents + totals.accountsReceivable + totals.inventory + totals.otherCurrentAssets;
@@ -346,7 +331,6 @@ document.addEventListener('DOMContentLoaded', () => {
             totals.totalLiabilities = totals.totalCurrentLiabilities + totals.totalNonCurrentLiabilities;
 
             // مجاميع قائمة الدخل
-            // (المجاميع الفرعية اتحسبت فوق)
             totals.grossProfit = totals.totalRevenue - totals.totalCogs;
             
             totals.totalOperatingExpenses = 
@@ -362,9 +346,8 @@ document.addEventListener('DOMContentLoaded', () => {
             totals.netProfit = totals.profitBeforeTax - totals.totalTax;
 
             // مجاميع حقوق الملكية
-            totals.totalEquityCapital = totals.paidInCapital; // (لأننا بنجمعها فوق)
+            totals.totalEquityCapital = totals.paidInCapital; 
             
-            // (المنطق ده زي ما هو سليم)
             const otherEquity = sumValues(uploadedData.bs.filter(item => item.Classification === 'opt_equity' && !classificationMap[item.Classification]));
             statements.bs.equityRetainedEarnings = otherEquity + totals.netProfit; 
             totals.retainedEarnings = statements.bs.equityRetainedEarnings; 
@@ -373,22 +356,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // مجاميع إضافية للتحليلات
             totals.workingCapital = totals.totalCurrentAssets - totals.totalCurrentLiabilities;
-            totals.purchases = totals.totalCogs; // افتراض مبسط
-            
-            // --- ▲▲▲ (نهاية الإصلاح الجوهري) ▲▲▲ ---
+            totals.purchases = totals.totalCogs; 
             
             console.log("Successfully processed uploaded data (New Method - FIXED).", statements);
-            return statements; // Return the processed object
+            return statements; 
         } catch (error) {
             console.error("Error processing uploaded data:", error);
-            return null; // Return null on failure
+            return null; 
         }
     };
-    // --- ▲▲▲ (نهاية الدالة المُصلحة) ▲▲▲ ---
+    // --- (نهاية الدالة المُصلحة) ---
 
 
     const buildStatementsFromTrialData = (trialDataArray) => {
-        // *** (الكود ده سليم زي ما هو من الملف الأصلي بتاعك) ***
+        // *** (الكود ده سليم 100% زي ما هو) ***
         const statements = {
             bs: { currentAssets: [], nonCurrentAssets: [], currentLiabilities: [], nonCurrentLiabilities: [], equityCapital: [], equityRetainedEarnings: 0 },
             is: { revenue: [], cogs: [], genAdminExpenses: [], sellingMarketingExpenses: [], depreciationAmortization: [], otherOperatingExpenses: [], interestExpense: [], taxExpense: [] },
@@ -486,7 +467,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // --- Calculate Totals and Subtotals ---
             totals.totalAssets = totals.totalCurrentAssets + totals.totalNonCurrentAssets;
             totals.totalLiabilities = totals.totalCurrentLiabilities + totals.totalNonCurrentLiabilities;
             totals.grossProfit = totals.totalRevenue - totals.totalCogs;
@@ -501,25 +481,25 @@ document.addEventListener('DOMContentLoaded', () => {
             totals.profitBeforeTax = totals.operatingProfit - totals.totalInterest;
             totals.netProfit = totals.profitBeforeTax - totals.totalTax;
             
-            statements.bs.equityRetainedEarnings += totals.netProfit; // Closing RE = Opening RE + Net Profit
-            totals.retainedEarnings = statements.bs.equityRetainedEarnings; // Save closing RE
+            statements.bs.equityRetainedEarnings += totals.netProfit; 
+            totals.retainedEarnings = statements.bs.equityRetainedEarnings; 
             totals.totalEquity = totals.totalEquityCapital + statements.bs.equityRetainedEarnings;
             totals.totalLiabilitiesAndEquity = totals.totalLiabilities + totals.totalEquity;
 
             totals.workingCapital = totals.totalCurrentAssets - totals.totalCurrentLiabilities;
             totals.ebit = totals.operatingProfit;
-            if (totals.purchases === 0 && totals.totalCogs > 0) totals.purchases = totals.totalCogs; // Proxy
+            if (totals.purchases === 0 && totals.totalCogs > 0) totals.purchases = totals.totalCogs; 
 
             console.log("Processed Statements Data from Trial Balance:", statements);
-            return statements; // Return the processed object
+            return statements;
         } catch (e) {
             console.error("Error during trial data processing loop:", e);
-            return null; // Return null on failure
+            return null; 
         }
     };
 
     const loadDataAndPrepareStatements = () => {
-        // ... (الكود ده سليم زي ما هو في الملف اللي بعتهولي) ...
+        // ... (الكود ده سليم زي ما هو) ...
         state.hasDataCurrent = false; 
         state.hasDataPrevious = false;
         state.statementsCurrent = null;
@@ -557,8 +537,8 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         if (selectedSource === 'uploadedData') {
-            state.statementsCurrent = load('uploadedFinancialData', processUploadedData); // <-- الدالة الجديدة
-            state.statementsPrevious = load('uploadedFinancialDataPrevious', processUploadedData); // <-- الدالة الجديدة
+            state.statementsCurrent = load('uploadedFinancialData', processUploadedData); 
+            state.statementsPrevious = load('uploadedFinancialDataPrevious', processUploadedData); 
         } else {
             state.statementsCurrent = load('trialData', buildStatementsFromTrialData);
             state.statementsPrevious = load('trialDataPrevious', buildStatementsFromTrialData);
@@ -734,7 +714,6 @@ document.addEventListener('DOMContentLoaded', () => {
         html += '</tbody></table>';
         document.getElementById('balanceSheetTable').innerHTML = html;
 
-        // Commentary
         const diff = (totalsCurrent.totalAssets || 0) - (totalsCurrent.totalLiabilitiesAndEquity || 0);
         let comment = Math.abs(diff) < 1 ? t_page('bs_comment_balanced') : t_page('bs_comment_unbalanced').replace('{diff}', formatCurrency(diff));
         if (state.hasDataPrevious && (totalsPrevious.totalAssets || 0) !== 0) {
@@ -749,7 +728,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderIncomeStatement = () => {
-        // ... (الكود ده سليم زي ما هو في الملف اللي بعتهولي) ...
+        // ... (الكود ده سليم زي ما هو) ...
         const stmtCurrent = state.statementsCurrent;
         const stmtPrevious = state.statementsPrevious;
         
@@ -825,20 +804,19 @@ document.addEventListener('DOMContentLoaded', () => {
              }
         }
         document.getElementById('incomeStatementComment').textContent = comment;
-    };
+     };
 
     const renderCashFlowStatement = () => {
-        // ... (الكود ده سليم زي ما هو في الملف اللي بعتهولي) ...
+        // ... (الكود ده سليم زي ما هو) ...
         const totalsCurrent = state.statementsCurrent?.totals || {};
         const totalsPrevious = state.statementsPrevious?.totals || {};
 
-        // Calculate CF items
         const netProfitC = totalsCurrent.netProfit || 0;
         const depreciationC = totalsCurrent.depreciationTotal || 0;
         const changeInWC_C = (totalsCurrent.workingCapital || 0) - (totalsPrevious.workingCapital || 0);
         const cashFromOpsC = netProfitC + depreciationC - (state.hasDataPrevious ? changeInWC_C : 0); 
-        const cashFromInvestingC = -( (totalsCurrent.totalNonCurrentAssets || 0) - (totalsPrevious.totalNonCurrentAssets || 0) - depreciationC ); // Capex = Change in NCA + Depreciation
-        const cashFromFinancingC = 0; // Proxy
+        const cashFromInvestingC = -( (totalsCurrent.totalNonCurrentAssets || 0) - (totalsPrevious.totalNonCurrentAssets || 0) - depreciationC ); 
+        const cashFromFinancingC = 0; 
         const netChangeInCashC = cashFromOpsC + cashFromInvestingC + cashFromFinancingC;
         const beginningCashC = totalsPrevious.cashEquivalents || 0;
         const endingCashCalculatedC = beginningCashC + netChangeInCashC;
@@ -846,11 +824,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const netProfitP = totalsPrevious.netProfit || 0;
         const depreciationP = totalsPrevious.depreciationTotal || 0;
-        const cashFromOpsP = netProfitP + depreciationP; // No WC change
-        const cashFromInvestingP = -depreciationP; // Proxy
-        const cashFromFinancingP = 0; // Proxy
+        const cashFromOpsP = netProfitP + depreciationP; 
+        const cashFromInvestingP = -depreciationP; 
+        const cashFromFinancingP = 0; 
         const netChangeInCashP = cashFromOpsP + cashFromInvestingP + cashFromFinancingP;
-        const beginningCashP = 0; // Assumption
+        const beginningCashP = 0; 
         const endingCashCalculatedP = beginningCashP + netChangeInCashP;
         
         let html = '<table class="table table-sm report-table"><thead><tr>';
@@ -897,7 +875,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const renderEquityStatement = () => {
-        // ... (الكود ده سليم زي ما هو في الملف اللي بعتهولي) ...
+        // ... (الكود ده سليم زي ما هو) ...
         const stmtCurrent = state.statementsCurrent;
         const stmtPrevious = state.statementsPrevious;
 
@@ -936,7 +914,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const reloadAndRenderData = () => {
-        // ... (الكود ده سليم زي ما هو في الملف اللي بعتهولي) ...
+        // ... (الكود ده سليم زي ما هو) ...
         console.log("[DEBUG] Reloading and rendering data based on selection.");
         const noDataWarningElement = document.getElementById('noDataWarning');
         
@@ -979,7 +957,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Initialization ---
     const init = () => {
-        // ... (الكود ده سليم زي ما هو في الملف اللي بعتهولي) ...
+        // ... (الكود ده سليم زي ما هو) ...
         console.log("[DEBUG] Initializing report page (Simplified)...");
         
         console.log("[DEBUG] Bypassing library load wait. Proceeding with data loading...");
