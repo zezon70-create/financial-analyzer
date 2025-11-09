@@ -148,12 +148,9 @@ window.pageTranslations={
         opt_otherRevenue:"Other Revenue",
         opt_otherExpense:"Other Expense"
     }
-}; // <-- (الإصلاح الحقيقي) هنا كانت الفاصلة (,)، وتم تصحيحها إلى فاصلة منقوطة (;)
-
+};
 document.addEventListener("DOMContentLoaded",(()=>{
-    
-    // --- (تطوير) هيكل التصنيفات الجديد المُجمّع ---
-    const classificationStructure = {
+     const classificationStructure = {
         bs: {
             "group_currentAssets": ["opt_cash", "opt_receivables", "opt_inventory", "opt_otherCurrentAssets"],
             "group_nonCurrentAssets": ["opt_fixedAssets", "opt_otherNonCurrentAssets"],
@@ -166,8 +163,6 @@ document.addEventListener("DOMContentLoaded",(()=>{
             "group_expenses": ["opt_cogs", "opt_operatingExpense", "opt_depreciation", "opt_interestExpense", "opt_taxExpense", "opt_otherExpense"]
         }
     };
-    // (نهاية التطوير)
-
     const t={data:{bs:[],is:[]},fileData:[],fileHeaders:[]},
     a=localStorage.getItem("lang")||"ar",
     o=e=>window.pageTranslations[a]?.[e]||e,
@@ -181,8 +176,6 @@ document.addEventListener("DOMContentLoaded",(()=>{
     c=()=>{const e=JSON.parse(localStorage.getItem("uploadedFinancialData")||"{}");for(const o in r.tables)t.data[o]=e[o]?.length>0?e[o]:[(a=r.tables[o].fields,a.reduce(((e,t)=>({...e,[t]:"Value"===t?0:""})),{}))],t.data[o].forEach((e=>{void 0===e.Classification&&(e.Classification="")}));var a},
     p=()=>{alert("Save As function needs to be updated to support classifications.")},
     u=()=>{if(0!==t.data.bs.length||0!==t.data.is.length)try{localStorage.setItem("uploadedFinancialDataPrevious",JSON.stringify(t.data)),alert(o("savedPreviousSuccess"))}catch(e){alert("Error saving previous period data.")}else alert(o("noDataToSave"))},
-    
-    // --- (تطوير) دالة بناء الصفوف (f) ---
     f=o=>{
         const s=document.getElementById(`${o}Table`),
         l=r.tables[o],
@@ -190,7 +183,6 @@ document.addEventListener("DOMContentLoaded",(()=>{
         p=l.headers[a];
         s.innerHTML=`<thead><tr>${p.map((e=>`<th>${e}</th>`)).join("")}</tr></thead><tbody></tbody>`;
         const u=s.querySelector("tbody");
-
         // --- (تطوير) بناء القائمة المنسدلة المُجمّعة باستخدام <optgroup> ---
         let m = ""; // m = optionsHtml
         const groups = classificationStructure[o]; // e.g., classificationStructure['bs']
@@ -231,4 +223,5 @@ document.addEventListener("DOMContentLoaded",(()=>{
     l.savePreviousBtn.addEventListener("click",u),
     l.tabContent.addEventListener("click",(e=>{const a=e.target.closest("[data-table]");if(a){const e=a.dataset.table,o=r.tables[e].fields.reduce(((e,t)=>({...e,[t]:"Value"===t?0:""})),{});t.data[e].push(o),d(),f(e)}})),
     c(),m(),l.browseButton&&(l.browseButton.addEventListener("click",(()=>l.fileUploader.click())),l.fileDropArea.addEventListener("click",(()=>l.fileUploader.click())),l.processFileBtn.addEventListener("click",y),l.fileUploader.addEventListener("change",(e=>{e.target.files.length>0&&b(e.target.files[0])})),["dragenter","dragover","dragleave","drop"].forEach((e=>{l.fileDropArea.addEventListener(e,(e=>{e.preventDefault(),e.stopPropagation()}),!1)})),["dragenter","dragover"].forEach((e=>{l.fileDropArea.addEventListener(e,(()=>l.fileDropArea.classList.add("border-success")),!1)})),["dragleave","drop"].forEach((e=>{l.fileDropArea.addEventListener(e,(()=>l.fileDropArea.classList.remove("border-success")),!1)})),l.fileDropArea.addEventListener("drop",(e=>{const t=e.dataTransfer.files;t.length>0&&(l.fileUploader.files=t,b(t[0]))}),!1))
+
 }));
