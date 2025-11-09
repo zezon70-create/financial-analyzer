@@ -148,7 +148,7 @@ window.pageTranslations={
         opt_otherRevenue:"Other Revenue",
         opt_otherExpense:"Other Expense"
     }
-};
+},
 document.addEventListener("DOMContentLoaded",(()=>{
      const classificationStructure = {
         bs: {
@@ -162,7 +162,7 @@ document.addEventListener("DOMContentLoaded",(()=>{
             "group_revenues": ["opt_revenue", "opt_otherRevenue"],
             "group_expenses": ["opt_cogs", "opt_operatingExpense", "opt_depreciation", "opt_interestExpense", "opt_taxExpense", "opt_otherExpense"]
         }
-    };
+    },
     const t={data:{bs:[],is:[]},fileData:[],fileHeaders:[]},
     a=localStorage.getItem("lang")||"ar",
     o=e=>window.pageTranslations[a]?.[e]||e,
@@ -224,4 +224,5 @@ document.addEventListener("DOMContentLoaded",(()=>{
     l.tabContent.addEventListener("click",(e=>{const a=e.target.closest("[data-table]");if(a){const e=a.dataset.table,o=r.tables[e].fields.reduce(((e,t)=>({...e,[t]:"Value"===t?0:""})),{});t.data[e].push(o),d(),f(e)}})),
     c(),m(),l.browseButton&&(l.browseButton.addEventListener("click",(()=>l.fileUploader.click())),l.fileDropArea.addEventListener("click",(()=>l.fileUploader.click())),l.processFileBtn.addEventListener("click",y),l.fileUploader.addEventListener("change",(e=>{e.target.files.length>0&&b(e.target.files[0])})),["dragenter","dragover","dragleave","drop"].forEach((e=>{l.fileDropArea.addEventListener(e,(e=>{e.preventDefault(),e.stopPropagation()}),!1)})),["dragenter","dragover"].forEach((e=>{l.fileDropArea.addEventListener(e,(()=>l.fileDropArea.classList.add("border-success")),!1)})),["dragleave","drop"].forEach((e=>{l.fileDropArea.addEventListener(e,(()=>l.fileDropArea.classList.remove("border-success")),!1)})),l.fileDropArea.addEventListener("drop",(e=>{const t=e.dataTransfer.files;t.length>0&&(l.fileUploader.files=t,b(t[0]))}),!1))
 
-}));
+},
+
