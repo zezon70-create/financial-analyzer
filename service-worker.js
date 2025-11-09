@@ -3,8 +3,6 @@
 // --- الخطوة 1: تغيير اسم الكاش (الإصدار) ---
 // غيرنا v3 لـ v4
 const CACHE_NAME = 'financial-analyzer-v4';
-
-// --- القايمة الكاملة 100% (زي المرة اللي فاتت) ---
 const FILES_TO_CACHE = [
     'index.html',
     'zezo.json',
@@ -15,9 +13,7 @@ const FILES_TO_CACHE = [
     'dashboard.html', 
     'comparisons.html', 
     'benchmarks.html', 
-
     'css/style.css',
-
     'js/main.js',
     'js/auth-guard.js',
     'js/index-app.js',
@@ -28,14 +24,10 @@ const FILES_TO_CACHE = [
     'js/dashboard-app.js',
     'js/comparisons-app.js',
     'js/benchmarks-app.js',
-
     'assets/logo.png',
     'assets/icons/icon-192x192.png',
     'assets/icons/icon-512x512.png',
-
     'manifest.json',
-
-    // --- ملفات الـ CDN الخارجية ---
     'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap',
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
     'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css',
@@ -47,8 +39,6 @@ const FILES_TO_CACHE = [
     'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js',
     'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'
 ];
-
-
 // --- حدث الـ "Install" (التثبيت) ---
 self.addEventListener('install', (event) => {
     event.waitUntil(
