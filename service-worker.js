@@ -1,10 +1,10 @@
-// service-worker.js (نسخة v10 - لإجبار تحديث الكاش)
+// service-worker.js (نسخة v4 - النسخة "الهجومية" لتنظيف الكاش)
 
 // --- الخطوة 1: تغيير اسم الكاش (الإصدار) ---
-// غيرنا v9 لـ v10
-const CACHE_NAME = 'financial-analyzer-v10';
+// غيرنا v3 لـ v4
+const CACHE_NAME = 'financial-analyzer-v4';
 
-// --- القايمة الكاملة 100% ---
+// --- القايمة الكاملة 100% (زي المرة اللي فاتت) ---
 const FILES_TO_CACHE = [
     'index.html',
     'zezo.json',
@@ -22,7 +22,7 @@ const FILES_TO_CACHE = [
     'js/auth-guard.js',
     'js/index-app.js',
     'js/input-app.js',
-    'js/upload-app.js', // سيتم تخزين النسخة الجديدة المُصححة
+    'js/upload-app.js',
     'js/report-app.js',
     'js/advanced-app.js',
     'js/dashboard-app.js',
@@ -40,7 +40,7 @@ const FILES_TO_CACHE = [
     'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
     'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css',
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css',
-    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css', 
+    'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css', // (مهم لصفحة advanced)
     'https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js',
     'https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js',
     'https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js',
@@ -54,7 +54,11 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => {
-                console.log('[ServiceWorker] بيخزن الملفات الأساسية (v10)...');
+                console.log('[ServiceWorker] بيخزن الملفات الأساسية (v4)...');
+                // استخدام .addAll بيكون صعب في الديباجينج، هنستخدم .add واحد واحد
+                // return cache.addAll(FILES_TO_CACHE);
+
+                // --- طريقة تخزين "أكثر أماناً" (بتتجاهل الأخطاء لو ملف CDN وقع) ---
                 const promises = FILES_TO_CACHE.map(url => {
                     return cache.add(url).catch(err => {
                         console.warn(`[ServiceWorker] فشل تخزين الملف (سيتم تجاهله): ${url}`, err);
@@ -63,16 +67,19 @@ self.addEventListener('install', (event) => {
                 return Promise.all(promises);
             })
             .then(() => {
-                console.log('[ServiceWorker] تخزين (v10) اكتمل. تفعيل فوري...');
+                console.log('[ServiceWorker] تخزين (v4) اكتمل. تفعيل فوري...');
+                // --- ▼▼▼ أهم إضافة ▼▼▼ ---
+                // بيجبر الحارس الجديد إنه يشتغل علطول وميستناش
                 return self.skipWaiting(); 
+                // --- ▲▲▲ نهاية الإضافة ▲▲▲ ---
             })
     );
 });
 
 // --- حدث الـ "Activate" (التفعيل) ---
 self.addEventListener('activate', (event) => {
-    console.log('[ServiceWorker] التفعيل (v10)...');
-    const cacheWhitelist = [CACHE_NAME]; // القايمة البيضا (سيب v10 بس)
+    console.log('[ServiceWorker] التفعيل (v4)...');
+    const cacheWhitelist = [CACHE_NAME]; // القايمة البيضا (سيب v4 بس)
 
     event.waitUntil(
         caches.keys().then((cacheNames) => {
@@ -80,22 +87,28 @@ self.addEventListener('activate', (event) => {
                 cacheNames.map((cacheName) => {
                     if (cacheWhitelist.indexOf(cacheName) === -1) {
                         console.log('[ServiceWorker] مسح الكاش القديم:', cacheName);
-                        return caches.delete(cacheName); // امسح كل ما هو ليس v10
+                        return caches.delete(cacheName); // امسح كل ما هو ليس v4
                     }
                 })
             );
         }).then(() => {
-            console.log('[ServiceWorker] السيطرة على الصفحة (v10).');
+            console.log('[ServiceWorker] السيطرة على الصفحة (v4).');
+            // --- ▼▼▼ أهم إضافة ▼▼▼ ---
+            // بيجبر كل الصفحات المفتوحة إنها تستخدم الحارس الجديد ده فوراً
             return self.clients.claim();
+            // --- ▲▲▲ نهاية الإضافة ▲▲▲ ---
         })
     );
 });
 
 // --- حدث الـ "Fetch" (جلب البيانات) ---
 self.addEventListener('fetch', (event) => {
+    // هنستخدم استراتيجية "Network First" للملفات الأساسية
+    // ده بيضمن إننا دايمًا بنحاول نجيب أحدث نسخة من النت الأول
+
     const requestUrl = new URL(event.request.url);
 
-    // استراتيجية "Network First" للملفات الأساسية
+    // لو الطلب رايح لملفات الـ HTML أو الـ JS أو الـ CSS الرئيسية
     if (event.request.mode === 'navigate' || 
         (requestUrl.pathname.endsWith('.html') || 
          requestUrl.pathname.endsWith('.js') || 
@@ -105,6 +118,7 @@ self.addEventListener('fetch', (event) => {
             fetch(event.request)
                 .then(response => {
                     // جبنا نسخة جديدة من النت
+                    // نحطها في الكاش للمرة الجاية (أوفلاين)
                     return caches.open(CACHE_NAME).then(cache => {
                         console.log(`[ServiceWorker] تخزين نسخة جديدة: ${event.request.url}`);
                         cache.put(event.request, response.clone());
@@ -116,12 +130,12 @@ self.addEventListener('fetch', (event) => {
                     console.log(`[ServiceWorker] النت فاصل. جاري البحث في الكاش عن: ${event.request.url}`);
                     return caches.match(event.request)
                         .then(response => {
-                            return response || caches.match('index.html'); 
+                            return response || caches.match('index.html'); // رجع الصفحة الرئيسية لو مش لاقي
                         });
                 })
         );
     } else {
-        // استراتيجية "Cache First" للصور والخطوط
+        // لو الطلب رايح لصور أو أي حاجة تانية، استخدم "Cache First"
         event.respondWith(
             caches.match(event.request)
                 .then((response) => {
