@@ -1,8 +1,8 @@
-// service-worker.js (نسخة v7 - لإجبار تحديث الكاش)
+// service-worker.js (نسخة v10 - لإجبار تحديث الكاش)
 
 // --- الخطوة 1: تغيير اسم الكاش (الإصدار) ---
-// غيرنا v6 لـ v7
-const CACHE_NAME = 'financial-analyzer-v7';
+// غيرنا v9 لـ v10
+const CACHE_NAME = 'financial-analyzer-v10';
 
 // --- القايمة الكاملة 100% ---
 const FILES_TO_CACHE = [
@@ -54,7 +54,7 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => {
-                console.log('[ServiceWorker] بيخزن الملفات الأساسية (v7)...');
+                console.log('[ServiceWorker] بيخزن الملفات الأساسية (v10)...');
                 const promises = FILES_TO_CACHE.map(url => {
                     return cache.add(url).catch(err => {
                         console.warn(`[ServiceWorker] فشل تخزين الملف (سيتم تجاهله): ${url}`, err);
@@ -63,7 +63,7 @@ self.addEventListener('install', (event) => {
                 return Promise.all(promises);
             })
             .then(() => {
-                console.log('[ServiceWorker] تخزين (v7) اكتمل. تفعيل فوري...');
+                console.log('[ServiceWorker] تخزين (v10) اكتمل. تفعيل فوري...');
                 return self.skipWaiting(); 
             })
     );
@@ -71,8 +71,8 @@ self.addEventListener('install', (event) => {
 
 // --- حدث الـ "Activate" (التفعيل) ---
 self.addEventListener('activate', (event) => {
-    console.log('[ServiceWorker] التفعيل (v7)...');
-    const cacheWhitelist = [CACHE_NAME]; // القايمة البيضا (سيب v7 بس)
+    console.log('[ServiceWorker] التفعيل (v10)...');
+    const cacheWhitelist = [CACHE_NAME]; // القايمة البيضا (سيب v10 بس)
 
     event.waitUntil(
         caches.keys().then((cacheNames) => {
@@ -80,12 +80,12 @@ self.addEventListener('activate', (event) => {
                 cacheNames.map((cacheName) => {
                     if (cacheWhitelist.indexOf(cacheName) === -1) {
                         console.log('[ServiceWorker] مسح الكاش القديم:', cacheName);
-                        return caches.delete(cacheName); // امسح كل ما هو ليس v7
+                        return caches.delete(cacheName); // امسح كل ما هو ليس v10
                     }
                 })
             );
         }).then(() => {
-            console.log('[ServiceWorker] السيطرة على الصفحة (v7).');
+            console.log('[ServiceWorker] السيطرة على الصفحة (v10).');
             return self.clients.claim();
         })
     );
