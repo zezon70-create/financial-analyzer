@@ -1,8 +1,8 @@
-// service-worker.js (نسخة v12 - لإجبار تحديث الكاش)
+// service-worker.js (نسخة v13 - لإجبار تحديث الكاش)
 
 // --- الخطوة 1: تغيير اسم الكاش (الإصدار) ---
-// غيرنا v11 لـ v12
-const CACHE_NAME = 'financial-analyzer-v12';
+// غيرنا v4 لـ v13
+const CACHE_NAME = 'financial-analyzer-v13';
 
 // --- القايمة الكاملة 100% (زي المرة اللي فاتت) ---
 const FILES_TO_CACHE = [
@@ -54,7 +54,7 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => {
-                console.log('[ServiceWorker] بيخزن الملفات الأساسية (v12)...');
+                console.log('[ServiceWorker] بيخزن الملفات الأساسية (v13)...');
                 // --- طريقة تخزين "أكثر أماناً" (بتتجاهل الأخطاء لو ملف CDN وقع) ---
                 const promises = FILES_TO_CACHE.map(url => {
                     return cache.add(url).catch(err => {
@@ -64,7 +64,7 @@ self.addEventListener('install', (event) => {
                 return Promise.all(promises);
             })
             .then(() => {
-                console.log('[ServiceWorker] تخزين (v12) اكتمل. تفعيل فوري...');
+                console.log('[ServiceWorker] تخزين (v13) اكتمل. تفعيل فوري...');
                 // --- ▼▼▼ أهم إضافة ▼▼▼ ---
                 // بيجبر الحارس الجديد إنه يشتغل علطول وميستناش
                 return self.skipWaiting(); 
@@ -74,8 +74,8 @@ self.addEventListener('install', (event) => {
 
 // --- حدث الـ "Activate" (التفعيل) ---
 self.addEventListener('activate', (event) => {
-    console.log('[ServiceWorker] التفعيل (v12)...');
-    const cacheWhitelist = [CACHE_NAME]; // القايمة البيضا (سيب v12 بس)
+    console.log('[ServiceWorker] التفعيل (v13)...');
+    const cacheWhitelist = [CACHE_NAME]; // القايمة البيضا (سيب v13 بس)
 
     event.waitUntil(
         caches.keys().then((cacheNames) => {
@@ -83,12 +83,12 @@ self.addEventListener('activate', (event) => {
                 cacheNames.map((cacheName) => {
                     if (cacheWhitelist.indexOf(cacheName) === -1) {
                         console.log('[ServiceWorker] مسح الكاش القديم:', cacheName);
-                        return caches.delete(cacheName); // امسح كل ما هو ليس v12
+                        return caches.delete(cacheName); // امسح كل ما هو ليس v13
                     }
                 })
             );
         }).then(() => {
-            console.log('[ServiceWorker] السيطرة على الصفحة (v12).');
+            console.log('[ServiceWorker] السيطرة على الصفحة (v13).');
             // --- ▼▼▼ أهم إضافة ▼▼▼ ---
             // بيجبر كل الصفحات المفتوحة إنها تستخدم الحارس الجديد ده فوراً
             return self.clients.claim();
