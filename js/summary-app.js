@@ -91,7 +91,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }    
     const lang = localStorage.getItem('lang') || 'ar';
     const t = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;    
-    // دالة مساعدة لترقيم النتائج
     const i18n_num = (val, type = 'percent') => {
         if (!isFinite(val)) return 'N/A';
         if (type === 'percent') return `${(val * 100).toFixed(1)}%`;
@@ -99,8 +98,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (type === 'times') return `${val.toFixed(1)} ${lang === 'ar' ? 'مرة' : 'Times'}`;
         return val.toFixed(2); // 'ratio'
     };
-
-    // --- 4. تحديد عناصر الصفحة ---
     const ui = {
         loadingMessage: document.getElementById('loadingMessage'),
         summaryContent: document.getElementById('summaryContent'),
@@ -112,13 +109,10 @@ document.addEventListener("DOMContentLoaded", () => {
         loadingText: document.querySelector('#loadingMessage p'),
         exportPdfBtn: document.getElementById('exportPdfBtn')
     };
-
-    // --- 5. تحميل البيانات الأساسية ---
     function loadData() {
         try {
             const ratiosData = localStorage.getItem('calculatedRatios');
             const statementsData = localStorage.getItem('financialDataCurrent');
-
             if (!ratiosData || !statementsData) {
                 console.error("Data missing. 'calculatedRatios' or 'financialDataCurrent' not found.");
                 ui.loadingTitle.textContent = t('noDataTitle');
@@ -128,17 +122,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 ui.loadingMessage.querySelector('.spinner-border').style.display = 'none'; // إخفاء علامة التحميل
                 return null;
             }
-
             const ratios = JSON.parse(ratiosData);
             const statements = JSON.parse(statementsData);
-
-            // التحقق من أن البيانات ليست فارغة
             if (Object.keys(ratios).length === 0) {
                  throw new Error("'calculatedRatios' is an empty object.");
             }
-
-            return { ratios, statements };
-            
+            return { ratios, statements };            
         } catch (error) {
             console.error("Failed to parse data from localStorage:", error);
             ui.loadingTitle.textContent = t('noDataTitle');
@@ -149,16 +138,12 @@ document.addEventListener("DOMContentLoaded", () => {
             return null;
         }
     }
-
-    // --- 6. 🧠 العقل المفكر (محرك القواعد) ---
     function runAnalysisEngine(ratios, statements) {
         const analysis = {
             strengths: [],
             weaknesses: [],
             solutions: []
         };
-
-        // --- القاعدة 1: الربحية ---
         if (isFinite(ratios.netProfitMargin)) {
             if (ratios.netProfitMargin < 0.02 && ratios.netProfitMargin >= 0) {
                 analysis.weaknesses.push(t('weakness_low_npm').replace('{val}', i18n_num(ratios.netProfitMargin)));
@@ -169,8 +154,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 analysis.strengths.push(t('strength_high_npm').replace('{val}', i18n_num(ratios.netProfitMargin)));
             }
         }
-        
-        // --- القاعدة 2: السيولة ---
         if (isFinite(ratios.currentRatio)) {
             if (ratios.currentRatio < 1.2) {
                 analysis.weaknesses.push(t('weakness_low_liquidity').replace('{val}', i18n_num(ratios.currentRatio, 'ratio')));
@@ -179,14 +162,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 analysis.strengths.push(t('strength_high_liquidity').replace('{val}', i18n_num(ratios.currentRatio, 'ratio')));
             }
         }
-
-        // --- القاعدة 3: المديونية ---
         if (isFinite(ratios.debtToEquity) && ratios.debtToEquity > 2.0) {
             analysis.weaknesses.push(t('weakness_high_leverage').replace('{val}', i18n_num(ratios.debtToEquity, 'ratio')));
             analysis.solutions.push(t('solution_high_leverage'));
         }
-        
-        // --- القاعدة 4: تحليل العائد على حقوق الملكية (ROE) ---
         if (isFinite(ratios.roe) && ratios.roe > 0.20) {
             if (isFinite(ratios.debtToEquity) && ratios.debtToEquity > 1.5) {
                 analysis.strengths.push(t('strength_roe_leveraged').replace('{val}', i18n_num(ratios.roe)));
@@ -194,25 +173,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 analysis.strengths.push(t('strength_roe_efficient').replace('{val}', i18n_num(ratios.roe)));
             }
         }
-
-        // --- القاعدة 5: تحليل الدورة النقدية (الكفاءة) ---
         if (isFinite(ratios.avgCollectionPeriod) && ratios.avgCollectionPeriod > 60) {
             analysis.weaknesses.push(t('weakness_slow_collection').replace('{val}', i18n_num(ratios.avgCollectionPeriod, 'days')));
-            // حل مقترن
             analysis.solutions.push(t('solution_slow_collection'));
         }
-        
         if (isFinite(ratios.inventoryTurnover) && ratios.inventoryTurnover < 3) {
             analysis.weaknesses.push(t('weakness_slow_inventory').replace('{val}', i18n_num(ratios.inventoryTurnover, 'times')));
-            // حل مقترن ذكي
             if (isFinite(ratios.grossProfitMargin) && ratios.grossProfitMargin > 0.40) {
                  analysis.solutions.push(t('solution_slow_inventory_margin').replace('{val}', i18n_num(ratios.grossProfitMargin)));
             } else {
                  analysis.solutions.push(t('solution_slow_inventory_no_margin'));
             }
         }
-
-        // --- الملخص العام (يعتمد على الربحية والسيولة) ---
         let overallSummary = t('summary_stable');
         if (isFinite(ratios.netProfitMargin) && isFinite(ratios.currentRatio)) {
             if (ratios.netProfitMargin > 0.10 && ratios.currentRatio > 1.5) {
@@ -221,44 +193,30 @@ document.addEventListener("DOMContentLoaded", () => {
                 overallSummary = t('summary_weak');
             }
         }
-        analysis.overall = overallSummary;
-        
+        analysis.overall = overallSummary;        
         return analysis;
     }
-
-    // --- 7. عرض النتائج على الصفحة ---
-    function renderAnalysis(analysis) {
-        
+    function renderAnalysis(analysis) {        
         ui.overallSummaryText.textContent = analysis.overall;
-
-        // ملء نقاط القوة
         if (analysis.strengths.length > 0) {
             ui.strengthsList.innerHTML = analysis.strengths.map(item => `<li class="list-group-item border-0 px-0">${item}</li>`).join('');
         } else {
             ui.strengthsList.innerHTML = `<li class="list-group-item border-0 px-0 text-muted">${t('noStrengths')}</li>`;
         }
-
-        // ملء نقاط الضعف
         if (analysis.weaknesses.length > 0) {
             ui.weaknessesList.innerHTML = analysis.weaknesses.map(item => `<li class="list-group-item border-0 px-0">${item}</li>`).join('');
         } else {
             ui.weaknessesList.innerHTML = `<li class="list-group-item border-0 px-0 text-success">${t('noWeaknesses')}</li>`;
         }
-
-        // ملء الحلول
         if (analysis.solutions.length > 0) {
             ui.solutionsList.innerHTML = analysis.solutions.map(item => `<li class="list-group-item border-0 px-0">${item}</li>`).join('');
         } else {
             ui.solutionsList.innerHTML = `<li class="list-group-item border-0 px-0 text-muted">${t('noSolutions')}</li>`;
         }
-        
-        // إظهار المحتوى وإخفاء رسالة التحميل
         ui.loadingMessage.style.display = 'none';
         ui.summaryContent.style.display = 'block';
         ui.exportPdfBtn.disabled = false; // تفعيل زر التصدير
     }
-
-    // --- 8. وظيفة تصدير PDF ---
     function setupPdfExport() {
         if (!ui.exportPdfBtn) return;
         ui.exportPdfBtn.addEventListener("click", () => {
@@ -271,8 +229,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 html2canvas: { scale: 2, useCORS: true, logging: false },
                 jsPDF: { unit: "in", format: "a4", orientation: "portrait" },
             };
-            
-            // إضافة عنوان للـ PDF
             const header = document.querySelector('header h1').textContent;
             const subheader = document.querySelector('header p').textContent;
             const headerHtml = `<div style="text-align: center; margin: 20px;">
@@ -283,9 +239,6 @@ document.addEventListener("DOMContentLoaded", () => {
             html2pdf().from(headerHtml + element.innerHTML).set(opt).save();
         });
     }
-
-    // --- 9. التشغيل ---
-    // (استخدام setTimeout لمنح main.js فرصة للتحميل والترجمة أولاً)
     setTimeout(() => {
         const data = loadData();
         if (data) {
@@ -295,12 +248,9 @@ document.addEventListener("DOMContentLoaded", () => {
             renderAnalysis(analysisResults);
             setupPdfExport();
         }
-
-        // تطبيق الترجمة النهائية بعد ملء كل شيء
         if (typeof window.applyTranslations === 'function') {
             console.log("Applying final translations for summary page...");
             window.applyTranslations();
         }
-    }, 100); // تأخير بسيط لإعطاء فرصة للترجمات الأساسية
-
+    }, 100);
 });
