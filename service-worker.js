@@ -10,11 +10,11 @@ const FILES_TO_CACHE = [
     'zezo.json',
     'input.html',
     'upload.html',
-    'report.html', 
-    'advanced.html', 
-    'dashboard.html', 
-    'comparisons.html', 
-    'benchmarks.html', 
+    'report.html',
+    'advanced.html',
+    'dashboard.html',
+    'comparisons.html',
+    'benchmarks.html',
 
     'css/style.css',
 
@@ -53,22 +53,22 @@ const FILES_TO_CACHE = [
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
-            .then((cache) => {
-                console.log('[ServiceWorker] بيخزن الملفات الأساسية (v14)...');
-                // --- طريقة تخزين "أكثر أماناً" (بتتجاهل الأخطاء لو ملف CDN وقع) ---
-                const promises = FILES_TO_CACHE.map(url => {
-                    return cache.add(url).catch(err => {
-                        console.warn(`[ServiceWorker] فشل تخزين الملف (سيتم تجاهله): ${url}`, err);
-                    });
+        .then((cache) => {
+            console.log('[ServiceWorker] بيخزن الملفات الأساسية (v14)...');
+            // --- طريقة تخزين "أكثر أماناً" (بتتجاهل الأخطاء لو ملف CDN وقع) ---
+            const promises = FILES_TO_CACHE.map(url => {
+                return cache.add(url).catch(err => {
+                    console.warn(`[ServiceWorker] فشل تخزين الملف (سيتم تجاهله): ${url}`, err);
                 });
-                return Promise.all(promises);
-            })
-            .then(() => {
-                console.log('[ServiceWorker] تخزين (v14) اكتمل. تفعيل فوري...');
-                // --- ▼▼▼ أهم إضافة ▼▼▼ ---
-                // بيجبر الحارس الجديد إنه يشتغل علطول وميستناش
-                return self.skipWaiting(); 
-            })
+            });
+            return Promise.all(promises);
+        })
+        .then(() => {
+            console.log('[ServiceWorker] تخزين (v14) اكتمل. تفعيل فوري...');
+            // --- ▼▼▼ أهم إضافة ▼▼▼ ---
+            // بيجبر الحارس الجديد إنه يشتغل علطول وميستناش
+            return self.skipWaiting();
+        })
     );
 });
 
@@ -98,44 +98,57 @@ self.addEventListener('activate', (event) => {
 
 // --- حدث الـ "Fetch" (جلب البيانات) ---
 self.addEventListener('fetch', (event) => {
+
+    // --- 🟢 بداية الحل 🟢 ---
+    // تجاهل الطلبات التي لا تبدأ بـ http (مثل chrome-extension://)
+    if (!event.request.url.startsWith('http')) {
+        return; // لا تقم بتخزين هذا الطلب
+    }
+    // --- 🟢 نهاية الحل 🟢 ---
+
+
     // هنستخدم استراتيجية "Network First" للملفات الأساسية
     // ده بيضمن إننا دايمًا بنحاول نجيب أحدث نسخة من النت الأول
 
     const requestUrl = new URL(event.request.url);
 
     // لو الطلب رايح لملفات الـ HTML أو الـ JS أو الـ CSS الرئيسية
-    if (event.request.mode === 'navigate' || 
-        (requestUrl.pathname.endsWith('.html') || 
-         requestUrl.pathname.endsWith('.js') || 
-         requestUrl.pathname.endsWith('.css'))) 
-    {
+    if (event.request.mode === 'navigate' ||
+        (requestUrl.pathname.endsWith('.html') ||
+            requestUrl.pathname.endsWith('.js') ||
+            requestUrl.pathname.endsWith('.css'))) {
         event.respondWith(
             fetch(event.request)
-                .then(response => {
-                    // جبنا نسخة جديدة من النت
-                    // نحطها في الكاش للمرة الجاية (أوفلاين)
-                    return caches.open(CACHE_NAME).then(cache => {
-                        console.log(`[ServiceWorker] تخزين نسخة جديدة: ${event.request.url}`);
-                        cache.put(event.request, response.clone());
-                        return response;
+            .then(response => {
+                // جبنا نسخة جديدة من النت
+                // نحطها في الكاش للمرة الجاية (أوفلاين)
+                return caches.open(CACHE_NAME).then(cache => {
+                    console.log(`[ServiceWorker] تخزين نسخة جديدة: ${event.request.url}`);
+                    // --- 🟢 تصحيح بسيط هنا 🟢 ---
+                    // بعض الطلبات (مثل navigate) لا يمكن استنساخها (clone) وهي لا تحتاج للتخزين
+                    // سنقوم بتخزين الطلبات العادية فقط
+                    if (event.request.method === 'GET') {
+                         cache.put(event.request, response.clone());
+                    }
+                    return response;
+                });
+            })
+            .catch(err => {
+                // النت فاصل؟ روح هات من الكاش
+                console.log(`[ServiceWorker] النت فاصل. جاري البحث في الكاش عن: ${event.request.url}`);
+                return caches.match(event.request)
+                    .then(response => {
+                        return response || caches.match('index.html'); // رجع الصفحة الرئيسية لو مش لاقي
                     });
-                })
-                .catch(err => {
-                    // النت فاصل؟ روح هات من الكاش
-                    console.log(`[ServiceWorker] النت فاصل. جاري البحث في الكاش عن: ${event.request.url}`);
-                    return caches.match(event.request)
-                        .then(response => {
-                            return response || caches.match('index.html'); // رجع الصفحة الرئيسية لو مش لاقي
-                        });
-                })
+            })
         );
     } else {
         // لو الطلب رايح لصور أو أي حاجة تانية، استخدم "Cache First"
         event.respondWith(
             caches.match(event.request)
-                .then((response) => {
-                    return response || fetch(event.request);
-                })
+            .then((response) => {
+                return response || fetch(event.request);
+            })
         );
     }
 });
