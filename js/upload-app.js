@@ -187,10 +187,19 @@ document.addEventListener("DOMContentLoaded",(()=>{
     s=e=>window.pageTranslations[a]?.[`field${e}`]||e,
     n=e=>window.pageTranslations[a]?.[e]||e,
     l={saveAsNameInput:document.getElementById("saveAsName"),saveAsBtn:document.getElementById("saveAsBtn"),saveBtn:document.getElementById("saveBtn"),clearBtn:document.getElementById("clearBtn"),savePreviousBtn:document.getElementById("savePreviousBtn"),tabContent:document.querySelector(".tab-content"),fileDropArea:document.getElementById("fileDropArea"),fileUploader:document.getElementById("fileUploader"),browseButton:document.getElementById("browseButton"),fileNameDisplay:document.getElementById("fileNameDisplay"),filePreviewArea:document.getElementById("filePreviewArea"),previewSpinner:document.getElementById("previewSpinner"),filePreviewTable:document.getElementById("filePreviewTable"),columnMapper:document.getElementById("columnMapper"),processFileBtn:document.getElementById("processFileBtn"),manualTab:document.getElementById("manual-tab")},
-    r={tables:{bs:{headers:{ar:["الحساب","القيمة","التصنيف (مهم جداً)","إجراء"],en:["Account","Value","Classification (Important)","Action"]},fields:["Account","Value","Classification"]},is:{headers:{ar:["البند","القيمة","التصنيف (مهم جداً)","إجراء"],en:["Item","Value","Classification (Important)","Action"]},fields:["Account","Value","Classification"]}},
     
-    // --- (تطوير) إضافة "Classification" للحقول المطلوبة للرفع ---
-    requiredFields:["Account","Value","Classification"],
+    // --- 🟢 بداية التعديل 🟢 ---
+    r={
+        tables:{
+            bs:{headers:{ar:["الحساب","القيمة","التصنيف (مهم جداً)","إجراء"],en:["Account","Value","Classification (Important)","Action"]},fields:["Account","Value","Classification"]},
+            is:{headers:{ar:["البند","القيمة","التصنيف (مهم جداً)","إجراء"],en:["Item","Value","Classification (Important)","Action"]},fields:["Account","Value","Classification"]}
+        },
+        
+        // --- (تطوير) إضافة "Classification" للحقول المطلوبة للرفع ---
+        // تم نقل هذا السطر ليكون داخل المتغير r
+        requiredFields:["Account","Value","Classification"] 
+    },
+    // --- 🟢 نهاية التعديل 🟢 ---
     
     i=e=>parseFloat(String(e||"").replace(/,/g,""))||0,
     d=()=>{localStorage.setItem("uploadedFinancialData",JSON.stringify(t.data)),console.log("Auto-save successful!")},
@@ -228,7 +237,27 @@ document.addEventListener("DOMContentLoaded",(()=>{
     m=()=>Object.keys(r.tables).forEach((e=>f(e))),
     
     // --- (تطوير) دالة مطابقة الأعمدة (v) ---
-    v=()=>{let e=requiredFields.map((e=>{const o=s(e),n=((e,t)=>{const a=e.toLowerCase(),o=(s(e)||"").toLowerCase();for(const e of t){const t=String(e||"").toLowerCase().trim();if(t===a||t===o)return e}return"account"===a&&t.find((e=>String(e).toLowerCase().trim().includes("item")))?t.find((e=>String(e).toLowerCase().trim().includes("item"))):"account"===a&&t.find((e=>String(e).toLowerCase().trim().includes("البند")))?t.find((e=>String(e).toLowerCase().trim().includes("البند"))):"value"===a&&t.find((e=>String(e).toLowerCase().trim().includes("amount")))?t.find((e=>String(e).toLowerCase().trim().includes("amount"))):"value"===a&&t.find((e=>String(e).toLowerCase().trim().includes("القيمة")))?t.find((e=>String(e).toLowerCase().trim().includes("القيمة"))):"classification"===a&&t.find((e=>String(e).toLowerCase().trim().includes("classification")))?t.find((e=>String(e).toLowerCase().trim().includes("classification"))):"classification"===a&&t.find((e=>String(e).toLowerCase().trim().includes("تصنيف")))?t.find((e=>String(e).toLowerCase().trim().includes("تصنيف"))):""})(e,t.fileHeaders);return`\n            <div class="col-md-4 col-sm-12">\n                <label for="map-${e}" class="form-label fw-bold">${o}</label>\n                <select id="map-${e}" class="form-select form-select-sm" data-field-key="${e}">\n                    <option value="">-- ${"ar"===a?"تجاهل":"Ignore"} --</option>\n                    ${t.fileHeaders.map((e=>`<option value="${e}" ${e===n?"selected":""}>${e}</option>`)).join("")}\n                </select>\n            </div>`})).join("");const n=`\n        <div class="col-md-12 col-sm-12 mt-3 pt-3 border-top">\n            <label for="map-StatementType" class="form-label fw-bold">${o("mapToStatement")}</label>\n            <select id="map-StatementType" class="form-select form-select">\n                <option value="bs">${o("tabBS")}</option>\n                <option value="is">${o("tabIS")}</option>\n            </select>\n        </div>`;l.columnMapper.innerHTML=e+n},
+    v=()=>{
+        // لاحظ أن requiredFields هنا ستعمل لأنها جزء من r
+        let e = r.requiredFields.map((e=>{ 
+            const o=s(e),n=((e,t)=>{const a=e.toLowerCase(),o=(s(e)||"").toLowerCase();for(const e of t){const t=String(e||"").toLowerCase().trim();if(t===a||t===o)return e}return"account"===a&&t.find((e=>String(e).toLowerCase().trim().includes("item")))?t.find((e=>String(e).toLowerCase().trim().includes("item"))):"account"===a&&t.find((e=>String(e).toLowerCase().trim().includes("البند")))?t.find((e=>String(e).toLowerCase().trim().includes("البند"))):"value"===a&&t.find((e=>String(e).toLowerCase().trim().includes("amount")))?t.find((e=>String(e).toLowerCase().trim().includes("amount"))):"value"===a&&t.find((e=>String(e).toLowerCase().trim().includes("القيمة")))?t.find((e=>String(e).toLowerCase().trim().includes("القيمة"))):"classification"===a&&t.find((e=>String(e).toLowerCase().trim().includes("classification")))?t.find((e=>String(e).toLowerCase().trim().includes("classification"))):"classification"===a&&t.find((e=>String(e).toLowerCase().trim().includes("تصنيف")))?t.find((e=>String(e).toLowerCase().trim().includes("تصنيف"))):""})(e,t.fileHeaders);return`
+            <div class="col-md-4 col-sm-12">
+                <label for="map-${e}" class="form-label fw-bold">${o}</label>
+                <select id="map-${e}" class="form-select form-select-sm" data-field-key="${e}">
+                    <option value="">-- ${"ar"===a?"تجاهل":"Ignore"} --</option>
+                    ${t.fileHeaders.map((e=>`<option value="${e}" ${e===n?"selected":""}>${e}</option>`)).join("")}
+                </select>
+            </div>`})).join("");
+        const n=`
+        <div class="col-md-12 col-sm-12 mt-3 pt-3 border-top">
+            <label for="map-StatementType" class="form-label fw-bold">${o("mapToStatement")}</label>
+            <select id="map-StatementType" class="form-select form-select">
+                <option value="bs">${o("tabBS")}</option>
+                <option value="is">${o("tabIS")}</option>
+            </select>
+        </div>`;
+        l.columnMapper.innerHTML=e+n
+    },
     // (نهاية تطوير دالة v)
 
     b=e=>{if(!e)return;l.fileNameDisplay.textContent=`File: ${e.name} | Size: ${(e.size/1024).toFixed(2)} KB`,l.filePreviewArea.classList.remove("d-none"),l.fileDropArea.classList.add("d-none"),l.previewSpinner.classList.remove("d-none"),l.filePreviewTable.innerHTML="",l.columnMapper.innerHTML="";const s=new FileReader;s.onload=e=>{try{const o=e.target.result,s=XLSX.read(o,{type:"array"}),n=s.SheetNames[0],r=s.Sheets[n],i=XLSX.utils.sheet_to_json(r,{header:0});if(0===i.length)throw new Error("No data found in file.");t.fileData=i,t.fileHeaders=Object.keys(i[0]),(()=>{if(0===t.fileData.length)return void(l.filePreviewTable.innerHTML=`<p class="text-danger">${"ar"===a?"الملف فارغ أو لا يمكن قراءته.":"File is empty or unreadable."}</p>`);const e=t.fileHeaders,o=t.fileData.slice(0,5);let s='<table class="table table-sm table-bordered table-striped small">';s+=`<thead class="table-light"><tr>${e.map((e=>`<th>${e}</th>`)).join("")}</tr></thead>`,s+="<tbody>",o.forEach((t=>{s+=`<tr>${e.map((e=>`<td>${t[e]||""}</td>`)).join("")}</tr>`})),s+="</tbody></table>",l.filePreviewTable.innerHTML=s})(),v(),l.previewSpinner.classList.add("d-none")}catch(e){console.error(e),alert(o("fileReadError")),g()}},s.onerror=()=>{alert(o("fileReadError")),g()},
