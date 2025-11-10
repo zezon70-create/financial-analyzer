@@ -230,7 +230,13 @@ document.addEventListener("DOMContentLoaded",(()=>{
         }
         // (نهاية التطوير)
 
-        c.forEach(((e,t)=>{const a=document.createElement("tr");let s="";l.fields.forEach((t=>{const a=e[t]||("Value"===t?0:"");if("Classification"===t)s+=`\n                        <td>\n                            <select class="form-select form-select-sm" data-field="Classification">\n                                <option value="">${n("opt_select")}</option>\n                                ${m}\n                            </select>\n                        </td>`;else{s+=`<td><input class="form-control form-control-sm" type="${"Value"===t?"number":"text"}" data-field="${t}" value="${a}"></td>`}})),s+='<td><button class="btn btn-sm btn-outline-danger btn-delete"><i class="bi bi-trash"></i></button></td>',a.innerHTML=s;const r=a.querySelector('select[data-field="Classification"]');r&&(r.value=e.Classification||""),a.querySelectorAll("input, select").forEach((e=>{e.addEventListener("change",(e=>{const a=e.target.dataset.field;c[t][a]="number"===e.target.type?i(e.target.value):e.target.value,d()}))})),a.querySelector(".btn-delete").addEventListener("click",(()=>{c.splice(t,1),d(),f(o)})),u.appendChild(a)}))
+        c.forEach(((e,t)=>{const a=document.createElement("tr");let s="";l.fields.forEach((t=>{const a=e[t]||("Value"===t?0:"");if("Classification"===t)s+=`
+                        <td>
+                            <select class="form-select form-select-sm" data-field="Classification">
+                                <option value="">${n("opt_select")}</option>
+                                ${m}
+                            </select>
+                        </td>`;else{s+=`<td><input class="form-control form-control-sm" type="${"Value"===t?"number":"text"}" data-field="${t}" value="${a}"></td>`}})),s+='<td><button class="btn btn-sm btn-outline-danger btn-delete"><i class="bi bi-trash"></i></button></td>',a.innerHTML=s;const r=a.querySelector('select[data-field="Classification"]');r&&(r.value=e.Classification||""),a.querySelectorAll("input, select").forEach((e=>{e.addEventListener("change",(e=>{const a=e.target.dataset.field;c[t][a]="number"===e.target.type?i(e.target.value):e.target.value,d()}))})),a.querySelector(".btn-delete").addEventListener("click",(()=>{c.splice(t,1),d(),f(o)})),u.appendChild(a)}))
     },
     // (نهاية تحديث الدالة)
 
