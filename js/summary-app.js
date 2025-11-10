@@ -1,0 +1,224 @@
+// js/summary-app.js
+
+// --- 1. الترجمات الخاصة بالصفحة ---
+const summaryTranslations = {
+    ar: {
+        pageTitle: "الملخص الذكي — المحلل المالي",
+        pageHeader: "الملخص التنفيذي الذكي",
+        pageSubheader: "تحليل آلي لنقاط القوة والضعف والفرص بناءً على بياناتك المالية.",
+        loadingTitle: "جاري تحميل التحليل...",
+        loadingText: "يقوم المحلل الذكي بمعالجة بياناتك. إذا استمر هذا طويلاً، تأكد من تشغيل صفحة 'التقارير' وصفحة 'التحليلات المتقدمة' أولاً.",
+        noDataTitle: "❌ خطأ في البيانات",
+        noDataText: "لا يمكن إنشاء الملخص. لم يتم العثور على 'calculatedRatios' أو 'financialDataCurrent'. يرجى تشغيل صفحة 'التقارير' ثم صفحة 'التحليلات المتقدمة' أولاً.",
+        overallSummaryTitle: "الملخص العام",
+        strengthsTitle: "🟢 نقاط القوة",
+        weaknessesTitle: "🔴 نقاط الضعف والتحذير",
+        solutionsTitle: "💡 الحلول والفرص المقترحة",
+        loadingItems: "جاري التحليل...",
+        noStrengths: "لم يتم رصد نقاط قوة تشغيلية واضحة في هذه المرحلة.",
+        noWeaknesses: "تهانينا! لم يتم رصد أي مؤشرات خطر حرجة.",
+        noSolutions: "لا توجد توصيات تلقائية حالياً. حافظ على الأداء الجيد.",
+
+        // (هنا يبدأ بنك القواعد الذكية)
+        // الملخصات
+        summary_strong: "الأداء المالي العام قوي. الشركة تظهر ربحية ممتازة مع هيكل مالي متوازن، مما يوفر أساساً متيناً للنمو.",
+        summary_stable: "الأداء المالي مستقر. توجد ربحية جيدة ولكن يجب مراقبة كفاءة الأصول والسيولة لضمان استمرار الأداء الإيجابي.",
+        summary_weak: "الأداء المالي يواجه تحديات. توجد ضغوط واضحة على الربحية والسيولة، مما يتطلب إجراءات تصحيحية عاجلة.",
+        
+        // نقاط القوة
+        strength_roe_leveraged: "تحقيق عائد مرتفع على حقوق الملكية (ROE) بنسبة {val}، مدفوعاً بشكل أساسي بالرافعة المالية العالية. (انتبه: هذه القوة قد تحمل مخاطر).",
+        strength_roe_efficient: "أداء استثنائي! تحقيق عائد مرتفع على حقوق الملكية (ROE) بنسبة {val}، ناتج عن كفاءة تشغيلية عالية (ربحية جيدة) مع مستوى ديون آمن.",
+        strength_high_npm: "ربحية ممتازة: هامش صافي الربح مرتفع جداً ويبلغ {val}. هذا يدل على تحكم قوي في التكاليف أو قوة تسعيرية.",
+        strength_high_liquidity: "سيولة ممتازة: نسبة التداول {val} مرتفعة جداً، مما يعني أن الشركة ليس لديها أي مشكلة في سداد التزاماتها قصيرة الأجل.",
+
+        // نقاط الضعف
+        weakness_low_npm: "خطر ربحية: الشركة تعمل بهامش صافي ربح منخفض جداً ({val}) أو تحقق خسائر. هذا يضعف قدرتها على تحمل أي صدمات.",
+        weakness_low_liquidity: "خطر سيولة حرج: نسبة التداول منخفضة ({val}). الشركة قد تواجه صعوبة في سداد الالتزامات قصيرة الأجل.",
+        weakness_high_leverage: "خطر مديونية مرتفع: نسبة الديون إلى حقوق الملكية تبلغ {val}. الاعتماد الكبير على الديون يزيد من المخاطر المالية وتكلفة الفوائد.",
+        weakness_slow_collection: "دورة نقدية ضعيفة: متوسط فترة التحصيل من العملاء طويل جداً ({val} يوم)، مما 'يحبس' النقدية ويضعف السيولة.",
+        weakness_slow_inventory: "مخزون راكد: معدل دوران المخزون بطيء ({val} مرة سنوياً)، مما يعني أن البضاعة لا تباع بالكفاءة المطلوبة وتربط جزءاً كبيراً من رأس المال.",
+
+        // الحلول
+        solution_slow_collection: "الحل (لضعف السيولة): يجب تطبيق سياسة ائتمان أكثر صرامة. فكر في تقديم خصم (مثلاً 2%) للعملاء الذين يدفعون مبكراً لتسريع التحصيل.",
+        solution_slow_inventory_margin: "الحل (لركود المخزون): بما أن هامش الربح الإجمالي لديك مرتفع ({val})، لديك مساحة لتقديم عروض ترويجية أو خصومات لتصفية المخزون البطيء وتحويله إلى نقد فوري.",
+        solution_slow_inventory_no_margin: "الحل (لركود المخزون): هامش الربح لديك منخفض. يجب مراجعة سياسة التسعير أو البحث عن طرق لتقليل تكلفة المخزون دون التأثير على الجودة.",
+        solution_high_leverage: "الحل (للمديونية المرتفعة): يجب التركيز على سداد الديون الحالية من الأرباح التشغيلية بدلاً من توزيعها، أو التفكير في إعادة جدولة الديون طويلة الأجل لتقليل عبء الفوائد.",
+    },
+    en: {
+        // ... (يمكن إضافة الترجمات الإنجليزية هنا بنفس الطريقة) ...
+    }
+};
+
+// --- 2. دمج الترجمات مع النظام الأساسي ---
+window.pageTranslations = window.pageTranslations || {};
+window.pageTranslations.ar = { ...window.pageTranslations.ar || {}, ...summaryTranslations.ar || {} };
+window.pageTranslations.en = { ...window.pageTranslations.en || {}, ...summaryTranslations.en || {} };
+
+// --- 3. بدء تشغيل الكود ---
+document.addEventListener("DOMContentLoaded", () => {
+    
+    const lang = localStorage.getItem('lang') || 'ar';
+    const t = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;
+    const i18n_num = (val, type = 'percent') => {
+        if (!isFinite(val)) return 'N/A';
+        if (type === 'percent') return `${(val * 100).toFixed(1)}%`;
+        if (type === 'days') return `${val.toFixed(0)} ${lang === 'ar' ? 'يوم' : 'Days'}`;
+        if (type === 'times') return `${val.toFixed(1)} ${lang === 'ar' ? 'مرة' : 'Times'}`;
+        return val.toFixed(2);
+    };
+
+    // --- 4. تحديد عناصر الصفحة ---
+    const ui = {
+        loadingMessage: document.getElementById('loadingMessage'),
+        summaryContent: document.getElementById('summaryContent'),
+        overallSummaryText: document.getElementById('overallSummaryText'),
+        strengthsList: document.getElementById('strengthsList'),
+        weaknessesList: document.getElementById('weaknessesList'),
+        solutionsList: document.getElementById('solutionsList'),
+        loadingTitle: document.querySelector('#loadingMessage .alert-heading'),
+        loadingText: document.querySelector('#loadingMessage p')
+    };
+
+    // --- 5. تحميل البيانات الأساسية ---
+    function loadData() {
+        try {
+            const ratiosData = localStorage.getItem('calculatedRatios');
+            const statementsData = localStorage.getItem('financialDataCurrent');
+
+            if (!ratiosData || !statementsData) {
+                console.error("Data missing. 'calculatedRatios' or 'financialDataCurrent' not found.");
+                ui.loadingTitle.textContent = t('noDataTitle');
+                ui.loadingText.textContent = t('noDataText');
+                ui.loadingMessage.classList.remove('alert-warning');
+                ui.loadingMessage.classList.add('alert-danger');
+                return null;
+            }
+
+            const ratios = JSON.parse(ratiosData);
+            const statements = JSON.parse(statementsData);
+
+            return { ratios, statements };
+            
+        } catch (error) {
+            console.error("Failed to parse data from localStorage:", error);
+            ui.loadingTitle.textContent = t('noDataTitle');
+            ui.loadingText.textContent = t('noDataText');
+            ui.loadingMessage.classList.remove('alert-warning');
+            ui.loadingMessage.classList.add('alert-danger');
+            return null;
+        }
+    }
+
+    // --- 6. 🧠 العقل المفكر (محرك القواعد) ---
+    function runAnalysisEngine(ratios, statements) {
+        const analysis = {
+            strengths: [],
+            weaknesses: [],
+            solutions: []
+        };
+
+        // --- القاعدة 1: الربحية ---
+        if (ratios.netProfitMargin < 0.02) {
+            analysis.weaknesses.push(t('weakness_low_npm').replace('{val}', i18n_num(ratios.netProfitMargin)));
+        }
+        if (ratios.netProfitMargin > 0.15) {
+            analysis.strengths.push(t('strength_high_npm').replace('{val}', i18n_num(ratios.netProfitMargin)));
+        }
+        
+        // --- القاعدة 2: السيولة ---
+        if (ratios.currentRatio < 1.2) {
+            analysis.weaknesses.push(t('weakness_low_liquidity').replace('{val}', i18n_num(ratios.currentRatio, 'ratio')));
+        }
+        if (ratios.currentRatio > 2.5) {
+            analysis.strengths.push(t('strength_high_liquidity').replace('{val}', i18n_num(ratios.currentRatio, 'ratio')));
+        }
+
+        // --- القاعدة 3: المديونية ---
+        if (ratios.debtToEquity > 2.0) {
+            analysis.weaknesses.push(t('weakness_high_leverage').replace('{val}', i18n_num(ratios.debtToEquity, 'ratio')));
+            analysis.solutions.push(t('solution_high_leverage'));
+        }
+        
+        // --- القاعدة 4: تحليل العائد على حقوق الملكية (ROE) ---
+        if (ratios.roe > 0.20) {
+            if (ratios.debtToEquity > 1.5) {
+                analysis.strengths.push(t('strength_roe_leveraged').replace('{val}', i18n_num(ratios.roe)));
+            } else {
+                analysis.strengths.push(t('strength_roe_efficient').replace('{val}', i18n_num(ratios.roe)));
+            }
+        }
+
+        // --- القاعدة 5: تحليل الدورة النقدية (الكفاءة) ---
+        if (ratios.avgCollectionPeriod > 60) {
+            analysis.weaknesses.push(t('weakness_slow_collection').replace('{val}', i18n_num(ratios.avgCollectionPeriod, 'days')));
+            // حل مقترن
+            analysis.solutions.push(t('solution_slow_collection'));
+        }
+        
+        if (ratios.inventoryTurnover < 3 && isFinite(ratios.inventoryTurnover)) {
+            analysis.weaknesses.push(t('weakness_slow_inventory').replace('{val}', i18n_num(ratios.inventoryTurnover, 'times')));
+            // حل مقترن ذكي
+            if (ratios.grossProfitMargin > 0.40) {
+                 analysis.solutions.push(t('solution_slow_inventory_margin').replace('{val}', i18n_num(ratios.grossProfitMargin)));
+            } else {
+                 analysis.solutions.push(t('solution_slow_inventory_no_margin'));
+            }
+        }
+
+        // --- الملخص العام (يعتمد على الربحية والسيولة) ---
+        let overallSummary = t('summary_stable');
+        if (ratios.netProfitMargin > 0.10 && ratios.currentRatio > 1.5) {
+            overallSummary = t('summary_strong');
+        } else if (ratios.netProfitMargin < 0 || ratios.currentRatio < 1.0) {
+            overallSummary = t('summary_weak');
+        }
+        analysis.overall = overallSummary;
+        
+        return analysis;
+    }
+
+    // --- 7. عرض النتائج على الصفحة ---
+    function renderAnalysis(analysis) {
+        
+        ui.overallSummaryText.textContent = analysis.overall;
+
+        // ملء نقاط القوة
+        if (analysis.strengths.length > 0) {
+            ui.strengthsList.innerHTML = analysis.strengths.map(item => `<li class="list-group-item">${item}</li>`).join('');
+        } else {
+            ui.strengthsList.innerHTML = `<li class="list-group-item text-muted">${t('noStrengths')}</li>`;
+        }
+
+        // ملء نقاط الضعف
+        if (analysis.weaknesses.length > 0) {
+            ui.weaknessesList.innerHTML = analysis.weaknesses.map(item => `<li class="list-group-item">${item}</li>`).join('');
+        } else {
+            ui.weaknessesList.innerHTML = `<li class="list-group-item text-success">${t('noWeaknesses')}</li>`;
+        }
+
+        // ملء الحلول
+        if (analysis.solutions.length > 0) {
+            ui.solutionsList.innerHTML = analysis.solutions.map(item => `<li class="list-group-item">${item}</li>`).join('');
+        } else {
+            ui.solutionsList.innerHTML = `<li class="list-group-item text-muted">${t('noSolutions')}</li>`;
+        }
+        
+        // إظهار المحتوى وإخفاء رسالة التحميل
+        ui.loadingMessage.style.display = 'none';
+        ui.summaryContent.style.display = 'block';
+    }
+
+    // --- 8. التشغيل ---
+    const data = loadData();
+    if (data) {
+        console.log("Data loaded successfully. Running Smart Analysis...");
+        const analysisResults = runAnalysisEngine(data.ratios, data.statements);
+        console.log("Analysis Complete:", analysisResults);
+        renderAnalysis(analysisResults);
+    }
+
+    // تطبيق الترجمة النهائية بعد ملء كل شيء
+    if (typeof window.applyTranslations === 'function') {
+        window.applyTranslations();
+    }
+});
