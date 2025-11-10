@@ -42,12 +42,8 @@ window.pageTranslations={
         fileReadError:"حدث خطأ أثناء قراءة الملف. الرجاء التأكد من أنه ملف Excel أو CSV صالح.",
         fieldAccount:"الحساب/البند",
         fieldValue:"القيمة",
-        
-        // --- (تطوير) إضافة حقل التصنيف الاختياري ---
         fieldClassification:"التصنيف (اختياري)",
         mapToStatement:"هذه البيانات تخص أي قائمة؟",
-
-        // --- (تطوير) إضافة ترجمات المجموعات ---
         "group_currentAssets": "الأصول المتداولة",
         "group_nonCurrentAssets": "الأصول غير المتداولة",
         "group_currentLiabilities": "الخصوم المتداولة",
@@ -55,7 +51,6 @@ window.pageTranslations={
         "group_equity": "حقوق الملكية",
         "group_revenues": "الإيرادات والمكاسب",
         "group_expenses": "التكاليف والمصروفات",
-
         opt_select:"-- اختر التصنيف --",
         opt_cash:"النقدية وما في حكمها",
         opt_receivables:"العملاء والمدينون",
@@ -122,12 +117,8 @@ window.pageTranslations={
         fileProcessingSuccess:"File processed successfully! The selected table has been populated.",
         fieldAccount:"Account/Item",
         fieldValue:"Value",
-        
-        // --- (تطوير) إضافة حقل التصنيف الاختياري ---
         fieldClassification:"Classification (Optional)",
         mapToStatement:"Which statement does this data belong to?",
-        
-        // --- (تطوير) إضافة ترجمات المجموعات ---
         "group_currentAssets": "Current Assets",
         "group_nonCurrentAssets": "Non-Current Assets",
         "group_currentLiabilities": "Current Liabilities",
@@ -135,7 +126,6 @@ window.pageTranslations={
         "group_equity": "Equity",
         "group_revenues": "Revenues & Gains",
         "group_expenses": "Costs & Expenses",
-
         opt_select:"-- Select Classification --",
         opt_cash:"Cash and Equivalents",
         opt_receivables:"Accounts Receivable",
@@ -158,11 +148,10 @@ window.pageTranslations={
         opt_otherRevenue:"Other Revenue",
         opt_otherExpense:"Other Expense"
     }
-}; // <-- (الإصلاح الحقيقي) هنا كانت الفاصلة (,)، وتم تصحيحها إلى فاصلة منقوطة (;)
+};
 
 document.addEventListener("DOMContentLoaded",(()=>{
     
-    // --- (تطوير) هيكل التصنيفات الجديد المُجمّع ---
     const classificationStructure = {
         bs: {
             "group_currentAssets": ["opt_cash", "opt_receivables", "opt_inventory", "opt_otherCurrentAssets"],
@@ -176,10 +165,8 @@ document.addEventListener("DOMContentLoaded",(()=>{
             "group_expenses": ["opt_cogs", "opt_operatingExpense", "opt_depreciation", "opt_interestExpense", "opt_taxExpense", "opt_otherExpense"]
         }
     };
-    // (نهاية التطوير)
-
-    // هذا هو الكود الأصلي بتاعك (e) القديم، تم دمجه مع التطويرات
-    const e = classificationStructure; // (تطوير) تم استبدال الكائن القديم بالجديد
+    
+    const e = classificationStructure; 
     
     const t={data:{bs:[],is:[]},fileData:[],fileHeaders:[]},
     a=localStorage.getItem("lang")||"ar",
@@ -188,18 +175,13 @@ document.addEventListener("DOMContentLoaded",(()=>{
     n=e=>window.pageTranslations[a]?.[e]||e,
     l={saveAsNameInput:document.getElementById("saveAsName"),saveAsBtn:document.getElementById("saveAsBtn"),saveBtn:document.getElementById("saveBtn"),clearBtn:document.getElementById("clearBtn"),savePreviousBtn:document.getElementById("savePreviousBtn"),tabContent:document.querySelector(".tab-content"),fileDropArea:document.getElementById("fileDropArea"),fileUploader:document.getElementById("fileUploader"),browseButton:document.getElementById("browseButton"),fileNameDisplay:document.getElementById("fileNameDisplay"),filePreviewArea:document.getElementById("filePreviewArea"),previewSpinner:document.getElementById("previewSpinner"),filePreviewTable:document.getElementById("filePreviewTable"),columnMapper:document.getElementById("columnMapper"),processFileBtn:document.getElementById("processFileBtn"),manualTab:document.getElementById("manual-tab")},
     
-    // --- 🟢 بداية التعديل 🟢 ---
     r={
         tables:{
             bs:{headers:{ar:["الحساب","القيمة","التصنيف (مهم جداً)","إجراء"],en:["Account","Value","Classification (Important)","Action"]},fields:["Account","Value","Classification"]},
             is:{headers:{ar:["البند","القيمة","التصنيف (مهم جداً)","إجراء"],en:["Item","Value","Classification (Important)","Action"]},fields:["Account","Value","Classification"]}
         },
-        
-        // --- (تطوير) إضافة "Classification" للحقول المطلوبة للرفع ---
-        // تم نقل هذا السطر ليكون داخل المتغير r
         requiredFields:["Account","Value","Classification"] 
     },
-    // --- 🟢 نهاية التعديل 🟢 ---
     
     i=e=>parseFloat(String(e||"").replace(/,/g,""))||0,
     d=()=>{localStorage.setItem("uploadedFinancialData",JSON.stringify(t.data)),console.log("Auto-save successful!")},
@@ -207,7 +189,6 @@ document.addEventListener("DOMContentLoaded",(()=>{
     p=()=>{alert("Save As function needs to be updated to support classifications.")},
     u=()=>{if(0!==t.data.bs.length||0!==t.data.is.length)try{localStorage.setItem("uploadedFinancialDataPrevious",JSON.stringify(t.data)),alert(o("savedPreviousSuccess"))}catch(e){alert("Error saving previous period data.")}else alert(o("noDataToSave"))},
     
-    // --- (تطوير) دالة بناء الصفوف (f) ---
     f=o=>{
         const s=document.getElementById(`${o}Table`),
         l=r.tables[o],
@@ -216,19 +197,17 @@ document.addEventListener("DOMContentLoaded",(()=>{
         s.innerHTML=`<thead><tr>${p.map((e=>`<th>${e}</th>`)).join("")}</tr></thead><tbody></tbody>`;
         const u=s.querySelector("tbody");
 
-        // --- (تطوير) بناء القائمة المنسدلة المُجمّعة باستخدام <optgroup> ---
-        let m = ""; // m = optionsHtml
-        const groups = classificationStructure[o]; // e.g., classificationStructure['bs']
+        let m = ""; 
+        const groups = classificationStructure[o]; 
         for (const groupKey in groups) {
-            const groupName = n(groupKey); // ترجمة اسم المجموعة
+            const groupName = n(groupKey); 
             m += `<optgroup label="${groupName}">`;
-            const items = groups[groupKey]; // e.g., ["opt_cash", "opt_receivables"]
+            const items = groups[groupKey]; 
             for (const itemKey of items) {
                 m += `<option value="${itemKey}">${n(itemKey)}</option>`;
             }
             m += `</optgroup>`;
         }
-        // (نهاية التطوير)
 
         c.forEach(((e,t)=>{const a=document.createElement("tr");let s="";l.fields.forEach((t=>{const a=e[t]||("Value"===t?0:"");if("Classification"===t)s+=`
                         <td>
@@ -238,13 +217,10 @@ document.addEventListener("DOMContentLoaded",(()=>{
                             </select>
                         </td>`;else{s+=`<td><input class="form-control form-control-sm" type="${"Value"===t?"number":"text"}" data-field="${t}" value="${a}"></td>`}})),s+='<td><button class="btn btn-sm btn-outline-danger btn-delete"><i class="bi bi-trash"></i></button></td>',a.innerHTML=s;const r=a.querySelector('select[data-field="Classification"]');r&&(r.value=e.Classification||""),a.querySelectorAll("input, select").forEach((e=>{e.addEventListener("change",(e=>{const a=e.target.dataset.field;c[t][a]="number"===e.target.type?i(e.target.value):e.target.value,d()}))})),a.querySelector(".btn-delete").addEventListener("click",(()=>{c.splice(t,1),d(),f(o)})),u.appendChild(a)}))
     },
-    // (نهاية تحديث الدالة)
 
     m=()=>Object.keys(r.tables).forEach((e=>f(e))),
     
-    // --- (تطوير) دالة مطابقة الأعمدة (v) ---
     v=()=>{
-        // لاحظ أن requiredFields هنا ستعمل لأنها جزء من r
         let e = r.requiredFields.map((e=>{ 
             const o=s(e),n=((e,t)=>{const a=e.toLowerCase(),o=(s(e)||"").toLowerCase();for(const e of t){const t=String(e||"").toLowerCase().trim();if(t===a||t===o)return e}return"account"===a&&t.find((e=>String(e).toLowerCase().trim().includes("item")))?t.find((e=>String(e).toLowerCase().trim().includes("item"))):"account"===a&&t.find((e=>String(e).toLowerCase().trim().includes("البند")))?t.find((e=>String(e).toLowerCase().trim().includes("البند"))):"value"===a&&t.find((e=>String(e).toLowerCase().trim().includes("amount")))?t.find((e=>String(e).toLowerCase().trim().includes("amount"))):"value"===a&&t.find((e=>String(e).toLowerCase().trim().includes("القيمة")))?t.find((e=>String(e).toLowerCase().trim().includes("القيمة"))):"classification"===a&&t.find((e=>String(e).toLowerCase().trim().includes("classification")))?t.find((e=>String(e).toLowerCase().trim().includes("classification"))):"classification"===a&&t.find((e=>String(e).toLowerCase().trim().includes("تصنيف")))?t.find((e=>String(e).toLowerCase().trim().includes("تصنيف"))):""})(e,t.fileHeaders);return`
             <div class="col-md-4 col-sm-12">
@@ -253,7 +229,8 @@ document.addEventListener("DOMContentLoaded",(()=>{
                     <option value="">-- ${"ar"===a?"تجاهل":"Ignore"} --</option>
                     ${t.fileHeaders.map((e=>`<option value="${e}" ${e===n?"selected":""}>${e}</option>`)).join("")}
                 </select>
-            </div>`})).join("");
+            </div>`
+        })).join("");
         const n=`
         <div class="col-md-12 col-sm-12 mt-3 pt-3 border-top">
             <label for="map-StatementType" class="form-label fw-bold">${o("mapToStatement")}</label>
@@ -264,32 +241,23 @@ document.addEventListener("DOMContentLoaded",(()=>{
         </div>`;
         l.columnMapper.innerHTML=e+n
     },
-    // (نهاية تطوير دالة v)
 
     b=e=>{if(!e)return;l.fileNameDisplay.textContent=`File: ${e.name} | Size: ${(e.size/1024).toFixed(2)} KB`,l.filePreviewArea.classList.remove("d-none"),l.fileDropArea.classList.add("d-none"),l.previewSpinner.classList.remove("d-none"),l.filePreviewTable.innerHTML="",l.columnMapper.innerHTML="";const s=new FileReader;s.onload=e=>{try{const o=e.target.result,s=XLSX.read(o,{type:"array"}),n=s.SheetNames[0],r=s.Sheets[n],i=XLSX.utils.sheet_to_json(r,{header:0});if(0===i.length)throw new Error("No data found in file.");t.fileData=i,t.fileHeaders=Object.keys(i[0]),(()=>{if(0===t.fileData.length)return void(l.filePreviewTable.innerHTML=`<p class="text-danger">${"ar"===a?"الملف فارغ أو لا يمكن قراءته.":"File is empty or unreadable."}</p>`);const e=t.fileHeaders,o=t.fileData.slice(0,5);let s='<table class="table table-sm table-bordered table-striped small">';s+=`<thead class="table-light"><tr>${e.map((e=>`<th>${e}</th>`)).join("")}</tr></thead>`,s+="<tbody>",o.forEach((t=>{s+=`<tr>${e.map((e=>`<td>${t[e]||""}</td>`)).join("")}</tr>`})),s+="</tbody></table>",l.filePreviewTable.innerHTML=s})(),v(),l.previewSpinner.classList.add("d-none")}catch(e){console.error(e),alert(o("fileReadError")),g()}},s.onerror=()=>{alert(o("fileReadError")),g()},
     g=()=>{l.filePreviewArea.classList.add("d-none"),l.fileDropArea.classList.remove("d-none"),l.fileUploader.value="",t.fileData=[],t.fileHeaders=[]},
     
-    // --- (تطوير) دالة معالجة الملف (h) ---
     h=()=>{if(!confirm(o("confirmClearUpload")))return;const e={};l.columnMapper.querySelectorAll("select[data-field-key]").forEach((t=>{e[t.dataset.fieldKey]=t.value}));const a=document.getElementById("map-StatementType").value;if(t.data[a]=[],
     
     t.fileData.forEach((o=>{
-        const s=o[e.Classification]||"", // (تطوير) اقرأ قيمة التصنيف من الملف
-        n=C(s), // (تطوير) ابحث عن المفتاح المقابل
+        const s=o[e.Classification]||"", 
+        n=C(s), 
         l={Account:o[e.Account]||"",Value:i(o[e.Value]),Classification:n},
         c={};r.tables[a].fields.forEach((e=>c[e]=l[e])),t.data[a].push(c)
-    // --- 🟢 بداية التعديل 🟢 ---
-    // تم حذف القوس ) الزائد من السطر التالي
-    }), 
-    // --- 🟢 نهاية التعديل 🟢 ---
-    // --- (نهاية التطوير) ---
+    })), 
     
     0===t.data[a].length){const e=e=>e.reduce(((e,t)=>({...e,[t]:"Value"===t?0:""})),{});t.data[a]=[e(r.tables[a].fields)]}d(),m();new bootstrap.Tab(l.manualTab).show();const s=document.getElementById(`${a}-tab`);if(s){new bootstrap.Tab(s).show()}g(),alert(o("fileProcessingSuccess"))},
-    // (نهاية دالة h)
-
-    // --- (جديد) دالة البحث عن مفتاح التصنيف ---
+    
     C=e=>{if(!e)return"";const t=String(e).toLowerCase().trim(),o=["ar","en"],s=Object.keys(window.pageTranslations.ar).filter((e=>e.startsWith("opt_")));for(const e of s)for(const a of o){const o=window.pageTranslations[a]?.[e]||"";if(o.toLowerCase().trim()===t)return e}for(const e of s)for(const a of o){const o=window.pageTranslations[a]?.[e]||"";if(o.toLowerCase().trim().includes(t))return e}return""};
-    // (نهاية الإضافة)
-
+    
     l.saveBtn.addEventListener("click",(()=>{d(),alert(o("savedSuccess"))})),
     l.clearBtn.addEventListener("click",(()=>{confirm(o("confirmClear"))&&(localStorage.removeItem("uploadedFinancialData"),c(),d(),m())})),
     l.saveAsBtn.addEventListener("click",p),
