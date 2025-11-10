@@ -52,7 +52,6 @@ applyTheme = e => {
     const t = document.getElementById("themeToggle");
     t && (t.innerHTML = "dark" === e ? '<i class="fa-solid fa-sun"></i>' : '<i class="fa-solid fa-moon"></i>'), localStorage.setItem("theme", e)
 };
-
 function applyTranslations() {
     const e = state.preferences.lang;
     console.log(`Applying translations for language: ${e} (main.js)`), document.documentElement.lang = e, document.documentElement.dir = "ar" === e ? "rtl" : "ltr", document.querySelectorAll("[data-translate-key]").forEach((t => {
