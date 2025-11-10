@@ -177,9 +177,12 @@ document.addEventListener("DOMContentLoaded", (() => {
             fileHeaders: []
         },
         a = localStorage.getItem("lang") || "ar",
-        o = e => window.pageTranslations[a] ? .[e] || e,
-        s = e => window.pageTranslations[a] ? .[`field${e}`] || e,
-        n = e => window.pageTranslations[a] ? .[e] || e,
+        // --- 🟢 بداية التصحيح 🟢 ---
+        // تم إزالة المسافات الخاطئة من السطور الثلاثة التالية
+        o = e => window.pageTranslations[a]?.[e] || e,
+        s = e => window.pageTranslations[a]?.[`field${e}`] || e,
+        n = e => window.pageTranslations[a]?.[e] || e,
+        // --- 🟢 نهاية التصحيح 🟢 ---
         l = {
             saveAsNameInput: document.getElementById("saveAsName"),
             saveAsBtn: document.getElementById("saveAsBtn"),
@@ -225,9 +228,12 @@ document.addEventListener("DOMContentLoaded", (() => {
         },
         c = () => {
             const e = JSON.parse(localStorage.getItem("uploadedFinancialData") || "{}");
-            for (const o in r.tables) t.data[o] = e[o] ? .length > 0 ? e[o] : [(a = r.tables[o].fields, a.reduce(((e, t) => ({ ...e,
-                [t]: "Value" === t ? 0 : ""
-            })), {}))], t.data[o].forEach((e => {
+            for (const o in r.tables) t.data[o] = 
+                // --- 🟢 بداية التصحيح (هذا هو الخطأ الذي أشرت إليه) 🟢 ---
+                e[o]?.length > 0 ? e[o] : [(a = r.tables[o].fields, a.reduce(((e, t) => ({ ...e,
+                // --- 🟢 نهاية التصحيح 🟢 ---
+                    [t]: "Value" === t ? 0 : ""
+                })), {}))], t.data[o].forEach((e => {
                 void 0 === e.Classification && (e.Classification = "")
             }));
             var a
@@ -355,7 +361,9 @@ document.addEventListener("DOMContentLoaded", (() => {
                 }
             }, s.onerror = () => {
                 alert(o("fileReadError")), g()
-            }, s.readAsArrayBuffer(e) // <-- [FIX] You were not reading the file, I added this line.
+            }, 
+            // هذا السطر كان ناقصاً في المرة السابقة أيضاً
+            s.readAsArrayBuffer(e)
         },
         g = () => {
             l.filePreviewArea.classList.add("d-none"), l.fileDropArea.classList.remove("d-none"), l.fileUploader.value = "", t.fileData = [], t.fileHeaders = []
@@ -399,17 +407,18 @@ document.addEventListener("DOMContentLoaded", (() => {
             if (!e) return "";
             const t = String(e).toLowerCase().trim(),
                 o = ["ar", "en"],
-                // --- 🟢 بداية التصحيح 🟢 ---
-                // قمت بتصحيح المسافة الخاطئة هنا
                 s = Object.keys(window.pageTranslations.ar).filter((e => e.startsWith("opt_")));
             for (const e of s)
                 for (const a of o) {
-                    const o = window.pageTranslations[a] ? .[e] || "";
+                    // --- 🟢 بداية التصحيح 🟢 ---
+                    const o = window.pageTranslations[a]?.[e] || "";
+                    // --- 🟢 نهاية التصحيح 🟢 ---
                     if (o.toLowerCase().trim() === t) return e
                 }
             for (const e of s)
                 for (const a of o) {
-                    const o = window.pageTranslations[a] ? .[e] || "";
+                    // --- 🟢 بداية التصحيح 🟢 ---
+                    const o = window.pageTranslations[a]?.[e] || "";
                     // --- 🟢 نهاية التصحيح 🟢 ---
                     if (o.toLowerCase().trim().includes(t)) return e
                 }
