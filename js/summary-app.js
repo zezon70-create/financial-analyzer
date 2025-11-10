@@ -1,7 +1,4 @@
 // js/summary-app.js
-
-// --- 1. الترجمات الخاصة بالصفحة ---
-// هذه الترجمات تُضاف إلى الترجمات العامة الموجودة في main.js
 const summaryTranslations = {
     ar: {
         pageTitle: "الملخص الذكي — المحلل المالي",
@@ -20,27 +17,18 @@ const summaryTranslations = {
         noWeaknesses: "تهانينا! لم يتم رصد أي مؤشرات خطر حرجة.",
         noSolutions: "لا توجد توصيات تلقائية حالياً. حافظ على الأداء الجيد.",
         exportPdf: "تصدير PDF", // (تمت إضافة زر التصدير)
-
-        // (هنا يبدأ بنك القواعد الذكية)
-        // الملخصات
         summary_strong: "الأداء المالي العام قوي. الشركة تظهر ربحية ممتازة مع هيكل مالي متوازن، مما يوفر أساساً متيناً للنمو.",
         summary_stable: "الأداء المالي مستقر. توجد ربحية جيدة ولكن يجب مراقبة كفاءة الأصول والسيولة لضمان استمرار الأداء الإيجابي.",
         summary_weak: "الأداء المالي يواجه تحديات. توجد ضغوط واضحة على الربحية والسيولة، مما يتطلب إجراءات تصحيحية عاجلة.",
-        
-        // نقاط القوة
         strength_roe_leveraged: "تحقيق عائد مرتفع على حقوق الملكية (ROE) بنسبة {val}، مدفوعاً بشكل أساسي بالرافعة المالية العالية. (انتبه: هذه القوة قد تحمل مخاطر).",
         strength_roe_efficient: "أداء استثنائي! تحقيق عائد مرتفع على حقوق الملكية (ROE) بنسبة {val}، ناتج عن كفاءة تشغيلية عالية (ربحية جيدة) مع مستوى ديون آمن.",
         strength_high_npm: "ربحية ممتازة: هامش صافي الربح مرتفع جداً ويبلغ {val}. هذا يدل على تحكم قوي في التكاليف أو قوة تسعيرية.",
         strength_high_liquidity: "سيولة ممتازة: نسبة التداول {val} مرتفعة جداً، مما يعني أن الشركة ليس لديها أي مشكلة في سداد التزاماتها قصيرة الأجل.",
-
-        // نقاط الضعف
         weakness_low_npm: "خطر ربحية: الشركة تعمل بهامش صافي ربح منخفض جداً ({val}) أو تحقق خسائر. هذا يضعف قدرتها على تحمل أي صدمات.",
         weakness_low_liquidity: "خطر سيولة حرج: نسبة التداول منخفضة ({val}). الشركة قد تواجه صعوبة في سداد الالتزامات قصيرة الأجل.",
         weakness_high_leverage: "خطر مديونية مرتفع: نسبة الديون إلى حقوق الملكية تبلغ {val}. الاعتماد الكبير على الديون يزيد من المخاطر المالية وتكلفة الفوائد.",
         weakness_slow_collection: "دورة نقدية ضعيفة: متوسط فترة التحصيل من العملاء طويل جداً ({val} يوم)، مما 'يحبس' النقدية ويضعف السيولة.",
         weakness_slow_inventory: "مخزون راكد: معدل دوران المخزون بطيء ({val} مرة سنوياً)، مما يعني أن البضاعة لا تباع بالكفاءة المطلوبة وتربط جزءاً كبيراً من رأس المال.",
-
-        // الحلول
         solution_slow_collection: "الحل (لضعف السيولة): يجب تطبيق سياسة ائتمان أكثر صرامة. فكر في تقديم خصم (مثلاً 2%) للعملاء الذين يدفعون مبكراً لتسريع التحصيل.",
         solution_slow_inventory_margin: "الحل (لركود المخزون): بما أن هامش الربح الإجمالي لديك مرتفع ({val})، لديك مساحة لتقديم عروض ترويجية أو خصومات لتصفية المخزون البطيء وتحويله إلى نقد فوري.",
         solution_slow_inventory_no_margin: "الحل (لركود المخزون): هامش الربح لديك منخفض. يجب مراجعة سياسة التسعير أو البحث عن طرق لتقليل تكلفة المخزون دون التأثير على الجودة.",
@@ -64,37 +52,30 @@ const summaryTranslations = {
         noWeaknesses: "Congratulations! No critical risk indicators found.",
         noSolutions: "No automated recommendations at this time. Maintain good performance.",
         exportPdf: "Export PDF",
-
         summary_strong: "Overall financial performance is strong. The company shows excellent profitability with a balanced financial structure, providing a solid foundation for growth.",
         summary_stable: "Financial performance is stable. Profitability is good, but asset efficiency and liquidity should be monitored to ensure continued positive performance.",
-        summary_weak: "Financial performance faces challenges. There are clear pressures on profitability and liquidity, requiring immediate corrective actions.",
-        
+        summary_weak: "Financial performance faces challenges. There are clear pressures on profitability and liquidity, requiring immediate corrective actions.",        
         strength_roe_leveraged: "High Return on Equity (ROE) of {val} achieved, primarily driven by high financial leverage. (Note: This strength may carry risk).",
         strength_roe_efficient: "Exceptional performance! High Return on Equity (ROE) of {val} achieved, resulting from high operational efficiency (good profitability) with a safe debt level.",
         strength_high_npm: "Excellent profitability: Net Profit Margin is very high at {val}. This indicates strong cost control or pricing power.",
         strength_high_liquidity: "Excellent liquidity: Current Ratio is very high ({val}), meaning the company has no issue meeting its short-term obligations.",
-
         weakness_low_npm: "Profitability Risk: The company is operating on a very low Net Profit Margin ({val}) or incurring losses. This weakens its ability to absorb shocks.",
         weakness_low_liquidity: "Critical Liquidity Risk: Current Ratio is low ({val}). The company may face difficulty meeting short-term obligations.",
         weakness_high_leverage: "High Leverage Risk: Debt to Equity ratio is {val}. High reliance on debt increases financial risk and interest burden.",
         weakness_slow_collection: "Weak Cash Cycle: Average collection period is very long ({val} days), 'locking up' cash and weakening liquidity.",
         weakness_slow_inventory: "Stagnant Inventory: Inventory turnover is slow ({val} times/year), meaning goods are not sold efficiently, tying up significant capital.",
-
         solution_slow_collection: "Solution (for weak liquidity): A stricter credit policy must be implemented. Consider offering a discount (e.g., 2%) for early payments to accelerate collections.",
         solution_slow_inventory_margin: "Solution (for stagnant inventory): Since your Gross Profit Margin is high ({val}), you have room to offer promotions or discounts to clear slow-moving inventory and convert it to cash.",
         solution_slow_inventory_no_margin: "Solution (for stagnant inventory): Your profit margin is low. Pricing must be reviewed, or seek ways to reduce inventory cost without sacrificing quality.",
         solution_high_leverage: "Solution (for high debt): Focus on repaying existing debt from operating profits rather than distributing dividends, or consider refinancing long-term debt to reduce the interest burden.",
     }
 };
-
 // --- 2. دمج الترجمات مع النظام الأساسي ---
 window.pageTranslations = window.pageTranslations || {};
 window.pageTranslations.ar = { ...window.pageTranslations.ar || {}, ...summaryTranslations.ar || {} };
 window.pageTranslations.en = { ...window.pageTranslations.en || {}, ...summaryTranslations.en || {} };
-
 // --- 3. بدء تشغيل الكود ---
-document.addEventListener("DOMContentLoaded", () => {
-    
+document.addEventListener("DOMContentLoaded", () => {    
     // تأكد من تشغيل main.js (أو أجزاء منه) إذا لم يتم تحميله
     if (typeof window.applyTranslations !== 'function') {
         console.warn("main.js's applyTranslations function not found! Running local minimal version.");
@@ -107,11 +88,9 @@ document.addEventListener("DOMContentLoaded", () => {
                  el.textContent = text;
              });
         };
-    }
-    
+    }    
     const lang = localStorage.getItem('lang') || 'ar';
-    const t = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;
-    
+    const t = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;    
     // دالة مساعدة لترقيم النتائج
     const i18n_num = (val, type = 'percent') => {
         if (!isFinite(val)) return 'N/A';
