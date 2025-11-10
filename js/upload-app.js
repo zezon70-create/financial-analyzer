@@ -271,7 +271,10 @@ document.addEventListener("DOMContentLoaded",(()=>{
         n=C(s), // (تطوير) ابحث عن المفتاح المقابل
         l={Account:o[e.Account]||"",Value:i(o[e.Value]),Classification:n},
         c={};r.tables[a].fields.forEach((e=>c[e]=l[e])),t.data[a].push(c)
-    })),
+    // --- 🟢 بداية التعديل 🟢 ---
+    // تم حذف القوس ) الزائد من السطر التالي
+    }), 
+    // --- 🟢 نهاية التعديل 🟢 ---
     // --- (نهاية التطوير) ---
     
     0===t.data[a].length){const e=e=>e.reduce(((e,t)=>({...e,[t]:"Value"===t?0:""})),{});t.data[a]=[e(r.tables[a].fields)]}d(),m();new bootstrap.Tab(l.manualTab).show();const s=document.getElementById(`${a}-tab`);if(s){new bootstrap.Tab(s).show()}g(),alert(o("fileProcessingSuccess"))},
