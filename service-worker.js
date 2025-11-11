@@ -1,8 +1,8 @@
-// service-worker.js (نسخة v17 - لإضافة الصفحات الجديدة)
+// service-worker.js (نسخة v18 - لإضافة الصفحات الجديدة)
 
 // --- الخطوة 1: تغيير اسم الكاش (الإصدار) ---
-// غيرنا v16 لـ v17
-const CACHE_NAME = 'financial-analyzer-v17';
+// غيرنا v17 لـ v18
+const CACHE_NAME = 'financial-analyzer-v18';
 
 // --- القايمة الكاملة (شاملة الإضافات الجديدة) ---
 const FILES_TO_CACHE = [
