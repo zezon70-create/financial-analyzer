@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-translate-key="pageTitle">الملخص التنفيذي — المحلل المالي</title>
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.rtl.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-body-tertiary">
+
+    <header class="site-header-global">
+        <div class="container-main nav-container">
+            <a href="index.html" class="brand">
+                <img src="assets/logo.png" alt="شعار المحلل المالي">
+                <span class="title" data-translate-key="brandTitle"></span>
+            </a>
+            <nav class="main-nav">
+                <a href="index.html" class="nav-link" data-translate-key="navHome"></a>
+                <a href="input.html" class="nav-link" data-translate-key="navInput"></a>
+                <a href="upload.html" class="nav-link" data-translate-key="navUpload"></a>
+                <a href="report.html" class="nav-link" data-translate-key="navReport"></a>
+                <a href="advanced.html" class="nav-link" data-translate-key="navAdvanced"></a>
+                <a href="dashboard.html" class="nav-link" data-translate-key="navDashboard"></a>
+                <a href="comparisons.html" class="nav-link" data-translate-key="navCompare"></a>
+                <a href="benchmarks.html" class="nav-link" data-translate-key="navBenchmarks"></a>
+                <a href="ExecutiveSummary.html" class="nav-link active" data-translate-key="navExecutiveSummary"></a> </nav>
+            <div class="controls d-flex align-items-center gap-3">
+                <select id="languageSelect" class="form-select form-select-sm" style="width: auto;"></select>
+                <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme"></button>
+            </div>
+        </div>
+    </header>
+    <div class="container-fluid mt-4">
+        <header class="mb-4 p-4 bg-white rounded shadow-sm d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h3 fw-bold mb-1" data-translate-key="pageHeader">الملخص التنفيذي الذكي</h1>
+                <p class="text-muted mb-0" data-translate-key="pageSubheader">تحليل آلي لنقاط القوة والضعف والفرص بناءً على بياناتك المالية.</p>
+            </div>
+            <button id="exportPdfBtn" class="btn btn-outline-danger" disabled>
+                <i class="bi bi-file-earmark-pdf me-2"></i>
+                <span data-translate-key="exportPdf">تصدير PDF</span>
+            </button>
+        </header>
+
+        <div id="loadingMessage" class="alert alert-warning" role="alert">
+            <h4 class="alert-heading" data-translate-key="loadingTitle">جاري تحميل التحليل...</h4>
+            <p data-translate-key="loadingText">يقوم المحلل الذكي بمعالجة بياناتك. إذا استمر هذا طويلاً، تأكد من تشغيل صفحة "التقارير" وصفحة "التحليلات المتقدمة" أولاً.</p>
+            <hr>
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border text-warning" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="summary-content-exportable"> 
+            <div id="summaryContent" style="display: none;">
+                
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0" data-translate-key="overallSummaryTitle"><i class="bi bi-person-check-fill me-2"></i> الملخص العام</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="fs-5" id="overallSummaryText">...</p>
+                    </div>
+                </div>
+    
+                <div class="row g-4">
+                    <div class="col-lg-4">
+                        <div class="card h-100 shadow-sm border-success">
+                            <div class="card-header bg-success-subtle border-success">
+                                <h5 class="mb-0 text-success-emphasis" data-translate-key="strengthsTitle">🟢 نقاط القوة</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush" id="strengthsList">
+                                    <li class="list-group-item" data-translate-key="loadingItems">جاري التحليل...</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="col-lg-4">
+                        <div class="card h-100 shadow-sm border-danger">
+                            <div class="card-header bg-danger-subtle border-danger">
+                                <h5 class="mb-0 text-danger-emphasis" data-translate-key="weaknessesTitle">🔴 نقاط الضعف والتحذير</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush" id="weaknessesList">
+                                    <li class="list-group-item" data-translate-key="loadingItems">جاري التحليل...</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <div class="col-lg-4">
+                        <div class="card h-100 shadow-sm border-info">
+                            <div class="card-header bg-info-subtle border-info">
+                                <h5 class="mb-0 text-info-emphasis" data-translate-key="solutionsTitle">💡 الحلول والفرص المقترحة</h5>
+                            </div>
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush" id="solutionsList">
+                                    <li class="list-group-item" data-translate-key="loadingItems">جاري التحليل...</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+            </div> </div> </div> 
+            
+    <footer class="site-footer mt-5">
+        <div class="container-main">
+            <p data-translate-key="footerText"></p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script src="js/main.js"></script>
+    <script src="js/summary-app.js"></script> 
+</body>
+</html>
