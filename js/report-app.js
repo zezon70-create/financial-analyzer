@@ -1,4 +1,4 @@
-// js/report-app.js (v2.1 - Detailed Statements + Credit Sales)
+// js/report-app.js (v2.2 - Detailed Statements + Credit Sales + Currency Conversion)
 
 window.pageTranslations = {
     ar: {
@@ -15,11 +15,17 @@ window.pageTranslations = {
         sourceTrialBalanceLabel: "استخدام ميزان المراجعة (من صفحة الإدخال)",
         sourceUploadedLabel: "استخدام القوائم المالية المرفوعة (من صفحة الرفع)",
         
-        // --- (جديد) إضافة حقول المبيعات الآجلة ---
-        additionalDataTitle: "بيانات إضافية (لأغراض التحليل)",
+        additionalDataTitle: "بيانات إضافية",
         creditSalesLabel: "المبيعات الآجلة (Credit Sales)",
-        creditSalesHint: "سيتم استخدام هذا الرقم لحساب نسب الدوران (مثل DSO).",
+        creditSalesHint: "أدخل المبيعات الآجلة للفترة",
         
+        // --- ✅✅✅ بداية الإضافة ✅✅✅ ---
+        reportCurrencyTitle: "إعدادات عملة العرض",
+        reportCurrencyLabel: "عرض التقرير بعملة:",
+        reportFxRateLabel: "سعر الصرف (مقابل العملة الأساسية):",
+        currency_base: "العملة الأساسية",
+        // --- ✅✅✅ نهاية الإضافة ✅✅✅ ---
+
         thAccount: "الحساب",
         thCurrentPeriod: "الفترة الحالية",
         thPreviousPeriod: "الفترة السابقة",
@@ -127,10 +133,16 @@ window.pageTranslations = {
         sourceTrialBalanceLabel: "Use Trial Balance (from Input page)",
         sourceUploadedLabel: "Use Uploaded Statements (from Upload page)",
         
-        // --- (New) Credit Sales Translations ---
-        additionalDataTitle: "Additional Data (for Analysis)",
+        additionalDataTitle: "Additional Data",
         creditSalesLabel: "Credit Sales",
-        creditSalesHint: "This number will be used for turnover ratios (e.g., DSO).",
+        creditSalesHint: "Enter total credit sales for the period",
+        
+        // --- ✅✅✅ بداية الإضافة ✅✅✅ ---
+        reportCurrencyTitle: "Report Currency Settings",
+        reportCurrencyLabel: "View report in:",
+        reportFxRateLabel: "Exchange Rate (vs. Base):",
+        currency_base: "Base Currency",
+        // --- ✅✅✅ نهاية الإضافة ✅✅✅ ---
         
         thAccount: "Account",
         thCurrentPeriod: "Current Period",
@@ -228,26 +240,46 @@ window.pageTranslations = {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log("[DEBUG] report-app.js script started execution (v2.1 - Detailed + Credit Sales).");
+    console.log("[DEBUG] report-app.js script started execution (v2.2 - Detailed + Currency Conversion).");
 
     const state = {
         statementsCurrent: null, 
         statementsPrevious: null, 
         hasDataCurrent: false,
-        hasDataPrevious: false
+        hasDataPrevious: false,
+        // --- ✅✅✅ بداية الإضافة ✅✅✅ ---
+        currentDisplayRate: 1.0, // سعر الصرف الحالي للعرض
+        baseCurrency: "EGP", // العملة الأساسية (سيتم قراءتها)
+        displayCurrencies: { 
+            // قائمة بالعملات المتاحة للعرض
+            // (ملاحظة: هذه قائمة مبسطة، الأفضل قراءتها من fxRates المحفوظة)
+            EGP: { name: "Egyptian Pound", rate: 1 },
+            USD: { name: "US Dollar", rate: 48.5 },
+            EUR: { name: "Euro", rate: 52 },
+            SAR: { name: "Saudi Riyal", rate: 12.9 },
+            AED: { name: "UAE Dirham", rate: 13.2 }
+        }
+        // --- ✅✅✅ نهاية الإضافة ✅✅✅ ---
     };
     const lang = localStorage.getItem('lang') || 'ar';
     const t_page = (key) => window.pageTranslations[lang]?.[key] || `[${key}]`;
     
-    // --- (Helper Functions: formatCurrency, formatChangePercent) ---
+    // --- ✅✅✅ بداية التطوير (دالة formatCurrency) ✅✅✅ ---
+    // تم تعديل الدالة لتقوم بالضرب في سعر الصرف
     const formatCurrency = (value, decimals = 0) => {
         if (!isFinite(value)) return "N/A";
-         const roundedValue = parseFloat(value.toFixed(decimals));
+
+        // التطوير: اضرب القيمة في سعر الصرف المحدد قبل العرض
+        const displayValue = value * state.currentDisplayRate;
+
+         const roundedValue = parseFloat(displayValue.toFixed(decimals));
          if (Math.abs(roundedValue) < Math.pow(10, -decimals) && roundedValue < 0) {
               return (0).toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
          }
          return roundedValue.toLocaleString('en-US', { minimumFractionDigits: decimals, maximumFractionDigits: decimals });
     };
+    // --- ✅✅✅ نهاية التطوير ✅✅✅ ---
+
     const formatChangePercent = (current, previous) => {
         if (typeof current !== 'number' || typeof previous !== 'number') return "N/A";
         if (previous === 0) {
@@ -525,7 +557,7 @@ document.addEventListener('DOMContentLoaded', () => {
             totals.workingCapital = totals.totalCurrentAssets - totals.totalCurrentLiabilities;
             totals.purchases = totals.totalCogs; // Estimation
             
-            console.log("Successfully processed uploaded data (v2.1 - Detailed).", statements);
+            console.log("Successfully processed uploaded data (v2.2 - Detailed).", statements);
             return statements; 
         } catch (error) {
             console.error("Error processing uploaded data:", error);
@@ -702,7 +734,7 @@ document.addEventListener('DOMContentLoaded', () => {
             totals.ebit = totals.operatingProfit;
             if (totals.purchases === 0 && totals.totalCogs > 0) totals.purchases = totals.totalCogs; 
 
-            console.log("Processed Statements Data from Trial Balance (v2.1 - Detailed):", statements);
+            console.log("Processed Statements Data from Trial Balance (v2.2 - Detailed):", statements);
             return statements;
         } catch (e) {
             console.error("Error during trial data processing loop:", e);
@@ -783,6 +815,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- (مطور) Rendering Functions ---
+    // (لا تغيير هنا، ستستخدم formatCurrency المحدثة)
     const renderComparativeSection = (itemsCurrent = [], itemsPrevious = [], sectionTitle, totalLabel, cssClass = '', decimals = 0) => {
         let sectionTotalCurrent = 0;
         let sectionTotalPrevious = 0;
@@ -808,8 +841,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const previousValue = prevItemsMap.get(account) || 0;
             const changeAbs = currentValue - previousValue;
             
-            // (جديد) Add ps-3 (padding-start) if we are in a sub-section
-            const paddingClass = sectionTitle ? "ps-3 sub-item" : ""; // (ar) 'ps-3' is correct with dir="rtl"
+            const paddingClass = sectionTitle ? "ps-3 sub-item" : "";
 
             html += `<tr class="${paddingClass}">
                         <td>${account}</td>
@@ -824,7 +856,6 @@ document.addEventListener('DOMContentLoaded', () => {
             sectionTotalPrevious += previousValue;
         });
 
-        // (جديد) Only print total row if totalLabel is provided
         if (totalLabel) {
              const totalChangeAbs = sectionTotalCurrent - sectionTotalPrevious;
              const totalChangePct = formatChangePercent(sectionTotalCurrent, sectionTotalPrevious);
@@ -1160,7 +1191,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('equityStatementComment').textContent = totalClosingEqC >= totalOpeningEqC ? t_page('eq_comment_growth') : t_page('eq_comment_decline');
     };
 
-    // --- (قياسي) Main Rendering Orchestrator ---
+    // --- (مطور) Main Rendering Orchestrator ---
     const reloadAndRenderData = () => {
         console.log("[DEBUG] Reloading and rendering data based on selection.");
         const noDataWarningElement = document.getElementById('noDataWarning');
@@ -1172,7 +1203,7 @@ document.addEventListener('DOMContentLoaded', () => {
          if(noDataWarningElement) noDataWarningElement.style.display = 'none';
 
         if (loadDataAndPrepareStatements()) { 
-            console.log("[DEBUG] Data loaded successfully. Rendering statements (v2.1)...");
+            console.log("[DEBUG] Data loaded successfully. Rendering statements (v2.2)...");
             renderBalanceSheet();
             renderIncomeStatement();
             renderCashFlowStatement();
@@ -1204,9 +1235,112 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- (قياسي) Initialization ---
     const init = () => {
-        console.log("[DEBUG] Initializing report page (v2.1 - Detailed)...");
+        console.log("[DEBUG] Initializing report page (v2.2 - Detailed)...");
         
-        reloadAndRenderData(); 
+        // --- ✅✅✅ بداية إضافة العملة ✅✅✅ ---
+        const reportCurrencySelect = document.getElementById('reportCurrencySelect');
+        const reportFxRateInput = document.getElementById('reportFxRateInput');
+        const creditSalesCurrency = document.getElementById('creditSalesCurrency');
+
+        const baseCurrency = localStorage.getItem('currency') || 'EGP';
+        state.baseCurrency = baseCurrency;
+
+        // جلب أسعار الصرف المحفوظة من صفحة الإدخال
+        const savedFxRates = JSON.parse(localStorage.getItem('fxRates') || '{}');
+        if (Object.keys(savedFxRates).length > 0) {
+            state.displayCurrencies = savedFxRates;
+        }
+
+        // ملء قائمة العملات
+        if (reportCurrencySelect) {
+            reportCurrencySelect.innerHTML = ''; // مسح الخيارات الافتراضية
+            // إضافة العملة الأساسية أولاً
+            reportCurrencySelect.add(new Option(`${t_page('currency_base')} (${baseCurrency})`, baseCurrency));
+            
+            // إضافة باقي العملات
+            for (const currency in state.displayCurrencies) {
+                if (currency !== baseCurrency) { // لا تضف العملة الأساسية مرة أخرى
+                    reportCurrencySelect.add(new Option(currency, currency));
+                }
+            }
+        }
+
+        // دالة لإعادة الرسم
+        const rerenderWithNewRate = () => {
+            if (state.hasDataCurrent) {
+                console.log(`[DEBUG] Rerendering reports with new FX rate: ${state.currentDisplayRate}`);
+                renderBalanceSheet();
+                renderIncomeStatement();
+                renderCashFlowStatement();
+                renderEquityStatement();
+            }
+        };
+
+        // ربط الأحداث
+        if (reportCurrencySelect) {
+            reportCurrencySelect.addEventListener('change', () => {
+                const selectedCurrency = reportCurrencySelect.value;
+                let newRate = 1.0;
+                
+                if (selectedCurrency === state.baseCurrency) {
+                    newRate = 1.0;
+                } else if (state.displayCurrencies[selectedCurrency]) {
+                    // حساب سعر الصرف (نفترض أن العملة الأساسية هي 1)
+                    // (ملاحظة: هذا يفترض أن الريت في input-app هو "كم جنيه = 1 عملة أجنبية")
+                    // إذا كان الريت 48.5 (USD)، فالرقم الذي نريده هو 1/48.5
+                    
+                    // لنفترض أن المستخدم يريد سعر الصرف المباشر
+                    // (سنقوم بتحسين هذا لاحقاً، الآن سنستخدم الريت المحفوظ كما هو)
+                    
+                    // *** منطق معدل: ***
+                    // المستخدم سيدخل سعر الصرف للعملة الجديدة يدوياً
+                    // أو نستخدم الريت المحفوظ
+                    const savedRate = state.displayCurrencies[selectedCurrency]?.rate || 1;
+                    
+                    // إذا كان الريت الأساسي (EGP) هو 1
+                    // والريت المحفوظ لـ USD هو 48.5
+                    // إذا أردنا عرض التقرير بـ USD، يجب أن نقسم كل الأرقام على 48.5
+                    // لذا، سعر الصرف للعرض هو (1 / 48.5)
+                    
+                    if (selectedCurrency === 'EGP') { // (افتراض أن الجنيه هو الأساس)
+                         newRate = 1.0;
+                    } else {
+                         const baseRateForSelected = state.displayCurrencies[selectedCurrency]?.rate;
+                         if (baseRateForSelected && baseRateForSelected > 0) {
+                             newRate = 1 / baseRateForSelected;
+                         }
+                    }
+                }
+                
+                // سنبسط المنطق: المستخدم يختار العملة، ونحن نضع السعر الافتراضي، وهو يعدله
+                let defaultRate = 1.0;
+                if (selectedCurrency !== state.baseCurrency) {
+                    const baseRate = state.displayCurrencies[state.baseCurrency]?.rate || 1; // (e.g., 1 for EGP)
+                    const targetRate = state.displayCurrencies[selectedCurrency]?.rate || 1; // (e.g., 48.5 for USD)
+                    defaultRate = (baseRate / targetRate).toFixed(5); // (e.g., 1 / 48.5)
+                }
+                
+                reportFxRateInput.value = defaultRate;
+                state.currentDisplayRate = defaultRate;
+                rerenderWithNewRate();
+            });
+        }
+        
+        if(reportFxRateInput) {
+            reportFxRateInput.addEventListener('change', (e) => {
+                state.currentDisplayRate = parseFloat(e.target.value) || 1.0;
+                rerenderWithNewRate();
+            });
+        }
+
+        // (تحديث عملة المبيعات الآجلة)
+        if (creditSalesCurrency) {
+            creditSalesCurrency.textContent = state.baseCurrency;
+        }
+        // --- ✅✅✅ نهاية إضافة العملة ✅✅✅ ---
+
+
+        reloadAndRenderData(); // التشغيل الأولي
 
         const exportPdfBtn = document.getElementById('exportPdfBtn');
         if (exportPdfBtn) {
@@ -1289,7 +1423,7 @@ document.addEventListener('DOMContentLoaded', () => {
             radio.addEventListener('change', reloadAndRenderData); 
         });
 
-        // --- (جديد) Credit Sales Input Logic ---
+        // --- (قياسي) Credit Sales Input Logic ---
         const creditSalesInput = document.getElementById('creditSalesInput');
         if (creditSalesInput) {
             creditSalesInput.value = localStorage.getItem('creditSalesCurrent') || '';
@@ -1299,11 +1433,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`[DEBUG] Saved Credit Sales: ${value}`);
             });
             
-            // (جديد) تحديث العملة بناءً على ما تم حفظه في صفحة الإدخال
+            // (تحديث) هذا العنصر أصبح الآن خاصاً بالعملة الأساسية فقط
             const currencyLabel = document.getElementById('creditSalesCurrency');
             if (currencyLabel) {
-                const savedCurrency = localStorage.getItem('currency') || 'EGP';
-                currencyLabel.textContent = savedCurrency;
+                currencyLabel.textContent = baseCurrency;
             }
         }
         // --- End Credit Sales ---
