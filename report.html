@@ -40,6 +40,7 @@
             font-weight: bold;
             font-size: 0.9em;
         }
+        
         /* (تطوير) إضافة تنسيق للبنود الفرعية */
         .report-table .sub-item td:first-child {
             /* (ar) استخدام padding-right للغة العربية */
@@ -49,6 +50,7 @@
              /* (en) استخدام padding-left للغة الإنجليزية */
             padding-left: 1.75rem !important;
         }
+
         .report-table .subtotal-row td { 
             border-top: 1px solid #eee; 
             font-weight: 600; 
@@ -101,34 +103,39 @@
             </section>
             
             <div class="card card-body mb-4 no-print bg-light border-0 shadow-sm">
-                <h6 data-translate-key="dataSourceTitle">مصدر البيانات:</h6>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="dataSource" id="sourceTrialBalance" value="trialData" checked>
-                    <label class="form-check-label small" for="sourceTrialBalance" data-translate-key="sourceTrialBalanceLabel">
-                        استخدام ميزان المراجعة (من صفحة الإدخال)
-                    </label>
-                </div>
-                <div class="form-check form-check-inline">
-                    <input class="form-check-input" type="radio" name="dataSource" id="sourceUploadedStatements" value="uploadedData">
-                    <label class="form-check-label small" for="sourceUploadedStatements" data-translate-key="sourceUploadedLabel">
-                        استخدام القوائم المالية المرفوعة (من صفحة الرفع)
-                    </label>
-                </div>
-                
-                <hr class="my-3">
-                <h6 data-translate-key="additionalDataTitle">بيانات إضافية (لأغراض التحليل)</h6>
-                <div class="row g-2">
-                    <div class="col-lg-6">
-                        <label for="creditSalesInput" class="form-label small" data-translate-key="creditSalesLabel">المبيعات الآجلة (Credit Sales)</label>
+                <div class="row g-3">
+                    <div class="col-lg-4 col-md-12">
+                        <h6 data-translate-key="dataSourceTitle">مصدر البيانات:</h6>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="dataSource" id="sourceTrialBalance" value="trialData" checked>
+                            <label class="form-check-label small" for="sourceTrialBalance" data-translate-key="sourceTrialBalanceLabel"></label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="dataSource" id="sourceUploadedStatements" value="uploadedData">
+                            <label class="form-check-label small" for="sourceUploadedStatements" data-translate-key="sourceUploadedLabel"></label>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6">
+                        <h6 data-translate-key="additionalDataTitle">بيانات إضافية</h6>
+                        <label for="creditSalesInput" class="form-label small visually-hidden" data-translate-key="creditSalesLabel">المبيعات الآجلة (Credit Sales)</label>
                         <div class="input-group input-group-sm">
                             <span class="input-group-text" id="creditSalesCurrency">EGP</span>
-                            <input type="number" class="form-control" id="creditSalesInput" placeholder="أدخل إجمالي المبيعات الآجلة للفترة">
+                            <input type="number" class="form-control" id="creditSalesInput" data-translate-key="creditSalesHint" placeholder="أدخل المبيعات الآجلة للفترة">
                         </div>
-                         <div class="form-text small" data-translate-key="creditSalesHint">سيتم استخدام هذا الرقم لحساب نسب الدوران (مثل DSO).</div>
+                    </div>
+
+                    <div class="col-lg-4 col-md-6">
+                        <h6 data-translate-key="reportCurrencyTitle">إعدادات عملة العرض</h6>
+                        <div class="input-group input-group-sm">
+                            <select id="reportCurrencySelect" class="form-select" style="max-width: 100px;">
+                                </select>
+                            <input type="number" id="reportFxRateInput" class="form-control" step="any" value="1.0">
+                        </div>
                     </div>
                 </div>
-                </div>             
-             <div class="alert alert-warning" id="noDataWarning" role="alert" style="display: none;">
+            </div>
+            <div class="alert alert-warning" id="noDataWarning" role="alert" style="display: none;">
                 </div>
             <section id="balanceSheetCard" class="card-surface mb-4"> <h4 data-translate-key="bsTitle"></h4>
                 <p class="text-muted small" data-translate-key="bsSubheader"></p>
@@ -206,4 +213,3 @@ console.log('فشل تسجيل Service worker:', err);
 </script>
 </body>
 </html>
-
