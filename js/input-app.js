@@ -156,5 +156,35 @@ document.addEventListener("DOMContentLoaded",(()=>{
     };
     // --- (نهاية دالة معالجة الملف) ---
     
-    (()=>{for(const t in e.currencies)l.currencySelect.add(new Option(`${e.currencies[t].name} (${t})`,t));s(),l.currencySelect.value=localStorage.getItem("currency")||"EGP",u(),m(),l.addRowBtn.addEventListener("click",(()=>{t.trialData.push({Account:"",MainType:"",SubType:"",Debit:0,Credit:0}),m()})),l.saveBtn.addEventListener("click",(()=>{o(),alert(r("savedSuccess"))})),l.clearBtn.addEventListener("click",(()=>{confirm(r("confirmClear"))&&(t.trialData=[],localStorage.removeItem("trialData"),s(),m())})),l.saveAsBtn.addEventListener("click",c),l.savePreviousBtn.addEventListener("click",d),l.currencySelect.addEventListener("change",u),l.fxRateInput.addEventListener("change",(t=>{e.currencies[l.currencySelect.value].rate=i(t.target.value),o()})),l.browseButton.addEventListener("click",(()=>l.fileUploader.click())),l.fileDropArea.addEventListener("click",(()=>l.fileUploader.click())),l.processFileBtn.addEventListener("click",y),l.fileUploader.addEventListener("change",(e=>{e.target.files.length>0&&v(e.target.files[0])})),["dragenter","dragover","dragleave","drop"].forEach((e=>{l.fileDropArea.addEventListener(e,(e=>{e.preventDefault(),e.stopPropagation()}),!1)})),["dragenter","dragover"].forEach((e=>{l.fileDropArea.addEventListener(e,(()=>{l.fileDropArea.classList.add("border-success"),l.fileDropArea.classList.remove("border-primary-subtle")}),!1)})),["dragleave","drop"].forEach((e=>{l.fileDropArea.addEventListener(e,(()=>{l.fileDropArea.classList.remove("border-success"),l.fileDropArea.classList.add("border-primary-subtle")}),!1)})),l.fileDropArea.addEventListener("drop",(e=>{const t=e.dataTransfer.files;t.length>0&&(l.fileUploader.files=t,v(t[0]))}),!1)})()
+    (()=>{
+        for(const t in e.currencies)l.currencySelect.add(new Option(`${e.currencies[t].name} (${t})`,t));
+        s(),
+        l.currencySelect.value=localStorage.getItem("currency")||"EGP",
+        u(),
+        m(),
+        l.addRowBtn.addEventListener("click",(()=>{t.trialData.push({Account:"",MainType:"",SubType:"",Debit:0,Credit:0}),m()})),
+        l.saveBtn.addEventListener("click",(()=>{o(),alert(r("savedSuccess"))})),
+        l.clearBtn.addEventListener("click",(()=>{confirm(r("confirmClear"))&&(t.trialData=[],localStorage.removeItem("trialData"),s(),m())})),
+        l.saveAsBtn.addEventListener("click",c),
+        l.savePreviousBtn.addEventListener("click",d),
+        
+        // --- ✅✅✅ بداية التصحيح ✅✅✅ ---
+        // تم تعديل هذا السطر ليقوم بحفظ العملة المختارة
+        l.currencySelect.addEventListener("change", (()=>{ 
+            u(); // (1) تحديث الواجهة (مثل تعطيل خانة السعر للجنيه)
+            localStorage.setItem("currency", l.currencySelect.value); // (2) حفظ العملة المختارة
+            console.log(`[DEBUG] Saved new base currency: ${l.currencySelect.value}`);
+        })),
+        // --- ✅✅✅ نهاية التصحيح ✅✅✅ ---
+
+        l.fxRateInput.addEventListener("change",(t=>{e.currencies[l.currencySelect.value].rate=i(t.target.value),o()})),
+        l.browseButton.addEventListener("click",(()=>l.fileUploader.click())),
+        l.fileDropArea.addEventListener("click",(()=>l.fileUploader.click())),
+        l.processFileBtn.addEventListener("click",y),
+        l.fileUploader.addEventListener("change",(e=>{e.target.files.length>0&&v(e.target.files[0])})),
+        ["dragenter","dragover","dragleave","drop"].forEach((e=>{l.fileDropArea.addEventListener(e,(e=>{e.preventDefault(),e.stopPropagation()}),!1)})),
+        ["dragenter","dragover"].forEach((e=>{l.fileDropArea.addEventListener(e,(()=>{l.fileDropArea.classList.add("border-success"),l.fileDropArea.classList.remove("border-primary-subtle")}),!1)})),
+        ["dragleave","drop"].forEach((e=>{l.fileDropArea.addEventListener(e,(()=>{l.fileDropArea.classList.remove("border-success"),l.fileDropArea.classList.add("border-primary-subtle")}),!1)})),
+        l.fileDropArea.addEventListener("drop",(e=>{const t=e.dataTransfer.files;t.length>0&&(l.fileUploader.files=t,v(t[0]))}),!1)
+    })()
 }));
