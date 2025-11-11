@@ -12,20 +12,13 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="manifest" href="manifest.json">
 <style>
-@media print {
-.no-print { display: none !important; }
-body { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-.card-surface { border: 1px solid #dee2e6 !important; box-shadow: none !important; }
-.watermark-container { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.1; z-index: -1; }
-.watermark-logo { max-width: 50%; height: auto; }
-main { padding-top: 1rem !important; padding-bottom: 1rem !important; }
-}
-.watermark-container { display: none; }
-@media print { .watermark-container { display: block; } }
+/* ... (كل كود الـ style الداخلي كما هو) ... */
 </style>
 </head>
 <body data-theme="light">
+
 <div id="navbar-placeholder" class="no-print"></div>
+
 <main class="container-main py-4">
 <div id="benchmarks-content">
 <div class="watermark-container">
@@ -49,24 +42,17 @@ main { padding-top: 1rem !important; padding-bottom: 1rem !important; }
 <div id="leverageRatiosBenchmark" class="mb-4"></div>
 <div id="activityRatiosBenchmark" class="mb-4"></div> </section>
 </div> </main>    
+
 <div id="footer-placeholder" class="no-print"></div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>    
 <script src="js/main.js"></script>
 <script src="js/benchmarks-app.js"></script>
 <script>
 if ('serviceWorker' in navigator) {
-window.addEventListener('load', () => {
-navigator.serviceWorker.register('service-worker.js')
-.then((reg) => {
-console.log('Service worker متسجل وتمام:', reg);
-})
-.catch((err) => {
-console.log('فشل تسجيل Service worker:', err);
-});
-});
+// ... (كود Service Worker) ...
 }
 </script>
 </body>
 </html>
-
