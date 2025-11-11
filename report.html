@@ -40,7 +40,6 @@
             font-weight: bold;
             font-size: 0.9em;
         }
-        
         /* (تطوير) إضافة تنسيق للبنود الفرعية */
         .report-table .sub-item td:first-child {
             /* (ar) استخدام padding-right للغة العربية */
@@ -50,7 +49,6 @@
              /* (en) استخدام padding-left للغة الإنجليزية */
             padding-left: 1.75rem !important;
         }
-
         .report-table .subtotal-row td { 
             border-top: 1px solid #eee; 
             font-weight: 600; 
@@ -118,13 +116,9 @@
 
                     <div class="col-lg-4 col-md-6">
                         <h6 data-translate-key="additionalDataTitle">بيانات إضافية</h6>
-                        <label for="creditSalesInput" class="form-label small visually-hidden" data-translate-key="creditSalesLabel">المبيعات الآجلة (Credit Sales)</label>
-                        <div class="input-group input-group-sm">
-                            <span class="input-group-text" id="creditSalesCurrency">EGP</span>
-                            <input type="number" class="form-control" id="creditSalesInput" data-translate-key="creditSalesHint" placeholder="أدخل المبيعات الآجلة للفترة">
-                        </div>
+                        <label for="creditSalesInput" class="form-label small" data-translate-key="creditSalesLabel">المبيعات الآجلة (Credit Sales)</label>
+                        <input type="number" class="form-control form-control-sm" id="creditSalesInput" data-translate-key="creditSalesHint" placeholder="أدخل المبيعات الآجلة للفترة">
                     </div>
-
                     <div class="col-lg-4 col-md-6">
                         <h6 data-translate-key="reportCurrencyTitle">إعدادات عملة العرض</h6>
                         <div class="input-group input-group-sm">
@@ -135,7 +129,8 @@
                     </div>
                 </div>
             </div>
-            <div class="alert alert-warning" id="noDataWarning" role="alert" style="display: none;">
+             
+             <div class="alert alert-warning" id="noDataWarning" role="alert" style="display: none;">
                 </div>
             <section id="balanceSheetCard" class="card-surface mb-4"> <h4 data-translate-key="bsTitle"></h4>
                 <p class="text-muted small" data-translate-key="bsSubheader"></p>
