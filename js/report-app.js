@@ -1240,7 +1240,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // --- ✅✅✅ بداية إضافة العملة ✅✅✅ ---
         const reportCurrencySelect = document.getElementById('reportCurrencySelect');
         const reportFxRateInput = document.getElementById('reportFxRateInput');
-        const creditSalesCurrency = document.getElementById('creditSalesCurrency');
 
         const baseCurrency = localStorage.getItem('currency') || 'EGP';
         state.baseCurrency = baseCurrency;
@@ -1285,43 +1284,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (selectedCurrency === state.baseCurrency) {
                     newRate = 1.0;
                 } else if (state.displayCurrencies[selectedCurrency]) {
-                    // حساب سعر الصرف (نفترض أن العملة الأساسية هي 1)
-                    // (ملاحظة: هذا يفترض أن الريت في input-app هو "كم جنيه = 1 عملة أجنبية")
-                    // إذا كان الريت 48.5 (USD)، فالرقم الذي نريده هو 1/48.5
-                    
-                    // لنفترض أن المستخدم يريد سعر الصرف المباشر
-                    // (سنقوم بتحسين هذا لاحقاً، الآن سنستخدم الريت المحفوظ كما هو)
-                    
                     // *** منطق معدل: ***
-                    // المستخدم سيدخل سعر الصرف للعملة الجديدة يدوياً
-                    // أو نستخدم الريت المحفوظ
-                    const savedRate = state.displayCurrencies[selectedCurrency]?.rate || 1;
-                    
-                    // إذا كان الريت الأساسي (EGP) هو 1
-                    // والريت المحفوظ لـ USD هو 48.5
-                    // إذا أردنا عرض التقرير بـ USD، يجب أن نقسم كل الأرقام على 48.5
-                    // لذا، سعر الصرف للعرض هو (1 / 48.5)
-                    
-                    if (selectedCurrency === 'EGP') { // (افتراض أن الجنيه هو الأساس)
-                         newRate = 1.0;
-                    } else {
-                         const baseRateForSelected = state.displayCurrencies[selectedCurrency]?.rate;
-                         if (baseRateForSelected && baseRateForSelected > 0) {
-                             newRate = 1 / baseRateForSelected;
-                         }
+                    // المستخدم يختار العملة، ونحن نضع السعر الافتراضي، وهو يعدله
+                    let defaultRate = 1.0;
+                    if (selectedCurrency !== state.baseCurrency) {
+                        const baseRate = state.displayCurrencies[state.baseCurrency]?.rate || 1; // (e.g., 1 for EGP)
+                        const targetRate = state.displayCurrencies[selectedCurrency]?.rate || 1; // (e.g., 48.5 for USD)
+                        defaultRate = (baseRate / targetRate).toFixed(5); // (e.g., 1 / 48.5)
                     }
+                    newRate = defaultRate;
                 }
                 
-                // سنبسط المنطق: المستخدم يختار العملة، ونحن نضع السعر الافتراضي، وهو يعدله
-                let defaultRate = 1.0;
-                if (selectedCurrency !== state.baseCurrency) {
-                    const baseRate = state.displayCurrencies[state.baseCurrency]?.rate || 1; // (e.g., 1 for EGP)
-                    const targetRate = state.displayCurrencies[selectedCurrency]?.rate || 1; // (e.g., 48.5 for USD)
-                    defaultRate = (baseRate / targetRate).toFixed(5); // (e.g., 1 / 48.5)
-                }
-                
-                reportFxRateInput.value = defaultRate;
-                state.currentDisplayRate = defaultRate;
+                reportFxRateInput.value = newRate;
+                state.currentDisplayRate = newRate;
                 rerenderWithNewRate();
             });
         }
@@ -1329,13 +1304,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if(reportFxRateInput) {
             reportFxRateInput.addEventListener('change', (e) => {
                 state.currentDisplayRate = parseFloat(e.target.value) || 1.0;
+                // عند تغيير سعر الصرف يدوياً، أعد القائمة إلى "العملة الأساسية" كإشارة
+                // أو يمكننا تركها كما هي، لنعتمد السعر اليدوي
+                // (سنتركها كما هي)
                 rerenderWithNewRate();
             });
-        }
-
-        // (تحديث عملة المبيعات الآجلة)
-        if (creditSalesCurrency) {
-            creditSalesCurrency.textContent = state.baseCurrency;
         }
         // --- ✅✅✅ نهاية إضافة العملة ✅✅✅ ---
 
@@ -1433,11 +1406,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.log(`[DEBUG] Saved Credit Sales: ${value}`);
             });
             
-            // (تحديث) هذا العنصر أصبح الآن خاصاً بالعملة الأساسية فقط
-            const currencyLabel = document.getElementById('creditSalesCurrency');
-            if (currencyLabel) {
-                currencyLabel.textContent = baseCurrency;
-            }
+            // --- ✅✅✅ بداية التعديل ✅✅✅ ---
+            // (حذف السطر الذي كان يتحكم في العملة التي أزلناها)
+            // --- ✅✅✅ نهاية التعديل ✅✅✅ ---
         }
         // --- End Credit Sales ---
 
